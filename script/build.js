@@ -32,8 +32,8 @@ if (process.argv[2] !== "--no-dashboard") {
     let updateBuildDashboard = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Build @intendant/dashboard") + " ")
     exec("cd admin && yarn && npm run-script build", () => {
         updateBuildDashboard(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy @intendant/dashboard") + " ")
-        fsextra.mkdirSync("./build/@intendant/core/public")
-        exec("cp -r ./admin/build/* ./build/@intendant/core/public", () => {
+        fsextra.mkdirSync("./packages/@intendant/core/public")
+        exec("cp -r ./admin/build/* ./packages/@intendant/core/public", () => {
             updateBuildDashboard(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
         })
     })
