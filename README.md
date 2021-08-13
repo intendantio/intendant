@@ -9,11 +9,10 @@
 
 ### Intendant is a smart home system.  
 ###  It is possible to interface all connected objects by making a **Intendant smartobject**.   
-### Define *smartobjects*, *modules*, *widgets*, *processes* and *routines* easily via a **personal offline web dashboard**  
-<br/>
+### Define *smartobjects*, *modules*, *widgets*, *process* and *routines* easily via a **personal offline web dashboard**  
 
 ### Docs on [intendant.io](https://intendant.io)
-<br/>
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
