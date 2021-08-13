@@ -1,0 +1,20 @@
+{
+    "id": "@intendant/smartobject",
+    "name": "smartobject",
+    "icon": "sun-outline",
+    "settings": [
+        {
+            "id": "id",
+            "type": "string",
+            "name": "smartobject"
+        }
+    ],
+    "actions": [
+        {
+            "id": "test",
+            "name": "Test",
+            "description": "Test",
+            "settings": []
+        }
+    ]
+}

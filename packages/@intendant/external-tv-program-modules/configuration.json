@@ -1,0 +1,34 @@
+{
+    "id": "@intendant/external-tv-program-modules",
+    "name": "external-tv-program-modules",
+    "actions": [
+        {
+            "id": "getProgram",
+            "name": "Get Program",
+            "description": "",
+            "settings": [
+                {
+                    "id": "program",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "hour",
+                    "type": "text",
+                    "default": 21
+                },
+                {
+                    "id": "minute",
+                    "type": "text",
+                    "default": 5
+                }
+            ]
+        },
+        {
+            "id": "getAllProgram",
+            "name": "Get All Program",
+            "description": "",
+            "settings": []
+        }
+    ]
+}

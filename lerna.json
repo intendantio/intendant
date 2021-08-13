@@ -1,0 +1,18 @@
+{
+  "version": "0.1.13",
+  "useWorkspaces": true,
+  "command": {
+    "publish": {
+      "message": "publish",
+      "registry": "https://registry.npmjs.org/"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/intendantio/intendant.git",
+    "directory": "packages/name"
+  },
+  "packages": [
+    "packages/*"
+  ]
+}
