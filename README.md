@@ -4,7 +4,6 @@
   </a>
   <h1 align="center">Automate your home easily</h1>
   <img alt="coverage" src="https://img.shields.io/static/v1?label=coverage&message=99.42%25&color=%3CCOLOR%3E">
-  <img alt="coverage" src="https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fintendantio">
 </p>
 
 ### Intendant is a smart home system.  
