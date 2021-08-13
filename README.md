@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://intendant.io/">
-    <img alt="intendant" src="../intendant/documentation/static/img/logo.svg" width="100">
+    <img alt="intendant" src="https://raw.githubusercontent.com/intendantio/intendant/543586c68957192f4e087eca9aad3b006a64403e/documentation/static/img/logo.svg" width="100">
   </a>
   <h1 align="center">Automate your home easily</h1>
   <img alt="coverage" src="https://img.shields.io/static/v1?label=coverage&message=99.42%25&color=%3CCOLOR%3E">
