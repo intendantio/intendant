@@ -47,6 +47,7 @@ An action is composed of an `id`, `name`, `description` and a list of `settings`
 {
     "id":"@organization/my-custom-module",
     "name":"my-custom-module",
+    "type": "module",
     "icon":"eva-icon",
     "settings": [
         {
