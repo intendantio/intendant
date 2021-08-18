@@ -1,0 +1,23 @@
+{
+  "name": "intendant",
+  "version": "1.0.0",
+  "description": "Template intendant",
+  "author": "intendant",
+  "license": "MIT",
+  "dependencies": {
+    "md5": "^2.3.0",
+    "node-fetch": "^2.6.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "form-data": "^4.0.0",
+    "moment": "^2.29.1",
+    "jsonwebtoken": "^8.5.1",
+    "match-all": "^1.2.6",
+    "node-schedule": "^2.0.0",
+    "toad-scheduler": "^1.0.2",
+    "crypto-js": "4.1.1",
+    "extract-zip": "2.0.1"
+  }
+}
