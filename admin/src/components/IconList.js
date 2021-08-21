@@ -16,7 +16,6 @@ class IconList extends React.Component {
         try {
             let result = await fetch(process.env.PUBLIC_URL + '/ressource/icon.json')
             let resultJSON = await result.json()
-            console.log(resultJSON)
             this.setState({ icons: resultJSON })
         } catch (error) {
             this.setState({ icons: [] })

@@ -79,7 +79,7 @@ class Smartobject extends React.Component {
                                                     </TableCell>
                                                     <TableCell align="center">
                                                         <Typography variant='body1'>
-                                                            {Icon.getIcon(smartobject.status.icon)}
+                                                            <img style={{ height: 25, width: 25, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + smartobject.status.icon + ".svg"} />
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell align="center">

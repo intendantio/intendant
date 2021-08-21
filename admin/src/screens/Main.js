@@ -13,6 +13,7 @@ import DetailRoutine from './contents/Routine/Detail'
 import Module from './contents/Module/List'
 import DetailModule from './contents/Module/Detail'
 import Configuration from './contents/Configuration/List'
+import Market from './contents/Market/List'
 import Widget from './contents/Widget/List'
 import NewWidget from './contents/Widget/New'
 import DetailWidget from './contents/Widget/Detail'
@@ -69,6 +70,7 @@ class Main extends React.Component {
                             <Route exact path="/user/new" component={NewUser} />
                             <Route exact path="/user/:id/password" component={NewPassword} />
                             <Route exact path="/configuration" component={Configuration} />
+                            <Route exact path="/market/:id" component={Market} />
                             <Route exact path="/authorization" component={Authorization} />
                         </Switch>
                     </div>

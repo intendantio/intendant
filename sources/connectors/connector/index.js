@@ -8,7 +8,6 @@ class Connector {
     }
 
     async getOne(id) {
-        console.log("test")
         if(typeof id == 'string' || typeof id == 'number') {
             return {
                 code: "ok",

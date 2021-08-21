@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;var _default=(a,b)=>{a.get("/api/authorizations",async(a,c)=>{a.url="/authorizations";let d=await b.controller.authentification.checkAuthorization(a);d.error?c.send(d):c.send(await b.controller.authentification.getAll())})};exports.default=_default,module.exports=exports.default;

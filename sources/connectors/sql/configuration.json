@@ -1,0 +1,5 @@
+{
+    "id": "@intendant/sql-connector",
+    "name": "sql-connector",
+    "type": "connector"
+}

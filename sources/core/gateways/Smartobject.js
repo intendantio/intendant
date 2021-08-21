@@ -99,7 +99,7 @@ export default (app, core) => {
 
     // Insert smartobject profiles
     app.post("/api/smartobjects/:idSmartobject/profiles", async (request, res) => {
-        request.url = "/api/smartobjects/:idSmartobject/profiles"
+        request.url = "/smartobjects/:idSmartobject/profiles"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -113,7 +113,7 @@ export default (app, core) => {
 
     // Delete smartobject profiles
     app.delete("/api/smartobjects/:idSmartobject/profiles/:idProfile", async (request, res) => {
-            request.url = "/api/smartobjects/:idSmartobject/profiles/:idProfile"
+            request.url = "/smartobjects/:idSmartobject/profiles/:idProfile"
             let authorization = await core.controller.authentification.checkAuthorization(request)
             if (authorization.error) {
                 res.send(authorization)

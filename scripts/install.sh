@@ -1,5 +1,13 @@
 #!/bin/bash
-echo "Intendant - install.sh";
+echo " 
+ _                            _                  
+| |       _                  | |             _   
+| |____ _| |_ _____ ____   __| |_____ ____ _| |_ 
+| |  _ (_   _) ___ |  _ \ / _  (____ |  _ (_   _)
+| | | | || |_| ____| | | ( (_| / ___ | | | || |_ 
+|_|_| |_| \__)_____)_| |_|\____\_____|_| |_| \__)
+                                                 
+";
 echo "See more information on https://intendant.io";
 echo "";
 echo "> Download template.zip";

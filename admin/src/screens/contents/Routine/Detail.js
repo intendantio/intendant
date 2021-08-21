@@ -171,7 +171,7 @@ class NewRoutine extends React.Component {
         } else if (this.state.routine.effects.length == 0) {
             this.setState({ enabled: true, message: "Missing effect" })
         } else {
-            let result = await new Request().post({
+            let result = await new Request().put({
                 name: this.state.routine.name,
                 watch: this.state.routine.watch,
                 icon: this.state.routine.icon,

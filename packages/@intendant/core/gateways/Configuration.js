@@ -1,5 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;var _default=(a,b)=>{//Get all smartobject configuration
-//Get all module configuration
-//Get all widget configuration
-//Get all routine configuration 
-a.get("/api/configurations/smartobject",async(a,c)=>{a.url="/configurations/smartobject";let d=await b.controller.authentification.checkAuthorization(a);d.error?c.send(d):c.send(await b.manager.smartobject.getAll())}),a.get("/api/configurations/module",async(a,c)=>{a.url="/configurations/module";let d=await b.controller.authentification.checkAuthorization(a);d.error?c.send(d):c.send(await b.manager.module.getAll())}),a.get("/api/configurations/widget",async(a,c)=>{a.url="/configurations/widget";let d=await b.controller.authentification.checkAuthorization(a);d.error?c.send(d):c.send(await b.controller.widget.getConfiguration())}),a.get("/api/configurations/routine",async(a,c)=>{a.url="/configurations/routine";let d=await b.controller.authentification.checkAuthorization(a);d.error?c.send(d):c.send(await b.controller.routine.getConfiguration())})};exports.default=_default,module.exports=exports.default;

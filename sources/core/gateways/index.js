@@ -15,6 +15,7 @@ import GetStarted from './GetStarted'
 import Client from './Client'
 import Widget from './Widget'
 import Configuration from './Configuration'
+import Market from './Market'
 
 class API {
 
@@ -39,6 +40,7 @@ class API {
         Client(app,core)
         Widget(app,core)
         Configuration(app,core)
+        Market(app,core)
 
         app.use((request, res) => {
             res.status(404).send({ message: "Route not found", code: 404 })

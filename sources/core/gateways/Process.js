@@ -1,8 +1,8 @@
 export default (app, core) => {
 
     //Get all espace
-    app.get("/api/espace", async (request, res) => {
-        request.url = '/espace'
+    app.get("/api/espaces", async (request, res) => {
+        request.url = '/espaces'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -87,6 +87,7 @@ export default (app, core) => {
             res.send(await core.controller.process.deleteAction(request.params.idProcess, request.params.idAction))
         }
     })
+    
     //Insert process inputs
     app.post('/api/process/:idProcess/inputs', async (request, res) => {
         request.url = '/process/:idProcess/inputs'
@@ -122,7 +123,7 @@ export default (app, core) => {
 
     // Insert process profiles
     app.post("/api/process/:idProcess/profiles", async (request, res) => {
-        request.url = "/api/process/:idProcess/profiles"
+        request.url = "/process/:idProcess/profiles"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -136,7 +137,7 @@ export default (app, core) => {
 
     // Delete process profiles
     app.delete("/api/process/:idProcess/profiles/:idProfile", async (request, res) => {
-        request.url = "/api/process/:idProcess/profiles/:idProfile"
+        request.url = "/process/:idProcess/profiles/:idProfile"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)

@@ -1,8 +1,10 @@
 import React from 'react'
-import { Typography, TablePagination, TableRow, Table, TableCell, TableContainer, TableBody, Paper, TableHead } from '@material-ui/core'
+import {IconButton, Typography, TablePagination, TableRow, Table, TableCell, TableContainer, TableBody, Paper, TableHead } from '@material-ui/core'
 
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
+import { Link } from "react-router-dom"
+import { Category, DevicesOther, Store } from '@material-ui/icons'
 
 class Configuration extends React.Component {
 
@@ -66,8 +68,17 @@ class Configuration extends React.Component {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignContent: 'center', alignItems: 'center' }}>
-                    <TablePagination
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center'}}>
+                <div style={{ flexDirection: 'row', display: 'flex' }}>
+                        <Paper style={{ width: 50, height: 50, marginTop: 10, padding: 5, marginBottom: 10, textAlign: 'center', justifyContent: 'space-around', alignContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+                            <Link to="/market/module" style={{ textDecoration: 'none', color: 'white' }}>
+                            <IconButton style={{ borderRadius: 0 }}>
+                                    <Store />
+                                </IconButton>
+                            </Link>
+                            </Paper>
+                    </div>
+                        <TablePagination
                         component="div"
                         count={this.state.smartobjects.length}
                         rowsPerPage={10}
@@ -109,7 +120,16 @@ class Configuration extends React.Component {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignContent: 'center', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
+                <div style={{ flexDirection: 'row', display: 'flex' }}>
+                        <Paper style={{width: 50, height: 50, marginTop: 10, padding: 5, marginBottom: 10, textAlign: 'center', justifyContent: 'space-around', alignContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+                            <Link to="/market/smartobject" style={{ textDecoration: 'none', color: 'white' }}>
+                            <IconButton style={{ borderRadius: 0 }}>
+                                    {this.state.id != "smartobject" ? <DevicesOther/> : <Category />}
+                                </IconButton>
+                            </Link>
+                            </Paper>
+                    </div>
                     <TablePagination
                         component="div"
                         count={this.state.modules.length}

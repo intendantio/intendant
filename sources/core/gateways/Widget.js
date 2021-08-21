@@ -57,7 +57,7 @@ export default (app, core) => {
 
     //Insert source in widget
     app.post("/api/widgets/:idWidget/sources", async (request, res) => {
-        request.url = "/api/widgets/:idWidget/sources"
+        request.url = "/widgets/:idWidget/sources"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -68,7 +68,7 @@ export default (app, core) => {
 
     //Delete source in widget
     app.delete("/api/widgets/:idWidget/sources/:idSource", async (request, res) => {
-        request.url = "/api/widgets/:idWidget/sources/:idSource"
+        request.url = "/widgets/:idWidget/sources/:idSource"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -79,7 +79,7 @@ export default (app, core) => {
 
     //Insert content in widget
     app.post("/api/widgets/:idWidget/contents", async (request, res) => {
-        request.url = "/api/widgets/:idWidget/content"
+        request.url = "/widgets/:idWidget/content"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -90,7 +90,7 @@ export default (app, core) => {
 
     //Delete content in widget
     app.delete("/api/widgets/:idWidget/contents/:idContent", async (request, res) => {
-        request.url = "/api/widgets/:idWidget/content/:idContent"
+        request.url = "/widgets/:idWidget/content/:idContent"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)

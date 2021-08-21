@@ -308,7 +308,7 @@ class NewWidget extends React.Component {
                         </div>
                     </div>
                     <div style={{ padding: 10, paddingBottom: 0 }}>
-                        <Typography variant='h5' > Configuration </Typography>
+                        <Typography variant='h5' > Content </Typography>
                         <div style={{ marginTop: 10, marginBottom: 10 }}>
                             <TableContainer component={Paper}>
                                 <Table>

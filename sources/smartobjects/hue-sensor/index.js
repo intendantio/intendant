@@ -24,7 +24,7 @@ class HueSensor extends SmartObject {
                 return {
                     error: true,
                     code: Package.name + ">checkPresence>invalidRequest>error" ,
-                    message: "Invalid request " + item
+                    message: "Invalid request " + JSON.stringify(item)
                 }
             } else {
                 return {

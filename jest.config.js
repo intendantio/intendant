@@ -4,9 +4,10 @@ module.exports = {
     setupFilesAfterEnv: ['./jest.setup.js'],
     verbose: false,
     testPathIgnorePatterns: [
-        "source/*",
+        "sources/*",
         ".dev/*",
         "build/*",
+        "scripts/*",
     ],
     modulePaths: [
         "<rootDir>/packages/"
@@ -16,8 +17,8 @@ module.exports = {
         "node_modules"
     ],
     modulePathIgnorePatterns: [
-        "source/.*",
-        "script/.*",
+        "sources/.*",
+        "scripts/.*",
         ".dev/.*",
         "build/.*",
     ]

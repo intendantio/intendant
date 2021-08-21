@@ -432,7 +432,6 @@ class Process extends Controller {
     }
 
     async deleteInput(idProcess,idInput) {
-        console.log(idProcess,idInput)
         let deleteInputRequest = await this.sqlProcessInput.deleteAllByField({
             reference: idInput,
             process: idProcess

@@ -16,10 +16,20 @@ updateRemove = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy re
 fsextra.copySync("./scripts/.cache", "./.dev")
 updateRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Copy ressource") + chalk.green(" ✔"))
 
+
+
 updateRemove = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Install") + " /Build")
 exec("cd ./.dev && yarn", (err,std,sder) => {
-    updateRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Copy modules") + chalk.green(" ✔"))
-    fsextra.copySync("./packages/@intendant", ".dev/node_modules/@intendant")
+    fsextra.copySync("./build/@intendant", ".dev/node_modules/@intendant")
+    updateRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Install") + chalk.green(" ✔"))
+    moduleconf.filter(r => {
+        return r.market
+    }).forEach(r => {
+        let copyRemove = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Download ") + r.module)
+        fsextra.copySync("./build/" + r.module, ".dev/.intendant/" + r.module)
+        copyRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Download ") + r.module + " " + chalk.green(" ✔"))
+    })
+
 })
 
 

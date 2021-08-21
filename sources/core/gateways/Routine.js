@@ -24,7 +24,7 @@ export default (app, core) => {
     })
 
     //Insert one routine
-    app.put('/api/routines', async (request, res) => {
+    app.post('/api/routines', async (request, res) => {
         request.url = '/routines'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
@@ -54,7 +54,7 @@ export default (app, core) => {
     })
 
     //Update one routine
-    app.post('/api/routines/:idRoutine', async (request, res) => {
+    app.put('/api/routines/:idRoutine', async (request, res) => {
         request.url = '/routines/:idRoutine'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {

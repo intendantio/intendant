@@ -1,0 +1,66 @@
+{
+    "id": "@intendant/internal-reminder-modules",
+    "name": "internal-reminder-modules",
+    "type": "module",
+    "actions": [
+        {
+            "id": "create",
+            "name": "Add reminder",
+            "description": "Add reminder in storage",
+            "settings": [
+                {
+                    "id": "reference",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "name",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "action_active",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "action_inactive",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "interval",
+                    "type": "slider",
+                    "min": 1,
+                    "max": 168,
+                    "default": 1,
+                    "step": 2
+                }
+            ]
+        },
+        {
+            "id": "getOne",
+            "name": "Get one reminder",
+            "description": "Get one reminder in storage",
+            "settings": [
+                {
+                    "id": "reference",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        },
+        {
+            "id": "update",
+            "name": "Update active reminder",
+            "description": "Update active reminder in storage",
+            "settings": [
+                {
+                    "id": "reference",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        }
+    ]
+}

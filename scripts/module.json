@@ -85,6 +85,11 @@
         "market": true
     },
     {
+        "path": "/modules/internal-reminder",
+        "module": "@intendant/internal-reminder-modules",
+        "market": true
+    },
+    {
         "path": "/modules/external-tv-program",
         "module": "@intendant/external-tv-program-modules",
         "market": true

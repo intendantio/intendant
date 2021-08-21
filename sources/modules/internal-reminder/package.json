@@ -1,0 +1,11 @@
+{
+    "name": "@intendant/internal-reminder-modules",
+    "main": "./index.js",
+    "version": "0.0.1",
+    "author": "Clément MERLET",
+    "license": "apache-2.0",
+    "publishConfig": {
+        "access": "public"
+    },
+    "gitHead": "f7a5c66c9a597e7bb3b716a70517d4bae5aca640"
+}

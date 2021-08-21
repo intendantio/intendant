@@ -10,12 +10,10 @@ class Manager {
         this.logger.verbose(Package.name, "Start Manager")
         this.smartobjects = new Map()
         this.before()
-        setInterval(async () => {
-            await this.initialisation()
-        }, 5000)
     }
 
     async before() {
+
         let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
         let result = await sqlSmartobject.updateAll({ status: 2 })
         if (result.error) {
@@ -37,6 +35,10 @@ class Manager {
         })
     }
 
+    async restart() {
+        this.core.logger.verbose(Package.name, "Restart Smartobject Manager")
+        await this.initialisation()
+    }
 
     async instanciate(smartobject) {
         let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
@@ -55,18 +57,24 @@ class Manager {
                 let setting = settings[index]
                 pSettings[setting.reference] = setting.value
             }
-            try {
-                let Module = require(smartobject["module"])
-                let moduleConfiguration = require(smartobject["module"] + "/configuration.json")
-                let instanceSmartObject = new Module(pSettings, this.core, moduleConfiguration)
-                let resultUpdateRequest = await sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
-                if (resultUpdateRequest.error) {
-                    this.logger.warning(Package.name, resultUpdateRequest.message)
-                    return
+
+            if (this.configuration.smartobjects.includes(smartobject.module)) {
+                try {
+                    let Module = require(require('path').resolve('./') + "/.intendant/" + smartobject["module"] + "/index.js")
+                    let moduleConfiguration = require(require('path').resolve('./') + "/.intendant/" + smartobject["module"] + "/configuration.json")
+                    let instanceSmartObject = new Module(pSettings, this.core, moduleConfiguration)
+                    let resultUpdateRequest = await sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
+                    if (resultUpdateRequest.error) {
+                        this.logger.warning(Package.name, resultUpdateRequest.message)
+                        return
+                    }
+                    this.smartobjects.set(smartobject.reference, instanceSmartObject)
+                } catch (error) {
+                    this.logger.warning(Package.name, error)
                 }
-                this.smartobjects.set(smartobject.reference, instanceSmartObject)
-            } catch (error) {
-                this.logger.warning(Package.name, error)
+            } else {
+                await sqlSmartobject.updateAll({ status: 3 }, { id: smartobject.id })
+                this.logger.warning(Package.name, "Package " + smartobject.module + " has not installed")
             }
         }
     }

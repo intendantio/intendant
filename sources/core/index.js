@@ -11,11 +11,14 @@ import Widget from './controllers/Widget'
 import Cache from './controllers/Cache'
 import User from './controllers/User'
 import Espace from './controllers/Espace'
+import Market from './controllers/Market'
 import Math from './controllers/tools/Math'
 
 import SmartObjectManager from './managers/Smartobject'
 import ModulesManager from './managers/Modules'
 import RoutineManager from './managers/Routine'
+
+import fs from 'fs'
 
 class Core {
     constructor(configuration, connector, logger) {
@@ -40,6 +43,11 @@ class Core {
         this.connector = connector
         this.salt = "" /*Math.random(16) */
 
+        
+
+        this.prepare()
+
+
         /* Controller */
         this.controller = {}
         this.controller.routine = new Routine(this)
@@ -53,6 +61,7 @@ class Core {
         this.controller.user = new User(this)
         this.controller.cache = new Cache(this)
         this.controller.espace = new Espace(this)
+        this.controller.market = new Market(this)
 
         setTimeout(() => {
             /* Manager */
@@ -63,6 +72,24 @@ class Core {
         },100)
 
     }
+
+    prepare() {
+        this.configuration.smartobjects = []
+        this.configuration.modules = []
+        if(fs.existsSync("./.intendant") == false) {
+            fs.mkdirSync("./.intendant/@intendant")
+        }
+        let dirsModule = fs.readdirSync('./.intendant/@intendant')
+        for (let dir = 0; dir < dirsModule.length; dir++) {
+            let currentConfiguration = JSON.parse(fs.readFileSync('./.intendant/@intendant/' + dirsModule[dir] + "/configuration.json").toString())
+            if(currentConfiguration.type == "smartobject") {
+                this.configuration.smartobjects.push(currentConfiguration.id)
+            } else if(currentConfiguration.type == "module") {
+                this.configuration.modules.push(currentConfiguration.id)
+            }
+        }
+    }
+    
 }
 
 export default Core

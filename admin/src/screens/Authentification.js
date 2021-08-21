@@ -9,8 +9,6 @@ import { Settings } from '@material-ui/icons'
 
 class Authentification extends React.Component {
 
-
-
     constructor(props) {
         super(props)
         this.state = {

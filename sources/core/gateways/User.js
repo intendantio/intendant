@@ -51,7 +51,7 @@ export default (app, core) => {
     })
 
     app.post('/api/users/:idUser/password', async (request, res) => {
-        request.url = '/api/users/:idUser/password'
+        request.url = '/users/:idUser/password'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)

@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;var _default=(a,b)=>{a.put("/api/getstarted",async(a,c)=>{c.send(await b.controller.user.insertAdmin(a.body.password))})};exports.default=_default,module.exports=exports.default;
