@@ -2,13 +2,13 @@
 module.exports = {
   title: 'Intendant.io',
   tagline: 'Automate your home',
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://intendant.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'intendant', // Usually your GitHub org/user name.
-  projectName: 'Intendant', // Usually your repo name.
+  organizationName: 'intendantio', // Usually your GitHub org/user name.
+  projectName: 'Intendant',
   themeConfig: {
     colorMode: {
       defaultMode: 'dark',
@@ -21,15 +21,14 @@ module.exports = {
         src: 'img/logo.svg',
       },
       items: [
-        { to: 'docs/installation/getting-started', activeBasePath: 'docs', label: 'Get started', position: 'left' },
-        { to: 'docs/docusaurus.config.js', activeBasePath: 'docs', label: 'Demo', position: 'right' },
-        { to: 'https://github.com/intendantio', activeBasePath: 'docs', label: 'Github', position: 'right' },
+        { to: 'docs/getting-started', activeBasePath: 'docs', label: 'Docs', position: 'left' },
+        { to: 'https://demo.intendant.io', activeBasePath: 'docs', label: 'Demo', position: 'right' },
+        { to: 'https://github.com/intendantio/intendant', activeBasePath: 'docs', label: 'Github', position: 'right' },
       ],
     },
     footer: {
       style: 'dark',
-      links: [
-      ],
+      links: [],
       copyright: `Copyright © ${new Date().getFullYear()} Intendant.io`,
     },
   },

@@ -1,101 +1,73 @@
 module.exports = {
   docs: [
+    'getting-started',
     {
       type: 'category',
-      label: 'Installation',
+      label: 'User guide',
       items: [
-        'installation/getting-started',
+        'user-guide/concept',
+        {
+          type: 'category',
+          label: 'Dashboard',
+          items: [
+            'user-guide/dashboard/getting-started',
+            'user-guide/dashboard/smartobject',
+            'user-guide/dashboard/module',
+            'user-guide/dashboard/process',
+            'user-guide/dashboard/widget',
+            'user-guide/dashboard/routine',
+            'user-guide/dashboard/user',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Mobile Application',
+          items: [
+            'user-guide/mobile/getting-started',
+            'user-guide/mobile/preview'
+          ],
+        }
       ],
     },
     {
       type: 'category',
-      label: 'Main Concepts',
+      label: 'Developer guide',
       items: [
-        {
-          type: 'category',
-          label: 'Core',
-          items: [
-            'concepts/core/introduction',
-            'concepts/core/lifecycle'
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Connector',
-          items: [
-            'concepts/connector/introduction',
-            {
-              type: 'category',
-              label: 'Basic Connector',
-              items: [
-                'concepts/connector/mysql'
-              ],
-            },
-            'concepts/connector/custom'
-          ],
-        },
         {
           type: 'category',
           label: 'Module',
           items: [
-            'concepts/module/introduction',
-            {
-              type: 'category',
-              label: 'Basic Module',
-              items: [
-                'concepts/module/weather-manager',
-                'concepts/module/list-manager',
-                'concepts/module/recipe-manager'
-              ],
-            },
-            'concepts/module/custom'
+            'guides/module/introduction',
+            'guides/module/custom'
           ],
         },
         {
           type: 'category',
           label: 'Smartobject',
           items: [
-            'concepts/smartobject/introduction',
-            {
-              type: 'category',
-              label: 'Basic Smartobject',
-              items: [
-                'concepts/smartobject/philips-hue-light',
-                'concepts/smartobject/philips-hue-sensor',
-                'concepts/smartobject/philips-smart-plug',
-                'concepts/smartobject/netatmo-home-coach'
-              ],
-            },
-            'concepts/smartobject/custom'
-            
+            'guides/smartobject/introduction',
+            'guides/smartobject/custom'
           ],
-        },
-        {
-          type: 'category',
-          label: 'Logging',
-          items: [
-            'concepts/logging/introduction',
-            {
-              type: 'category',
-              label: 'Basic Logging',
-              items: [
-                'concepts/logging/console'
-              ],
-            },
-            'concepts/logging/custom'
-          ],
-        },
+        }
       ],
     },
     {
       type: 'category',
-      label: 'Web API',
+      label: 'Api',
       items: [
+        'api/authentification',
         'api/authorization',
+        'api/client',
+        'api/configuration',
+        'api/getstarted',
+        'api/market',
         'api/module',
+        'api/ping',
         'api/process',
+        'api/profile',
         'api/routine',
         'api/smartobject',
+        'api/user',
         'api/widget',
       ],
     }
