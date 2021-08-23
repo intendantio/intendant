@@ -10,15 +10,15 @@ echo "
 ";
 echo "See more information on https://intendant.io";
 echo "";
-echo "> Download template.zip";
-curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/console-sql.zip > template.zip;
-echo "> Unzip template.zip";
-unzip -o -qq template.zip;
-echo "> Remove template.zip";
-rm template.zip;
+echo "> Download package.json";
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/package.json > package.json;
+echo "> Download index.js";
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/index.js > index.js;
+echo "> Download intendant.json";
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/intendant.json > intendant.json;
+echo "> Download intendant.sql";
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/intendant.sql > intendant.sql;
 echo "> Installation dependencies";
 npm --silent --quiet --no-progress  install;
 echo "> Installation successful";
 echo "> Edit the intendant.json file to finish the final configurations";
-echo "> Press enter to finish";
-read varname

@@ -1,0 +1,15 @@
+{
+    "port": "8000",
+    "token": "UwZumJrkchtdWbEhSFYNgNvk73zvkM4qA7VXLuZTNNHsuQZyZUgwDbGfLkKzRBQxXeYh9Zzg",
+    "connector": {
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "intendant"
+    },
+    "tracing": {
+        "verbose": true,
+        "warning": true,
+        "error": true
+    }
+}
