@@ -18,10 +18,12 @@ class Authentification extends React.Component {
             message: "",
             password: "",
             customAddress: false,
-            address: "localhost:8000",
+            address: window.location.href,
             login: "admin",
             isMobile: false
         }
+
+        console.log(window.location.href)
     }
 
 
@@ -59,18 +61,21 @@ class Authentification extends React.Component {
 
     async checkServer() {
         let ok = true
+        let protocol = window.location.protocol + "//"
+        if(this.state.address.split("://").length > 1) {
+            protocol = ""
+        }
         try {
-            let result = await fetch("http://" + this.state.address + "/api/ping", {}, 2000)
+            let result = await fetch(protocol + this.state.address + "/api/ping", {}, 2000)
             let resultJSON = await result.json()
             if (resultJSON.message != "pong" || resultJSON.code != "ok") {
                 this.setState({ enabled: true, message: 'Connection to server failed' })
                 ok = false
             } else {
+                localStorage.setItem("server",protocol + this.state.address)
                 if (resultJSON.getStarted) {
                     this.setState({ getStarted: true })
                     return false
-                } else {
-                    localStorage.setItem("server", "http://" + this.state.address)
                 }
             }
         } catch (error) {
