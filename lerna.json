@@ -1,5 +1,5 @@
 {
-  "version": "0.1.13",
+  "version": "0.0.3",
   "useWorkspaces": true,
   "command": {
     "publish": {
@@ -10,9 +10,9 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/intendantio/intendant.git",
-    "directory": "packages/name"
+    "directory": "build/packages/@intendant/name"
   },
   "packages": [
-    "packages/*"
+    "build/packages/@intendant/*"
   ]
 }
