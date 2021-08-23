@@ -5,7 +5,8 @@
         "host": "localhost",
         "user": "root",
         "password": "",
-        "database": "intendant"
+        "database": "intendant",
+        "port": "3306"
     },
     "tracing": {
         "verbose": true,
