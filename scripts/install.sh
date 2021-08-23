@@ -11,13 +11,13 @@ echo "
 echo "See more information on https://intendant.io";
 echo "";
 echo "> Download package.json";
-curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/package.json > package.json;
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/package.json > package.json;
 echo "> Download index.js";
-curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/index.js > index.js;
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/index.js > index.js;
 echo "> Download intendant.json";
-curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/intendant.json > intendant.json;
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/intendant.json > intendant.json;
 echo "> Download intendant.sql";
-curl -s https://raw.githubusercontent.com/intendantio/intendant/main/getstarted/intendant.sql > intendant.sql;
+curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/intendant.sql > intendant.sql;
 echo "> Installation dependencies";
 npm --silent --quiet --no-progress  install;
 echo "> Installation successful";
