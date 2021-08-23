@@ -17,7 +17,7 @@ unzip -o -qq template.zip;
 echo "> Remove template.zip";
 rm template.zip;
 echo "> Installation dependencies";
-npm --silent install > "/dev/null";
+npm --silent --quiet --no-progress  install;
 echo "> Installation successful";
 echo "> Edit the intendant.json file to finish the final configurations";
 echo "> Press enter to finish";
