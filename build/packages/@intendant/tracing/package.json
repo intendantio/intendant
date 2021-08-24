@@ -1,9 +1,12 @@
 {
   "name": "@intendant/tracing",
   "main": "./index.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Clément MERLET",
   "license": "apache-2.0",
+  "dependencies": {
+    "@intendant/core": "^0.0.4"
+  },
   "gitHead": "f7a5c66c9a597e7bb3b716a70517d4bae5aca640",
   "publishConfig": {
     "access": "public"
