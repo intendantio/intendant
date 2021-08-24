@@ -1,14 +1,13 @@
 {
   "name": "@intendant/console-tracing",
   "main": "./index.js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publishConfig": {
     "access": "public"
   },
   "author": "Clément MERLET",
   "license": "apache-2.0",
   "dependencies": {
-    "@intendant/core": "^0.0.4",
     "@intendant/tracing": "latest",
     "chalk": "^4.1.0"
   },
