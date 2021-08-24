@@ -1,6 +1,6 @@
 {
     "name": "@intendant/core",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "main": "./index.js",
     "author": "Clément MERLET",
     "license": "apache-2.0",
@@ -16,6 +16,7 @@
         "toad-scheduler": "^1.0.2",
         "md5": "^2.3.0",
         "lodash": "^4.17.21",
-        "extract-zip": "2.0.1"
+        "extract-zip": "2.0.1",
+        "npm": "^7.21.0"
     }
 }

@@ -77,7 +77,7 @@ class Core {
         this.configuration.smartobjects = []
         this.configuration.modules = []
         if(fs.existsSync("./.intendant") == false) {
-            fs.mkdirSync("./.intendant/@intendant")
+            fs.mkdirSync("./.intendant/@intendant",{recursive: true})
         }
         let dirsModule = fs.readdirSync('./.intendant/@intendant')
         for (let dir = 0; dir < dirsModule.length; dir++) {

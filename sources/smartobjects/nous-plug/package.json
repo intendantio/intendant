@@ -8,7 +8,7 @@
         "access": "public"
     },
     "dependencies": {
-        "@intendant/smartobject": "^0.1.0",
+        "@intendant/smartobject": "latest",
         "node-fetch": "^2.6.1",
         "crypt-js": "^1.0.4"
     },

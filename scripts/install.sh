@@ -19,6 +19,6 @@ curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/in
 echo "> Download intendant.sql";
 curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/intendant.sql > intendant.sql;
 echo "> Installation dependencies";
-npm --silent --quiet --no-progress --loglevel silent --no-summary --no-tree install ;
+npm install --silent;
 echo "> Installation successful";
 echo "> Edit the intendant.json file to finish the final configurations";

@@ -2,6 +2,7 @@ import Controller from "./Controller"
 import fetch from 'node-fetch'
 import extract from 'extract-zip'
 import fs from 'fs'
+import npm from 'npm'
 import Package from '../package.json'
 
 class Market extends Controller {
@@ -44,7 +45,16 @@ class Market extends Controller {
             await extract(require('path').resolve('./') + "/.tmp-download.zip", { dir: require('path').resolve('./') + "/.intendant/" + pPackage })
             this.core.logger.verbose(Package.name,"Remove tmp file")
             fs.unlinkSync(require('path').resolve('./') + "/.tmp-download.zip")
-            
+            await new Promise((resolve, reject) => {
+                npm.load(() => {
+                    resolve()
+                })
+            })
+            await new Promise((resolve, reject) => {
+                npm.commands.install([require('path').resolve('./') + "/.intendant/" + pPackage + "/package.json","--silent"],() => {
+                    resolve()
+                })
+            })
             this.core.logger.verbose(Package.name,"Restart configuration")
             
             this.core.prepare()

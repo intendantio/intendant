@@ -114,7 +114,7 @@ class Configuration extends React.Component {
                                 <TableRow hover key={pmodule.reference} style={{ cursor: 'pointer' }}>
                                     <TableCell align="left">
                                         <Typography variant='body1'>
-                                            {pmodule.title}
+                                            {pmodule.name}
                                         </Typography>
                                     </TableCell><TableCell align="left">
                                         <Typography variant='body1'>

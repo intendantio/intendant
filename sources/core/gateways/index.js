@@ -43,7 +43,7 @@ class API {
         Market(app,core)
 
         app.use((request, res) => {
-            res.status(404).send({ message: "Route not found", code: 404 })
+            res.redirect('/admin')
         })
 
         app.listen(core.configuration.port, () => {
