@@ -35,6 +35,6 @@
     "zip-a-folder": "^1.1.0"
   },
   "workspaces": [
-    "packages/*"
+    "build/packages/**"
   ]
 }
