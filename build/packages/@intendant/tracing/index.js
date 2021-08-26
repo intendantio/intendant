@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;class Tracing{static verbose(){return!0}static warning(){return!0}static error(){return!0}}var _default=Tracing;exports.default=_default,module.exports=exports.default;
