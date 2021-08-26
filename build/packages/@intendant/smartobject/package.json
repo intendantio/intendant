@@ -1,7 +1,7 @@
 {
   "name": "@intendant/smartobject",
   "main": "./index.js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Clément MERLET",
   "license": "apache-2.0",
   "gitHead": "f7a5c66c9a597e7bb3b716a70517d4bae5aca640",
