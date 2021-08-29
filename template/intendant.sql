@@ -513,6 +513,17 @@ CREATE TABLE `widget_content_type` (
   `rank` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+--
+-- Dumping data for table `widget_content_type`
+--
+
+INSERT INTO `widget_content_type` (`id`, `reference`, `name`, `rank`) VALUES
+(1, 'title', 'Title', 1),
+(2, 'content', 'Content', 2),
+(3, 'list', 'List', 3);
+
+
 -- --------------------------------------------------------
 
 --
