@@ -7,6 +7,9 @@
   <h1 align="center">Intendant</h1>
   <h2 align="center">Automate your home easily</h2>
   <img alt="coverage" src="https://img.shields.io/static/v1?label=coverage&message=99.42%25&color=%3CCOLOR%3E">
+  
+  
+
 
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
   <a href="https://intendant.io/docs/getting-started" target="_blank">
@@ -17,6 +20,13 @@
   </a>
   <a href="https://twitter.com/intendantio" target="_blank">
     <img alt="Twitter: intendantio" src="https://img.shields.io/twitter/follow/intendantio.svg?style=social" />
+  </a>
+  </br>
+  <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
+  <img alt="playstore" src="https://img.shields.io/badge/playstore-available-success" >
+  </a>
+  <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
+    <img alt="playstore" src="https://img.shields.io/badge/appstore-in%20progress-orange">
   </a>
 
 # What is it? 
@@ -30,7 +40,7 @@ Intedant is designed to be upgraded with custom modules. It is possible to creat
 
 ## Open source application
 
-Intendant has an Android and iOS app available in the PlayStore, AppStore. Application is the easiest and most ergonomic way to use the Intendant. It is open source and does not require any authorization.
+Intendant has an Android and iOS app available in the [PlayStore](https://play.google.com/store/apps/details?id=intendant.io), AppStore. Application is the easiest and most ergonomic way to use the Intendant. It is open source and does not require any authorization.
 
 # Get started
 
