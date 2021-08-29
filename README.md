@@ -58,12 +58,13 @@ Give a ⭐️ if this project helped you!
 
 ## Author
 
-* Website: https://intendant.io
+* Docs: https://intendant.io
+* Mail: [contact@intendant.io](mailto:contact@intendant.io)
 * Twitter: [@intendantio](https://twitter.com/intendantio)
 * GitHub: [@intendantio](https://github.com/intendantio)
 
 ## 📝 License
 
-Copyright © 2021 [Clément MERLET](https://github.com/intendantio).<br />
+Copyright © 2021 [Clément MERLET](https://github.com/3jedgcm).<br />
 This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
 
