@@ -2,29 +2,22 @@
   <a href="https://intendant.io/">
     <img alt="intendant" src="https://raw.githubusercontent.com/intendantio/intendant/543586c68957192f4e087eca9aad3b006a64403e/documentation/static/img/logo.svg" width="100">
   </a>
-
+  <h1 align="center">Intendant - Automate your home easily</h1>
 </p>
-  <h1 align="center">Intendant</h1>
-  <h2 align="center">Automate your home easily</h2>
-  <img alt="coverage" src="https://img.shields.io/static/v1?label=coverage&message=99.42%25&color=%3CCOLOR%3E">
-  <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
+  <img alt="coverage" src="https://img.shields.io/static/v1?label=Coverage&message=99.42%25&color=%3CCOLOR%3E">
+  <img alt="Version" src="https://img.shields.io/badge/Version-0.0.1-blue.svg?cacheSeconds=2592000" />
   <a href="https://intendant.io/docs/getting-started" target="_blank">
-    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+    <img alt="Documentation" src="https://img.shields.io/badge/Documentation-yes-brightgreen.svg" />
+  </a>
+  <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
+  <img alt="Playstore" src="https://img.shields.io/badge/Playstore-available-success" >
+  </a>
+  <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
+    <img alt="AppStore" src="https://img.shields.io/badge/AppStore-in%20progress-orange">
   </a>
   <a href="https://choosealicense.com/licenses/mit/" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
-  <a href="https://twitter.com/intendantio" target="_blank">
-    <img alt="Twitter: intendantio" src="https://img.shields.io/twitter/follow/intendantio.svg?style=social" />
-  </a>
-  <p>
-  <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
-  <img alt="playstore" src="https://img.shields.io/badge/playstore-available-success" >
-  </a>
-  <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
-    <img alt="playstore" src="https://img.shields.io/badge/appstore-in%20progress-orange">
-  </a>
-  </p>
 
 # What is it? 
 
