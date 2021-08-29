@@ -6,11 +6,10 @@ module.exports = {
     testPathIgnorePatterns: [
         "sources/*",
         ".dev/*",
-        "build/*",
         "scripts/*",
     ],
     modulePaths: [
-        "<rootDir>/packages/"
+        "<rootDir>/build/"
     ],
     collectCoverage: true,
     transformIgnorePatterns: [
@@ -20,6 +19,5 @@ module.exports = {
         "sources/.*",
         "scripts/.*",
         ".dev/.*",
-        "build/.*",
     ]
 };
