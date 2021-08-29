@@ -1,0 +1,30 @@
+{
+    "id": "@intendant/hue-sensor-smartobject",
+    "name": "hue-sensor-smartobject",
+    "type": "smartobject",
+    "icon": "radio-outline",
+    "settings": [{
+            "id": "id",
+            "type": "string",
+            "name": "Sensor identifiant"
+        },
+        {
+            "id": "path",
+            "type": "string",
+            "name": "Hue Hub path"
+        },
+        {
+            "id": "apikey",
+            "type": "string",
+            "name": "Hue authorisation"
+        }
+    ],
+    "actions": [
+        {
+            "id": "checkPresence",
+            "name": "Check presence",
+            "description": "Check if module have presence",
+            "settings": []
+        }
+    ]
+}

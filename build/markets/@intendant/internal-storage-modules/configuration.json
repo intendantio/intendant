@@ -1,0 +1,36 @@
+{
+    "id": "@intendant/internal-storage-modules",
+    "name": "internal-storage-modules",
+    "type": "module",
+    "actions": [
+        {
+            "id": "getItem",
+            "name": "Get item",
+            "description": "Get item in storage",
+            "settings": [
+                {
+                    "id": "reference",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        },
+        {
+            "id": "setItem",
+            "name": "Set item",
+            "description": "Set item in storage",
+            "settings": [
+                {
+                    "id": "reference",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "value",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "id": "@intendant/external-recipe-modules",
+    "name": "external-recipe-modules",
+    "type": "module",
+    "actions": [
+        {
+            "id": "getRecipe",
+            "name": "Get Recipe",
+            "description": "",
+            "settings": [
+                {
+                    "id": "recipe",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        }
+    ]
+}
