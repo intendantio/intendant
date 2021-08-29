@@ -2,6 +2,8 @@
   <a href="https://intendant.io/">
     <img alt="intendant" src="https://raw.githubusercontent.com/intendantio/intendant/543586c68957192f4e087eca9aad3b006a64403e/documentation/static/img/logo.svg" width="100">
   </a>
+
+</p>
   <h1 align="center">Intendant</h1>
   <h2 align="center">Automate your home easily</h2>
   <img alt="coverage" src="https://img.shields.io/static/v1?label=coverage&message=99.42%25&color=%3CCOLOR%3E">
@@ -16,7 +18,6 @@
   <a href="https://twitter.com/intendantio" target="_blank">
     <img alt="Twitter: intendantio" src="https://img.shields.io/twitter/follow/intendantio.svg?style=social" />
   </a>
-</p>
 
 # What is it? 
 
@@ -33,7 +34,7 @@ Intendant has an Android and iOS app available in the PlayStore, AppStore. Appli
 
 # Get started
 
-## One line install
+## Install
 
 ```sh
 curl -sL https://raw.githubusercontent.com/intendantio/intendant/main/scripts/install.sh | bash -
@@ -41,7 +42,7 @@ curl -sL https://raw.githubusercontent.com/intendantio/intendant/main/scripts/in
 
 ## Demo
 
-You can access a demo platform with the login admin and password admin on [intendant.io](https://demo.intendant.io/admin/)
+You can access a demo platform with login `admin` and password `admin` on [demo.intendant.io](https://demo.intendant.io/admin/)
 
 ## Docs
 
