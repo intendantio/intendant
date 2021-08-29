@@ -103,7 +103,7 @@ class Manager {
         let smartobjects = []
         this.configuration.smartobjects.forEach(smartobject => {
             try {
-                let configuration = require(smartobject + "/configuration.json")
+                let configuration = require(require('path').resolve('./') + "/.intendant/" +  smartobject + "/configuration.json")
                 smartobjects.push(configuration)
             } catch (error) {
                 this.core.logger.warning(Package.name, "Impossible get configuration in " + smartobject + " module")

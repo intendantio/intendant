@@ -129,11 +129,19 @@ class Widget extends Controller {
                 if (smartobjectRequest.error) {
                     return smartobjectRequest
                 }
-                let resultAction = await this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.reference).action(action.action, pArguments)
-                if (resultAction.error) {
-                    return resultAction
+                if(this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.reference)) {
+                    let resultAction = await this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.reference).action(action.action, pArguments)
+                    if (resultAction.error) {
+                        return resultAction
+                    }
+                    data[action.reference] = resultAction.data
+                } else {
+                    return {
+                        error: true,
+                        code: Package.name + '>SmartobjectNotFound>' + smartobjectRequest.data.reference,
+                        message: "Smartobject not found"
+                    }
                 }
-                data[action.reference] = resultAction.data
             } else if (action.type === "module") {
                 let resultAction = await this.core.manager.module.executeAction(action.object, action.action, pArguments)
                 if (resultAction.error) {
