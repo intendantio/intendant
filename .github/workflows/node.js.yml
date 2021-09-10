@@ -26,5 +26,6 @@ jobs:
         cache: 'npm'
     - name: Yarn CLI
       uses: CultureHQ/actions-yarn@v1.0.1
+    - run: yarn
     - run: yarn build
     - run: yarn test
