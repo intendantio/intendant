@@ -15,6 +15,7 @@ module.exports = {
     transformIgnorePatterns: [
         "node_modules",
         "node_modules/(?!(jest-)?crypto-js)",
+        "moment",
     ],
     modulePathIgnorePatterns: [
         "sources/.*",
