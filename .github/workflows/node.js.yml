@@ -16,16 +16,5 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
-    - name: Yarn CLI
-      uses: CultureHQ/actions-yarn@v1.0.1
-    - run: yarn
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Yarn CLI
-      uses: CultureHQ/actions-yarn@v1.0.1
-    - run: yarn build
-    - run: yarn test
+    - name: Run Jest
+      uses: stefanoeb/jest-action@1.0.4
