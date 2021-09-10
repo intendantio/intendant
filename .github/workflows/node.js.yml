@@ -16,5 +16,9 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
+    - name: Yarn CLI
+      uses: CultureHQ/actions-yarn@v1.0.1
+    - run: yarn
     - name: Run Jest
       uses: stefanoeb/jest-action@1.0.4
+    - run: jest
