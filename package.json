@@ -7,7 +7,7 @@
   "useWorkspaces": true,
   "scripts": {
     "build": "node ./scripts/build",
-    "test": "jest && node ./tools/fixBadge",
+    "test": "jest",
     "market": "node ./scripts/publish",
     "dev": "node ./scripts/development && cd ./.dev && node index",
     "dev-documentation": "cd documentation && npm run-script start"
