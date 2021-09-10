@@ -22,6 +22,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: perfanalytics-api/package-lock.json
     - name: Yarn CLI
       uses: CultureHQ/actions-yarn@v1.0.1
     - run: yarn
