@@ -13,7 +13,8 @@ module.exports = {
     ],
     collectCoverage: true,
     transformIgnorePatterns: [
-        "node_modules"
+        "node_modules",
+        "node_modules/(?!(jest-)?crypto-js)",
     ],
     modulePathIgnorePatterns: [
         "sources/.*",
