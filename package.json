@@ -21,10 +21,12 @@
     "babel-plugin-add-module-exports": "^1.0.4",
     "babel-preset-minify": "^0.5.1",
     "chalk": "^4.1.1",
+    "crypto-js": "^4.1.1",
     "draftlog": "^1.0.13",
+    "match-all": "^1.2.6",
+    "moment": "^2.29.1",
     "node-fetch": "^2.6.1",
-    "zip-a-folder": "^1.1.0",
-    "crypto-js": "^4.1.1"
+    "zip-a-folder": "^1.1.0"
   },
   "workspaces": [
     "build/packages/**"

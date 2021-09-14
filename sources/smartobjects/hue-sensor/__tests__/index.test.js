@@ -95,7 +95,7 @@ describe(Package.name, () => {
         expect(resultAction).toEqual({
             code: Package.name + ">checkPresence>invalidRequest>error",
             error: true,
-            message: "Invalid request jest-error"
+            message: "Invalid request \"jest-error\""
         })
     })
 

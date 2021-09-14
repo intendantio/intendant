@@ -3,23 +3,16 @@ module.exports = {
     transform: { "^.+\\.js$": "babel-jest" },
     setupFilesAfterEnv: ['./jest.setup.js'],
     verbose: false,
-    testPathIgnorePatterns: [
-        "sources/*",
-        ".dev/*",
-        "scripts/*",
-    ],
     modulePaths: [
-        "<rootDir>/build/"
+        "<rootDir>/sources/"
     ],
-    collectCoverage: true,
-    transformIgnorePatterns: [
+    moduleDirectories: [
         "node_modules",
-        "node_modules/(?!(jest-)?crypto-js)",
-        "moment",
     ],
+    collectCoverage: false,
     modulePathIgnorePatterns: [
         "sources/.*",
-        "scripts/.*",
-        ".dev/.*",
+        "dev/.*",
+        "template/.*"
     ]
 };

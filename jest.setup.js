@@ -1,1 +1,3 @@
-//console.log = () => {}
+console.log = () => {}
+console.warn = () => {}
+console.verbose = () => {}
