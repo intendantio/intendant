@@ -253,7 +253,7 @@ class SQLite extends Connector {
                     } else if (field.slice(0, 11) == "DATE:CUSTOM") {
                         values = values + field.slice(11) + ","
                     } else if (field == "DATE:NOW") {
-                        values = values + "NOW(),"
+                        values = values + "date('now'),"
                     } else if (typeof field == 'string') {
                         values = values + "'" + field + "',"
                     }
@@ -348,7 +348,7 @@ class SQLite extends Connector {
             } else if (value.slice(0, 11) == "DATE:CUSTOM") {
                 statment = statment + field + "=" + field.slice(11) + ","
             } else if (value == "DATE:NOW") {
-                statment = statment + field + "=NOW(),"
+                statment = statment + field + "=date('now'),"
             } else if (typeof value == 'string') {
                 statment = statment + field + "='" + value + "',"
             }
