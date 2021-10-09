@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "@intendant/console-tracing": "latest",
-    "@intendant/sql-connector": "latest",
+    "@intendant/sqlite-connector": "latest",
     "@intendant/core": "latest"
   }
 }

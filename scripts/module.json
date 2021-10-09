@@ -96,6 +96,12 @@
         "publish-market": false
     },
     {
+        "path": "/connectors/sqlite",
+        "module": "@intendant/sqlite-connector",
+        "publish-npm": true,
+        "publish-market": false
+    },
+    {
         "path": "/core",
         "module": "@intendant/core",
         "publish-npm": true,

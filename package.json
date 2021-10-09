@@ -10,6 +10,7 @@
     "test": "jest",
     "market": "node ./scripts/publish",
     "dev": "node ./scripts/development && cd ./.dev && node index",
+    "publish": "lerna publish --force-publish",
     "dev-documentation": "cd documentation && npm run-script start"
   },
   "devDependencies": {
@@ -20,6 +21,7 @@
     "@babel/preset-env": "^7.14.4",
     "babel-plugin-add-module-exports": "^1.0.4",
     "babel-preset-minify": "^0.5.1",
+    "better-sqlite3": "^7.4.3",
     "chalk": "^4.1.1",
     "crypto-js": "^4.1.1",
     "draftlog": "^1.0.13",

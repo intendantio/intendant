@@ -2,11 +2,7 @@
     "port": "8000",
     "token": "UwZumJrkchtdWbEhSFYNgNvk73zvkM4qA7VXLuZTNNHsuQZyZUgwDbGfLkKzRBQxXeYh9Zzg",
     "connector": {
-        "host": "localhost",
-        "user": "root",
-        "password": "",
-        "database": "intendant",
-        "port": "3306"
+        "file": "test.db"
     },
     "tracing": {
         "verbose": true,
