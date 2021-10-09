@@ -1,6 +1,6 @@
 {
     "name": "@intendant/core",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "main": "./index.js",
     "author": "Clément MERLET",
     "license": "apache-2.0",
@@ -18,6 +18,5 @@
         "node-fetch": "^2.6.1",
         "npm": "^7.21.0",
         "toad-scheduler": "^1.0.2"
-    },
-    "gitHead": "c40b0eac331f842a35c0a774f772dbfc07b348fa"
+    }
 }
