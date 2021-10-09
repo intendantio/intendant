@@ -20,7 +20,7 @@ export default function Application({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultEspace = await fetch("http://" + address + "/api/espaces", {
+                let resultEspace = await fetch(address + "/api/espaces", {
                     headers: {
                         Authorization: token
                     }
@@ -37,7 +37,7 @@ export default function Application({ navigation, route }) {
             } catch (error) {
                 showMessage({
                     type: "danger",
-                    message: 'Error: A server error has occurred'
+                    message: 'Error: A creash error has occurred ' + JSON.stringify(error)
                 })
             }
         } else {

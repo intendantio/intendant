@@ -22,7 +22,7 @@ export default function List({ navigation }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultSmartobject = await fetch("http://" + address + "/api/smartobjects", {
+                let resultSmartobject = await fetch(address + "/api/smartobjects", {
                     headers: {
                         Authorization: token
                     }

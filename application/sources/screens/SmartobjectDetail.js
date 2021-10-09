@@ -26,7 +26,7 @@ export default function Detail({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultSmartobject = await fetch("http://" + address + "/api/smartobjects/" + route.params.smartobject, {
+                let resultSmartobject = await fetch(address + "/api/smartobjects/" + route.params.smartobject, {
                     headers: {
                         Authorization: token
                     }
@@ -69,7 +69,7 @@ export default function Detail({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultProcess = await fetch("http://" + address + "/api/smartobjects/" + smartobject.id + "/actions/" + pAction.id, {
+                let resultProcess = await fetch(address + "/api/smartobjects/" + smartobject.id + "/actions/" + pAction.id, {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ export default function Detail({ navigation, route }) {
                         visible={visible}
                         backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
                         onBackdropPress={() => setVisible(false)}>
-                        <Card disabled={true} style={{width: window.width * 0.8}}>
+                        <Card disabled={true} style={{maxWidth: 400, width: window.width * 0.8}}>
                             <Text category='h5' style={{ textAlign: 'center' }}  >{action.name}</Text>
                             {
                                 action.settings.map(settings => {

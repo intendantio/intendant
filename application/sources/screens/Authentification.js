@@ -22,11 +22,11 @@ export default function AuthentificationScreen({ navigation, route }) {
             if (login.length > 0) {
                 if (password.length > 0) {
                     try {
-                        let result = await fetch("http://" + address + "/api/ping")
+                        let result = await fetch(address + "/api/ping")
                         let resultJSON = await result.json()
                         if (resultJSON.message == "pong" && resultJSON.code == "ok") {
 
-                            let resultAuthentification = await fetch("http://" + address + "/api/authentification", {
+                            let resultAuthentification = await fetch(address + "/api/authentification", {
                                 method: 'POST',
                                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
@@ -48,7 +48,7 @@ export default function AuthentificationScreen({ navigation, route }) {
                                     await AsyncStorage.setItem('pegasus-auto', 'auto')
                                 }
                                 let client = await AsyncStorage.getItem('pegasus-client')
-                                let resultClient = await fetch("http://" + address + "/api/client", {
+                                let resultClient = await fetch(address + "/api/client", {
                                     method: 'POST',
                                     body: JSON.stringify({
                                         imei: Application.androidId ? Application.androidId : Constants.installationId,
@@ -69,7 +69,7 @@ export default function AuthentificationScreen({ navigation, route }) {
                                     })
                                     setPassword('')
                                 } else {
-                                    navigation.push('Widget')
+                                    navigation.push('Home')
                                 }
                             }
                         } else {

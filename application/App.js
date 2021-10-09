@@ -15,6 +15,7 @@ import Process from './sources/screens/Process'
 import Widget from './sources/screens/Widget'
 import Routine from './sources/screens/Routine'
 import Loading from './sources/screens/Loading'
+import Home from './sources/screens/Home'
 import * as eva from '@eva-design/eva'
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components'
 import Theme from './sources/Theme'
@@ -47,6 +48,7 @@ export default function App() {
             <Screen name="Smartobject" component={Smartobject} />
             <Screen name="Widget" component={Widget} />
             <Screen name="Espace" component={Espace} />
+            <Screen name="Home" component={Home} />
             <Screen name="Routine" component={Routine} />
             <Screen name="Process" component={Process} />
           </Navigator>

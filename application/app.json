@@ -2,8 +2,8 @@
   "expo": {
     "name": "Intendant",
     "slug": "intendant",
-    "version": "1.0.0",
-    "orientation": "portrait",
+    "version": "1.0.2",
+    "orientation": "default",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -18,7 +18,7 @@
     ],
     "android": {
       "package": "intendant.io",
-      "versionCode": 1,
+      "versionCode": 100002,
       "adaptiveIcon": {
         "foregroundImage": "./assets/ic_launcher_foreground.png",
         "backgroundImage": "./assets/ic_launcher_background.png"

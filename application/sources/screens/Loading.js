@@ -21,7 +21,7 @@ export default function DetailsScreen({ navigation }) {
         if (address) {
             let auto = await AsyncStorage.getItem('pegasus-auto')
             if (auto) {
-                navigation.navigate('Widget')
+                navigation.navigate('Home')
             } else {
                 navigation.navigate('Authentification')
             }

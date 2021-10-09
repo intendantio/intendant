@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react'
 import { SafeAreaView, ScrollView, View, RefreshControl } from 'react-native'
 import Icon from '../components/Icon'
-import { Button, Layout, Text, TopNavigationAction, TopNavigation, ListItem } from '@ui-kitten/components'
+import { Button, Layout, Text, TopNavigationAction, TopNavigation, ListItem, Card } from '@ui-kitten/components'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -16,12 +16,8 @@ const SmartphoneIcon = (props) => (
     <Icon {...props} name='smartphone-outline' />
 )
 
-const LayoutIcon = (props) => (
-    <Icon {...props} name='layout' />
-)
-
-const GridIcon = (props) => (
-    <Icon {...props} name='grid' />
+const BackIcon = (props) => (
+    <Icon {...props} name='arrow-ios-back-outline' />
 )
 
 
@@ -34,7 +30,7 @@ export default function Widget({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultEspace = await fetch("http://" + address + "/api/widgets", {
+                let resultEspace = await fetch(address + "/api/widgets", {
                     headers: {
                         Authorization: token
                     }
@@ -70,8 +66,12 @@ export default function Widget({ navigation, route }) {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Layout level='1' style={{ flex: 1, minHeight: 128, paddingTop: 20 }}>
-                <TopNavigation alignment='center' title={() => { return (<Text category='s1'>Intendant</Text>) }} subtitle={() => { return (<Text appearance='hint' category='s1'> Widget </Text>) }} accessoryLeft={() => <TopNavigationAction style={{ marginLeft: 15 }} icon={GridIcon} onPress={() => { navigation.push("Espace") }} />} accessoryRight={() => <TopNavigationAction style={{ marginRight: 15 }} icon={LayoutIcon} onPress={() => navigation.push('Routine')} />} />
-
+                <TopNavigation
+                    alignment='center'
+                    title={() => { return (<Text category='s1'>Intendant</Text>) }}
+                    subtitle={() => { return (<Text appearance='hint' category='s1'>Widget</Text>) }}
+                    accessoryLeft={() => <TopNavigationAction icon={BackIcon} onPress={() => navigation.pop()} />}
+                />
                 <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={() => { setLoading(true); loadWidget() }} />} style={{ flex: 1, paddingHorizontal: 10, marginBottom: 10 }}>
                     {
                         widgets.map((widget, index) => {
@@ -128,23 +128,6 @@ export default function Widget({ navigation, route }) {
                         })
                     }
                 </ScrollView>
-                <View style={{ padding: 15, justifyContent: 'space-between', flexDirection: 'row' }}>
-
-                    <View style={{ flexDirection: 'row' }}>
-                        <Button size='small' onPress={async () => {
-                            navigation.push('Smartobject')
-                        }} status='basic' appearance='outline' accessoryLeft={SmartphoneIcon}>
-                        </Button>
-                    </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Button size='small' onPress={async () => {
-                            AsyncStorage.removeItem('pegasus-auto')
-                            AsyncStorage.removeItem('pegasus-token')
-                            navigation.push('Authentification')
-                        }} status='basic' appearance='outline' accessoryLeft={LogIcon}>
-                        </Button>
-                    </View>
-                </View>
             </Layout>
         </SafeAreaView>
     );

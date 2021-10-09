@@ -24,7 +24,7 @@ export default function Espace({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultProcess = await fetch("http://" + address + "/api/process", {
+                let resultProcess = await fetch(address + "/api/process", {
                     headers: {
                         Authorization: token
                     }
@@ -67,7 +67,7 @@ export default function Espace({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultProcess = await fetch("http://" + address + "/api/process/" + process.id + "/execute", {
+                let resultProcess = await fetch(address + "/api/process/" + process.id + "/execute", {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -137,8 +137,8 @@ export default function Espace({ navigation, route }) {
                     <Card disabled={true}>
                         <Text category='h6' style={{ marginBottom: 5 }}  >{process.description}</Text>
                         {
-                            process.inputs.map(input => {
-                                return <ActionComponent settings={input} onUpdate={(id, value) => { inputsValue[id] = value }} />
+                            process.inputs.map((input,index) => {
+                                return <ActionComponent key={index} settings={input} onUpdate={(id, value) => { inputsValue[id] = value }} />
                             })
                         }
                         <Button style={{ marginTop: 15 }} appearance='filled' onPress={() => { executeAction(process) }} status={process.enable == 1 ? "primary" : "danger"} >

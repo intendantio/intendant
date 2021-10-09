@@ -37,7 +37,7 @@ export default Action = (props) => {
                     <Slider
                         value={props.settings.default}
                         onValueChange={(value) => { props.onUpdate(props.settings.id,value)}}
-                        style={{ width:  (screen.width * 0.09 + 12) * 5 , height: 40 }}
+                        style={{ maxWidth: 300, width:  (screen.width * 0.09 + 12) * 5 , height: 40 }}
                         minimumValue={props.settings.min}
                         maximumValue={props.settings.max}
                         step={props.settings.step}

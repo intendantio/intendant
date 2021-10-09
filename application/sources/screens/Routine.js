@@ -18,7 +18,7 @@ export default function Application({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultRoutine = await fetch("http://" + address + "/api/routines", {
+                let resultRoutine = await fetch(address + "/api/routines", {
                     headers: {
                         Authorization: token
                     }
@@ -52,7 +52,7 @@ export default function Application({ navigation, route }) {
         if (address) {
             try {
                 let token = await AsyncStorage.getItem('pegasus-token')
-                let resultRoutine = await fetch("http://" + address + "/api/routines/" + routine.id + "/status", {
+                let resultRoutine = await fetch(address + "/api/routines/" + routine.id + "/status", {
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',

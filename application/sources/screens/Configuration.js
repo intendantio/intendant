@@ -36,7 +36,12 @@ export default function ConfigurationScreen({ navigation, route }) {
             let pError = false
             let pWarning = false
             try {
-                let result = await fetch("http://" + pAddress + "/api/ping", {}, 2000)
+                let protocol = "https://"
+                if(pAddress.split("://").length > 1) {
+                    protocol = ""
+                }
+                console.log(protocol + pAddress + "/api/ping")
+                let result = await fetch(protocol + pAddress + "/api/ping", {}, 2000)
                 let resultJSON = await result.json()
                 if (resultJSON.message != "pong" || resultJSON.code != "ok") {
                     pError = true
@@ -77,7 +82,11 @@ export default function ConfigurationScreen({ navigation, route }) {
     }, [])
 
     const next = async () => {
-        await AsyncStorage.setItem('pegasus-address', address)
+        let protocol = "https://"
+        if(address.split("://").length > 1) {
+            protocol = ""
+        }
+        await AsyncStorage.setItem('pegasus-address', protocol + address)
         await AsyncStorage.setItem('pegasus-client', client)
         navigation.navigate('Authentification')
     }
@@ -124,7 +133,6 @@ export default function ConfigurationScreen({ navigation, route }) {
                     </View>
                 </View>
                 <View style={{ padding: 15, justifyContent: 'space-between', flexDirection: 'row' }}>
-                    
                     <View style={{ flexDirection: 'row' }}>
                         <Button size='small' style={{ marginRight: 5 }} onPress={() => { Linking.openURL("https://intendant.io") }} status='basic' accessoryLeft={(props) => (
                             <Icon {...props} name='globe-3' />
