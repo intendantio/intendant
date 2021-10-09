@@ -10,7 +10,6 @@
     "test": "jest",
     "market": "node ./scripts/publish",
     "dev": "node ./scripts/development && cd ./.dev && node index",
-    "publish": "lerna publish --force-publish",
     "dev-documentation": "cd documentation && npm run-script start"
   },
   "devDependencies": {
