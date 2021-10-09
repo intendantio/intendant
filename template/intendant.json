@@ -2,7 +2,7 @@
     "port": "8000",
     "token": "UwZumJrkchtdWbEhSFYNgNvk73zvkM4qA7VXLuZTNNHsuQZyZUgwDbGfLkKzRBQxXeYh9Zzg",
     "connector": {
-        "file": "test.db"
+        "file": "intendant.db"
     },
     "tracing": {
         "verbose": true,

@@ -19,7 +19,9 @@ class SQLite extends Connector {
             this._core.logger.error(Package.name, "Please check the configuration of the connector and the status of the database")
             process.exit(0)
         } else if(this._connector.inTransaction) {
-            this.check(exec)
+            setTimeout(() => {
+                this.check(exec)
+            },2000)
         }
     }
 
