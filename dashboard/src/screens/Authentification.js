@@ -18,12 +18,10 @@ class Authentification extends React.Component {
             message: "",
             password: "",
             customAddress: false,
-            address: window.location.href,
+            address: window.location.origin,
             login: "admin",
             isMobile: false
         }
-
-        console.log(window.location.href)
     }
 
 

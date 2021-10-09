@@ -45,7 +45,6 @@ class Configuration extends React.Component {
                 id: this.props.match.params.id
             }, () => { this.componentDidMount() })
         }
-        console.log("update")
     }
 
     async componentDidMount() {
