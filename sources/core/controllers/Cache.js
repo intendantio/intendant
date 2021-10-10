@@ -40,13 +40,18 @@ class Cache extends Controller {
                 id: null,
                 reference: data.reference,
                 value: dataMessage,
-                expiry: "DATE:CUSTOMNOW() + INTERVAL " + data.interval + " SECOND"
+                expiry: "DATE:CUSTOM" + data.interval
             })
         }
     }
 
     async check() {
-        let result = await this.sqlCache.execute("DELETE FROM `cache` WHERE expiry < NOW()")
+        return {
+            error: false,
+            message: "",
+            code: "ok"
+        }
+        let result = await this.sqlCache.execute("DELETE FROM `cache` WHERE expiry < DATE:NOW")
         if (result.error) {
             return result
         }

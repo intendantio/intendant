@@ -291,6 +291,7 @@ class SQLite extends Connector {
         this.check("execute")
         if (typeof request == 'string') {
             try {
+                request = request.replace("DATE:NOW","date('now')")
                 let result = await this._connector.prepare(request).all()
                 return {
                     code: "ok",
@@ -346,7 +347,7 @@ class SQLite extends Connector {
             } else if (typeof value == 'number') {
                 statment = statment + field + "=" + value + ","
             } else if (value.slice(0, 11) == "DATE:CUSTOM") {
-                statment = statment + field + "=" + field.slice(11) + ","
+                statment = statment + field + "=date('now',+" + field.slice(11) + " second),"
             } else if (value == "DATE:NOW") {
                 statment = statment + field + "=date('now'),"
             } else if (typeof value == 'string') {

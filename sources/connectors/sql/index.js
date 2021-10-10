@@ -248,7 +248,7 @@ class SQL extends Connector {
                     } else if (typeof field == 'number') {
                         values = values + "" + field + ","
                     } else if (field.slice(0, 11) == "DATE:CUSTOM") {
-                        values = values + field.slice(11) + ","
+                        statment = statment + field + "NOW() + INTERVAL " + field.slice(11) + " SECOND,"
                     } else if (field == "DATE:NOW") {
                         values = values + "NOW(),"
                     } else if (typeof field == 'string') {
@@ -288,6 +288,7 @@ class SQL extends Connector {
         this.check("execute")
         if (typeof request == 'string') {
             try {
+                request = request.replace("DATE:NOW","NOW()")
                 let result = await this._query(request)
                 return {
                     code: "ok",

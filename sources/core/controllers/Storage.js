@@ -7,12 +7,23 @@ class Storage extends Controller {
         if (requestGetOne.error) {
             return requestGetOne
         }
-        return {
-            error: false,
-            code: 'ok',
-            message: '',
-            data: requestGetOne.data ? JSON.parse(requestGetOne.data.value) : requestGetOne.data
+        try {
+            return {
+                error: false,
+                code: 'ok',
+                message: '',
+                data: requestGetOne.data ? JSON.parse(requestGetOne.data.value) : requestGetOne.data
+            }
+        } catch (error) {
+            await this.removeItem(id)
+            return {
+                error: false,
+                code: 'ok',
+                message: '',
+                data: {}
+            }
         }
+        
     }
 
     async setItem(id, value) {
