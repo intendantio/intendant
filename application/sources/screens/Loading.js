@@ -15,15 +15,33 @@ Notifications.setNotificationHandler({
 })
 
 export default function DetailsScreen({ navigation }) {
+
+
+    const checkServer = async (address) => {
+        try {
+            let result = await fetch(address + "/api/ping", {}, 2000)
+            let resultJSON = await result.json()
+                if (resultJSON.message != "pong" || resultJSON.code != "ok") {
+                } else {
+                    return true
+                }
+        } catch (error) {}
+        return false
+    }
+
     const initialisation = async () => {
-        let token = await getPushToken()
         let address = await AsyncStorage.getItem('pegasus-address')
         if (address) {
-            let auto = await AsyncStorage.getItem('pegasus-auto')
-            if (auto) {
-                navigation.navigate('Home')
+            let checkResult = await checkServer(address)
+            if(checkResult) {
+                let auto = await AsyncStorage.getItem('pegasus-auto')
+                if (auto) {
+                    navigation.navigate('Home')
+                } else {
+                    navigation.navigate('Authentification')
+                }
             } else {
-                navigation.navigate('Authentification')
+                navigation.navigate('Configuration')
             }
         } else {
             navigation.navigate('Configuration')

@@ -37,11 +37,17 @@ export default Smartobject = (props) => {
                     })
                 } else {
                     let pSmartobject = resultSourcesJSON.data
+                    pSmartobject.action = {
+                        id: "no_id",
+                        name: "No action",
+                        settings: []
+                    }
                     pSmartobject.actions.forEach(paction => {
                         if (paction.id == props.action) {
                             pSmartobject.action = paction
                         }
                     })
+                    
                     setData(pSmartobject)
                 }
             } catch (error) {
@@ -60,6 +66,9 @@ export default Smartobject = (props) => {
     }
 
     const middleware = () => {
+        if(data.action.id == "no_id") {
+            return
+        }
         inputsValue = {}
         if(data.action.settings.length == 0) {
             execute()
@@ -124,12 +133,12 @@ export default Smartobject = (props) => {
                 <Icon style={{ height: 60, width: 60, alignSelf: 'center' }} fill='rgb(143, 155, 179)' name={"close"} />
             </Card>
         )
-    } else {
+    } else if(data) {
         return (
             <Card onLongPress={() => { setOnRemove(true) }} onPress={() => { middleware()}} style={{ flex: 1, margin: 5, justifyContent: 'center', alignItems: 'center' }}>
                 <Icon style={{ height: 30, width: 30, alignSelf: 'center', marginBottom: 5 }} fill='rgb(143, 155, 179)' name={data.icon} />
-                <Text category={props.size > 2 ? "s1" : "h5"} appearance={"default"}>{data.reference}</Text>
-                <Text category={props.size > 2 ? "s2" : "h6"} appearance={"hint"}>{data.action.name}</Text>
+                <Text category={props.size > 2 && props.rows == 4 ? "s1" : "h5"} appearance={"default"}>{data.reference}</Text>
+                <Text category={props.size > 2 && props.rows == 4 ? "s2" : "h6"} appearance={"hint"}>{data.action.name}</Text>
                 <Modal
                 visible={modal}
                 backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
@@ -147,6 +156,12 @@ export default Smartobject = (props) => {
                             </Button>
                     </Card>
             </Modal>
+            </Card>
+        )
+    } else {
+        return (
+            <Card onPress={() => { }} style={{ flex: 1, margin: 5, justifyContent: 'center', alignItems: 'center' }}>
+                <Spinner />
             </Card>
         )
     }

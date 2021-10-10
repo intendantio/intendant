@@ -1,16 +1,19 @@
 
 import React, { useEffect } from 'react'
-import { View, SafeAreaView, Image, Linking } from 'react-native'
+import { View, SafeAreaView, Image, Keyboard } from 'react-native'
 import { Button, Layout, Text, CheckBox, Input, TopNavigation } from '@ui-kitten/components'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
 import Constants from 'expo-constants'
 import { showMessage } from "react-native-flash-message";
 import Icon from '../components/Icon'
+import * as ScreenOrientation from 'expo-screen-orientation'
 
 export default function AuthentificationScreen({ navigation, route }) {
 
+    const [orientation, setOrientation] = React.useState('')
     const [checkbox, setCheckbox] = React.useState('')
+    const [keyboardState, setKeyboardState] = React.useState(false);
     const [login, setLogin] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [loading, setLoading] = React.useState(false)
@@ -110,8 +113,43 @@ export default function AuthentificationScreen({ navigation, route }) {
         setLoading(false)
     }
 
+    const initialisation = async () => {
+        let getOrientation = await ScreenOrientation.getOrientationAsync()
+        if (getOrientation == 1) {
+            setOrientation("portrait")
+        } else {
+            setOrientation("landscape")
+        }
+    }
+
     useEffect(() => {
+        Keyboard.addListener('keyboardDidShow', async () => {
+            let getOrientation = await ScreenOrientation.getOrientationAsync()
+            if (getOrientation == 1) {
+                setOrientation("portrait")
+            } else {
+                setOrientation("landscape")
+            }
+            setKeyboardState(true)
+        })
+        Keyboard.addListener('keyboardDidHide', async () => {
+            let getOrientation = await ScreenOrientation.getOrientationAsync()
+            if (getOrientation == 1) {
+                setOrientation("portrait")
+            } else {
+                setOrientation("landscape")
+            }
+            setKeyboardState(false)
+        })
+        ScreenOrientation.addOrientationChangeListener((info) => {
+            if (info.orientationInfo.orientation == 1) {
+                setOrientation("portrait")
+            } else {
+                setOrientation("landscape")
+            }
+        })
         navigation.addListener('beforeRemove', event => event.preventDefault())
+        initialisation()
     }, [])
 
 
@@ -120,15 +158,18 @@ export default function AuthentificationScreen({ navigation, route }) {
             <Layout level='1' style={{ flex: 1, minHeight: 128, paddingTop: 20 }}>
                 <TopNavigation alignment='center' title={() => { return (<Text category='s1'>Intendant</Text>) }} subtitle={() => { return (<Text appearance='hint' category='s1'>Authentification</Text>) }} />
                 <View style={{ flex: 1, justifyContent: 'center', padding: 15 }}>
-                    <View style={{ alignItems: 'center', marginBottom: 30 }}>
-                        <Image source={require('../../assets/ic_launcher_foreground.png')} resizeMode='contain' style={{ height: 125 }} />
-                        <Text status={"basic"} category='h2' style={{ textAlign: 'center' }}   >
-                            Intendant
-                        </Text>
-                        <Text appearance='hint' category='s1' style={{ textAlign: 'center' }} >
-                            Log in to your account to access your space.
-                        </Text>
-                    </View>
+                    {
+                        keyboardState && orientation == "landscape" ? null :
+                            <View style={{ alignItems: 'center', marginBottom: 30 }}>
+                                <Image source={require('../../assets/ic_launcher_foreground.png')} resizeMode='contain' style={{ height: 125 }} />
+                                <Text status={"basic"} category='h2' style={{ textAlign: 'center' }}   >
+                                    Intendant
+                                </Text>
+                                <Text appearance='hint' category='s1' style={{ textAlign: 'center' }} >
+                                    Log in to your account to access your space.
+                                </Text>
+                            </View>
+                    }
                     <View>
                         <Input
                             status={'basic'}
@@ -151,7 +192,7 @@ export default function AuthentificationScreen({ navigation, route }) {
                             style={{ marginTop: 10 }}
                             checked={checkbox}
                             onChange={nextChecked => setCheckbox(nextChecked)}>
-                            Logging automatically 
+                            Logging automatically
                         </CheckBox>
                         <Button onPress={() => { setAuthentification() }} status='success' disabled={password.length == 0 || login.length == 0 || loading} style={{ marginTop: 20 }} >
                             <Text category='s1' appearance={password.length == 0 || login.length == 0 || loading ? 'hint' : 'default'} >{'Connexion'}</Text>

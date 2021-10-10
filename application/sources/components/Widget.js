@@ -1,12 +1,9 @@
 
 import React, { useEffect } from 'react'
-import { View, Dimensions, TouchableOpacity, RefreshControl, ScrollView, Layout } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Modal, Button, Text, Card, Spinner, SelectItem, IndexPath, ViewPager } from '@ui-kitten/components'
+import { Text, Card, Spinner } from '@ui-kitten/components'
 import Icon from './Icon'
 import { showMessage } from "react-native-flash-message"
-const screen = Dimensions.get("screen");
-
 
 export default Widget = (props) => {
 
@@ -70,7 +67,7 @@ export default Widget = (props) => {
         )
     } else {
         return (
-            <Card onLongPress={() => { setOnRemove(true) }}   onPress={() => { initialisation() }} style={{ flex: 1, margin: 5, justifyContent: 'flex-start', alignItems: 'center' }}>
+            <Card onLongPress={() => { setOnRemove(true) }}   onPress={() => { initialisation() }} style={{ flex: 1, margin: 5, justifyContent: 'center', alignItems: 'center' }}>
                 {
                     data && data.contents.map((content,index) => {
                         if(content.type.reference == "list") {
@@ -79,12 +76,12 @@ export default Widget = (props) => {
                                     pcontent = pcontent.slice(1,pcontent.length)
                                 }
                                 return (
-                                    <Text key={pindex + "0" + index} category={(props.size > 2 ? "label" : "s2")} appearance={"hint"}>{pcontent}</Text>
+                                    <Text key={pindex + "0" + index} category={(props.size > 2 && props.rows == 4 ? "label" : "s2")} appearance={"hint"}>{pcontent}</Text>
                                 )
                             })
                         } else {
                             return (
-                                <Text key={index} category={content.type.reference == "title" ? (props.size > 2 ? "h6" : "h5") : (props.size > 2 ? "label" : "s1")} appearance={content.type.reference == "title" ? "default" : "hint"}>{content.content}</Text>
+                                <Text key={index} category={content.type.reference == "title" ? (props.size > 2 && props.rows == 4 ? "h6" : "h5") : (props.size > 2 && props.rows == 4 ? "label" : "s1")} appearance={content.type.reference == "title" ? "default" : "hint"}>{content.content}</Text>
                             )
                         }
                     })

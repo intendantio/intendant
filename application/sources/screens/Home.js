@@ -1,10 +1,10 @@
 
 import React, { useEffect } from 'react'
-import { SafeAreaView, ScrollView, View, Dimensions, TouchableOpacity } from 'react-native'
+import { SafeAreaView, View } from 'react-native'
 import Icon from '../components/Icon'
 import { Button, Layout, Text, Modal, TopNavigationAction, TopNavigation, Spinner, Card, Select, IndexPath, SelectItem } from '@ui-kitten/components'
-import ActionComponent from '../components/Action'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as ScreenOrientation from 'expo-screen-orientation'
 
 import ComponentWidget from '../components/Widget'
 import ComponentProcess from '../components/Process'
@@ -42,6 +42,7 @@ const ProcessIcon = (props) => (
 
 export default function Widget({ navigation, route }) {
 
+    const [rows, setRows] = React.useState(0)
     const [sources, setSources] = React.useState([])
     const [loading, setLoading] = React.useState(false)
     const [edit, setEdit] = React.useState(false)
@@ -99,6 +100,11 @@ export default function Widget({ navigation, route }) {
     }
 
     const initialisation = async () => {
+        if(await ScreenOrientation.getOrientationAsync() == 1) {
+            setRows(2)
+        } else {
+            setRows(4)
+        }
         let result = await AsyncStorage.getItem('source-preview')
         if (result) {
             setPreview(JSON.parse(result))
@@ -141,6 +147,14 @@ export default function Widget({ navigation, route }) {
     }
 
     useEffect(() => {
+        ScreenOrientation.addOrientationChangeListener((info) => {
+            if(info.orientationInfo.orientation == 1) {
+                setRows(2)
+            } else {
+                setRows(4)
+            }
+        })
+
         initialisation()
     }, [])
 
@@ -158,14 +172,14 @@ export default function Widget({ navigation, route }) {
                 <TopNavigation alignment='center' title={() => { return (<Text category='s1'>Intendant</Text>) }} subtitle={() => { return (<Text appearance='hint' category='s1'>{"Home" + (mode == 'edit' ? " (edit mode)" : "")}</Text>) }} accessoryLeft={() => <TopNavigationAction style={{ marginLeft: 15 }} icon={GridIcon} onPress={() => { navigation.push("Espace") }} />} accessoryRight={() => <TopNavigationAction style={{ marginRight: 15 }} icon={LayoutIcon} onPress={() => navigation.push('Routine')} />} />
                 <View style={{ flex: 1, marginHorizontal: 15, flexDirection: 'row' }} >
                     {
-                        preview.widgets.map((widget,index) => {
+                        preview.widgets.slice(0,rows).map((widget,index) => {
                             return (
-                                <ComponentWidget key={index} id={widget.id} size={preview.widgets.length} onDelete={() => { deleteSource("widgets",index)}} />
+                                <ComponentWidget key={index} id={widget.id} rows={rows} size={preview.widgets.length} onDelete={() => { deleteSource("widgets",index)}} />
                             )
                         })
                     }
                     {
-                        preview.widgets.length < 4 && mode == 'edit'?
+                        preview.widgets.length < rows && mode == 'edit'?
                             <Card onPress={() => { openModal("widgets") }} style={{ flex: 1, margin: 5, justifyContent: 'center', alignItems: 'center' }}>
                                 <Icon style={{ height: 35, width: 35 }} fill='rgb(143, 155, 179)' name={"plus-outline"} />
                             </Card> : null
@@ -173,14 +187,14 @@ export default function Widget({ navigation, route }) {
                 </View>
                 <View style={{ flex: 1, marginHorizontal: 15, flexDirection: 'row' }} >
                     {
-                        preview.process.map((process,index) => {
+                        preview.process.slice(0,rows).map((process,index) => {
                             return (
-                                <ComponentProcess key={index} id={process.id} size={preview.process.length} onDelete={() => { deleteSource("process",index)}} />
+                                <ComponentProcess key={index} id={process.id} rows={rows} size={preview.process.length} onDelete={() => { deleteSource("process",index)}} />
                             )
                         })
                     }
                     {
-                        preview.process.length < 4 && mode == 'edit'?
+                        preview.process.length < rows && mode == 'edit'?
                             <Card onPress={() => { openModal("process") }} style={{ flex: 1, margin: 5, justifyContent: 'center', alignItems: 'center' }}>
                                 <Icon style={{ height: 35, width: 35 }} fill='rgb(143, 155, 179)' name={"plus-outline"} />
                             </Card> : null
@@ -188,9 +202,9 @@ export default function Widget({ navigation, route }) {
                 </View>
                 <View style={{ flex: 1, marginHorizontal: 15, flexDirection: 'row' }} >
                     {
-                        preview.smartobjects.map((smartobject,index) => {
+                        preview.smartobjects.slice(0,rows).map((smartobject,index) => {
                             return (
-                                <ComponentSmartobject key={index} id={smartobject.id} action={smartobject.action}  size={preview.smartobjects.length} onDelete={() => { deleteSource("smartobjects",index)}} />
+                                <ComponentSmartobject key={index}  rows={rows} id={smartobject.id} action={smartobject.action}  size={preview.smartobjects.length} onDelete={() => { deleteSource("smartobjects",index)}} />
                             )
                         })
                     }

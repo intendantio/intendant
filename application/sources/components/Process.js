@@ -122,9 +122,9 @@ export default Process = (props) => {
                 <Icon style={{ height: 35, width: 35, alignSelf:'center', marginBottom: 5 }} fill='rgb(143, 155, 179)' name={data.icon} />
                 {
                     data.mode == "simple" ?
-                    <Text category={props.size > 2 ? "s1" : "h5"} appearance={"default"}>{data.name}</Text>
+                    <Text style={{textAlign:'center'}} category={props.size > 2 && props.rows == 4 ? "s1" : "h5"} appearance={"default"}>{data.name}</Text>
                     : 
-                    <Text category={props.size > 2 ? "s1" : "h5"} appearance={"default"}>{data.enable == 0 ? data.name_enable : data.name_disable}</Text>
+                    <Text style={{textAlign:'center'}} category={props.size > 2 && props.rows == 4 ? "s1" : "h5"} appearance={"default"}>{data.enable == 0 ? data.name_enable : data.name_disable}</Text>
                 }
                 <Modal
                 visible={modal}
