@@ -1,16 +1,17 @@
 #!/bin/bash
+clear
 echo " 
- _                            _                  
-| |       _                  | |             _   
-| |____ _| |_ _____ ____   __| |_____ ____ _| |_ 
-| |  _ (_   _) ___ |  _ \ / _  (____ |  _ (_   _)
-| | | | || |_| ____| | | ( (_| / ___ | | | || |_ 
-|_|_| |_| \__)_____)_| |_|\____\_____|_| |_| \__)
-                                                 
+    _                            _                  
+    | |       _                  | |             _   
+    | |____ _| |_ _____ ____   __| |_____ ____ _| |_ 
+    | |  _ (_   _) ___ |  _ \ / _  (____ |  _ (_   _)
+    | | | | || |_| ____| | | ( (_| / ___ | | | || |_ 
+    |_|_| |_| \__)_____)_| |_|\____\_____|_| |_| \__)
+                                                
 ";
-echo "See more information on https://intendant.io";
+echo "  See more information on https://intendant.io";
 echo "";
-echo "> Download package.json";
+echo '> Download package.json';
 curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/package.json > package.json;
 echo "> Download index.js";
 curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/index.js > index.js;
@@ -19,6 +20,6 @@ curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/in
 echo "> Download intendant.sqlite.sql";
 curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/intendant.sqlite.sql > intendant.sqlite.sql;
 echo "> Installation dependencies";
-npm install --silent;
+npm install --silent &>/dev/null;
 echo "> Installation successful";
-echo "> Edit the intendant.json file to finish the final configurations";
+echo "> Start with 'node index.js'";
