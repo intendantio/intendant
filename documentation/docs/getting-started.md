@@ -23,9 +23,4 @@ You must edit fields :
 
 - `port` : define port number of intendant is hosted.     
 - `token` : define a random text to encrypt JSON Web Tokens.  
-- `connector` : define MYSQL database connection.
-
-## Database structure
-
-A MySQL server is required to run intendant.  
-You must import sql structure file to import to your database. **  [Download](https://raw.githubusercontent.com/intendantio/intendant/main/template/structure-intendant.sql) **
+- `file` : defines the file name of a sqlite database.
