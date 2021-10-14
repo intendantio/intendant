@@ -248,7 +248,7 @@ class SQL extends Connector {
                     } else if (typeof field == 'number') {
                         values = values + "" + field + ","
                     } else if (field.slice(0, 11) == "DATE:CUSTOM") {
-                        statment = statment + field + "NOW() + INTERVAL " + field.slice(11) + " SECOND,"
+                        values = values + field + "NOW() + INTERVAL " + field.slice(11) + " SECOND,"
                     } else if (field == "DATE:NOW") {
                         values = values + "NOW(),"
                     } else if (typeof field == 'string') {
