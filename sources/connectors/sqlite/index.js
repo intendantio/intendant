@@ -6,10 +6,15 @@ import Package from './package.json'
 class SQLite extends Connector {
 
     constructor(configuration, core, name) {
-        super(configuration, core, name)
-        this._name = name
-        this._configuration = configuration
-        this._connector = Connection.getInstance(configuration)
+        try {
+            super(configuration, core, name)
+            this._name = name
+            this._configuration = configuration
+            this._connector = Connection.getInstance(configuration)
+        } catch (error) {
+            this._core.logger.error(Package.name, "Error occured in " + this._name + " table")
+            throw error
+        }
     }
 
 

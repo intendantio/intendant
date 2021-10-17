@@ -8,7 +8,9 @@ class Connection {
         if (instance === null) {
             instance = betterSqlite3(configuration.file ? configuration.file : "intendant.db")
             fs.readFileSync("./intendant.sqlite.sql").toString().split(";").forEach(request => {
-                instance.prepare(request).run()
+                try {
+                    instance.prepare(request).run()
+                } catch (error) {}
             })
         }
         return instance

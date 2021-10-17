@@ -1,7 +1,7 @@
 {
     "name": "@intendant/sql-connector",
     "main": "./index.js",
-    "version": "0.0.14",
+    "version": "0.0.2",
     "author": "Clément MERLET",
     "license": "apache-2.0",
     "publishConfig": {

@@ -38,10 +38,7 @@ class Controller {
             this.sqlProcessInput = new this.core.connector(this.core.configuration, core, "process_input")
 
             this.sqlCache = new this.core.connector(this.core.configuration, core, "cache")
-        } catch (error) {
-            
-        }
-        
+        } catch (error) {}
     }
 }
 

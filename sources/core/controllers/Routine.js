@@ -18,6 +18,7 @@ class Routine extends Controller {
 
     async getAll() {
         let arrRoutines = []
+        console.log(this)
         let routinesRequest = await this.sqlRoutine.getAll()
         if (routinesRequest.error) {
             this.core.logger.warning(Package.name, routinesRequest.message)

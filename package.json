@@ -8,7 +8,7 @@
   "scripts": {
     "build": "node ./scripts/build",
     "test": "jest",
-    "market": "node ./scripts/publish",
+    "market": "node ./scripts/market",
     "dev": "node ./scripts/development && cd ./.dev && node index",
     "dev-documentation": "cd documentation && npm run-script start"
   },

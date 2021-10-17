@@ -4,10 +4,9 @@ class Color {
         r /= 255, g /= 255, b /= 255
         var max = Math.max(r, g, b), min = Math.min(r, g, b)
         var h, s, l = (max + min) / 2
-    
-        if(max === min){
+        if(max === min) {
             h = s = 0
-        }else{
+        } else {
             var d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
             switch(max){
@@ -20,11 +19,11 @@ class Color {
         return [h, s, l];
     }
 
-    static isHexColor (hex) {
+    static isHexColor(hex) {
         return typeof hex === 'string'
             && hex.length === 6
             && !isNaN(Number('0x' + hex))
-      }
+    }
 }
 
 export default Color 
