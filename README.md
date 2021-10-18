@@ -39,6 +39,10 @@ Intendant has an Android and iOS app available in the [PlayStore](https://play.g
 curl -sL https://raw.githubusercontent.com/intendantio/intendant/main/scripts/install.sh | bash -
 ```
 
+![alt install.sh](https://raw.githubusercontent.com/intendantio/intendant/main/install.gif "install.sh")
+
+
+
 ## Demo
 
 You can access a demo platform with login `admin` and password `admin` on [demo.intendant.io](https://demo.intendant.io/admin/)
