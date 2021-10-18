@@ -1,7 +1,7 @@
-<h1 align="center">Welcome to Intendant - @intendant/core 👋</h1>
+<h1 align="center">Welcome to Intendant - @intendant/smartobject 👋</h1>
 <p>
-  <a href="https://www.npmjs.com/package/@intendant/core" target="_blank">
-    <img alt="Version" src="https://img.shields.io/npm/v/@intendant/core.svg">
+  <a href="https://www.npmjs.com/package/@intendant/smartobject" target="_blank">
+    <img alt="Version" src="https://img.shields.io/npm/v/@intendant/smartobject.svg">
   </a>
   <a href="https://intendant.io/" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
@@ -14,7 +14,6 @@
   </a>
 </p>
 
-
 ### 🏠 [Homepage](https://intendant.io/)
 
 ### ✨ [Demo](https://demo.intendant.io/admin/)
@@ -22,7 +21,7 @@
 ## Install
 
 ```sh
-npm install @intendant/core
+npm install @intendant/smartobject
 ```
 
 ## Author

@@ -52,7 +52,26 @@ class Authentification extends Controller {
     }
 
     async checkAuthorization(request = {}) {
-        let token = request.headers['authorization']
+        let authorization = request.headers['authorization']
+        if(authorization == undefined) {
+            authorization = "Bearer aaaa.bbbb.cccc"
+        }
+        let authorizationSplit = authorization.split(" ")
+        if(authorizationSplit.length != 2) {
+            return {
+                error: true,
+                message: "Jwt Token invalid",
+                code: Package.name + '>Token>Invalid'
+            }
+        }
+        if(authorizationSplit[0] != "Bearer") {
+            return {
+                error: true,
+                message: "Jwt Token invalid",
+                code: Package.name + '>Token>Invalid'
+            }
+        }
+        let token = authorizationSplit[1]
         let resultRequest = await this.sqlAuthorization.getOneByField({
             reference: request.url,
             method: request.method

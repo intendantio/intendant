@@ -33,10 +33,6 @@ npm install @intendant/core
 * Twitter: [@intendantio](https://twitter.com/intendantio)
 * GitHub: [@intendantio](https://github.com/intendantio)
 
-## 🤝 Contributing
-
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/intendantio/intendant/issues). You can also take a look at the [contributing guide](https://github.com/intendantio/intendant#contributing).
-
 ## Show your support
 
 Give a ⭐️ if this project helped you!

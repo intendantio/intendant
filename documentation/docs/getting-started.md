@@ -1,26 +1,22 @@
 ---
-title: Installation
+title: Quick start
 ---
 
 ## Requirement 
 
-NodeJS is required, all versions are compatible but it is recommended at least version 10.
+NodeJS is required, you must be using Node.js v10.20.1 or above.
 
-## Project structure
+## Installation
 
-
-To install with command line.
-
-```
+```sh
 curl -sL https://raw.githubusercontent.com/intendantio/intendant/main/scripts/install.sh | bash -
 ```
 
-## Configuration
+![alt install.sh](https://raw.githubusercontent.com/intendantio/intendant/main/install.gif "install.sh")
 
-`intendant.json` is a configuration file.
+## Starting server
 
-You must edit fields :
 
-- `port` : define port number of intendant is hosted.     
-- `token` : define a random text to encrypt JSON Web Tokens.  
-- `file` : defines the file name of a sqlite database.
+```sh
+node index.js
+```

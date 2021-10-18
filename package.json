@@ -4,6 +4,7 @@
   "repository": "https://github.com/intendantio/intendant",
   "private": "true",
   "author": "Clément MERLET",
+  "license": "MIT",
   "useWorkspaces": true,
   "scripts": {
     "build": "node ./scripts/build",
@@ -28,8 +29,5 @@
     "moment": "^2.29.1",
     "node-fetch": "^2.6.1",
     "zip-a-folder": "^1.1.0"
-  },
-  "workspaces": [
-    "build/packages/**"
-  ]
+  }
 }
