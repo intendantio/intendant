@@ -35,12 +35,11 @@ Intendant has an Android and iOS app available in the [PlayStore](https://play.g
 
 ## Install
 
+![alt install.sh](https://raw.githubusercontent.com/intendantio/intendant/main/install.gif "install.sh")
+
 ```sh
 curl -sL https://raw.githubusercontent.com/intendantio/intendant/main/scripts/install.sh | bash -
 ```
-
-![alt install.sh](https://raw.githubusercontent.com/intendantio/intendant/main/install.gif "install.sh")
-
 
 
 ## Demo
