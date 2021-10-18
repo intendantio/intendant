@@ -10,11 +10,11 @@
     "test": "jest",
     "market": "node ./scripts/market",
     "dev": "node ./scripts/development && cd ./.dev && node index",
-    "dev-documentation": "cd documentation && npm run-script start"
+    "dev-documentation": "cd documentation && npm run-script start",
+    "publish": "node ./scripts/publish" 
   },
   "devDependencies": {
-    "jest": "^27.0.1",
-    "lerna": "^4.0.0"
+    "jest": "^27.0.1"
   },
   "dependencies": {
     "@babel/preset-env": "^7.14.4",
