@@ -12,7 +12,7 @@
     "market": "node ./scripts/market",
     "dev": "node ./scripts/development && cd ./.dev && node index",
     "dev-documentation": "cd documentation && npm run-script start",
-    "publish": "node ./scripts/publish" 
+    "npm-publish": "node ./scripts/publish" 
   },
   "devDependencies": {
     "jest": "^27.0.1"
