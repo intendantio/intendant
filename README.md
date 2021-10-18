@@ -4,8 +4,7 @@
   </a>
   <h1 align="center">Intendant - Automate your home easily</h1>
 </p>
-  <img alt="coverage" src="https://img.shields.io/static/v1?label=Coverage&message=99.42%25&color=%3CCOLOR%3E">
-  <img alt="Version" src="https://img.shields.io/badge/Version-0.0.1-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/Version-0.0.13-blue.svg?cacheSeconds=2592000" />
   <a href="https://intendant.io/docs/getting-started" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/Documentation-yes-brightgreen.svg" />
   </a>
