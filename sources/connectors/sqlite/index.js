@@ -268,6 +268,7 @@ class SQLite extends Connector {
                 keys = keys.slice(0, -1)
                 keys = keys + ")"
                 let result = await this._connector.prepare("INSERT INTO " + this._name + " " + keys + " VALUES " + values).run()
+                result = { insertId: result.lastInsertRowid } 
                 return {
                     code: "ok",
                     error: false,
