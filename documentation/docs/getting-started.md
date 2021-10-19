@@ -12,7 +12,7 @@ NodeJS is required, you must be using Node.js v10.20.1 or above.
 curl -sL https://raw.githubusercontent.com/intendantio/intendant/main/scripts/install.sh | bash -
 ```
 
-![alt install.sh](https://raw.githubusercontent.com/intendantio/intendant/main/install.gif "install.sh")
+![alt install.sh](https://raw.githubusercontent.com/intendantio/intendant/main/static/install.gif "install.sh")
 
 ## Starting server
 
