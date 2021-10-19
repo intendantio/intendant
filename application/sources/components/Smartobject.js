@@ -26,7 +26,7 @@ export default Smartobject = (props) => {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultSources = await fetch(address + "/api/smartobjects/" + props.id, {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultSourcesJSON = await resultSources.json()
@@ -87,7 +87,7 @@ export default Smartobject = (props) => {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Authorization': token
+                        'Authorization': "Bearer " + token
                     },
                     method: 'POST',
                     body: JSON.stringify({

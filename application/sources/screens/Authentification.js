@@ -59,7 +59,7 @@ export default function AuthentificationScreen({ navigation, route }) {
                                         token: resultAuthentificationJSON.token
                                     }),
                                     headers: {
-                                        'Authorization': resultAuthentificationJSON.token,
+                                        'Authorization': "Bearer " + resultAuthentificationJSON.token,
                                         'Accept': 'application/json',
                                         'Content-Type': 'application/json',
                                     }

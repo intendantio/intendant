@@ -26,7 +26,7 @@ export default function Espace({ navigation, route }) {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultProcess = await fetch(address + "/api/process", {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultProcessJSON = await resultProcess.json()
@@ -71,7 +71,7 @@ export default function Espace({ navigation, route }) {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Authorization': token
+                        'Authorization': "Bearer " + token
                     },
                     method: 'POST',
                     body: JSON.stringify({

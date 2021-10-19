@@ -22,7 +22,7 @@ export default function Application({ navigation, route }) {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultEspace = await fetch(address + "/api/espaces", {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultEspaceJSON = await resultEspace.json()

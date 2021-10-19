@@ -64,7 +64,7 @@ export default function Widget({ navigation, route }) {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultSources = await fetch(address + "/api/" + type, {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultSourcesJSON = await resultSources.json()

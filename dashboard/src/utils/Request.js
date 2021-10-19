@@ -35,7 +35,7 @@ class Request {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': authorization
+                    'Authorization': 'Bearer ' + authorization
                 },
                 body: this.method == 'POST' || this.method == 'PUT' ? JSON.stringify(this.data) : null
             })

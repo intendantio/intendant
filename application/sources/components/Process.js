@@ -26,7 +26,7 @@ export default Process = (props) => {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultSources = await fetch(address + "/api/process/" + props.id , {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultSourcesJSON = await resultSources.json()
@@ -76,7 +76,7 @@ export default Process = (props) => {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Authorization': token
+                        'Authorization': "Bearer " + token
                     },
                     method: 'POST',
                     body: JSON.stringify({

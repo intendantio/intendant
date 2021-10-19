@@ -20,7 +20,7 @@ export default function Application({ navigation, route }) {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultRoutine = await fetch(address + "/api/routines", {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultRoutineJSON = await resultRoutine.json()
@@ -56,7 +56,7 @@ export default function Application({ navigation, route }) {
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     },
                     method: 'PUT',
                     body: JSON.stringify({

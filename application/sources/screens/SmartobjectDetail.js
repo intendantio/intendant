@@ -28,7 +28,7 @@ export default function Detail({ navigation, route }) {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultSmartobject = await fetch(address + "/api/smartobjects/" + route.params.smartobject, {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultSmartobjectJSON = await resultSmartobject.json()
@@ -73,7 +73,7 @@ export default function Detail({ navigation, route }) {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Authorization': token
+                        'Authorization': "Bearer " + token
                     },
                     method: 'POST',
                     body: JSON.stringify({

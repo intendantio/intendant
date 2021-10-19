@@ -82,7 +82,7 @@ class NewWidget extends React.Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': authorization
+                'Authorization': "Bearer " + authorization
             },
             body: JSON.stringify({
                 reference: this.state.widgetReference,

@@ -24,7 +24,7 @@ export default function List({ navigation }) {
                 let token = await AsyncStorage.getItem('pegasus-token')
                 let resultSmartobject = await fetch(address + "/api/smartobjects", {
                     headers: {
-                        Authorization: token
+                        Authorization: "Bearer " + token
                     }
                 })
                 let resultSmartobjectJSON = await resultSmartobject.json()
