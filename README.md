@@ -20,6 +20,14 @@
 
 # What is it? 
 
+#### Intendant is a **home automation software**, it connects and controls the connected objects in your home. 
+
+The installation system makes it possible to add connected object **easily and quickly**. 
+
+No requirements are necessary to install Intendant on your comptuter.
+
+See more on [https://intendant.io](https://intendant.io)
+
 ## Free & Open source
 Intendant is designed to be free and open source software. It can be installed in a few minutes without any pre-requisite skills.
 
