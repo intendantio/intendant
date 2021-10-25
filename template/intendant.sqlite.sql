@@ -82,9 +82,10 @@ CREATE TABLE IF NOT EXISTS "profile" (
 CREATE TABLE IF NOT EXISTS "routine" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
 	"name" varchar(255) NOT NULL,
-	"watch" INTEGER NOT NULL,
+	"watch" varchar(255) NULL,
 	"icon" varchar(255) NOT NULL,
-	"status" INTEGER NOT NULL
+	"status" INTEGER NOT NULL,
+	"mode" varchar(255) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS "routine_effect" (
 	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -293,7 +294,18 @@ VALUES (1, '/configurations/module', 'GET', 1),
 		1
 	),
 	(62, '/authentification', 'POST', 0),
-	(63, '/ping', 'GET', 0);
+	(63, '/ping', 'GET', 0),
+	(
+		64,
+		'/routines',
+		'POST',
+		1
+	),(
+		65,
+		'/routines/:idRoutine',
+		'PUT',
+		1
+	);
 INSERT INTO "authorization_profile" ("id", "authorization", "profile")
 VALUES (5, 1, 1),
 	(6, 2, 1),
@@ -345,7 +357,9 @@ VALUES (5, 1, 1),
 	(62, 58, 1),
 	(63, 59, 1),
 	(64, 60, 1),
-	(65, 61, 1);
+	(65, 61, 1),
+	(66, 64, 1),
+	(67, 65, 1);
 INSERT INTO "espace" ("id", "reference", "name", "description", "icon")
 VALUES (
 		1,

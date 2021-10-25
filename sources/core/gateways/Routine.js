@@ -35,7 +35,8 @@ export default (app, core) => {
                 request.body.icon, 
                 request.body.watch, 
                 request.body.triggers, 
-                request.body.effects
+                request.body.effects,
+                request.body.mode
             ))
         }
     })
@@ -66,7 +67,8 @@ export default (app, core) => {
                 request.body.icon, 
                 request.body.watch, 
                 request.body.triggers, 
-                request.body.effects
+                request.body.effects,
+                request.body.mode
             ))
         }
     })

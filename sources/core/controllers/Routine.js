@@ -11,7 +11,8 @@ class Routine extends Controller {
             currentRoutine.icon,
             currentRoutine.watch,
             currentRoutine.triggers,
-            currentRoutine.effects
+            currentRoutine.effects,
+            currentRoutine.mode
         )
         return resultInsert
     }
@@ -118,14 +119,15 @@ class Routine extends Controller {
         }
     }
 
-    async insert(name,icon,watch,triggers,effects) {
-        if (typeof name == 'string' && typeof icon == 'string' && typeof watch == 'number' && Array.isArray(triggers) && Array.isArray(effects)) {
+    async insert(name,icon,watch,triggers,effects,mode) {
+        if (typeof name == 'string' && typeof mode == 'string' && typeof icon == 'string' && typeof watch == 'string' && Array.isArray(triggers) && Array.isArray(effects)) {
             let resultInsert = await this.sqlRoutine.insert({
                 id: null,
                 name: name,
                 watch: watch,
                 icon: icon,
-                status: 0
+                status: 0,
+                mode: mode
             })
             if (resultInsert.error) {
                 return resultInsert
@@ -200,12 +202,12 @@ class Routine extends Controller {
         }
     }
 
-    async update(idRoutine,name,icon,watch,triggers,effects) {
+    async update(idRoutine,name,icon,watch,triggers,effects,mode) {
         let resultProcess = await this.delete(idRoutine)
         if(resultProcess.error) {
             return resultProcess
         }
-        let resultInsert = this.insert(name,icon,watch,triggers,effects)
+        let resultInsert = this.insert(name,icon,watch,triggers,effects,mode)
         if(resultInsert.error) {
             return resultInsert
         }
@@ -251,7 +253,7 @@ class Routine extends Controller {
     }
 
     async updateStatus(idRoutine, status) {
-        let routineRequest = this.sqlRoutine.execute("UPDATE `routine` SET `status`='" + status + "' WHERE id=" + idRoutine)
+        let routineRequest = this.sqlRoutine.updateAll({status: status},{id:idRoutine})
         if (routineRequest.error) {
             return routineRequest
         } else {

@@ -1,12 +1,13 @@
 import React from 'react'
 import { Popover, InputAdornment, FormControlLabel, Modal, Fade, Select, MenuItem, Checkbox, Slider, FormControl, InputLabel, Card, Typography, Button, TextField, IconButton, Paper } from '@material-ui/core'
-import { Save, Add, List } from '@material-ui/icons'
+import { Save, Add, List, Cached } from '@material-ui/icons'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
 import Source from '../../../utils/Source'
 import Action from '../../../components/Action'
 import Theme from '../../../Theme'
 import IconList from '../../../components/IconList'
+import WeekSchedul from '../../../components/WeekSchedul'
 
 const style = {
     position: 'absolute',
@@ -31,7 +32,8 @@ class NewRoutine extends React.Component {
             routine: null,
             sources: [],
             modalTrigger: false,
-            modalEffect: false
+            modalEffect: false,
+            mode: "counter"
         }
     }
 
@@ -43,7 +45,7 @@ class NewRoutine extends React.Component {
         } else if (resultSource.error) {
             this.setState({ enabled: true, message: resultSource.code + " : " + resultSource.message })
         } else {
-            this.setState({ routine: result.data, sources: resultSource.data })
+            this.setState({mode: result.data.mode, routine: result.data, sources: resultSource.data })
         }
     }
 
@@ -173,10 +175,11 @@ class NewRoutine extends React.Component {
         } else {
             let result = await new Request().put({
                 name: this.state.routine.name,
-                watch: this.state.routine.watch,
+                watch: this.state.routine.watch.toString(),
                 icon: this.state.routine.icon,
                 triggers: this.state.routine.triggers,
-                effects: this.state.routine.effects
+                effects: this.state.routine.effects,
+                mode: this.state.mode
             }).fetch('/api/routines/' + this.state.id)
             if (result.error) {
                 this.setState({ enabled: true, message: result.code + " : " + result.message })
@@ -216,22 +219,33 @@ class NewRoutine extends React.Component {
                         </Popover>
                             
                             </div>
-                            <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
-                                <div style={{ display: 'flex', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15 }}>
-                                    <div style={{ display: 'flex', flex: 6, justifyContent: 'center' }}>
-                                        <Slider
-                                            defaultValue={0}
-                                            valueLabelDisplay="auto"
-                                            orientation={'horizontal'}
-                                            min={0}
-                                            max={1440}
-                                            step={1}
-                                            value={this.state.routine.watch}
-                                            onChange={(event, value) => { this.updateWatch(value) }}
-                                        />
+                            {
+                                this.state.mode == 'counter' ?
+                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                        <div style={{ display: 'flex', paddingTop: 15, paddingBottom: 15, paddingLeft: 15, paddingRight: 15 }}>
+                                            <div style={{ flex: 1 }}>
+                                                <IconButton size='small' onClick={() => { this.setState({ mode: 'week' }) }} variant='outlined'>
+                                                    <Cached />
+                                                </IconButton>
+                                            </div>
+                                            <div style={{ display: 'flex', flex: 15, justifyContent: 'center' }}>
+                                                <Slider
+                                                    defaultValue={0}
+                                                    valueLabelDisplay="auto"
+                                                    orientation={'horizontal'}
+                                                    min={0}
+                                                    max={1440}
+                                                    step={1}
+                                                    value={this.state.routine.watch}
+                                                    onChange={(event, value) => { this.updateWatch(value) }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div> :
+                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                        <WeekSchedul onChange={(value) => { this.updateWatch(value) }} onChangeMode={() => { this.setState({ mode: 'counter' }) }} />
                                     </div>
-                                </div>
-                            </div>
+                            }
                         </div>
                         <div style={{ flexDirection: 'row', display: 'flex', marginTop: 20 }}>
                             <div style={{ flex: 1, padding: 5 }} >

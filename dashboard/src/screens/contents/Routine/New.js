@@ -1,11 +1,12 @@
 import React from 'react'
 import { Popover, InputAdornment, FormControlLabel, Modal, Fade, Select, MenuItem, Checkbox, Slider, FormControl, InputLabel, Card, Typography, Button, TextField, IconButton, Paper } from '@material-ui/core'
-import { Save, Add, List } from '@material-ui/icons'
+import { Save, Add, List, Cached } from '@material-ui/icons'
 import Alert from '../../../components/Alert'
 import Source from '../../../utils/Source'
 import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
 import Theme from '../../../Theme'
+import WeekSchedul from '../../../components/WeekSchedul'
 import IconList from '../../../components/IconList'
 
 const style = {
@@ -28,6 +29,7 @@ class NewRoutine extends React.Component {
             message: "",
             routine: null,
             sources: [],
+            mode: 'counter',
             modalTrigger: false,
             modalEffect: false,
             routine: {
@@ -166,19 +168,20 @@ class NewRoutine extends React.Component {
     }
 
     async save() {
-        if(this.state.routine.name.length == 0) {
+        if (this.state.routine.name.length == 0) {
             this.setState({ enabled: true, message: "Missing name" })
-        } else if(this.state.routine.icon.length == 0 ) {
+        } else if (this.state.routine.icon.length == 0) {
             this.setState({ enabled: true, message: "Missing icon" })
-        } else if(this.state.routine.effects.length == 0) {
+        } else if (this.state.routine.effects.length == 0) {
             this.setState({ enabled: true, message: "Missing effect" })
         } else {
             let result = await new Request().post({
                 name: this.state.routine.name,
-                watch: this.state.routine.watch,
+                watch: this.state.routine.watch.toString(),
                 icon: this.state.routine.icon,
                 triggers: this.state.routine.triggers,
-                effects: this.state.routine.effects
+                effects: this.state.routine.effects,
+                mode: this.state.mode
             }).fetch("/api/routines")
             if (result.error) {
                 this.setState({ enabled: true, message: result.code + " : " + result.message })
@@ -196,43 +199,54 @@ class NewRoutine extends React.Component {
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <TextField onChange={(event) => { this.updateName(event.nativeEvent.target.value) }} style={{ width: '49%' }} value={this.state.routine.name} label="Name" variant='outlined'></TextField>
-                                <TextField onChange={(event) => { this.updateIcon(event.nativeEvent.target.value) }} value={this.state.routine.icon} label="Icon" variant='outlined' style={{ width: '49%' }} 
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton onClick={() => { this.setState({ popup: true }) }} style={{ margin: 0, padding: 0 }}>
-                                                <List />
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                }}
+                                <TextField onChange={(event) => { this.updateIcon(event.nativeEvent.target.value) }} value={this.state.routine.icon} label="Icon" variant='outlined' style={{ width: '49%' }}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton onClick={() => { this.setState({ popup: true }) }} style={{ margin: 0, padding: 0 }}>
+                                                    <List />
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
                                 ></TextField>
-                            
-                        <Popover
-                            open={this.state.popup}
-                            onClose={() => { this.setState({ popup: false }) }}
-                            anchorOrigin={{ vertical: 'top',  horizontal: 'center', }}
-                            transformOrigin={{  vertical: 'top', horizontal: 'center', }}
-                        >
-                            <IconList onSelect={(icon) => { this.setState({ popup: false }); this.updateIcon(icon)}} />
-                        </Popover>
+                                <Popover
+                                    open={this.state.popup}
+                                    onClose={() => { this.setState({ popup: false }) }}
+                                    anchorOrigin={{ vertical: 'top', horizontal: 'center', }}
+                                    transformOrigin={{ vertical: 'top', horizontal: 'center', }}
+                                >
+                                    <IconList onSelect={(icon) => { this.setState({ popup: false }); this.updateIcon(icon) }} />
+                                </Popover>
                             </div>
-                            <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
-                                <div style={{ display: 'flex', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15 }}>
-                                    <div style={{ display: 'flex', flex: 6, justifyContent: 'center' }}>
-                                        <Slider
-                                            defaultValue={0}
-                                            valueLabelDisplay="auto"
-                                            orientation={'horizontal'}
-                                            min={0}
-                                            max={1440}
-                                            step={1}
-                                            value={this.state.routine.watch}
-                                            onChange={(event, value) => { this.updateWatch(value) }}
-                                        />
+                            {
+                                this.state.mode == 'counter' ?
+                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                        <div style={{ display: 'flex', paddingTop: 15, paddingBottom: 15, paddingLeft: 15, paddingRight: 15 }}>
+                                            <div style={{ flex: 1 }}>
+                                                <IconButton size='small' onClick={() => { this.setState({ mode: 'week' }) }} variant='outlined'>
+                                                    <Cached />
+                                                </IconButton>
+                                            </div>
+                                            <div style={{ display: 'flex', flex: 15, justifyContent: 'center' }}>
+                                                <Slider
+                                                    defaultValue={0}
+                                                    valueLabelDisplay="auto"
+                                                    orientation={'horizontal'}
+                                                    min={0}
+                                                    max={1440}
+                                                    step={1}
+                                                    value={this.state.routine.watch}
+                                                    onChange={(event, value) => { this.updateWatch(value) }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div> :
+                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                        <WeekSchedul onChange={(value) => { this.updateWatch(value) }} onChangeMode={() => { this.setState({ mode: 'counter' }) }} />
                                     </div>
-                                </div>
-                            </div>
+                            }
+
                         </div>
                         <div style={{ flexDirection: 'row', display: 'flex', marginTop: 20 }}>
                             <div style={{ flex: 1, padding: 5 }} >
@@ -365,23 +379,23 @@ class NewRoutine extends React.Component {
                                             </div>
                                             : null
                                     }
-                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                <div style={{ marginBottom: 10, marginTop: 10, flex: 1 }} >
-                                                    <TextField variant="outlined" placeholder={"Result"} value={this.state.result} onChange={(event) => { this.setState({ result: event.currentTarget.value }) }} style={{ width: '100%' }} />
-                                                </div>
-                                                <FormControl variant="outlined" style={{ marginBottom: 5, marginTop: 5, flex: 1 }} >
-                                                    <InputLabel>Condition</InputLabel>
-                                                    <Select placeholder='Action' style={{ width: '100%' }} value={this.state.statement} onChange={(event) => { this.setState({ statement: event.target.value }) }} label="Source" >
-                                                        <MenuItem value={"equal"} >{"="}</MenuItem>
-                                                        <MenuItem value={"smaller"} >{"<"}</MenuItem>
-                                                        <MenuItem value={"bigger"} >{">"}</MenuItem>
-                                                        <MenuItem value={"different"} >{"<>"}</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                                <div style={{ marginBottom: 10, marginTop: 10, flex: 1 }} >
-                                                    <TextField variant="outlined" placeholder={"Expected"} value={this.state.expected} onChange={(event) => { this.setState({ expected: event.currentTarget.value }) }} style={{ width: '100%' }} />
-                                                </div>
-                                            </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ marginBottom: 10, marginTop: 10, flex: 1 }} >
+                                            <TextField variant="outlined" placeholder={"Result"} value={this.state.result} onChange={(event) => { this.setState({ result: event.currentTarget.value }) }} style={{ width: '100%' }} />
+                                        </div>
+                                        <FormControl variant="outlined" style={{ marginBottom: 5, marginTop: 5, flex: 1 }} >
+                                            <InputLabel>Condition</InputLabel>
+                                            <Select placeholder='Action' style={{ width: '100%' }} value={this.state.statement} onChange={(event) => { this.setState({ statement: event.target.value }) }} label="Source" >
+                                                <MenuItem value={"equal"} >{"="}</MenuItem>
+                                                <MenuItem value={"smaller"} >{"<"}</MenuItem>
+                                                <MenuItem value={"bigger"} >{">"}</MenuItem>
+                                                <MenuItem value={"different"} >{"<>"}</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        <div style={{ marginBottom: 10, marginTop: 10, flex: 1 }} >
+                                            <TextField variant="outlined" placeholder={"Expected"} value={this.state.expected} onChange={(event) => { this.setState({ expected: event.currentTarget.value }) }} style={{ width: '100%' }} />
+                                        </div>
+                                    </div>
                                     <Button onClick={() => { this.addTrigger() }} variant='outlined' style={{ width: 'minContent', marginTop: 5 }}>
                                         Save
                                     </Button>
