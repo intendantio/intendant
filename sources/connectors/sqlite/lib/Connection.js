@@ -9,17 +9,7 @@ class Connection {
             if (fs.existsSync("intendant.db")) {
                 instance = betterSqlite3("intendant.db")
             } else {
-                instance = betterSqlite3("intendant.db")
-                if (fs.existsSync("intendant.sqlite.sql")) {
-                    let requests = fs.readFileSync("intendant.sqlite.sql").toString().split(";")
-                    for (let index = 0; index < requests.length; index++) {
-                        let request = requests[index]
-                        try {
-                            instance.prepare(request).run()
-                        } catch (error) {
-                        }
-                    }
-                }
+                throw "intendant.db is required to start intendant"
             }
         }
         return instance
