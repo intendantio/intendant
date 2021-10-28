@@ -249,6 +249,7 @@ class SmartObject extends Controller {
                                         return insertSettngsRequest
                                     }
                                 }
+                                this.core.manager.smartobject.update(smartObjectId)
                                 return {
                                     error: false,
                                     message: "",

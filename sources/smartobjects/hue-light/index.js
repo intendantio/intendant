@@ -23,7 +23,7 @@ class Light extends SmartObject {
         var hue = parseInt(((Color.rgbToHsl(r, g, b)[0] * 360) * 65535) / 360);
         let sat = parseInt(hsl[1] * 255)
         let bri = parseInt(hsl[2] * 255)
-        let result = await fetch(this.settings.path + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -33,7 +33,8 @@ class Light extends SmartObject {
                 on: true,
                 hue: hue,
                 sat: sat,
-                bri: parseInt(settings.brightness ? settings.brightness : 254)
+                transitiontime: settings.transitiontime * 10,
+                bri: parseInt(settings.brightness ? settings.brightness : bri)
             })
         })
         if(result.status == 200) {
@@ -79,7 +80,7 @@ class Light extends SmartObject {
     }
 
     async __turnOff(settings = {}) {
-        let result = await fetch(this.settings.path + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -132,7 +133,7 @@ class Light extends SmartObject {
     }
 
     async __getState(settings = {}) {
-        let result = await fetch(this.settings.path + this.settings.apikey + "/lights/" + this.settings.id)
+        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id )
         if(result.status == 200) {
             let resultJSON = await result.json()
             if (Array.isArray(resultJSON)) {

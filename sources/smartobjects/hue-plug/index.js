@@ -14,7 +14,7 @@ class Plug extends SmartObject {
         Action
     */
     async __turnOn(settings = {}) {
-        let result = await fetch(this.settings.path + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -67,7 +67,7 @@ class Plug extends SmartObject {
     }
 
     async __turnOff(settings = {}) {
-        let result = await fetch(this.settings.path + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -121,7 +121,7 @@ class Plug extends SmartObject {
     }
 
     async __getState(settings = {}) {
-        let result = await fetch(this.settings.path + this.settings.apikey + "/lights/" + this.settings.id)
+        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id)
         if(result.status == 200) {
             let resultJSON = await result.json()
             if (Array.isArray(resultJSON)) {

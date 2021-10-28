@@ -255,6 +255,8 @@ class SQLite extends Connector {
                         values = values + "NULL,"
                     } else if (typeof field == 'number') {
                         values = values + "" + field + ","
+                    } else if (typeof field == 'boolean') {
+                        values = values + "'" + field + "',"
                     } else if (field.slice(0, 11) == "DATE:CUSTOM") {
                         values = values + field.slice(11) + ","
                     } else if (field == "DATE:NOW") {
@@ -328,10 +330,19 @@ class SQLite extends Connector {
         let statment = " WHERE "
         for (let field in fields) {
             let value = fields[field];
+            
             if (total > 0) {
                 statment = statment + " AND "
             }
-            statment = statment + field + "='" + value + "'"
+            if(typeof value == "object") {
+                if (value.value == "DATE:NOW") {
+                    statment = statment + field + value.statement  +  "date('now')"
+                }  else {
+                    statment = statment + field + value.statement  +  "'" + value.value + "'"
+                }
+            } else {
+                statment = statment + field + "='" + value + "'"
+            }
             total = total + 1
         }
         if (total === 0) {

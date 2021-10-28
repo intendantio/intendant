@@ -181,7 +181,7 @@ class DetailSmartObject extends React.Component {
                                                     <div style={{ display: 'grid', gridRowGap:'10px', gridTemplateColumns: 'repeat(5,min-content)' , marginTop: 10, marginBottom: 10 }}>
                                                         {
                                                             action.settings.map(setting => {
-                                                                return <Action orientation='vertical' setState={this.setState.bind(this)} action={setting} />
+                                                                return <Action flexDirection='column' orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
                                                             })
                                                         }
                                                     </div> : null

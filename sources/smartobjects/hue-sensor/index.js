@@ -15,7 +15,7 @@ class HueSensor extends SmartObject {
     */
 
     async __checkPresence(settings = {}) {
-        let result = await fetch(this.settings.path + this.settings.apikey + "/sensors/" + this.settings.id)
+        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/sensors/" + this.settings.id)
         if(result.status == 200) {
             let resultJSON = await result.json()
             if (Array.isArray(resultJSON)) {

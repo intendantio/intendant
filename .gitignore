@@ -159,4 +159,4 @@ web-build/
 # macOS
 .DS_Store
 
-template/intendant.db
+/template/intendant.db.dev

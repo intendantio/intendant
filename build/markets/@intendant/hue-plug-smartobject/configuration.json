@@ -11,7 +11,7 @@
         {
             "id": "path",
             "type": "string",
-            "name": "Hue Hub path"
+            "name": "Hue Hub ip"
         },
         {
             "id": "apikey",

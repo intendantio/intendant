@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Paper, Typography, Slider, FormControl, Select, MenuItem, InputLabel } from '@material-ui/core'
+import { TextField, Paper, Checkbox, Typography, Slider, FormControl, Select, MenuItem, InputLabel } from '@material-ui/core'
 import { TwitterPicker } from 'react-color'
 
 class Action extends React.Component {
@@ -42,7 +42,7 @@ class Action extends React.Component {
                     <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10 }} >
                         <FormControl variant="outlined" style={{ width: '150px' }} >
                             <InputLabel>{this.state.action.id}</InputLabel>
-                            <Select  onChange={(event) => { this.updateAction(this.state.action, event.target.value) }} label={this.state.action.id} >
+                            <Select onChange={(event) => { this.updateAction(this.state.action, event.target.value) }} label={this.state.action.id} >
                                 {
                                     this.state.action.values.map(value => {
                                         return <MenuItem value={value} >{value}</MenuItem>
@@ -54,10 +54,7 @@ class Action extends React.Component {
                 )
             case 'colorpicker':
                 return (
-                    <Paper elevation={3} style={{ alignItems: 'center', display: 'flex', padding: 10, marginRight: 5 }} >
-                        <Typography variant='body1' style={{ textAlign: 'start', marginBottom: 5, marginRight: 10 }}>
-                            {this.state.action.id.toUpperCase()}
-                        </Typography>
+                    <Paper elevation={3} style={{ alignItems: 'flex-start', display: 'flex', padding: 10, marginRight: 5, flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row' }} >
                         <TwitterPicker
                             triangle='hide'
                             color={this.state.value}
@@ -67,7 +64,7 @@ class Action extends React.Component {
                 )
             case 'slider':
                 return (
-                    <Paper elevation={3} style={{ alignItems: 'center', display: 'flex', padding: 10, marginRight: 5 }} >
+                    <Paper elevation={3} style={{ alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', padding: 10, marginRight: 5 }} >
                         <Typography variant='body1' style={{ textAlign: 'start', marginBottom: 5 }}>
                             {this.state.action.id.toUpperCase()}
                         </Typography>
@@ -80,6 +77,15 @@ class Action extends React.Component {
                             step={this.state.action.step}
                             onChange={(event, value) => { this.updateAction(this.state.action, value) }}
                         />
+                    </Paper>
+                )
+            case 'checkbox':
+                return (
+                    <Paper elevation={3} style={{ alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row', padding: 10, marginRight: 5 }} >
+                        <Typography variant='body1' style={{ textAlign: 'start', marginBottom: 5 }}>
+                            {this.state.action.id.toUpperCase()}
+                        </Typography>
+                        <Checkbox defaultChecked={this.state.action.default} onChange={(event,value) => {this.updateAction(this.state.action, value)}} />
                     </Paper>
                 )
             default:
