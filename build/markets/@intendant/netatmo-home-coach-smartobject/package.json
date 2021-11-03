@@ -2,6 +2,7 @@
     "name": "@intendant/netatmo-home-coach-smartobject",
     "main": "./index.js",
     "version": "0.0.1",
+    "typings": "./index.d.ts",
     "author": "Clément MERLET",
     "license": "apache-2.0",
     "publishConfig": {

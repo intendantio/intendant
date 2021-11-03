@@ -36,21 +36,21 @@ class Plug extends SmartObject {
             if (resultJSON.success) {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     access: resultJSON.result.access_token
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + ">getAccessToken>invalidResult",
-                    message: "Invalid result " + resultJSON.code + " : " + resultJSON.msg
+                    package: Package.name,
+                    message: "Invalid result " + resultJSON.package + " : " + resultJSON.msg
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getAccessToken>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -74,7 +74,7 @@ class Plug extends SmartObject {
                 {
                     commands: [
                         {
-                            code: settings.code,
+                            package: Package.name,
                             value: true
                         }
                     ]
@@ -95,7 +95,7 @@ class Plug extends SmartObject {
                 body: JSON.stringify({
                     commands: [
                         {
-                            code: settings.code,
+                            package: Package.name,
                             value: true
                         }
                     ]
@@ -107,21 +107,21 @@ class Plug extends SmartObject {
                 if (resultJSON.success) {
                     return {
                         error: false,
-                        code: "ok",
+                        package: Package.name,
                         message: "",
                         data: resultJSON.result
                     }
                 } else {
                     return {
                         error: true,
-                        code: Package.name + ">turnOn>invalidResult",
-                        message: "Invalid result " + resultJSON.code + " : " + resultJSON.msg
+                        package: Package.name,
+                        message: "Invalid result " + resultJSON.package + " : " + resultJSON.msg
                     }
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + ">turnOn>invalidStatus>" + result.status,
+                    package: Package.name,
                     message: "Invalid status " + result.status
                 }
             }
@@ -143,7 +143,7 @@ class Plug extends SmartObject {
                 {
                     commands: [
                         {
-                            code: settings.code,
+                            package: Package.name,
                             value: false
                         }
                     ]
@@ -164,7 +164,7 @@ class Plug extends SmartObject {
                 body: JSON.stringify({
                     commands: [
                         {
-                            code: settings.code,
+                            package: Package.name,
                             value: false
                         }
                     ]
@@ -176,21 +176,21 @@ class Plug extends SmartObject {
                 if (resultJSON.success) {
                     return {
                         error: false,
-                        code: "ok",
+                        package: Package.name,
                         message: "",
                         data: resultJSON.result
                     }
                 } else {
                     return {
                         error: true,
-                        code: Package.name + ">turnOff>invalidResult",
-                        message: "Invalid result " + resultJSON.code + " : " + resultJSON.msg
+                        package: Package.name,
+                        message: "Invalid result " + resultJSON.package + " : " + resultJSON.msg
                     }
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + ">turnOff>invalidStatus>" + result.status,
+                    package: Package.name,
                     message: "Invalid status " + result.status
                 }
             }
@@ -229,22 +229,22 @@ class Plug extends SmartObject {
                 if (resultJSON.success) {
                     return {
                         error: false,
-                        code: "ok",
+                        package: Package.name,
                         message: "",
                         data: resultJSON.result
                     }
                 } else {
                     return {
                         error: true,
-                        code: Package.name + ">getState>invalidResult",
-                        message: "Invalid result " + resultJSON.code + " : " + resultJSON.msg
+                        package: Package.name,
+                        message: "Invalid result " + resultJSON.package + " : " + resultJSON.msg
                     }
                 }
             } else {
 
                 return {
                     error: true,
-                    code: Package.name + ">getState>invalidStatus>" + result.status,
+                    package: Package.name,
                     message: "Invalid status " + result.status
                 }
             }

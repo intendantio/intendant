@@ -4,11 +4,10 @@ import Package from './package.json'
 
 class Plug extends SmartObject {
 
-    constructor(settings,logger,core) {
+    constructor(settings, logger, core) {
         let configuration = require('./configuration.json')
-        super(settings,logger,core,configuration)
+        super(settings, logger, core, configuration)
     }
-
 
     /*
         Action
@@ -20,11 +19,9 @@ class Plug extends SmartObject {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                on: true
-            })
+            body: JSON.stringify({ on: true })
         })
-        if(result.status == 200) {
+        if (result.status == 200) {
             let resultJSON = await result.json()
             let error = {
                 error: false,
@@ -46,13 +43,13 @@ class Plug extends SmartObject {
             if (error.error) {
                 return {
                     error: true,
-                    code: Package.name + ">turnOn>invalidRequest>" + error.message,
-                    message: "Invalid request " + error.message
+                    package: Package.name,
+                    message: "Invalid request"
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
@@ -60,8 +57,8 @@ class Plug extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">turnOn>invalidStatus>" + result.status,
-                message: "Invalid status " + result.status
+                package: Package.name,
+                message: "Invalid status"
             }
         }
     }
@@ -73,11 +70,9 @@ class Plug extends SmartObject {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                on: false
-            })
+            body: JSON.stringify({ on: false })
         })
-        if(result.status == 200) {
+        if (result.status == 200) {
             let resultJSON = await result.json()
             let error = {
                 error: false,
@@ -99,42 +94,41 @@ class Plug extends SmartObject {
             if (error.error) {
                 return {
                     error: true,
-                    code: Package.name + ">turnOff>invalidRequest>" + error.message,
-                    message: "Invalid request " + error.message
+                    package: Package.name,
+                    message: "Invalid request"
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
                     message: "",
+                    package: Package.name,
                     data: resultJSON
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">turnOff>invalidStatus>" + result.status,
-                message: "Invalid status " + result.status
+                package: Package.name,
+                message: "Invalid status"
             }
         }
-        
+
     }
 
-    async __getState(settings = {}) {
+    async __configuration(settings = {}) {
         let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id)
-        if(result.status == 200) {
+        if (result.status == 200) {
             let resultJSON = await result.json()
             if (Array.isArray(resultJSON)) {
-                let item = resultJSON[0].error
                 return {
                     error: true,
-                    code: Package.name + ">getState>invalidRequest>" + item,
-                    message: "Invalid request " + item
+                    package: Package.name,
+                    message: "Invalid request"
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
@@ -142,8 +136,8 @@ class Plug extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">getState>invalidStatus>" + result.status,
-                message: "Invalid status " + result.status
+                package: Package.name,
+                message: "Invalid status"
             }
         }
     }

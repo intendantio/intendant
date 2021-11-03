@@ -19,14 +19,14 @@ class Market extends Controller {
         if(resultMarketJSON.length == 0) {
             this.core.logger.warning(Package.name,"Package not found")
             return {
-                code: Package.name + ">Package>NotFound",
+                package: Package.name,
                 message: "",
                 error: true
             }
         } else if(resultMarketJSON.length > 1) {
             this.core.logger.warning(Package.name,"Package not found")
             return {
-                code: Package.name + ">Package>NotFound",
+                package: Package.name,
                 message: "",
                 error: true
             }
@@ -80,7 +80,7 @@ class Market extends Controller {
             this.core.manager.module.restart()
             await this.core.manager.smartobject.restart()
             return {
-                code: 'ok',
+                package: Package.name,
                 message: "",
                 error: false
             }
@@ -99,7 +99,7 @@ class Market extends Controller {
         await this.core.manager.smartobject.restart()
 
         return {
-            code: 'ok',
+            package: Package.name,
             message: "",
             error: false
         }

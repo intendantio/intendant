@@ -28,7 +28,7 @@ class SQL extends Connector {
             try {
                 let result = await this._query("SELECT * FROM " + this._name + " WHERE id=" + id)
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result.length == 1 ? result[0] : false,
                     message: ""
@@ -37,14 +37,14 @@ class SQL extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">getOne>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">getOne>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -57,7 +57,7 @@ class SQL extends Connector {
             try {
                 let result = await this._query("SELECT * FROM " + this._name + this.getWhere(wheres))
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result.length == 1 ? result[0] : false,
                     message: ""
@@ -66,14 +66,14 @@ class SQL extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">getOneByField>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">getOneByField>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -86,7 +86,7 @@ class SQL extends Connector {
             try {
                 let result = await this._query("SELECT * FROM " + this._name + this.getWhere(wheres))
                 return {
-                    code: "ok",
+                    package: Package.name,
                     data: result,
                     error: false,
                     message: ""
@@ -95,14 +95,14 @@ class SQL extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">getAllByField>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">getAllByField>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -114,7 +114,7 @@ class SQL extends Connector {
         try {
             let result = await this._query("SELECT * FROM " + this._name)
             return {
-                code: "ok",
+                package: Package.name,
                 data: result,
                 error: false,
                 message: ""
@@ -123,7 +123,7 @@ class SQL extends Connector {
             let message = this._name + " catch an error : " + JSON.stringify(error.toString())
             this._core.logger.error(Package.name, message)
             return {
-                code: Package.name + ">getAll>catchError",
+                package: Package.name,
                 error: true,
                 message: message
             }
@@ -136,7 +136,7 @@ class SQL extends Connector {
             try {
                 await this._query("DELETE FROM " + this._name + " WHERE id=" + id)
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     message: ""
                 }
@@ -144,14 +144,14 @@ class SQL extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">deleteOne>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">deleteOne>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -164,7 +164,7 @@ class SQL extends Connector {
             try {
                 await this._query("DELETE FROM " + this._name + this.getWhere(fields))
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     message: ""
                 }
@@ -172,14 +172,14 @@ class SQL extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">deleteAllByField>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">deleteAllByField>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -192,7 +192,7 @@ class SQL extends Connector {
             try {
                 await this._query("UPDATE " + this._name + this.getSet(sets) + this.getWhere(wheres))
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     message: ""
                 }
@@ -200,14 +200,14 @@ class SQL extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">updateAll>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">updateAll>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -219,7 +219,7 @@ class SQL extends Connector {
         try {
             await this._query("DELETE FROM " + this._name)
             return {
-                code: "ok",
+                package: Package.name,
                 error: false,
                 message: ""
             }
@@ -227,7 +227,7 @@ class SQL extends Connector {
             let message = this._name + " catch an error : " + JSON.stringify(error.toString())
             this._core.logger.error(Package.name, message)
             return {
-                code: Package.name + ">truncate>catchError",
+                package: Package.name,
                 error: true,
                 message: message
             }
@@ -261,7 +261,7 @@ class SQL extends Connector {
                 keys = keys + ")"
                 let result = await this._query("INSERT INTO " + this._name + " " + keys + " VALUES " + values)
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result,
                     message: ""
@@ -270,14 +270,14 @@ class SQL extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">insert>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">insert>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -291,7 +291,7 @@ class SQL extends Connector {
                 request = request.replace("DATE:NOW","NOW()")
                 let result = await this._query(request)
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result,
                     message: ""
@@ -301,13 +301,13 @@ class SQL extends Connector {
                 this._core.logger.error(Package.name, message)
                 return {
                     error: true,
-                    code: Package.name + ">execute>catchError",
+                    package: Package.name,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">execute>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }

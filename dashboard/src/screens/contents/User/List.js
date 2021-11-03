@@ -25,12 +25,12 @@ class Smartobject extends React.Component {
         if (result.error) {
             this.setState({
                 enabled: true,
-                message: result.code + " : " + result.message
+                message: result.package + " : " + result.message
             })
         } else if (resultProfile.error) {
             this.setState({
                 enabled: true,
-                message: resultProfile.code + " : " + resultProfile.message
+                message: resultProfile.package + " : " + resultProfile.message
             })
         } else {
             this.setState({
@@ -45,7 +45,7 @@ class Smartobject extends React.Component {
     async delete(id) {
         let result = await new Request().delete().fetch("/api/users/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -57,7 +57,7 @@ class Smartobject extends React.Component {
             profile: profile
         }).fetch("/api/users/" + user.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }

@@ -20,67 +20,21 @@ describe(Package.name, () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "ok", error: false, message: "test-jest", data: {} })
+        expect(resultAction).toEqual({ package: Package.name, data: {} })
     })
 
     test('action not found', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test-no-found", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Action>NotFound>test-no-found", error: true, message: "Action not found 'test-no-found'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "Action not found 'test-no-found'" })
     })
 
     test('action throw', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest", throw: true })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Error>test", error: true, message: "An error has occurred when test '\"test-error\"'" })
-    })
-
-    /* @intendant/netatmo-home-coach-smartobject */
-
-    test('action success > getData', async () => {
-        //API Success
-        jest.mock("node-fetch", () => {
-            return async (url) => {
-                return {
-                    json: async () => {
-                        return { error: { code: '' }, status: 'ok', body: { devices: { data: "jest-mock" } } }
-                    }, status: 200
-                }
-            }
-        })
-        let smartobject = require('../index')
-        let instanceSmartobject = new smartobject(settings, core, configuration)
-        let resultAction = await instanceSmartobject.action("getData", {})
-        expect(resultAction).toEqual({
-            code: "ok",
-            error: false,
-            message: "",
-            data: { error: { code: '' }, status: 'ok', body: { devices: { data: "jest-mock" } } }
-        })
-    })
-
-    test('action error status > getData', async () => {
-
-        //API Success
-        jest.mock("node-fetch", () => {
-            return async (url) => {
-                return {
-                    json: async () => {
-                        return { error: { code: '' }, status: 'ok', body: { devices: { data: "jest-mock" } } }
-                    }, status: 500
-                }
-            }
-        })
-        let smartobject = require('../index')
-        let instanceSmartobject = new smartobject(settings, core, configuration)
-        let resultAction = await instanceSmartobject.action("getData", {})
-        expect(resultAction).toEqual({
-            code: Package.name + ">getData>invalidStatus>500",
-            error: true,
-            message: "Invalid status 500"
-        })
+        expect(resultAction).toEqual({ package: Package.name,message: "An error has occurred when test '\"test-error\"'" })
     })
 
     test('action error request > getData', async () => {
@@ -99,7 +53,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getData", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getData>invalidRequest>error",
+            package: Package.name,
             error: true,
             message: "Invalid request jest-error"
         })
@@ -122,7 +76,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getData", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getData>@intendant/core>get>jest-error",
+            package: Package.name,
             error: true,
             message: "jest-error"
         })
@@ -144,7 +98,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getData")
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: { jest: "cache" }

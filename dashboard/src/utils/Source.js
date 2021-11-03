@@ -62,7 +62,7 @@ class Source {
                     sources.push({ id: process.id, name: "Processus " + process.reference, actions: actions, type: 'process' })
                 })
             }
-            return { data: sources, error: false, code: '', message: '' }
+            return { data: sources, error: false, package: '', message: '' }
         }
     }
 

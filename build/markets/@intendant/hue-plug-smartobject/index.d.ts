@@ -27,7 +27,7 @@ declare module '@intendant/hue-plug-smartobject' {
 
     interface Result {
         error: Boolean,
-        code: String,
+        package: Package.name,
         message: String
     }
 

@@ -20,21 +20,21 @@ describe(Package.name, () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "ok", error: false, message: "test-jest", data: {} })
+        expect(resultAction).toEqual({ package: Package.name, data: {} })
     })
 
     test('action not found', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test-no-found", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Action>NotFound>test-no-found", error: true, message: "Action not found 'test-no-found'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "Action not found 'test-no-found'" })
     })
 
     test('action throw', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest", throw: true })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Error>test", error: true, message: "An error has occurred when test '\"test-error\"'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "An error has occurred when test '\"test-error\"'" })
     })
 
     /* @intendant/nous-plug-smartobject */
@@ -61,7 +61,7 @@ describe(Package.name, () => {
     let instanceSmartobject = new smartobject(settings, core, configuration)
     let resultAction = await instanceSmartobject.getAccessToken({})
     expect(resultAction).toEqual({
-        code: "ok",
+        package: Package.name,
         error: false,
         message: "",
         access: "jest_access"
@@ -80,7 +80,7 @@ test('action error status  > getAccessToken', async () => {
     let instanceSmartobject = new smartobject(settings, core, configuration)
     let resultAction = await instanceSmartobject.getAccessToken({})
     expect(resultAction).toEqual({
-        code: Package.name + ">getAccessToken>invalidStatus>500",
+        package: Package.name,
         error: true,
         message: "Invalid status 500"
     })
@@ -93,7 +93,7 @@ test('action error request > getAccessToken', async () => {
                 json: async () => {
                     return {
                         success: false,
-                        code: "jest-error-code",
+                        package: Package.name,
                         msg: "jest-error-msg"
                     }
                 }, status: 200
@@ -104,7 +104,7 @@ test('action error request > getAccessToken', async () => {
     let instanceSmartobject = new smartobject(settings, core, configuration)
     let resultAction = await instanceSmartobject.getAccessToken({})
     expect(resultAction).toEqual({
-        code: Package.name + ">getAccessToken>invalidResult",
+        package: Package.name,
         error: true,
         message: "Invalid result jest-error-code : jest-error-msg"
     })
@@ -132,14 +132,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("turnOn", {color: "#88001b",birghtness: 200})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -159,14 +159,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("turnOn", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">turnOn>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -179,7 +179,7 @@ test('action error request > getAccessToken', async () => {
                     json: async () => {
                         return {
                             success: false,
-                            code: "jest-error-code",
+                            package: Package.name,
                             msg: "jest-error-msg"
                         }
                     }, status: 200
@@ -192,14 +192,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("turnOn", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">turnOn>invalidResult",
+            package: Package.name,
             error: true,
             message: "Invalid result jest-error-code : jest-error-msg"
         })
@@ -226,14 +226,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("turnOff", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -253,14 +253,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("turnOff", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">turnOff>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -273,7 +273,7 @@ test('action error request > getAccessToken', async () => {
                     json: async () => {
                         return {
                             success: false,
-                            code: "jest-error-code",
+                            package: Package.name,
                             msg: "jest-error-msg"
                         }
                     }, status: 200
@@ -286,14 +286,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("turnOff", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">turnOff>invalidResult",
+            package: Package.name,
             error: true,
             message: "Invalid result jest-error-code : jest-error-msg"
         })
@@ -320,14 +320,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("getState", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -347,14 +347,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("getState", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getState>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -367,7 +367,7 @@ test('action error request > getAccessToken', async () => {
                     json: async () => {
                         return {
                             success: false,
-                            code: "jest-error-code",
+                            package: Package.name,
                             msg: "jest-error-msg"
                         }
                     }, status: 200
@@ -379,14 +379,14 @@ test('action error request > getAccessToken', async () => {
         instanceSmartobject.getAccessToken = () => {
             return ({
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 access: ""
             })
         } 
         let resultAction = await instanceSmartobject.action("getState", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getState>invalidResult",
+            package: Package.name,
             error: true,
             message: "Invalid result jest-error-code : jest-error-msg"
         })

@@ -41,12 +41,9 @@ class Core {
         this.configuration = configuration
         this.logger = logger
         this.connector = connector
-        this.salt = "" /*Math.random(16) */
-
-        
+        this.salt = Math.random(16)
 
         this.prepare()
-
 
         /* Controller */
         this.controller = {}

@@ -16,6 +16,7 @@ class SmartObject {
     }
 
     async action(action, settings) {
+        this.logger.verbose(Package.name,"Execute " + action)
         if (this["__" + action]) {
             try {
                 this.core.controller.smartobject.updateLastUse(this.id)
@@ -25,7 +26,7 @@ class SmartObject {
                 this.logger.warning(Package.name, message)
                 return {
                     error: true,
-                    code: Package.name + ">Error>" + action,
+                    package: Package.name,
                     message: message
                 }
             }
@@ -33,7 +34,7 @@ class SmartObject {
             this.logger.warning(Package.name, "Action not found " + action)
             return {
                 error: true,
-                code: Package.name + ">Action>NotFound>" + action,
+                package: Package.name,
                 message: "Action not found '" + action + "'"
             }
         }
@@ -44,7 +45,7 @@ class SmartObject {
             throw "test-error"
         }
         return {
-            code: 'ok',
+            package: Package.name,
             data: {},
             error: false,
             message: settings.message

@@ -12,7 +12,7 @@ class Process extends Controller {
             return {
                 error: true,
                 message: "Process not found",
-                code: Package.name + ">Process>NotFound"
+                package: Package.name
             }
         }
         let actionRequest = await this.sqlProcessAction.getAllByField({ process: idProcess })
@@ -52,7 +52,7 @@ class Process extends Controller {
         return {
             error: false,
             message: '',
-            code: 'ok',
+            package: Package.name,
             data: process
         }
     }
@@ -75,7 +75,7 @@ class Process extends Controller {
             return {
                 error: false,
                 message: '',
-                code: 'ok',
+                package: Package.name,
                 data: tmpProcesss
             }
         }
@@ -97,7 +97,7 @@ class Process extends Controller {
         return {
             error: false,
             message: '',
-            code: 'ok'
+            package: Package.name
         }
     }
 
@@ -122,7 +122,7 @@ class Process extends Controller {
         return {
             error: false,
             message: '',
-            code: 'ok'
+            package: Package.name
         }
     }
 
@@ -146,7 +146,7 @@ class Process extends Controller {
         return {
             error: false,
             message: '',
-            code: 'ok'
+            package: Package.name
         }
     }
 
@@ -202,7 +202,7 @@ class Process extends Controller {
                         return {
                             error: true,
                             message: "Invalid type '" + action.type + "'",
-                            code: Package.name + '>Type>Invalid'
+                            package: Package.name
                         }
                     }
                 }
@@ -213,14 +213,14 @@ class Process extends Controller {
             return {
                 error: false,
                 message: '',
-                code: 'ok',
+                package: Package.name,
                 data: data
             }
         } else {
             return {
                 error: true,
                 message: "You are not allowed",
-                code: Package.name + ">forbiden"
+                package: Package.name
             }
         }
     }
@@ -286,7 +286,7 @@ class Process extends Controller {
         return {
             error: false,
             message: '',
-            code: 'ok'
+            package: Package.name
         }
     }
 
@@ -323,7 +323,7 @@ class Process extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -343,7 +343,7 @@ class Process extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -379,54 +379,54 @@ class Process extends Controller {
                                 return {
                                     error: false,
                                     message: "",
-                                    code: "ok"
+                                    package: Package.name
                                 }
                             } else {
-                                this.core.logger.warning(Package.name + ">insertInput>alreadyExist", "Reference already exist")
+                                this.core.logger.warning(Package.name, "Reference already exist")
                                 return {
                                     error: true,
                                     message: "Reference already exist",
-                                    code: Package.name + ">insertInput>alreadyExist"
+                                    package: Package.name
                                 }
                             }
                         } else {
-                            this.core.logger.warning(Package.name + ">insertInput>missingParameter", "Missing process settings enable")
+                            this.core.logger.warning(Package.name, "Missing process settings enable")
                             return {
                                 error: true,
                                 message: "Missing process settings enable",
-                                code: Package.name + ">insertInput>missingParameter"
+                                package: Package.name
                             }
                         }
                     } else {
-                        this.core.logger.warning(Package.name + ">insertInput>missingParameter", "Missing process settings type")
+                        this.core.logger.warning(Package.name, "Missing process settings type")
                         return {
                             error: true,
                             message: "Missing process settings type",
-                            code: Package.name + ">insertInput>missingParameter"
+                            package: Package.name
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name + ">insertInput>missingParameter", "Missing process settings name")
+                    this.core.logger.warning(Package.name, "Missing process settings name")
                     return {
                         error: true,
                         message: "Missing process settings name",
-                        code: Package.name + ">insertInput>missingParameter"
+                        package: Package.name
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name + ">insertInput>missingParameter", "Missing process settings reference")
+                this.core.logger.warning(Package.name, "Missing process settings reference")
                 return {
                     error: true,
                     message: "Missing process settings reference",
-                    code: Package.name + ">insertInput>missingParameter"
+                    package: Package.name
                 }
             }
         } else {
-            this.core.logger.warning(Package.name + ">insertInput>missingParameter", "Missing process settings id")
+            this.core.logger.warning(Package.name, "Missing process settings id")
             return {
                 error: true,
                 message: "Missing process settings id",
-                code: Package.name + ">insertInput>missingParameter"
+                package: Package.name
             }
         }
     }
@@ -442,7 +442,7 @@ class Process extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 

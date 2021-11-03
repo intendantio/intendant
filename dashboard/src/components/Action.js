@@ -54,20 +54,23 @@ class Action extends React.Component {
                 )
             case 'colorpicker':
                 return (
-                    <Paper elevation={3} style={{ alignItems: 'flex-start', display: 'flex', padding: 10, marginRight: 5, flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row' }} >
+                    <div elevation={3} style={{ alignItems: 'flex-start', display: 'flex', padding: 10, marginRight: 5, flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row' }} >
                         <TwitterPicker
+                            styles={{padding: 0}}
+                            colors={['#FF6900', '#FCB900', '#7BDCB5', '#00D084', '#8ED1FC', '#0693E3', '#ABB8C3', '#EB144C', '#F78DA7', '#9900EF']}
                             triangle='hide'
                             color={this.state.value}
                             onChangeComplete={(color) => { this.updateAction(this.state.action, color.hex) }}
                         />
-                    </Paper>
+                    </div>
                 )
             case 'slider':
                 return (
-                    <Paper elevation={3} style={{ alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', padding: 10, marginRight: 5 }} >
-                        <Typography variant='body1' style={{ textAlign: 'start', marginBottom: 5 }}>
-                            {this.state.action.id.toUpperCase()}
+                    <div elevation={3} style={{height: "fit-content", alignSelf: 'center',borderWidth: 1,borderStyle:'solid', borderRadius: 5, borderColor: 'rgba(255, 255, 255, 0.23)', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15, marginRight: 10 }} >
+                        <Typography variant='body1' style={{ textAlign: 'center',color: 'rgba(255, 255, 255, 0.5)', padding: 0}} >
+                            {this.state.action.id}
                         </Typography>
+                        <div style={{marginBottom: 2, marginTop: 2}} />
                         <Slider
                             defaultValue={0}
                             valueLabelDisplay="auto"
@@ -77,16 +80,16 @@ class Action extends React.Component {
                             step={this.state.action.step}
                             onChange={(event, value) => { this.updateAction(this.state.action, value) }}
                         />
-                    </Paper>
+                    </div>
                 )
             case 'checkbox':
                 return (
-                    <Paper elevation={3} style={{ alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'row', padding: 10, marginRight: 5 }} >
-                        <Typography variant='body1' style={{ textAlign: 'start', marginBottom: 5 }}>
-                            {this.state.action.id.toUpperCase()}
+                    <div elevation={3} style={{height: "fit-content", alignSelf: 'center',borderWidth: 1,borderStyle:'solid', borderRadius: 5, borderColor: 'rgba(255, 255, 255, 0.23)', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15, marginRight: 10 }} >
+                        <Typography variant='body1' style={{ textAlign: 'center',color: 'rgba(255, 255, 255, 0.5)', padding: 0}}>
+                            {this.state.action.id}
                         </Typography>
-                        <Checkbox defaultChecked={this.state.action.default} onChange={(event,value) => {this.updateAction(this.state.action, value)}} />
-                    </Paper>
+                        <Checkbox defaultChecked={this.state.action.default} color='primary' onChange={(event,value) => {this.updateAction(this.state.action, value)}} />
+                    </div>
                 )
             default:
                 return null

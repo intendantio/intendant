@@ -90,14 +90,6 @@ class Sidebar extends React.Component {
                                 <ListItemText primary={"Market"} />
                             </ListItem>
                         </Link>
-                        <Link to="/configuration" style={{ textDecoration: 'none', color: 'white' }}>
-                            <ListItem button key={"configuration"} >
-                                <ListItemIcon>
-                                    <Settings />
-                                </ListItemIcon>
-                                <ListItemText primary={"Configuration"} />
-                            </ListItem>
-                        </Link>
                         <Divider />
                         <ListItem button key={"disconnect"} onClick={() => {this.props.onDisconnect()}} >
                             <ListItemIcon>

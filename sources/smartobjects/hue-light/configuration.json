@@ -22,9 +22,15 @@
     ],
     "actions": [
         {
-            "id": "getState",
+            "id": "configuration",
+            "name": "Get configuration",
+            "description": "Get description configuration",
+            "settings": []
+        },
+        {
+            "id": "state",
             "name": "Get state",
-            "description": "Get description",
+            "description": "Get state",
             "settings": []
         },
         {
@@ -52,15 +58,14 @@
                     "step": 1,
                     "min": 1,
                     "max": 10,
-                    "default": 4
+                    "default": 1
                 },
                 {
                     "id": "color",
                     "type": "colorpicker",
                     "default": "#ffffff"
                 }
-            ],
-            "submit": true
+            ]
         }
     ]
 }

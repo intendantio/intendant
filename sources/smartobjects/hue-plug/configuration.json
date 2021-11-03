@@ -20,9 +20,9 @@
         }
     ],
     "actions": [{
-            "id": "getState",
-            "name": "Get state",
-            "description": "Get description",
+            "id": "configuration",
+            "name": "Get configuration",
+            "description": "Get description configuration",
             "settings": []
         },
         {

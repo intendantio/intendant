@@ -23,13 +23,13 @@ class HueSensor extends SmartObject {
                 this.logger.warning(this.key, "/checkPresence - error code " + item.type + " return")
                 return {
                     error: true,
-                    code: Package.name + ">checkPresence>invalidRequest>error" ,
+                    package: Package.name,
                     message: "Invalid request " + JSON.stringify(item)
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
@@ -37,7 +37,7 @@ class HueSensor extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">checkPresence>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }

@@ -27,7 +27,7 @@ class NewPassword extends React.Component {
         } else {
             let result = await new Request().post({password: this.state.password}).fetch("/api/users/" + this.state.id + "/password")
             if (result.error) {
-                this.setState({ enabled: true, message: result.code + " : " + result.message })
+                this.setState({ enabled: true, message: result.package + " : " + result.message })
             } else {
                 this.props.history.push('/user')
             }

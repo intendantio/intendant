@@ -22,20 +22,21 @@ class SmartObject extends Controller {
         }
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: '',
             data: pSmartObjects
         }
     }
 
-    async deleteSettings(idSetting) {
-        let getRequest = await this.sqlSmartobjectArgument.getOne(idSetting)
+    async deleteArguments(idArgument) {
+        this.core.logger.verbose(Package.name,"Delete smartobject_argument to [" + idArgument + "]")
+        let getRequest = await this.sqlSmartobjectArgument.getOne(idArgument)
         if (getRequest.error) {
             return getRequest
         }
         let smartobjectArgument = getRequest.data
         let deleteAllRequest = await this.sqlSmartobjectArgument.deleteAllByField({
-            id: idSetting
+            id: idArgument
         })
         if (deleteAllRequest.error) {
             return deleteAllRequest
@@ -47,11 +48,12 @@ class SmartObject extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
-    async insertSettings(idSmartobject,reference,value) {
+    async insertArguments(idSmartobject,reference,value) {
+        this.core.logger.verbose(Package.name,"Insert smartobject_argument to " + idSmartobject + " [" + reference + ":" + value + "]")
         if (reference) {
             if (value) {
                 let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
@@ -74,22 +76,22 @@ class SmartObject extends Controller {
                 return {
                     error: false,
                     message: "",
-                    code: "ok"
+                    package: Package.name
                 }
             } else {
-                this.core.logger.warning(Package.name + ">insertSettings>missingParameter", "Missing smartobject settings value")
+                this.core.logger.warning(Package.name, "Missing smartobject_argument value")
                 return {
                     error: true,
-                    message: "Missing smartobject settings value",
-                    code: Package.name + ">insertSettings>missingParameter"
+                    message: "Missing smartobject_argument value",
+                    package: Package.name
                 }
             }
         } else {
-            this.core.logger.warning(Package.name + ">insertSettings>missingParameter", "Missing smartobject settings reference")
+            this.core.logger.warning(Package.name, "Missing smartobject_argument reference")
             return {
                 error: true,
-                message: "Missing smartobject settings reference",
-                code: Package.name + ">insertSettings>missingParameter"
+                message: "Missing smartobject_argument reference",
+                package: Package.name
             }
         }
     }
@@ -103,15 +105,15 @@ class SmartObject extends Controller {
             return {
                 error: true,
                 message: "Smartobject not found",
-                code: Package.name + ">Smartobject>NotFound"
+                package: Package.name
             }
         }
         let smartobject = smartobjectRequest.data
-        let settingsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: smartobject["id"] })
-        if (settingsRequest.error) {
-            return settingsRequest
+        let argumentsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: smartobject["id"] })
+        if (argumentsRequest.error) {
+            return argumentsRequest
         }
-        let settings = settingsRequest.data
+        let argumentsData = argumentsRequest.data
         let statusRequest = await this.sqlSmartobjectStatus.getOne(smartobject["status"])
         if (statusRequest.error) {
             return statusRequest
@@ -141,7 +143,7 @@ class SmartObject extends Controller {
                 reference: smartobject.reference,
                 lastUse: smartobject.last_use,
                 status: status,
-                settings: settings,
+                arguments: argumentsData,
                 actions: actions,
                 profiles: profiles
             }
@@ -168,7 +170,7 @@ class SmartObject extends Controller {
         return {
             error: false,
             message: '',
-            code: 'ok'
+            package: Package.name
         }
     }
 
@@ -192,7 +194,7 @@ class SmartObject extends Controller {
         return {
             error: false,
             message: '',
-            code: 'ok'
+            package: Package.name
         }
     }
 
@@ -204,14 +206,14 @@ class SmartObject extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
-    async insert(pModule,reference,settings) {
+    async insert(pModule,reference,pArguments) {
         if (pModule) {
             if (reference) {
-                if (settings) {
+                if (pArguments) {
                         let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: reference })
                         if (smartobjectRequest.error) {
                             return smartobjectRequest
@@ -222,7 +224,7 @@ class SmartObject extends Controller {
                             return {
                                 error: true,
                                 message: "Smartobject already exist",
-                                code: "reference-already-exist-smartobject-parameters"
+                                package: Package.name
                             }
                         } else {
                             let data = {
@@ -237,8 +239,8 @@ class SmartObject extends Controller {
                                 return insertRequest
                             } else {
                                 let smartObjectId = insertRequest.data.insertId
-                                for (let index = 0; index < settings.length; index++) {
-                                    let setting = settings[index]
+                                for (let index = 0; index < pArguments.length; index++) {
+                                    let setting = pArguments[index]
                                     let insertSettngsRequest = await this.sqlSmartobjectArgument.insert({
                                         id: null,
                                         smartobject: smartObjectId,
@@ -253,16 +255,16 @@ class SmartObject extends Controller {
                                 return {
                                     error: false,
                                     message: "",
-                                    code: "ok"
+                                    package: Package.name
                                 }
                             }
                         }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing smartobject settings")
+                    this.core.logger.warning(Package.name, "Missing smartobject arguments")
                     return {
                         error: true,
-                        message: "Missing smartobject settings",
-                        code: "missing-smartobject-settings"
+                        message: "Missing smartobject arguments",
+                        package: Package.name
                     }
                 }
             } else {
@@ -270,7 +272,7 @@ class SmartObject extends Controller {
                 return {
                     error: true,
                     message: "Missing smartobject reference",
-                    code: "missing-smartobject-reference"
+                    package: Package.name
                 }
             }
         } else {
@@ -278,7 +280,7 @@ class SmartObject extends Controller {
             return {
                 error: true,
                 message: "Missing smartobject module",
-                code: "missing-smartobject-module"
+                package: Package.name
             }
         }
     }
@@ -295,7 +297,7 @@ class SmartObject extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -309,7 +311,7 @@ class SmartObject extends Controller {
         return allow || force
     }
 
-    async executeAction(idSmartobject, idAction, idProfile, settings, force = false) {
+    async executeAction(idSmartobject, idAction, idProfile, pArguments, force = false) {
         if (idAction) {
             if (idProfile) {
                 let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
@@ -320,7 +322,7 @@ class SmartObject extends Controller {
                     return {
                         error: true,
                         message: "Smartobject not found",
-                        code: Package.name + ">NotFound"
+                        package: Package.name
                     }
                 }
                 if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.reference)) {
@@ -328,12 +330,12 @@ class SmartObject extends Controller {
                     let smartobject = await this.getOne(instanceSmartobject.id)
 
                     if (this.isAllow(smartobject.data, idProfile, force)) {
-                        return instanceSmartobject.action(idAction, settings)
+                        return instanceSmartobject.action(idAction, pArguments)
                     } else {
                         return {
                             error: true,
                             message: "You are not allowed",
-                            code: Package.name + ">forbiden"
+                            package: Package.name
                         }
                     }
                 } else {
@@ -341,7 +343,7 @@ class SmartObject extends Controller {
                     return {
                         error: true,
                         message: "Smartobject " + reference + " is not loaded",
-                        code: Package.name + ">NotLoaded"
+                        package: Package.name
                     }
                 }
             } else {
@@ -349,7 +351,7 @@ class SmartObject extends Controller {
                 return {
                     error: true,
                     message: "Missing smartobject arguments",
-                    code: Package.name + ">Missing>SmartobjectArgument"
+                    package: Package.name
                 }
             }
         } else {
@@ -357,12 +359,11 @@ class SmartObject extends Controller {
             return {
                 error: true,
                 message: "Missing smartobject action",
-                code: "missing-smartobject-action"
+                package: Package.name
             }
         }
     }
 
-    //TODO getConfiguration
     async getConfiguration() {
         this.core.logger.verbose(Package.name, "Get all modules")
         let modules = []
@@ -376,7 +377,7 @@ class SmartObject extends Controller {
         })
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: '',
             data: modules
         }

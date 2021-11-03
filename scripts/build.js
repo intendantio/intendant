@@ -13,6 +13,7 @@ console.log()
 console.log(chalk.white.bold.bgMagenta(" Intendant - Build "))
 console.log()
 let updateRemove = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Delete cache ") + " /Build")
+fsextra.removeSync("./build-error.log")
 fsextra.removeSync("./build")
 fsextra.removeSync("./public")
 updateRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Delete cache") + chalk.green(" ✔"))
@@ -42,7 +43,7 @@ pModule.forEach((modulec, index) => {
         })
     }
     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Build ") + modulec.module)
-    exec("cd scripts &&  babel ../sources" + modulec.path + " --out-dir ../build/" + folder +  "/" + modulec.module + " --config-file ./.babelrc",async  (error) => {
+    exec("cd scripts && ..\\node_modules\\.bin\\babel ../sources" + modulec.path + " --out-dir ../build/" + folder +  "/" + modulec.module + " --config-file ./.babelrc",async  (error) => {
         if (error) {
             fsextra.appendFileSync("./build-error.log", "Build " + modulec.module + " : " + error.signal)
             fsextra.appendFileSync("./build-error.log", error.stack)

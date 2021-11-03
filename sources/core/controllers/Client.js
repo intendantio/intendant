@@ -33,34 +33,34 @@ class Client extends Controller {
                         }
                         return {
                             error: false,
-                            code: 'ok',
+                            package: Package.name,
                             message: ''
                         }
                     } else {
                         return {
                             error: true,
-                            code: 'user-missing',
+                            package: Package.name,
                             message: 'User is missing'
                         }
                     }
                 } else {
                     return {
                         error: true,
-                        code: 'token-missing',
+                        package: Package.name,
                         message: 'Token is missing'
                     }
                 }
             } else {
                 return {
                     error: true,
-                    code: 'name-missing',
+                    package: Package.name,
                     message: 'Name is missing'
                 }
             }
         } else {
             return {
                 error: true,
-                code: 'imei-missing',
+                package: Package.name,
                 message: 'Imei is missing'
             }
         }

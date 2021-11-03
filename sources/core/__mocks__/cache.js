@@ -8,7 +8,7 @@ export default {
                 message: "",
                 cache: true,
                 data: { jest: "cache" },
-                code: "ok"
+                package: Package.name
             }
         },
         insert: (key,value) => {
@@ -22,7 +22,7 @@ export default {
                 message: "",
                 cache: false,
                 data: false,
-                code: "ok"
+                package: Package.name
             }
         },
         insert: (key,value) => {
@@ -35,7 +35,7 @@ export default {
                 error: true,
                 message: "jest-error",
                 cache: false,
-                code: Package.name + ">get>jest-error"
+                package: Package.name
             }
         },
         insert: (key,value) => {

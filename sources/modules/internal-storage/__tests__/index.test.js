@@ -9,7 +9,7 @@ describe('@intendant/internal-storage-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__setItem({ reference: "jest-reference", value: "jest-value" })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: ""
         })
@@ -20,7 +20,7 @@ describe('@intendant/internal-storage-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getItem({ reference: "jest-reference" })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             data: "jest-value",
             message: ""

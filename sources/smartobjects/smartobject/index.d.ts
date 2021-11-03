@@ -1,4 +1,4 @@
-declare module '@intendant/smartobject' {
+declare module Smartobject {
 
     interface Configuration {
         name: String,
@@ -27,7 +27,7 @@ declare module '@intendant/smartobject' {
 
     interface Result {
         error: Boolean,
-        code: String,
+        package: Package.name,
         message: String
     }
 
@@ -35,5 +35,6 @@ declare module '@intendant/smartobject' {
         constructor(settings: Settings, logger: Object, core: Object, configuration: Configuration);
         public action(action: String, settings: Object): Promise<Result>;
     }
-    export = SmartObject
 }
+
+export = Smartobject

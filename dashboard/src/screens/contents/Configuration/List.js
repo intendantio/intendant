@@ -24,9 +24,9 @@ class Configuration extends React.Component {
         let resultModule = await new Request().get().fetch("/api/configurations/module")
         let resultSmartobject = await new Request().get().fetch("/api/configurations/smartobject")
         if (resultModule.error) {
-            this.setState({ enabled: true, message: resultModule.code + " : " + resultModule.message })
+            this.setState({ enabled: true, message: resultModule.package + " : " + resultModule.message })
         } else if (resultSmartobject.error) {
-            this.setState({ enabled: true, message: resultSmartobject.code + " : " + resultSmartobject.message })
+            this.setState({ enabled: true, message: resultSmartobject.package + " : " + resultSmartobject.message })
         } else {
             this.setState({ enabled: false, message: "", modules: resultModule.data, smartobjects: resultSmartobject.data })
         }

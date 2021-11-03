@@ -30,7 +30,7 @@ describe('@intendant/external-recipe-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getRecipe({ recipe: "jest-recipe" })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {},
@@ -62,7 +62,7 @@ describe('@intendant/external-recipe-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getRecipe()
         expect(resultAction).toEqual({
-            code: Package.name + ">getRecipe>recipe>missing",
+            package: Package.name,
             error: true,
             message: "Recipe is missing"
         })
@@ -89,7 +89,7 @@ describe('@intendant/external-recipe-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getRecipe({ recipe: "jest-recipe" })
         expect(resultAction).toEqual({
-            code: Package.name + ">getRecipe>code>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -119,7 +119,7 @@ describe('@intendant/external-recipe-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getRecipe({ recipe: "jest-recipe" })
         expect(resultAction).toEqual({
-            code: Package.name + ">getRecipe>throwException",
+            package: Package.name,
             error: true,
             message: "Throw exception"
         })
@@ -150,7 +150,7 @@ describe('@intendant/external-recipe-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getRecipe({ recipe: "jest-recipe" })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {
@@ -185,7 +185,7 @@ describe('@intendant/external-recipe-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getRecipe({ recipe: "jest-recipe" })
         expect(resultAction).toEqual({
-            code: "@intendant/core>get>jest-error",
+            package: Package.name,
             error: true,
             cache: false,
             message: "jest-error"

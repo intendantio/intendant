@@ -25,7 +25,7 @@ class ExternalRecipe {
                     this.core.logger.verbose(Package.name, "Use cache")
                     return {
                         error: false,
-                        code: "ok",
+                        package: Package.name,
                         message: resultCache.message,
                         data: resultCache.data,
                         source: "cache://www.marmiton.org"
@@ -38,13 +38,13 @@ class ExternalRecipe {
                     let target = resultURL.toArray()[0].replace("</script>", "").replace("<script id=\"__NEXT_DATA__\" type=\"application/json\">", "")
                     let data = JSON.parse(target).props.pageProps.searchResults.hits
                     await this.core.controller.cache.insert({
-                        reference: Package.name + "-" + settings.recipe,
+                        reference: Package.name,
                         data: data,
                         interval: 2592000
                     })
                     return {
                         error: false,
-                        code: "ok",
+                        package: Package.name,
                         data: data,
                         message: "",
                         source: "https://www.marmiton.org"
@@ -53,7 +53,7 @@ class ExternalRecipe {
                     this.core.logger.warning(Package.name, "Invalid status")
                     return {
                         error: true,
-                        code: Package.name + ">getRecipe>code>invalidStatus>" + result.status,
+                        package: Package.name,
                         message: "Invalid status " + result.status
                     }
                 }
@@ -61,7 +61,7 @@ class ExternalRecipe {
                 this.core.logger.warning(Package.name, "Recipe is missing")
                 return {
                     error: true,
-                    code: Package.name + ">getRecipe>recipe>missing",
+                    package: Package.name,
                     message: "Recipe is missing"
                 }
             }
@@ -69,7 +69,7 @@ class ExternalRecipe {
             this.core.logger.warning(Package.name, "Throw exception")
             return {
                 error: true,
-                code: Package.name + ">getRecipe>throwException",
+                package: Package.name,
                 message: "Throw exception"
             }
         }

@@ -17,7 +17,7 @@ class Manager {
         let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
         let result = await sqlSmartobject.updateAll({ status: 2 })
         if (result.error) {
-            this.logger.warning(Package.name, result.code + " " + result.message)
+            this.logger.warning(Package.name, result.package + " " + result.message)
             return
         }
         await this.initialisation()
@@ -27,7 +27,7 @@ class Manager {
         let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
         let smartobjectsRequest = await sqlSmartobject.getAll()
         if (smartobjectsRequest.error) {
-            this.logger.error(Package.name, smartobjectsRequest.code + " : " + smartobjectsRequest.message)
+            this.logger.error(Package.name, smartobjectsRequest.package + " : " + smartobjectsRequest.message)
             return
         }
         smartobjectsRequest.data.forEach(async smartobject => {
@@ -46,7 +46,7 @@ class Manager {
         if (this.smartobjects.has(smartobject.reference) === false) {
             let settingsRequest = await sqlSmartobjectArgument.getAllByField({ smartobject: smartobject.id })
             if (settingsRequest.error) {
-                this.logger.warning(Package.name, settingsRequest.code + " : " + settingsRequest.message)
+                this.logger.warning(Package.name, settingsRequest.package + " : " + settingsRequest.message)
                 return
             }
             let settings = settingsRequest.data
@@ -80,7 +80,7 @@ class Manager {
     }
 
     async update(id) {
-        this.core.logger.verbose(Package.name, "Update smartobject " + id)
+        this.core.logger.verbose(Package.name, "Update instance smartobject " + id)
         let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
         let getRequest = await sqlSmartobject.getOne(id)
         if (getRequest.error) {
@@ -94,7 +94,7 @@ class Manager {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -112,7 +112,7 @@ class Manager {
         })
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: '',
             data: smartobjects
         }

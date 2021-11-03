@@ -12,7 +12,7 @@ export default (app, core) => {
                 getStarted: result.getStarted,
                 error: false,
                 message: "pong",
-                code: "ok"
+                package: Package.name
             })
         }
     })

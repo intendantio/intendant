@@ -36,7 +36,7 @@ class GetStarted extends React.Component {
         if (this.state.password == this.state.confirmePassword) {
             let result = await new Request().put({ password: this.state.password }).fetch("/api/getstarted")
             if (result.error) {
-                this.setState({ enabled: true, message: result.code + " : " + result.message })
+                this.setState({ enabled: true, message: result.package + " : " + result.message })
             } else {
                 this.props.onFinish()
             }

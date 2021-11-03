@@ -10,37 +10,26 @@ class NetatmoHomeCoach extends SmartObject {
         super(settings, logger, core, configuration)
     }
 
-
-    /*
-        Action
-    */
-
-    async __getData(settings = {}) {
+    async request() {
         let resultCache = await this.core.controller.cache.get({
             reference: Package.name + "-" + this.settings.clientId
         })
         if (resultCache.error) {
-            return {
-                error: true,
-                code: Package.name + ">getData>" + resultCache.code,
-                message: resultCache.message
-            }
+            return { error: true, package: Package.name, message: resultCache.message }
         }
         if (resultCache.cache) {
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 data: resultCache.data,
                 message: ""
             }
         }
-
         let formData = new FormData()
         formData.append("grant_type", "refresh_token")
         formData.append("refresh_token", this.settings.token)
         formData.append("client_id", this.settings.clientId)
         formData.append("client_secret", this.settings.clientSecret)
-
         let resultRefresh = await fetch("https://api.netatmo.com/oauth2/token", {
             body: formData,
             method: 'POST'
@@ -56,30 +45,103 @@ class NetatmoHomeCoach extends SmartObject {
             let resultJSON = await result.json()
             if (resultJSON.status === "ok") {
                 await this.core.controller.cache.insert({
-                    reference: Package.name + "-" + this.settings.clientId,
+                    reference: Package.name,
                     data: resultJSON,
                     interval: 3600
                 })
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + ">getData>invalidRequest>" + resultJSON.status,
+                    package: Package.name,
                     message: "Invalid request " + resultJSON.error.message
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getData>invalidStatus>" + resultRefresh.status,
+                package: Package.name,
                 message: "Invalid status " + resultRefresh.status
             }
         }
+
+    }
+
+    /*
+        Action
+    */
+
+    async __dashboard(settings = {}) {
+        let configuration = await this.request()
+        if (configuration.error) {
+            return configuration
+        }
+        let device = false
+        configuration.data.body.devices.forEach(pDevice => {
+            if (pDevice._id == this.settings.device) { device = pDevice }
+        })
+        if (device) {
+            let dashboard = device.dashboard_data
+            return {
+                error: false,
+                package: Package.name,
+                message: "",
+                data: {
+                    temperature: dashboard.Temperature,
+                    co2: dashboard.CO2,
+                    noise: dashboard.Noise,
+                    pressure: dashboard.Pressure,
+                    humidity: dashboard.humidity
+                }
+            }
+        } else {
+            return {
+                error: true,
+                package: Package.name,
+                message: "Device " + this.settings.device + " not found"
+            }
+        }
+    }
+
+    async __place(settings = {}) {
+        let configuration = await this.request()
+        if (configuration.error) {
+            return configuration
+        }
+        let device = false
+        configuration.data.body.devices.forEach((pDevice) => {
+            if (pDevice._id == this.settings.device) { device = pDevice }
+        })
+        if (device) {
+            let place = device.place
+            return {
+                error: false,
+                package: Package.name,
+                message: "",
+                data: {
+                    altitude: place.altitude,
+                    city: place.city,
+                    country: place.country,
+                    timezone: place.timezone,
+                    location: place.location
+                }
+            }
+        } else {
+            return {
+                error: true,
+                package: Package.name,
+                message: "Device " + this.settings.device + " not found"
+            }
+        }
+    }
+
+    async __configuration(settings = {}) {
+        return await this.request()
     }
 
 }

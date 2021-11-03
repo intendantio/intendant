@@ -53,13 +53,13 @@ export default (app, core) => {
     })
 
     //Insert smartobject settings
-    app.post('/api/smartobjects/:idSmartobject/settings', async (request, res) => {
-        request.url = '/smartobjects/:idSmartobject/settings'
+    app.post('/api/smartobjects/:idSmartobject/arguments', async (request, res) => {
+        request.url = '/smartobjects/:idSmartobject/arguments'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
         } else {
-            res.send(await core.controller.smartobject.insertSettings(
+            res.send(await core.controller.smartobject.insertArguments(
                 request.params.idSmartobject,
                 request.body.reference,
                 request.body.value
@@ -67,15 +67,15 @@ export default (app, core) => {
         }
     })
 
-    //Delete smartobject settings
-    app.delete('/api/smartobjects/:idSmartobject/settings/:idSetting', async (request, res) => {
-        request.url = '/smartobjects/:idSmartobject/settings/:idSetting'
+    //Delete smartobject arguments
+    app.delete('/api/smartobjects/:idSmartobject/arguments/:idArgument', async (request, res) => {
+        request.url = '/smartobjects/:idSmartobject/arguments/:idArgument'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
         } else {
-            res.send(await core.controller.smartobject.deleteSettings(
-                request.params.idSetting,
+            res.send(await core.controller.smartobject.deleteArguments(
+                request.params.idArgument,
                 request.params.idSmartobject
             ))
         }

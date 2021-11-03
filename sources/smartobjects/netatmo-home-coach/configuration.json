@@ -27,9 +27,21 @@
     ],
     "actions": [
         {
-            "id": "getData",
-            "name": "Get home data",
-            "description": "Get home data",
+            "id": "dashboard",
+            "name": "Dashboard",
+            "description": "Get dashboard data",
+            "settings": []
+        },
+        {
+            "id": "configuration",
+            "name": "Configuration",
+            "description": "Get configuration",
+            "settings": []
+        },
+        {
+            "id": "place",
+            "name": "Place",
+            "description": "Get place",
             "settings": []
         }
     ]

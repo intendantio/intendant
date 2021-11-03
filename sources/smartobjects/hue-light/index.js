@@ -33,7 +33,7 @@ class Light extends SmartObject {
                 on: true,
                 hue: hue,
                 sat: sat,
-                transitiontime: settings.transitiontime * 10,
+                transitiontime: settings.transitiontime ? (settings.transitiontime * 10) : 40,
                 bri: parseInt(settings.brightness ? settings.brightness : bri)
             })
         })
@@ -59,13 +59,13 @@ class Light extends SmartObject {
             if (error.error) {
                 return {
                     error: true,
-                    code: Package.name + ">turnOn>invalidRequest>" + error.message,
+                    package: Package.name,
                     message: "Invalid request " + error.message
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
@@ -73,7 +73,7 @@ class Light extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">turnOn>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -112,13 +112,13 @@ class Light extends SmartObject {
             if (error.error) {
                 return {
                     error: true,
-                    code: Package.name + ">turnOff>invalidRequest>" + error.message,
+                    package: Package.name,
                     message: "Invalid request " + error.message
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
@@ -126,13 +126,13 @@ class Light extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">turnOff>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
     }
 
-    async __getState(settings = {}) {
+    async request() {
         let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id )
         if(result.status == 200) {
             let resultJSON = await result.json()
@@ -140,13 +140,13 @@ class Light extends SmartObject {
                 let item = resultJSON[0].error
                 return {
                     error: true,
-                    code: Package.name + ">getState>invalidRequest>" + item,
+                    package: Package.name,
                     message: "Invalid request " + item
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
@@ -154,8 +154,30 @@ class Light extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">getState>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
+            }
+        }
+    }
+
+    async __configuration(settings = {}) {
+        return await this.request()
+    }
+
+    async __state(settings = {}) {
+        let result = await this.request()
+        if(result.error) {
+            return result
+        } 
+        return {
+            error: false,
+            package: Package.name,
+            message: "",
+            data: {
+                on: result.data.state.on,
+                brightness: result.data.state.bri,
+                color: result.data.state.hue,
+                staturation: result.data.state.sat,
             }
         }
     }

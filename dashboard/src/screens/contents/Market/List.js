@@ -23,7 +23,7 @@ class Configuration extends React.Component {
     async install(pPackage) {
         let result = await new Request().post({ package: pPackage }).fetch("/api/markets/install")
         if (result.error) {
-            this.setState({ severity: "error",enabled: true, message: result.code + " : " + result.message })
+            this.setState({ severity: "error",enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({severity: "info", enabled: true, message: pPackage + " was installed" })
             this.componentDidMount()
@@ -33,7 +33,7 @@ class Configuration extends React.Component {
     async uninstall(pPackage) {
         let result = await new Request().post({ package: pPackage }).fetch("/api/markets/uninstall")
         if (result.error) {
-            this.setState({severity: "error", enabled: true, message: result.code + " : " + result.message })
+            this.setState({severity: "error", enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({severity: "info", enabled: true, message: pPackage + " was removed" })
             this.componentDidMount()
@@ -76,9 +76,9 @@ class Configuration extends React.Component {
         })
         this.setState({ markets: resultMarket.filter(market => { return market.type == this.state.id }) })
         if (resultModule.error) {
-            this.setState({ severity: "error",enabled: true, message: resultModule.code + " : " + resultModule.message })
+            this.setState({ severity: "error",enabled: true, message: resultModule.package + " : " + resultModule.message })
         } else if (resultSmartobject.error) {
-            this.setState({ severity: "error",enabled: true, message: resultSmartobject.code + " : " + resultSmartobject.message })
+            this.setState({ severity: "error",enabled: true, message: resultSmartobject.package + " : " + resultSmartobject.message })
         } else {
             this.setState({ modules: resultModule.data, smartobjects: resultSmartobject.data })
         }

@@ -41,9 +41,9 @@ class NewRoutine extends React.Component {
         let resultSource = await Source.getSource(["smartobject", "process", "module"])
         let result = await new Request().get().fetch("/api/routines/" + this.state.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else if (resultSource.error) {
-            this.setState({ enabled: true, message: resultSource.code + " : " + resultSource.message })
+            this.setState({ enabled: true, message: resultSource.package + " : " + resultSource.message })
         } else {
             this.setState({mode: result.data.mode, routine: result.data, sources: resultSource.data })
         }
@@ -182,7 +182,7 @@ class NewRoutine extends React.Component {
                 mode: this.state.mode
             }).fetch('/api/routines/' + this.state.id)
             if (result.error) {
-                this.setState({ enabled: true, message: result.code + " : " + result.message })
+                this.setState({ enabled: true, message: result.package + " : " + result.message })
             } else {
                 this.props.history.push('/routine/')
             }

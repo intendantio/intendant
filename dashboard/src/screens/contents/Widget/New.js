@@ -37,11 +37,11 @@ class NewWidget extends React.Component {
         let resultConfiguration = await new Request().get().fetch("/api/configurations/widget")
         let resultSource = await Source.getSource(["smartobject","module"])
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else if (resultConfiguration.error) {
-            this.setState({ enabled: true, message: resultConfiguration.code + " : " + resultConfiguration.message })
+            this.setState({ enabled: true, message: resultConfiguration.package + " : " + resultConfiguration.message })
         } else if (resultSource.error) {
-            this.setState({ enabled: true, message: resultSource.code + " : " + resultSource.message })
+            this.setState({ enabled: true, message: resultSource.package + " : " + resultSource.message })
         } else {
             this.setState({ enabled: false, message: "", loading: false, sources: resultSource.data, type: false, types: resultConfiguration.data.contents.types })
         }
@@ -93,7 +93,7 @@ class NewWidget extends React.Component {
         })
         let resultJSON = await result.json()
         if (resultJSON.error) {
-            this.setState({ enabled: true, message: resultJSON.code + " : " + resultJSON.message })
+            this.setState({ enabled: true, message: resultJSON.package + " : " + resultJSON.message })
         } else {
             this.props.history.push('/widget')
         }

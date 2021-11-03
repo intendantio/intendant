@@ -160,3 +160,4 @@ web-build/
 .DS_Store
 
 /template/intendant.db.dev
+*.db-journal

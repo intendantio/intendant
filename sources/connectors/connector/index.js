@@ -10,14 +10,14 @@ class Connector {
     async getOne(id) {
         if(typeof id == 'string' || typeof id == 'number') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false,
                 data: {}
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -27,14 +27,14 @@ class Connector {
     async getOneByField(wheres) {
         if(typeof wheres == 'object') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false,
                 data: {}
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -44,7 +44,7 @@ class Connector {
     async getAllByField(wheres) {
         if(typeof wheres == 'object') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false,
                 data: [
@@ -53,7 +53,7 @@ class Connector {
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -62,7 +62,7 @@ class Connector {
 
     async getAll() {
         return {
-            code: "ok",
+            package: Package.name,
             message: "",
             error: false,
             data: [
@@ -74,13 +74,13 @@ class Connector {
     async deleteOne(id) {
         if(typeof id == 'string' || typeof id == 'number') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -90,13 +90,13 @@ class Connector {
     async deleteAllByField(fields) {
         if(typeof fields == 'object') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -106,13 +106,13 @@ class Connector {
     async updateAll(sets,wheres) {
         if(typeof wheres == 'object' && typeof sets == 'object') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -121,7 +121,7 @@ class Connector {
 
     async truncate() {
         return {
-            code: "ok",
+            package: Package.name,
             message: "",
             error: false
         }
@@ -130,13 +130,13 @@ class Connector {
     async execute(request) {
         if(typeof request == 'string') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -147,13 +147,13 @@ class Connector {
     async insert(fields) {
         if(typeof fields == 'object') {
             return {
-                code: "ok",
+                package: Package.name,
                 message: "",
                 error: false
             }
         } else {
             return {
-                code: "error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }

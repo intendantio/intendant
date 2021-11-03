@@ -44,7 +44,7 @@ class Authentification extends React.Component {
         if (await this.checkServer()) {
             let result = await new Request().post({ login: this.state.login, password: this.state.password }).fetch("/api/authentification")
             if (result.error) {
-                this.setState({ enabled: true, message: result.code + " : " + result.message })
+                this.setState({ enabled: true, message: result.package + " : " + result.message })
             } else {
                 localStorage.setItem("authorization", result.token)
                 this.setState({ enabled: false, message: "", authentification: false })
@@ -66,7 +66,7 @@ class Authentification extends React.Component {
         try {
             let result = await fetch(protocol + this.state.address + "/api/ping", {}, 2000)
             let resultJSON = await result.json()
-            if (resultJSON.message != "pong" || resultJSON.code != "ok") {
+            if (resultJSON.message != "pong") {
                 this.setState({ enabled: true, message: 'Connection to server failed' })
                 ok = false
             } else {

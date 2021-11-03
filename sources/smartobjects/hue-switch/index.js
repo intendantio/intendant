@@ -8,7 +8,6 @@ class HueSwitch extends SmartObject {
     constructor(settings, logger, core) {
         let configuration = require('./configuration.json')
         super(settings, logger, core, configuration)
-        this.events = new Map()
     }
 
     /*
@@ -24,7 +23,7 @@ class HueSwitch extends SmartObject {
                 this.logger.warning(this.key, "/checkState - error code " + item.type + " return")
                 return {
                     error: true,
-                    code: Package.name + ">getState>invalidRequest>error",
+                    package: Package.name,
                     message: "Invalid request " + item
                 }
             } else {
@@ -44,7 +43,7 @@ class HueSwitch extends SmartObject {
                     })
                     return {
                         error: false,
-                        code: "ok",
+                        package: Package.name,
                         message: "",
                         data: {
                             event: lastEvent.buttonevent ? lastEvent.buttonevent : -1,
@@ -55,7 +54,7 @@ class HueSwitch extends SmartObject {
                 } catch (error) {
                     return {
                         error: true,
-                        code: Package.name + ">getState>invalidResult",
+                        package: Package.name,
                         message: "Invalid result"
                     }
                 }
@@ -63,7 +62,7 @@ class HueSwitch extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">getState>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -78,13 +77,13 @@ class HueSwitch extends SmartObject {
                 this.logger.warning(this.key, "/checkState - error code " + item.type + " return")
                 return {
                     error: true,
-                    code: Package.name + ">getConfiguration>invalidRequest>error",
+                    package: Package.name,
                     message: "Invalid request " + item
                 }
             } else {
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
@@ -92,96 +91,10 @@ class HueSwitch extends SmartObject {
         } else {
             return {
                 error: true,
-                code: Package.name + ">getConfiguration>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
-    }
-
-    async __subscribeEvent(settings = {}) {
-        if (this.events[settings.id]) {
-            return {
-                error: true,
-                code: Package.name + ">subscribeEvent>alreadySubscribe",
-                message: "Event with " + settings.id + " is already subscribe"
-            }
-        }
-        this.events[settings.id] = {interval: setInterval(async () => {
-            if(this.events[settings.id].sleep > 0) {
-                this.events[settings.id].sleep = this.events[settings.id].sleep - 1
-                if(this.events[settings.id].sleep  == 0) {
-                    this.events[settings.id].state = false
-                }
-                return
-            }
-            let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/sensors/" + this.settings.id)
-            if (result.status == 200) {
-                let resultJSON = await result.json()
-                if (Array.isArray(resultJSON)) {
-                    clearInterval(this.events[settings.id].interval) 
-                    return
-                } else {
-                    try {
-                        if(settings.event == resultJSON.state.buttonevent) {
-                            let now = Moment(new Date().toISOString()).utc()
-                            let difference = now.diff(Moment.utc(resultJSON.state.lastupdated).format(), 'seconds')
-                            if(difference < 1) {
-                                this.events[settings.id].sleep = settings.duration
-                                this.events[settings.id].state = true
-                            }
-                        }  
-                    } catch (error) {
-                        return {
-                            error: true,
-                            code: Package.name + ">getState>invalidResult",
-                            message: "Invalid result"
-                        }
-                    }
-                }
-            } else {
-                return {
-                    error: true,
-                    code: Package.name + ">getState>invalidStatus>" + result.status,
-                    message: "Invalid status " + result.status
-                }
-            }
-        }, 1000), sleep: 0, state: false}
-        return {
-            error: false,
-            code: "ok",
-            message: "",
-            data: []
-        }
-    }
-
-    async __readEvent(settings = {}) {
-        if (this.events[settings.id]) {
-            if(this.events[settings.id].state) {
-                if(settings.withUpdate === true || settings.withUpdate === 'true') {
-                    this.events[settings.id].state = false
-                }
-                return {
-                    error: false,
-                    code: "ok",
-                    message: "",
-                    data: { state: true }
-                }
-            } else {
-                return {
-                    error: false,
-                    code: "ok",
-                    message: "",
-                    data: { state: false }
-                }
-            }
-        } else {
-            return {
-                error: true,
-                code: Package.name + ">subscribeEvent>eventNotFound",
-                message: "Event with " + settings.id + " not found"
-            }
-        }
-        
     }
 
 }

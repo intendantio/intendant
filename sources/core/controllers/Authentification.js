@@ -43,7 +43,7 @@ class Authentification extends Controller {
                 })
                 return {
                     data: tmp,
-                    code: 'ok',
+                    package: Package.name,
                     message: ''
                 }
             }
@@ -61,14 +61,14 @@ class Authentification extends Controller {
             return {
                 error: true,
                 message: "Jwt Token invalid",
-                code: Package.name + '>Token>Invalid'
+                package: Package.name
             }
         }
         if(authorizationSplit[0] != "Bearer") {
             return {
                 error: true,
                 message: "Jwt Token invalid",
-                code: Package.name + '>Token>Invalid'
+                package: Package.name
             }
         }
         let token = authorizationSplit[1]
@@ -81,7 +81,7 @@ class Authentification extends Controller {
             return {
                 error: true,
                 message: resultRequest.messsage + " " + request.method + " " + request.url,
-                code: 'authorization-not-found'
+                package: Package.name
             }
         }
         if (resultRequest.data == false) {
@@ -100,7 +100,7 @@ class Authentification extends Controller {
             return {
                 error: false,
                 message: 'ok',
-                code: 'ok'
+                package: Package.name
             }
         }
         let resultJwt = Jwt.verifyAccessToken(token, this.core.configuration.token)
@@ -114,7 +114,7 @@ class Authentification extends Controller {
                 return {
                     error: true,
                     message: "Jwt Token invalid",
-                    code: Package.name + '>Token>Invalid'
+                    package: Package.name
                 }
             }
             if (userRequest.error) {
@@ -132,7 +132,7 @@ class Authentification extends Controller {
                             return {
                                 error: false,
                                 message: 'ok',
-                                code: 'ok',
+                                package: Package.name,
                                 profile: userRequest.data.profile,
                                 user: userRequest.data.id
                             }
@@ -141,7 +141,7 @@ class Authentification extends Controller {
                             return {
                                 error: true,
                                 message: "Forbidden",
-                                code: Package.name + '>Forbidden'
+                                package: Package.name
                             }
                         }
                     }
@@ -150,7 +150,7 @@ class Authentification extends Controller {
                     return {
                         error: true,
                         message: "User invalid",
-                        code: Package.name + '>User>NotFound'
+                        package: Package.name
                     }
                 }
             }
@@ -159,7 +159,7 @@ class Authentification extends Controller {
             return {
                 error: true,
                 message: "Jwt Token invalid",
-                code: Package.name + '>Token>Invalid'
+                package: Package.name
             }
         }
     }
@@ -177,7 +177,7 @@ class Authentification extends Controller {
                             return {
                                 error: false,
                                 message: "",
-                                code: "ok",
+                                package: Package.name,
                                 profile: account.profile,
                                 token: Jwt.generateAccessToken(this.core.salt + "~" + login, this.core.configuration.token)
                             }
@@ -185,14 +185,14 @@ class Authentification extends Controller {
                             return {
                                 error: true,
                                 message: "Password is invalid",
-                                code: "authentification-password-invalid"
+                                package: Package.name
                             }
                         }
                     } else {
                         return {
                             error: true,
                             message: "Login is invalid",
-                            code: "authentification-login-invalid"
+                            package: Package.name
                         }
                     }
                 }
@@ -201,7 +201,7 @@ class Authentification extends Controller {
                 return {
                     error: true,
                     message: "Password is empty",
-                    code: "authentification-password-empty"
+                    package: Package.name
                 }
             }
         } else {
@@ -209,7 +209,7 @@ class Authentification extends Controller {
             return {
                 error: true,
                 message: "Login is empty",
-                code: "authentification-login-empty"
+                package: Package.name
             }
         }
     }
@@ -230,7 +230,7 @@ class Authentification extends Controller {
                     return {
                         error: false,
                         message: '',
-                        code: 'ok'
+                        package: Package.name
                     }
                 }
             } else {
@@ -238,7 +238,7 @@ class Authentification extends Controller {
                     return {
                         error: false,
                         message: '',
-                        code: 'ok'
+                        package: Package.name
                     }
                 } else {
                     let insertRequest = await this.sqlAuthorizationProfile.insert({
@@ -252,7 +252,7 @@ class Authentification extends Controller {
                         return {
                             error: false,
                             message: '',
-                            code: 'ok'
+                            package: Package.name
                         }
                     }
                 }

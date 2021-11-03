@@ -22,7 +22,7 @@ class NewSmartobject extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({ enabled: false, message: "", profiles: result.data })
         }
@@ -38,7 +38,7 @@ class NewSmartobject extends React.Component {
             } else {
             let result = await new Request().post({login: this.state.login, password: this.state.password, profile: this.state.profile}).fetch("/api/users")
             if (result.error) {
-                this.setState({ enabled: true, message: result.code + " : " + result.message })
+                this.setState({ enabled: true, message: result.package + " : " + result.message })
             } else {
                 this.props.history.push('/user')
             }

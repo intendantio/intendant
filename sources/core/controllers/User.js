@@ -32,7 +32,7 @@ class User extends Controller {
             return {
                 error: true,
                 message: "User invalid",
-                code: Package.name + '>User>NotFound'
+                package: Package.name
             }
         }
         if (resultUserAdmin.data.login == "admin") {
@@ -40,7 +40,7 @@ class User extends Controller {
             return {
                 error: true,
                 message: "Cannot delete admin",
-                code: Package.name + '>User>CantAdmin'
+                package: Package.name
             }
         }
         let resultClient = this.sqlClient.deleteAllByField({ user: idUser })
@@ -54,7 +54,7 @@ class User extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -71,7 +71,7 @@ class User extends Controller {
                         return {
                             error: true,
                             message: "Login is already register",
-                            code: "authentification-already-register"
+                            package: Package.name
                         }
                     } else {
                         this.core.logger.verbose(Package.name, "Insert user " + login)
@@ -90,7 +90,7 @@ class User extends Controller {
                             return {
                                 error: false,
                                 message: "",
-                                code: "ok"
+                                package: Package.name
                             }
                         }
                     }
@@ -100,7 +100,7 @@ class User extends Controller {
                 return {
                     error: true,
                     message: "Password is empty",
-                    code: "authentification-password-empty"
+                    package: Package.name
                 }
             }
         } else {
@@ -108,7 +108,7 @@ class User extends Controller {
             return {
                 error: true,
                 message: "Login is empty",
-                code: "authentification-login-empty"
+                package: Package.name
             }
         }
     }
@@ -120,13 +120,13 @@ class User extends Controller {
                 return this.insert("admin", password, '1')
             } else {
                 return {
-                    error: Package.name + ">Missing>Password",
+                    error: Package.name,
                     message: "Missing password"
                 }
             }
         } else {
             return {
-                error: Package.name + ">Invalid>CycleState",
+                error: Package.name,
                 message: "Invalid cycle state"
             }
         }
@@ -155,17 +155,17 @@ class User extends Controller {
                 return {
                     error: false,
                     message: "",
-                    code: "ok"
+                    package: Package.name
                 }
             } else {
                 return {
-                    error: Package.name + ">Missing>Profile",
+                    error: Package.name,
                     message: "Missing profile"
                 }
             }
         } else {
             return {
-                error: Package.name + ">Missing>Login",
+                error: Package.name,
                 message: "Missing login"
             }
         }
@@ -184,7 +184,7 @@ class User extends Controller {
             return {
                 error: false,
                 message: "",
-                code: "ok"
+                package: Package.name
             }
         }
     }

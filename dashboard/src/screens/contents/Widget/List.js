@@ -20,7 +20,7 @@ class Widget extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/widgets")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({ enabled: false, message: "", widgets: result.data })
         }

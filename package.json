@@ -15,6 +15,9 @@
     "npm-publish": "node ./scripts/publish"
   },
   "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/preset-typescript": "^7.16.0",
     "jest": "^27.0.1"
   },
   "dependencies": {

@@ -24,7 +24,7 @@ class Smartobject extends React.Component {
             if (result.error) {
                 this.setState({
                     enabled: true,
-                    message: result.code + " : " + result.message
+                    message: result.package + " : " + result.message
                 })
             } else {
                 this.setState({

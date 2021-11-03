@@ -16,7 +16,7 @@ class Cache extends Controller {
                 message: "",
                 cache: true,
                 data: JSON.parse(Buffer.from(result.data.value,"base64").toString('utf-8')).cache,
-                code: "ok"
+                package: Package.name
             }
         } else {
             return {
@@ -24,7 +24,7 @@ class Cache extends Controller {
                 message: "",
                 cache: false,
                 data: false,
-                code: "ok"
+                package: Package.name
             }
         }
     }
@@ -53,7 +53,7 @@ class Cache extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 

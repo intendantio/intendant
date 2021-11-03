@@ -32,47 +32,6 @@
             "name": "Get configuration",
             "description": "Get switch configuration",
             "settings": []
-        },
-        {
-            "id": "subscribeEvent",
-            "name": "Subscribe event",
-            "description": "Subscribe an event",
-            "settings": [
-                {
-                    "id": "id",
-                    "type": "text",
-                    "default": ""
-                },
-                {
-                    "id": "duration",
-                    "type": "slider",
-                    "step": 1,
-                    "min": 1,
-                    "max": 60,
-                    "default": 1
-                },{
-                    "id": "event",
-                    "type": "number",
-                    "default": 1000
-                }
-            ]
-        },
-        {
-            "id": "readEvent",
-            "name": "Read event",
-            "description": "Read event with update option",
-            "settings": [
-                {
-                    "id": "id",
-                    "type": "text",
-                    "default": ""
-                },
-                {
-                    "id": "withUpdate",
-                    "type": "checkbox",
-                    "default": true
-                }
-            ]
         }
     ]
 }

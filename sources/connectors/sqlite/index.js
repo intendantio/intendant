@@ -36,7 +36,7 @@ class SQLite extends Connector {
             try {
                 let result = await this._connector.prepare("SELECT * FROM " + this._name + " WHERE id=" + id).all()
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result.length == 1 ? result[0] : false,
                     message: ""
@@ -45,14 +45,14 @@ class SQLite extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">getOne>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">getOne>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -65,7 +65,7 @@ class SQLite extends Connector {
             try {
                 let result = await this._connector.prepare("SELECT * FROM " + this._name + this.getWhere(wheres)).all()
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result.length == 1 ? result[0] : false,
                     message: ""
@@ -74,14 +74,14 @@ class SQLite extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">getOneByField>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">getOneByField>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -94,7 +94,7 @@ class SQLite extends Connector {
             try {
                 let result = await this._connector.prepare("SELECT * FROM " + this._name + this.getWhere(wheres)).all()
                 return {
-                    code: "ok",
+                    package: Package.name,
                     data: result,
                     error: false,
                     message: ""
@@ -103,14 +103,14 @@ class SQLite extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">getAllByField>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">getAllByField>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -122,7 +122,7 @@ class SQLite extends Connector {
         try {
             let result = await this._connector.prepare("SELECT * FROM " + this._name).all()
             return {
-                code: "ok",
+                package: Package.name,
                 data: result,
                 error: false,
                 message: ""
@@ -131,7 +131,7 @@ class SQLite extends Connector {
             let message = this._name + " catch an error : " + JSON.stringify(error.toString())
             this._core.logger.error(Package.name, message)
             return {
-                code: Package.name + ">getAll>catchError",
+                package: Package.name,
                 error: true,
                 message: message
             }
@@ -144,7 +144,7 @@ class SQLite extends Connector {
             try {
                 await this._connector.prepare("DELETE FROM " + this._name + " WHERE id=" + id).run()
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     message: ""
                 }
@@ -152,14 +152,14 @@ class SQLite extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">deleteOne>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">deleteOne>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -172,7 +172,7 @@ class SQLite extends Connector {
             try {
                 await this._connector.prepare("DELETE FROM " + this._name + this.getWhere(fields)).run()
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     message: ""
                 }
@@ -180,14 +180,14 @@ class SQLite extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">deleteAllByField>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">deleteAllByField>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -200,7 +200,7 @@ class SQLite extends Connector {
             try {
                 await this._connector.prepare("UPDATE " + this._name + this.getSet(sets) + this.getWhere(wheres)).run()
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     message: ""
                 }
@@ -208,14 +208,14 @@ class SQLite extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">updateAll>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">updateAll>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -227,7 +227,7 @@ class SQLite extends Connector {
         try {
             await this._connector.prepare("DELETE FROM " + this._name).run()
             return {
-                code: "ok",
+                package: Package.name,
                 error: false,
                 message: ""
             }
@@ -235,7 +235,7 @@ class SQLite extends Connector {
             let message = this._name + " catch an error : " + JSON.stringify(error.toString())
             this._core.logger.error(Package.name, message)
             return {
-                code: Package.name + ">truncate>catchError",
+                package: Package.name,
                 error: true,
                 message: message
             }
@@ -258,9 +258,9 @@ class SQLite extends Connector {
                     } else if (typeof field == 'boolean') {
                         values = values + "'" + field + "',"
                     } else if (field.slice(0, 11) == "DATE:CUSTOM") {
-                        values = values + field.slice(11) + ","
+                        values = values +  "datetime('now', '+" + field.slice(11) + " second'),"
                     } else if (field == "DATE:NOW") {
-                        values = values + "date('now'),"
+                        values = values + "datetime('now'),"
                     } else if (typeof field == 'string') {
                         values = values + "'" + field + "',"
                     }
@@ -272,7 +272,7 @@ class SQLite extends Connector {
                 let result = await this._connector.prepare("INSERT INTO " + this._name + " " + keys + " VALUES " + values).run()
                 result = { insertId: result.lastInsertRowid } 
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result,
                     message: ""
@@ -281,14 +281,14 @@ class SQLite extends Connector {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
                 this._core.logger.error(Package.name, message)
                 return {
-                    code: Package.name + ">insert>catchError",
+                    package: Package.name,
                     error: true,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">insert>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }
@@ -302,7 +302,7 @@ class SQLite extends Connector {
                 request = request.replace("DATE:NOW","date('now')")
                 let result = await this._connector.prepare(request).all()
                 return {
-                    code: "ok",
+                    package: Package.name,
                     error: false,
                     data: result,
                     message: ""
@@ -312,13 +312,13 @@ class SQLite extends Connector {
                 this._core.logger.error(Package.name, message)
                 return {
                     error: true,
-                    code: Package.name + ">execute>catchError",
+                    package: Package.name,
                     message: message
                 }
             }
         } else {
             return {
-                code: Package.name + ">execute>error",
+                package: Package.name,
                 message: "Invalid parameter",
                 error: true
             }

@@ -27,6 +27,7 @@ class NewProcess extends React.Component {
             modeInput: 0,
             action: null,
             source: null,
+            loading: false,
             isChecked: false,
             sources: []
         }
@@ -41,12 +42,12 @@ class NewProcess extends React.Component {
         if (resultEspace.error) {
             this.setState({
                 enabled: true,
-                message: resultEspace.code + " : " + resultEspace.message
+                message: resultEspace.package + " : " + resultEspace.message
             })
         } else if (result.error) {
             this.setState({
                 enabled: true,
-                message: result.code + " : " + result.message
+                message: result.package + " : " + result.message
             })
         } else {
             this.setState({
@@ -56,6 +57,7 @@ class NewProcess extends React.Component {
                 sources: resultSource.data
             })
         }
+        this.setState({ loading: null })
     }
 
     setSource(id) {
@@ -101,7 +103,7 @@ class NewProcess extends React.Component {
         }
         let result = await new Request().post(action).fetch("/api/process/" + this.state.id + "/actions")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -110,7 +112,7 @@ class NewProcess extends React.Component {
     async deleteSource(idsource) {
         let result = await new Request().delete().fetch("/api/process/" + this.state.id + "/actions/" + idsource)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -119,7 +121,7 @@ class NewProcess extends React.Component {
     async delete(id) {
         let result = await new Request().delete().fetch("/api/process/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.props.history.push('/process')
         }
@@ -128,6 +130,7 @@ class NewProcess extends React.Component {
 
 
     async executeAction() {
+        this.setState({ loading: true })
         let tmp = {}
         for (let index = 0; index < this.state.process.inputs.length; index++) {
             let input = this.state.process.inputs[index];
@@ -139,7 +142,7 @@ class NewProcess extends React.Component {
         }
         let result = await new Request().post({ inputs: tmp }).fetch("/api/process/" + this.state.process.id + "/execute")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             if (result.data) {
                 this.setState({ executeInformation: JSON.stringify(result.data) })
@@ -151,7 +154,7 @@ class NewProcess extends React.Component {
     async insertProfile(process, profile) {
         let result = await new Request().post({idProfile: profile.id, }).fetch("/api/process/" + process.id + "/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -160,7 +163,7 @@ class NewProcess extends React.Component {
     async deleteProfile(process, profile) {
         let result = await new Request().delete().fetch("/api/process/" + process.id + "/profiles/" + profile.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -169,7 +172,7 @@ class NewProcess extends React.Component {
     async deleteProcessInput(input) {
         let result = await new Request().delete({}).fetch("/api/process/" + this.state.process.id + "/inputs/" + input.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -187,7 +190,7 @@ class NewProcess extends React.Component {
             enable: this.state.modeInput
         }).fetch("/api/process/" + this.state.process.id + "/inputs")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({
                 referenceSettings: "",
@@ -227,17 +230,17 @@ class NewProcess extends React.Component {
                             {
                                 this.state.process.mode == "simple" ?
                                     this.state.process.mode === "simple" ?
-                                        <Button style={{ alignSelf: 'center', marginLeft: 10, marginTop: 10 }} variant={this.state.process.enable === 2 ? "contained" : "outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Autorenew />}>
+                                        <Button disabled={this.state.loading} style={{ alignSelf: 'center', marginLeft: 10, marginTop: 10 }} variant={this.state.process.enable === 2 ? "contained" : "outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Autorenew />}>
                                             {this.state.process.name}
                                         </Button> : null
                                     :
                                     <div style={{ flexDirection: 'column', display: 'flex', width: '20%' }}>
                                         {
                                             this.state.process.enable == 1 ?
-                                                <Button style={{ marginTop: 10 }} variant={"contained"} onClick={() => { this.executeAction() }} color="default" startIcon={<Check />}>
+                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"contained"} onClick={() => { this.executeAction() }} color="default" startIcon={<Check />}>
                                                     {this.state.process.name_enable}
                                                 </Button> :
-                                                <Button style={{ marginTop: 10 }} variant={"outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Close />}>
+                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Close />}>
                                                     {this.state.process.name_disable}
                                                 </Button>
                                         }

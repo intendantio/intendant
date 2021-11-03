@@ -19,21 +19,21 @@ describe(Package.name, () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "ok", error: false, message: "test-jest", data: {} })
+        expect(resultAction).toEqual({ package: Package.name, data: {} })
     })
 
     test('action not found', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test-no-found", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Action>NotFound>test-no-found", error: true, message: "Action not found 'test-no-found'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "Action not found 'test-no-found'" })
     })
 
     test('action throw', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest", throw: true })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Error>test", error: true, message: "An error has occurred when test '\"test-error\"'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "An error has occurred when test '\"test-error\"'" })
     })
 
     /* @intendant/hue-sensor-smartobject */
@@ -53,7 +53,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("checkPresence", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: { state: { data: "jest-mock" } }
@@ -72,7 +72,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("checkPresence", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">checkPresence>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -93,7 +93,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("checkPresence", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">checkPresence>invalidRequest>error",
+            package: Package.name,
             error: true,
             message: "Invalid request \"jest-error\""
         })

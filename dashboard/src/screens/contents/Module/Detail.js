@@ -5,7 +5,6 @@ import JSONPretty from 'react-json-pretty'
 import { Alert } from '@material-ui/lab'
 import { Close } from '@material-ui/icons'
 import { Paper, Typography, Divider, Button, IconButton } from '@material-ui/core'
-
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
@@ -16,8 +15,8 @@ class Detail extends React.Component {
         super(props)
         this.state = {
             hashId: props.match.params.id,
+            loading: null,
             module: null,
-            loading: true,
             enabled: false,
             message: "",
             executeInformation: ""
@@ -29,7 +28,7 @@ class Detail extends React.Component {
         if (result.error) {
             this.setState({
                 enabled: true,
-                message: result.code + " : " + result.message
+                message: result.package + " : " + result.message
             })
             this.props.history.push('/module')
         } else {
@@ -47,9 +46,11 @@ class Detail extends React.Component {
                 this.props.history.push('/module')
             }
         }
+        this.setState({ loading: null })
     }
 
     async executeAction(action, settings) {
+        this.setState({ loading: action })
         let tmp = {}
         for (let index = 0; index < settings.length; index++) {
             let argument = settings[index];
@@ -63,8 +64,9 @@ class Detail extends React.Component {
         if (result.error) {
             this.setState({
                 enabled: true,
-                message: result.code + " : " + result.message
+                message: result.package + " : " + result.message
             })
+            this.setState({ loading: null })
         } else {
             if (result.data) {
                 this.setState({
@@ -92,9 +94,10 @@ class Detail extends React.Component {
                         <div style={{ padding: 10, paddingBottom: 0 }}>
                             {
                                 this.state.module.actions.map(action => {
+                                    console.log(action.id)
                                     return (
                                         <Paper style={{ marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', padding: 10 }}>
-                                            <Button onClick={() => { this.executeAction(action.id, action.settings) }} variant='outlined' style={{ width: '250px', height: '100%' }} >
+                                            <Button disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={this.state.loading == action.id ? 'contained' : 'outlined'} style={{ width: '250px', height: '100%' }} >
                                                 {action.name}
                                             </Button>
                                             {
@@ -129,14 +132,14 @@ class Detail extends React.Component {
                         }
                     </Paper>
                     <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        { this.state.message }
+                        {this.state.message}
                     </AlertComponent>
                 </div>
             )
         } else {
             return (
                 <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    { this.state.message }
+                    {this.state.message}
                 </AlertComponent>
             )
         }

@@ -12,7 +12,7 @@ export default {
             getItem: (id) => {
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: '',
                     data: storage[id] ? storage[id] : {}
                 }
@@ -21,21 +21,21 @@ export default {
                 storage[id] = value
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: ''
                 }
             },
             removeItem: () => {
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: ''
                 }
             },
             clear: () => {
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: ''
                 }
             }

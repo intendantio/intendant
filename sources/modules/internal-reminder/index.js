@@ -9,7 +9,7 @@ class InternalListManager {
 
     async __create(settings = {}) {
         settings.flag = Moment().unix()
-        return await this.core.controller.storage.setItem(Package.name + "/" + settings.reference,settings)
+        return await this.core.controller.storage.setItem(Package.name,settings)
     }
 
     async __getOne(settings = {}) {
@@ -22,7 +22,7 @@ class InternalListManager {
 
         if(reminder == false) {
             return {
-                code: Package.name + ">ReminderNotFound",
+                package: Package.name,
                 message: "Reminder with reference " + settings.reference + " is not found",
                 error: true
             }
@@ -32,7 +32,7 @@ class InternalListManager {
         reminder.action = reminder.active ? reminder.action_active : reminder.action_inactive
 
         return {
-            code: 'ok',
+            package: Package.name,
             message: "",
             error: false,
             data: reminder
@@ -49,13 +49,13 @@ class InternalListManager {
 
         if(reminder == false) {
             return {
-                code: Package.name + ">ReminderNotFound",
+                package: Package.name,
                 message: "Reminder with reference " + settings.reference + " is not found",
                 error: true
             }
         }
         reminder.flag = Moment().unix()
-        return await this.core.controller.storage.setItem(Package.name + "/" + settings.reference,reminder)
+        return await this.core.controller.storage.setItem(Package.name,reminder)
     }
 
 }

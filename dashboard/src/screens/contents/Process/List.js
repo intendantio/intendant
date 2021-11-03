@@ -20,7 +20,7 @@ class Process extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/process")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({ processs: result.data })
         }

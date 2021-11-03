@@ -20,7 +20,7 @@ class Module extends React.Component {
     async componentDidMount() {
         let resultModule = await new Request().get().fetch("/api/configurations/module")
         if (resultModule.error) {
-            this.setState({ enabled: true, message: resultModule.code + " : " + resultModule.message })
+            this.setState({ enabled: true, message: resultModule.package + " : " + resultModule.message })
         } else {
             this.setState({ enabled: false, message: "", modules: resultModule.data })
         }

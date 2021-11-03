@@ -31,7 +31,7 @@ class InternalListManager {
 
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: '',
             data: _lists
         }
@@ -42,7 +42,7 @@ class InternalListManager {
             if (this.lists[settings.reference]) {
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: '',
                     data: {
                         size: this.lists[settings.reference].length
@@ -51,14 +51,14 @@ class InternalListManager {
             } else {
                 return {
                     error: true,
-                    code: Package.name + '>getSize>list>missing',
+                    package: Package.name,
                     message: 'List is missing'
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + '>getSize>reference>missing',
+                package: Package.name,
                 message: 'Reference is missing'
             }
         }
@@ -70,21 +70,21 @@ class InternalListManager {
             if (this.lists[settings.reference]) {
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: '',
                     data: this.lists[settings.reference]
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + '>getOne>list>missing',
+                    package: Package.name,
                     message: 'List is missing'
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + '>getOne>reference>missing',
+                package: Package.name,
                 message: 'Reference is missing'
             }
         }
@@ -95,7 +95,7 @@ class InternalListManager {
             if (this.lists[settings.reference]) {
                 return {
                     error: true,
-                    code: Package.name + '>create>list>alreadyExist',
+                    package: Package.name,
                     message: 'List already exist'
                 }
             } else {
@@ -103,14 +103,14 @@ class InternalListManager {
                 await this.synchronize()
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: ''
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + '>create>reference>missing',
+                package: Package.name,
                 message: 'Reference is missing'
             }
         }
@@ -124,27 +124,27 @@ class InternalListManager {
                     await this.synchronize()
                     return {
                         error: false,
-                        code: 'ok',
+                        package: Package.name,
                         message: ''
                     }
                 } else {
                     return {
                         error: true,
-                        code: Package.name + '>add>list>missing',
+                        package: Package.name,
                         message: 'List is missing'
                     }
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + '>add>item>missing',
+                    package: Package.name,
                     message: 'Item is missing'
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + '>add>reference>missing',
+                package: Package.name,
                 message: 'Reference is missing'
             }
         }
@@ -159,34 +159,34 @@ class InternalListManager {
                         await this.synchronize()
                         return {
                             error: false,
-                            code: 'ok',
+                            package: Package.name,
                             message: ''
                         }
                     } else {
                         return {
                             error: true,
-                            code: Package.name + '>remove>index>invalid',
+                            package: Package.name,
                             message: 'Index invalid'
                         }
                     }
                 } else {
                     return {
                         error: true,
-                        code: Package.name + '>remove>list>missing',
+                        package: Package.name,
                         message: 'List is missing'
                     }
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + '>remove>index>missing',
+                    package: Package.name,
                     message: 'Index is missing'
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + '>remove>reference>missing',
+                package: Package.name,
                 message: 'Reference is missing'
             }
         }
@@ -199,20 +199,20 @@ class InternalListManager {
                 await this.synchronize()
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: ''
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + '>clear>list>missing',
+                    package: Package.name,
                     message: 'List is missing'
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + '>clear>reference>missing',
+                package: Package.name,
                 message: 'Reference is missing'
             }
         }
@@ -225,20 +225,20 @@ class InternalListManager {
                 await this.synchronize()
                 return {
                     error: false,
-                    code: 'ok',
+                    package: Package.name,
                     message: ''
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + '>delete>list>missing',
+                    package: Package.name,
                     message: 'List is missing'
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + '>delete>reference>missing',
+                package: Package.name,
                 message: 'Reference is missing'
             }
         }

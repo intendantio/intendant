@@ -1,48 +1,26 @@
-declare module '@intendant/netatmo-home-coach-smartobject' {
+import Smartobject from "../smartobject"
 
-    interface Configuration {
-        name: String,
-        icon: String,
-        settings: Array<Settings>,
-        actions: Array<Actions>
+declare module NetatmoHomeCoach {
+
+    interface Dashboard {
+        temperature: Number,
+        noise: Number,
+        co2: Number,
+        pressure: Number,
+        humidity: Number
     }
 
-    interface Settings {
-        key: String,
-        type: String,
-        name: String
+    interface ResultDashboard extends Smartobject.Result {
+        data: Dashboard
     }
 
-    interface Actions {
-        key: String,
-        name: String,
-        description: String,
-        settings: Array<Object>
-    }
-
-    interface Settings {
-        id: String,
-        smartObjectId: String
-    }
-
-    interface Result {
-        error: Boolean,
-        code: String,
-        message: String
-    }
-
-    class SmartObject {
-        constructor(settings: Settings, logger: Object, core: Object, configuration: Configuration);
-        public action(action: String, settings: Object): Promise<Result>;
-        public getActions(): Array<Actions>;
-    }
-
-    class HueSensor extends SmartObject {
-        constructor(settings: Settings, logger: Object, core: Object);
-        public __turnOn(settings: Object): Promise<Result>;
-        public __turnOff(settings: Object): Promise<Result>;
-        public __getState(settings: Object): Promise<Result>;
+    class NetatmoHomeCoach extends Smartobject.SmartObject {
+        constructor(settings: Smartobject.Settings, logger: Object, core: Object);
+        public request(settings: Object): Promise<Smartobject.Result>;
+        public __dashboard(settings: Object): Promise<ResultDashboard>;
+        public __place(settings: Object): Promise<Smartobject.Result>;
     }
     
-    export = HueSensor
 }
+
+export = NetatmoHomeCoach

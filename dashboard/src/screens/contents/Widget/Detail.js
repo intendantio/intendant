@@ -22,7 +22,8 @@ class Widget extends React.Component {
             content: "",
             sources: [],
             types: [],
-            widget: null
+            widget: null,
+            needSave: null
         }
     }
 
@@ -31,11 +32,11 @@ class Widget extends React.Component {
         let resultConfiguration = await new Request().get().fetch("/api/configurations/widget")
         let resultSource = await Source.getSource(["smartobject", "module"])
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else if (resultSource.error) {
-            this.setState({ enabled: true, message: resultSource.code + " : " + resultSource.message })
+            this.setState({ enabled: true, message: resultSource.package + " : " + resultSource.message })
         } else if (resultConfiguration.error) {
-            this.setState({ enabled: true, message: resultConfiguration.code + " : " + resultConfiguration.message })
+            this.setState({ enabled: true, message: resultConfiguration.package + " : " + resultConfiguration.message })
         } else {
             this.setState({ enabled: false, message: "", loading: false, widget: result.data, sources: resultSource.data, types: resultConfiguration.data.contents.types})
         }
@@ -44,7 +45,7 @@ class Widget extends React.Component {
     async delete() {
         let result = await new Request().delete({}).fetch("/api/widgets/" + this.state.widget.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.props.history.push('/widget')
         }
@@ -53,7 +54,7 @@ class Widget extends React.Component {
     async deleteSource(source) {
         let result = await new Request().delete().fetch("/api/widgets/" + this.state.widget.id + "/sources/" + source)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -92,7 +93,7 @@ class Widget extends React.Component {
         }).fetch("/api/widgets/" + this.state.id + "/sources")
 
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({ action: null, source: null, reference: "" })
             this.componentDidMount()
@@ -117,7 +118,7 @@ class Widget extends React.Component {
     async setContent() {
         let result = await new Request().post({type: this.state.type, content: this.state.content}).fetch("/api/widgets/" + this.state.id + "/contents")
         if(result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({ content: "" })
             this.componentDidMount()
@@ -127,7 +128,7 @@ class Widget extends React.Component {
     async deleteContent(id) {
         let result = await new Request().delete().fetch("/api/widgets/" + this.state.id + "/contents/" + id)
         if(result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -142,10 +143,10 @@ class Widget extends React.Component {
             return pContent
         })
         widget.contents = contents
-        this.setState({ widget: widget })
+        this.setState({ widget: widget, needSave: null })
         let result = await new Request().put({ content: content }).fetch("/api/widgets/" + this.state.widget.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -351,15 +352,18 @@ class Widget extends React.Component {
                                                             <TableCell align="left" >
                                                                 <TextField
                                                                     style={{ width: '100%', marginBottom: 5 }}
-                                                                    onChange={(event) => { content.native = event.target.value; this.update(content) }}
+                                                                    onChange={(event) => { content.native = event.target.value; this.setState({needSave: index}) }}
+                                                                    onBlur={(event) => {this.update(content) }}
                                                                     multiline
                                                                     value={content.native}
                                                                     variant="outlined"
                                                                 />
                                                                 {
                                                                     content.content.split("\n").map(_content => {
+                                                                        console.log(this.state.needSave)
+                                                                        console.log(index)
                                                                         return (
-                                                                            <Typography variant='body1' style={{ fontWeight: _content.type == 'title' ? 'bold' : 'normal' }}>
+                                                                            <Typography variant='body1' color={this.state.needSave == index ? 'primary' : 'inherit'} style={{ fontWeight: _content.type == 'title' ? 'bold' : 'normal' }}>
                                                                                 {_content}
                                                                             </Typography>
                                                                         )

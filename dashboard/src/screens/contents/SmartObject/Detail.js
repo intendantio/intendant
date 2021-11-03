@@ -16,9 +16,10 @@ class DetailSmartObject extends React.Component {
             smartobject: null,
             profiles: [],
             enabled: false,
+            loading: null,
             message: "",
-            referenceSettings: "",
-            valueSettings: "",
+            referenceArguments: "",
+            valueArguments: "",
             executeInformation: ""
         }
     }
@@ -31,18 +32,20 @@ class DetailSmartObject extends React.Component {
         } else {
             this.setState({ smartobject: resultSmartobject.data, profiles: resultProfile.data })
         }
+        this.setState({ loading: null })
     }
 
     async delete(id) {
         let result = await new Request().delete().fetch("/api/smartobjects/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.props.history.push('/smartobject')
         }
     }
 
     async executeAction(action, settings) {
+        this.setState({loading: action})
         let tmp = {}
         for (let index = 0; index < settings.length; index++) {
             let argument = settings[index];
@@ -54,7 +57,7 @@ class DetailSmartObject extends React.Component {
         }
         let result = await new Request().post({ settings: tmp }).fetch("/api/smartobjects/" + this.state.id + "/actions/" + action)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message, loading: null })
         } else {
             if (result.data) {
                 this.setState({ executeInformation: JSON.stringify(result.data) })
@@ -63,21 +66,21 @@ class DetailSmartObject extends React.Component {
         }
     }
 
-    async deleteSmartobjectSettings(settings) {
-        let result = await new Request().delete().fetch("/api/smartobjects/" + settings.smartobject + "/settings/" + settings.id)
+    async deleteSmartobjectArguments(pArguments) {
+        let result = await new Request().delete().fetch("/api/smartobjects/" + pArguments.smartobject + "/arguments/" + pArguments.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
     }
 
-    async insertSmartobjectSettings(id, reference, value) {
-        let result = await new Request().post({ reference: reference, value: value }).fetch("/api/smartobjects/" + id + "/settings")
+    async insertSmartobjectArguments(id, reference, value) {
+        let result = await new Request().post({ reference: reference, value: value }).fetch("/api/smartobjects/" + id + "/arguments")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
-            this.setState({ referenceSettings: "", valueSettings: "" })
+            this.setState({ referenceArguments: "", valueArguments: "" })
             this.componentDidMount()
         }
     }
@@ -85,7 +88,7 @@ class DetailSmartObject extends React.Component {
     async insertProfile(smartobject, profile) {
         let result = await new Request().post({idProfile: profile.id, }).fetch("/api/smartobjects/" + smartobject.id + "/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -94,7 +97,7 @@ class DetailSmartObject extends React.Component {
     async deleteProfile(smartobject, profile) {
         let result = await new Request().delete().fetch("/api/smartobjects/" + smartobject.id + "/profiles/" + profile.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -121,25 +124,25 @@ class DetailSmartObject extends React.Component {
                             <div style={{ marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'row' }}>
                                 <TableContainer component={Paper} >
                                     <TableBody>
-                                        {this.state.smartobject.settings.map((setting) => (
-                                            <TableRow key={setting.id} >
+                                        {this.state.smartobject.arguments.map((pArgument) => (
+                                            <TableRow key={pArgument.id} >
                                                 <TableCell align="left">
                                                     <Typography variant='subtitle1'>
-                                                        {setting.reference}
+                                                        {pArgument.reference}
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell align="left" style={{ width: '70%' }}>
                                                     <Typography variant='subtitle1'>
-                                                        {setting.value.slice(0, 50) + (setting.value.length > 50 ? " (...)" : "")}
+                                                        {pArgument.value.slice(0, 50) + (pArgument.value.length > 50 ? " (...)" : "")}
                                                     </Typography>
                                                 </TableCell>
                                                 <TableCell align="right" style={{ padding: 4 }}>
-                                                    <IconButton onClick={() => { navigator.clipboard.writeText(setting.value) }} style={{ borderRadius: 5, margin: 0 }}>
+                                                    <IconButton onClick={() => { navigator.clipboard.writeText(pArgument.value) }} style={{ borderRadius: 5, margin: 0 }}>
                                                         <FileCopy />
                                                     </IconButton>
                                                 </TableCell>
                                                 <TableCell align="right" style={{ padding: 4 }}>
-                                                    <IconButton onClick={() => { this.deleteSmartobjectSettings(setting) }} style={{ borderRadius: 5, margin: 0 }}>
+                                                    <IconButton onClick={() => { this.deleteSmartobjectArguments(pArgument) }} style={{ borderRadius: 5, margin: 0 }}>
                                                         <Delete />
                                                     </IconButton>
                                                 </TableCell>
@@ -147,15 +150,15 @@ class DetailSmartObject extends React.Component {
                                         ))}
                                         <TableRow key={"-1"} >
                                             <TableCell align="left">
-                                                <TextField value={this.state.referenceSettings} onChange={(event) => { this.setState({ referenceSettings: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
+                                                <TextField value={this.state.referenceArguments} onChange={(event) => { this.setState({ referenceArguments: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
                                                 </TextField>
                                             </TableCell>
                                             <TableCell align="left">
-                                                <TextField value={this.state.valueSettings} onChange={(event) => { this.setState({ valueSettings: event.nativeEvent.target.value }) }} placeholder='Value' style={{ width: '100%' }}>
+                                                <TextField value={this.state.valueArguments} onChange={(event) => { this.setState({ valueArguments: event.nativeEvent.target.value }) }} placeholder='Value' style={{ width: '100%' }}>
                                                 </TextField>
                                             </TableCell>
                                             <TableCell align="right" style={{ padding: 4 }}>
-                                                <IconButton onClick={() => { this.insertSmartobjectSettings(this.state.smartobject.id, this.state.referenceSettings, this.state.valueSettings) }} style={{ borderRadius: 5, margin: 0 }}>
+                                                <IconButton onClick={() => { this.insertSmartobjectArguments(this.state.smartobject.id, this.state.referenceArguments, this.state.valueArguments) }} style={{ borderRadius: 5, margin: 0 }}>
                                                     <Add />
                                                 </IconButton>
                                             </TableCell>
@@ -172,7 +175,7 @@ class DetailSmartObject extends React.Component {
                                 this.state.smartobject.actions.map(action => {
                                     return (
                                         <Paper style={{ padding: 10, marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '100%' }}>
-                                            <Button onClick={() => { this.executeAction(action.id, action.settings) }} variant='outlined' style={{ width: '250px', height: '100%' }} >
+                                            <Button disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={this.state.loading == action.id ? 'contained' : 'outlined'} style={{ width: '250px', height: '100%' }} >
                                                 {action.name}
                                             </Button>
                                             

@@ -47,14 +47,14 @@ class Modules {
             } else {
                 return {
                     error: true,
-                    code: Package.name + ' > ModuleManager > executeAction > action not found',
+                    package: Package.name,
                     message: 'Action not found'
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ' > ModuleManager > executeAction > module not found',
+                package: Package.name,
                 message: 'Module not found'
             }
         }
@@ -74,7 +74,7 @@ class Modules {
         })
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: '',
             data: modules
         }

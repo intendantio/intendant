@@ -21,7 +21,7 @@ class Security extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             if (this.state.selectProfile === "") {
                 this.setState({
@@ -62,7 +62,7 @@ class Security extends React.Component {
         })
         let result = await new Request().get().fetch("/api/profiles/" + id + "/authorizations")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({
                 enabled: false,
@@ -75,7 +75,7 @@ class Security extends React.Component {
     async updateSecure(profile, pAuthorization, secure) {
         let result = await new Request().post({ authorization: pAuthorization, secure: secure }).fetch("/api/profiles/" + profile + "/authorizations")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }

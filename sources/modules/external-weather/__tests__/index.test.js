@@ -26,7 +26,7 @@ describe('@intendant/external-weather-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getWeather({ city: "jest-city" })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {},
@@ -51,7 +51,7 @@ describe('@intendant/external-weather-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getWeather()
         expect(resultAction).toEqual({
-            code: Package.name + ">getWeather>city>missing",
+            package: Package.name,
             error: true,
             message: "City is missing"
         })
@@ -69,7 +69,7 @@ describe('@intendant/external-weather-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getWeather({ city: "jest-city" })
         expect(resultAction).toEqual({
-            code: Package.name + ">getWeather>code>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -89,7 +89,7 @@ describe('@intendant/external-weather-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getWeather({ city: "jest-city" })
         expect(resultAction).toEqual({
-            code: Package.name + ">getWeather>throwException",
+            package: Package.name,
             error: true,
             message: "Throw exception"
         })
@@ -111,7 +111,7 @@ describe('@intendant/external-weather-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getWeather({ city: "jest-city" })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {
@@ -137,7 +137,7 @@ describe('@intendant/external-weather-modules', () => {
         let instanceModule = new pModule(core)
         let resultAction = await instanceModule.__getWeather({ city: "jest-city" })
         expect(resultAction).toEqual({
-            code: "@intendant/core>get>jest-error",
+            package: Package.name,
             error: true,
             cache: false,
             message: "jest-error"

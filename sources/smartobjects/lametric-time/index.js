@@ -23,14 +23,14 @@ class LaMetric extends SmartObject {
             let resultJSON = await result.json()
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 data: resultJSON
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getAllNotification>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -46,14 +46,14 @@ class LaMetric extends SmartObject {
             let resultJSON = await result.json()
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 data: resultJSON
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getCurrentNotification>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -70,21 +70,21 @@ class LaMetric extends SmartObject {
                 let resultJSON = await result.json()
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + ">getOneNotification>invalidStatus>" + result.status,
+                    package: Package.name,
                     message: "Invalid status " + result.status
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getOneNotification>Missing>Notification",
+                package: Package.name,
                 message: "Missing notification"
             }
         }
@@ -121,14 +121,14 @@ class LaMetric extends SmartObject {
             let resultJSON = await result.json()
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 data: resultJSON
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">sendNotification>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -146,21 +146,21 @@ class LaMetric extends SmartObject {
                 let resultJSON = await result.json()
                 return {
                     error: false,
-                    code: "ok",
+                    package: Package.name,
                     message: "",
                     data: resultJSON
                 }
             } else {
                 return {
                     error: true,
-                    code: Package.name + ">deleteOneNotification>invalidStatus>" + result.status,
+                    package: Package.name,
                     message: "Invalid status " + result.status
                 }
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">deleteOneNotification>Missing>Notification",
+                package: Package.name,
                 message: "Missing notification"
             }
         }
@@ -176,14 +176,14 @@ class LaMetric extends SmartObject {
             let resultJSON = await result.json()
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 data: resultJSON
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getWifi>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -199,14 +199,14 @@ class LaMetric extends SmartObject {
             let resultJSON = await result.json()
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 data: resultJSON
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getState>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -222,14 +222,14 @@ class LaMetric extends SmartObject {
             let resultJSON = await result.json()
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 data: resultJSON
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">getVolume>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -255,14 +255,14 @@ class LaMetric extends SmartObject {
             let resultJSON = await result.json()
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 message: "",
                 data: resultJSON
             }
         } else {
             return {
                 error: true,
-                code: Package.name + ">updateVolume>invalidStatus>" + result.status,
+                package: Package.name,
                 message: "Invalid status " + result.status
             }
         }
@@ -273,7 +273,7 @@ class LaMetric extends SmartObject {
         let resultJSON = await result.json()
         return {
             error: false,
-            code: "ok",
+            package: Package.name,
             message: "",
             data: resultJSON
         }

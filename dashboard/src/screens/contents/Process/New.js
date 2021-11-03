@@ -44,9 +44,9 @@ class New extends React.Component {
         let resultSource = await Source.getSource(["smartobject", "module"])
         let resultEspace = await new Request().get().fetch("/api/espaces")
         if (resultSource.error) {
-            this.setState({ enabled: true, message: resultSource.code + " : " + resultSource.message })
+            this.setState({ enabled: true, message: resultSource.package + " : " + resultSource.message })
         } else if (resultEspace.error) {
-            this.setState({ enabled: true, message: resultEspace.code + " : " + resultEspace.message })
+            this.setState({ enabled: true, message: resultEspace.package + " : " + resultEspace.message })
         } else {
             this.setState({
                 enabled: false,
@@ -127,7 +127,7 @@ class New extends React.Component {
         }
         let result = await new Request().post(body).fetch("/api/process")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.props.history.push('/process')
         }

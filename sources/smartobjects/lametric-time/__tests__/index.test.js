@@ -19,21 +19,21 @@ describe(Package.name, () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "ok", error: false, message: "test-jest", data: {} })
+        expect(resultAction).toEqual({ package: Package.name, data: {} })
     })
 
     test('action not found', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test-no-found", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Action>NotFound>test-no-found", error: true, message: "Action not found 'test-no-found'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "Action not found 'test-no-found'" })
     })
 
     test('action throw', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest", throw: true })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Error>test", error: true, message: "An error has occurred when test '\"test-error\"'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "An error has occurred when test '\"test-error\"'" })
     })
 
     /* @intendant/hue-switch-smartobject */
@@ -51,7 +51,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getAllNotification", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -68,7 +68,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getAllNotification", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getAllNotification>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -86,7 +86,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getCurrentNotification", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -103,7 +103,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getCurrentNotification", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getCurrentNotification>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -121,7 +121,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getOneNotification", { notification: 1 })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -139,7 +139,7 @@ describe(Package.name, () => {
         let resultAction = await instanceSmartobject.action("getOneNotification", {})
         expect(resultAction).toEqual({
             error: true,
-            code: Package.name + ">getOneNotification>Missing>Notification",
+            package: Package.name,
             message: "Missing notification"
         })
     })
@@ -154,7 +154,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getOneNotification", { notification: 1 })
         expect(resultAction).toEqual({
-            code: Package.name + ">getOneNotification>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -172,7 +172,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getVolume", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -189,7 +189,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getVolume", { notification: 1 })
         expect(resultAction).toEqual({
-            code: Package.name + ">getVolume>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -207,7 +207,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("updateVolume", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -224,7 +224,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("updateVolume", { volume: 30 })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -241,7 +241,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("updateVolume", { notification: 1 })
         expect(resultAction).toEqual({
-            code: Package.name + ">updateVolume>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -259,7 +259,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getState", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -276,7 +276,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getState", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getState>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -294,7 +294,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getWifi", {})
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -311,7 +311,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getWifi", {})
         expect(resultAction).toEqual({
-            code: Package.name + ">getWifi>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -329,7 +329,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("deleteOneNotification", { notification: 1 })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -347,7 +347,7 @@ describe(Package.name, () => {
         let resultAction = await instanceSmartobject.action("deleteOneNotification", {})
         expect(resultAction).toEqual({
             error: true,
-            code: Package.name + ">deleteOneNotification>Missing>Notification",
+            package: Package.name,
             message: "Missing notification"
         })
     })
@@ -362,7 +362,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("deleteOneNotification", { notification: 1 })
         expect(resultAction).toEqual({
-            code: Package.name + ">deleteOneNotification>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -380,7 +380,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("sendNotification", { })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -397,7 +397,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("sendNotification", { })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}
@@ -414,7 +414,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("sendNotification", { })
         expect(resultAction).toEqual({
-            code: Package.name + ">sendNotification>invalidStatus>500",
+            package: Package.name,
             error: true,
             message: "Invalid status 500"
         })
@@ -432,7 +432,7 @@ describe(Package.name, () => {
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("getIcons", { })
         expect(resultAction).toEqual({
-            code: "ok",
+            package: Package.name,
             error: false,
             message: "",
             data: {}

@@ -17,21 +17,21 @@ describe(Package.name, () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "ok", error: false, message: "test-jest", data: {} })
+        expect(resultAction).toEqual({ package: Package.name, data: {} })
     })
 
     test('action not found', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test-no-found", { message: "test-jest" })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Action>NotFound>test-no-found", error: true, message: "Action not found 'test-no-found'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "Action not found 'test-no-found'" })
     })
 
     test('action throw', async () => {
         let smartobject = require('../index')
         let instanceSmartobject = new smartobject(settings, core, configuration)
         let resultAction = await instanceSmartobject.action("test", { message: "test-jest", throw: true })
-        expect(resultAction).toEqual({ code: "@intendant/smartobject>Error>test", error: true, message: "An error has occurred when test '\"test-error\"'" })
+        expect(resultAction).toEqual({ package: Package.name,message: "An error has occurred when test '\"test-error\"'" })
     })
 
     test('action throw settings', async () => {
@@ -39,7 +39,7 @@ describe(Package.name, () => {
         try {
             let instanceSmartobject = new smartobject({}, core, configuration)
             let resultAction = await instanceSmartobject.action("test", { message: "test-jest", throw: true })
-            expect(resultAction).toEqual({ code: "@intendant/smartobject>Error>test", error: true, message: "An error has occurred when test '\"test-error\"'" })
+            expect(resultAction).toEqual({ package: Package.name,message: "An error has occurred when test '\"test-error\"'" })
         } catch (error) {
             expect(error).toMatch('@intendant/smartobject>Missing settings>id');
         }

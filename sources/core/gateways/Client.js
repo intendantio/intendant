@@ -16,7 +16,7 @@ export default (app, core) => {
             } else {
                 return {
                     error: true,
-                    code: 'parametter-missing',
+                    package: Package.name,
                     message: 'Missing parametter'
                 }
             }

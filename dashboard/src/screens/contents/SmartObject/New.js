@@ -20,7 +20,7 @@ class NewSmartobject extends React.Component {
     async componentDidMount() {
         let resultType = await new Request().get().fetch("/api/configurations/smartobject")
         if (resultType.error) {
-            this.setState({ enabled: true, message: resultType.code + " : " + resultType.message })
+            this.setState({ enabled: true, message: resultType.package + " : " + resultType.message })
         } else {
             this.setState({
                 enabled: false,
@@ -64,7 +64,7 @@ class NewSmartobject extends React.Component {
             if (result.error) {
                 this.setState({
                     enabled: true,
-                    message: result.code + " : " + result.message
+                    message: result.package + " : " + result.message
                 })
             } else {
                 this.props.history.push('/smartobject')

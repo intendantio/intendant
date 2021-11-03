@@ -1,4 +1,5 @@
 import Controller from "./Controller"
+import Package from '../package.json'
 
 class Storage extends Controller {
 
@@ -10,7 +11,7 @@ class Storage extends Controller {
         try {
             return {
                 error: false,
-                code: 'ok',
+                package: Package.name,
                 message: '',
                 data: requestGetOne.data ? JSON.parse(requestGetOne.data.value) : requestGetOne.data
             }
@@ -18,7 +19,7 @@ class Storage extends Controller {
             await this.removeItem(id)
             return {
                 error: false,
-                code: 'ok',
+                package: Package.name,
                 message: '',
                 data: {}
             }
@@ -46,7 +47,7 @@ class Storage extends Controller {
         }
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: ''
         }
     }
@@ -58,7 +59,7 @@ class Storage extends Controller {
         }
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: ''
         }
     }
@@ -70,7 +71,7 @@ class Storage extends Controller {
         }
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: ''
         }
     }

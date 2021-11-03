@@ -48,7 +48,7 @@ class ExternalRecipe {
                     this.core.logger.warning(Package.name, "Program is missing")
                     return {
                         error: true,
-                        code: Package.name + ">getProgram>program>missing",
+                        package: Package.name,
                         message: "Program is missing"
                     }
                 } else {
@@ -64,14 +64,14 @@ class ExternalRecipe {
                     if (allProgram.length == 0) {
                         return {
                             error: true,
-                            code: Package.name + ">getProgram>program>missing",
+                            package: Package.name,
                             message: "Program is missing"
                         }
                     } else {
                         let program = allProgram[0]
                         return {
                             error: false,
-                            code: "ok",
+                            package: Package.name,
                             data: {
                                 title: program.title[0]
                             },
@@ -83,7 +83,7 @@ class ExternalRecipe {
                 this.core.logger.warning(Package.name, "Program is missing")
                 return {
                     error: true,
-                    code: Package.name + ">getProgram>program>missing",
+                    package: Package.name,
                     message: "Program is missing"
                 }
             }
@@ -91,7 +91,7 @@ class ExternalRecipe {
             this.core.logger.warning(Package.name, "Throw exception")
             return {
                 error: true,
-                code: Package.name + ">getProgram>throwException",
+                package: Package.name,
                 message: "Throw exception"
             }
         }
@@ -125,7 +125,7 @@ class ExternalRecipe {
             })
             return {
                 error: false,
-                code: "ok",
+                package: Package.name,
                 data: channels,
                 message: "",
             }
@@ -133,7 +133,7 @@ class ExternalRecipe {
             this.core.logger.warning(Package.name, "Throw exception")
             return {
                 error: true,
-                code: Package.name + ">getAllProgram>throwException",
+                package: Package.name,
                 message: "Throw exception"
             }
         }

@@ -36,7 +36,7 @@ class Routine extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok",
+            package: Package.name,
             data: arrRoutines
         }
     }
@@ -94,7 +94,7 @@ class Routine extends Controller {
             return {
                 error: true,
                 message: "Routine not found",
-                code: Package.name + ">Routine>NotFound"
+                package: Package.name
             }
         }
         let routine = routineRequest.data
@@ -114,7 +114,7 @@ class Routine extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok",
+            package: Package.name,
             data: routine
         }
     }
@@ -192,13 +192,13 @@ class Routine extends Controller {
             return {
                 error: true,
                 message: "Missing parameters",
-                code: Package.name + ">insert>missingParameters"
+                package: Package.name
             }
         }
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -214,7 +214,7 @@ class Routine extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -248,7 +248,7 @@ class Routine extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -260,7 +260,7 @@ class Routine extends Controller {
             return {
                 error: false,
                 message: "",
-                code: "ok"
+                package: Package.name
             }
         }
     }
@@ -279,7 +279,7 @@ class Routine extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok",
+            package: Package.name,
             data: {
                 triggers: triggers,
                 effects: effects

@@ -40,7 +40,7 @@ class Widget extends Controller {
             return {
                 error: true,
                 message: "Widget not found",
-                code: Package.name + ">Widget>NotFound"
+                package: Package.name
             }
         }
         let widget = requestWidget.data
@@ -86,7 +86,7 @@ class Widget extends Controller {
             content.native = content.content
             let extracts = this.extract(content.content)
             extracts.extracts.forEach(extract => {
-                let value = data.error ? data.code : _.get(data.data, extract.value)
+                let value = data.error ? data.package : _.get(data.data, extract.value)
                 if (Array.isArray(value) && content.type.reference == 'list') {
                     let _content = ""
                     value.forEach((_value, index) => {
@@ -138,7 +138,7 @@ class Widget extends Controller {
                 } else {
                     return {
                         error: true,
-                        code: Package.name + '>SmartobjectNotFound>' + smartobjectRequest.data.reference,
+                        package: Package.name,
                         message: "Smartobject not found"
                     }
                 }
@@ -153,13 +153,13 @@ class Widget extends Controller {
                 return {
                     error: true,
                     message: "Invalid type '" + action.type + "'",
-                    code: Package.name + '>Type>Invalid'
+                    package: Package.name
                 }
             }
         }
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: '',
             data: data
         }
@@ -182,7 +182,7 @@ class Widget extends Controller {
         }
         return {
             error: false,
-            code: 'ok',
+            package: Package.name,
             message: '',
             data: newWidget
         }
@@ -239,7 +239,7 @@ class Widget extends Controller {
                         }
                         return {
                             error: false,
-                            code: 'ok',
+                            package: Package.name,
                             message: ''
                         }
                     } else {
@@ -247,7 +247,7 @@ class Widget extends Controller {
                         return {
                             error: true,
                             message: "Missing sources action",
-                            code: "missing-sources-action"
+                            package: Package.name
                         }
                     }
                 } else {
@@ -255,7 +255,7 @@ class Widget extends Controller {
                     return {
                         error: true,
                         message: "Missing contents action",
-                        code: "missing-contents-action"
+                        package: Package.name
                     }
                 }
             } else {
@@ -263,7 +263,7 @@ class Widget extends Controller {
                 return {
                     error: true,
                     message: "Missing icon action",
-                    code: "missing-icon-action"
+                    package: Package.name
                 }
             }
         } else {
@@ -271,7 +271,7 @@ class Widget extends Controller {
             return {
                 error: true,
                 message: "Missing reference action",
-                code: "missing-reference-action"
+                package: Package.name
             }
         }
     }
@@ -288,15 +288,15 @@ class Widget extends Controller {
             }
             return {
                 error: false,
-                code: 'ok',
+                package: Package.name,
                 message: ''
             }
         } else {
-            this.core.logger.warning(Package.name + ">insertSettings>missingParameter", "Missing smartobject settings name")
+            this.core.logger.warning(Package.name, "Missing smartobject settings name")
             return {
                 error: true,
                 message: "Missing smartobject settings name",
-                code: Package.name + ">update>missingParameter"
+                package: Package.name
             }
         }
     }
@@ -330,7 +330,7 @@ class Widget extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -347,7 +347,7 @@ class Widget extends Controller {
                             return {
                                 error: true,
                                 message: "Widget not found",
-                                code: Package.name + ">widget>notFound"
+                                package: Package.name
                             }
                         }
                         let widgetSourceRequest = await this.sqlWidgetSource.insert({
@@ -375,14 +375,14 @@ class Widget extends Controller {
                         return {
                             error: false,
                             message: "",
-                            code: "ok"
+                            package: Package.name
                         }
                     } else {
                         this.core.logger.warning(Package.name, "Missing arguments")
                         return {
                             error: true,
                             message: "Missing arguments action",
-                            code: "missing-arguments-action"
+                            package: Package.name
                         }
                     }
                 } else {
@@ -390,7 +390,7 @@ class Widget extends Controller {
                     return {
                         error: true,
                         message: "Missing action action",
-                        code: "missing-action-action"
+                        package: Package.name
                     }
                 }
             } else {
@@ -398,7 +398,7 @@ class Widget extends Controller {
                 return {
                     error: true,
                     message: "Missing source action",
-                    code: "missing-source-action"
+                    package: Package.name
                 }
             }
         } else {
@@ -406,7 +406,7 @@ class Widget extends Controller {
             return {
                 error: true,
                 message: "Missing reference action",
-                code: "missing-reference-action"
+                package: Package.name
             }
         }
     }
@@ -422,7 +422,7 @@ class Widget extends Controller {
                     return {
                         error: true,
                         message: "Widget not found",
-                        code: Package.name + ">widget>notFound"
+                        package: Package.name
                     }
                 }
                 let widgetSourceRequest = await this.sqlWidgetContent.insert({
@@ -436,14 +436,14 @@ class Widget extends Controller {
                 return {
                     error: false,
                     message: "",
-                    code: "ok"
+                    package: Package.name
                 }
             } else {
                 this.core.logger.warning(Package.name, "Missing content")
                 return {
                     error: true,
                     message: "Missing content action",
-                    code: "missing-content-action"
+                    package: Package.name
                 }
             }
         } else {
@@ -451,7 +451,7 @@ class Widget extends Controller {
             return {
                 error: true,
                 message: "Missing type action",
-                code: "missing-type-action"
+                package: Package.name
             }
         }
     }
@@ -468,7 +468,7 @@ class Widget extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -480,7 +480,7 @@ class Widget extends Controller {
         return {
             error: false,
             message: "",
-            code: "ok"
+            package: Package.name
         }
     }
 
@@ -491,7 +491,7 @@ class Widget extends Controller {
         }
         return {
             error: false,
-            code: "ok",
+            package: Package.name,
             message: "",
             data: {
                 contents: {

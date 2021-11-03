@@ -26,7 +26,7 @@ class Routine extends React.Component {
         if (result.error) {
             this.setState({
                 enabled: true,
-                message: result.code + " : " + result.message
+                message: result.package + " : " + result.message
             })
         } else {
             this.setState({
@@ -41,7 +41,7 @@ class Routine extends React.Component {
     async delete(id) {
         let result = await new Request().delete().fetch("/api/routines/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -50,7 +50,7 @@ class Routine extends React.Component {
     async duplicate(id) {
         let result = await new Request().put().fetch("/api/routines/" + id + "/duplicate")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
@@ -59,7 +59,7 @@ class Routine extends React.Component {
     async updateStatus(id, status) {
         let result = await new Request().put({ status: status }).fetch("/api/routines/" + id + "/status")
         if (result.error) {
-            this.setState({ enabled: true, message: result.code + " : " + result.message })
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
             this.componentDidMount()
         }
