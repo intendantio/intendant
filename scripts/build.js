@@ -15,6 +15,7 @@ console.log()
 let updateRemove = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Delete cache ") + " /Build")
 fsextra.removeSync("./build")
 fsextra.removeSync("./public")
+fsextra.removeSync("./build-error.log")
 updateRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Delete cache") + chalk.green(" ✔"))
 
 fsextra.mkdirSync("./build/markets",{recursive: true})
@@ -42,7 +43,7 @@ pModule.forEach((modulec, index) => {
         })
     }
     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Build ") + modulec.module)
-    exec("cd scripts &&  babel ../sources" + modulec.path + " --out-dir ../build/" + folder +  "/" + modulec.module + " --config-file ./.babelrc",async  (error) => {
+    exec("cd scripts && ../node_modules/.bin/babel ../sources" + modulec.path + " --out-dir ../build/" + folder +  "/" + modulec.module + " --config-file ./.babelrc",async  (error) => {
         if (error) {
             fsextra.appendFileSync("./build-error.log", "Build " + modulec.module + " : " + error.signal)
             fsextra.appendFileSync("./build-error.log", error.stack)
@@ -51,8 +52,6 @@ pModule.forEach((modulec, index) => {
             if(modulec['publish-market']) {
                 await zipFolder.zip("./build/markets/" + modulec.module, "./public/" + modulec.module.replace("/","-") + ".zip")
             }
-
-
             update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
         }
     })

@@ -46,11 +46,6 @@ class Cache extends Controller {
     }
 
     async check() {
-        return {
-            error: false,
-            message: "",
-            code: "ok"
-        }
         let result = await this.sqlCache.execute("DELETE FROM `cache` WHERE expiry < DATE:NOW")
         if (result.error) {
             return result

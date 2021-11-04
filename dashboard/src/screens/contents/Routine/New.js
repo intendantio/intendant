@@ -80,6 +80,7 @@ class NewRoutine extends React.Component {
     }
 
     updateWatch(watch) {
+        console.log(watch)
         let routine = this.state.routine
         routine.watch = watch
         this.setState({ routine: routine })
@@ -221,14 +222,14 @@ class NewRoutine extends React.Component {
                             </div>
                             {
                                 this.state.mode == 'counter' ?
-                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
-                                        <div style={{ display: 'flex', paddingTop: 15, paddingBottom: 15, paddingLeft: 15, paddingRight: 15 }}>
+                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                        <div style={{ display: 'flex', paddingTop: 15, paddingBottom: 15, paddingLeft: 5, paddingRight: 5 }}>
                                             <div style={{ flex: 1 }}>
                                                 <IconButton size='small' onClick={() => { this.setState({ mode: 'week' }) }} variant='outlined'>
                                                     <Cached />
                                                 </IconButton>
                                             </div>
-                                            <div style={{ display: 'flex', flex: 15, justifyContent: 'center' }}>
+                                            <div style={{ display: 'flex', flex: 20, justifyContent: 'center' }}>
                                                 <Slider
                                                     defaultValue={0}
                                                     valueLabelDisplay="auto"
@@ -242,7 +243,7 @@ class NewRoutine extends React.Component {
                                             </div>
                                         </div>
                                     </div> :
-                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25,  borderColor: 'rgba(255, 255, 255, 0.23)' }}>
                                         <WeekSchedul onChange={(value) => { this.updateWatch(value) }} onChangeMode={() => { this.setState({ mode: 'counter' }) }} />
                                     </div>
                             }

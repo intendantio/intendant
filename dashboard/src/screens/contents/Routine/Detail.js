@@ -221,8 +221,8 @@ class NewRoutine extends React.Component {
                             </div>
                             {
                                 this.state.mode == 'counter' ?
-                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, marginRight: 10, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
-                                        <div style={{ display: 'flex', paddingTop: 15, paddingBottom: 15, paddingLeft: 15, paddingRight: 15 }}>
+                                    <div style={{ marginBottom: 10, marginTop: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                        <div style={{ display: 'flex', paddingTop: 15, paddingBottom: 15, paddingLeft: 5, paddingRight: 5 }}>
                                             <div style={{ flex: 1 }}>
                                                 <IconButton size='small' onClick={() => { this.setState({ mode: 'week' }) }} variant='outlined'>
                                                     <Cached />

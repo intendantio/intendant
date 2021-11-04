@@ -1,4 +1,4 @@
-declare module '@intendant/connector' {
+declare module "@intendant/connector" {
 
     class Connector {
         constructor();
@@ -14,6 +14,7 @@ declare module '@intendant/connector' {
         public insert(fields: Object): Promise<any>;
         public update(fields: Object): Promise<any>;
     }
+    
+    export default Connector
 
-    export = Connector
 }
