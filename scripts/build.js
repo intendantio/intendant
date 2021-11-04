@@ -16,6 +16,7 @@ let updateRemove = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Del
 fsextra.removeSync("./build-error.log")
 fsextra.removeSync("./build")
 fsextra.removeSync("./public")
+fsextra.removeSync("./build-error.log")
 updateRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Delete cache") + chalk.green(" ✔"))
 
 fsextra.mkdirSync("./build/markets",{recursive: true})
@@ -52,8 +53,6 @@ pModule.forEach((modulec, index) => {
             if(modulec['publish-market']) {
                 await zipFolder.zip("./build/markets/" + modulec.module, "./public/" + modulec.module.replace("/","-") + ".zip")
             }
-
-
             update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
         }
     })

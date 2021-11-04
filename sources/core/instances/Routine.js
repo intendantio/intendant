@@ -191,8 +191,8 @@ class Routine {
                 new ToadScheduler.SimpleIntervalJob({ seconds: parseInt(this.watch) }, task)
             )
         } else if (this.mode == "week") {
-
             Schedule.scheduleJob(this.watch,async () => {
+                this.logger.verbose(Package.name, "Routine n° " + this.id + " trigger")
                 let isValidTest = true
                 for (let indexTrigger = 0; indexTrigger < this.triggers.length; indexTrigger++) {
                     let trigger = this.triggers[indexTrigger]
@@ -360,7 +360,6 @@ class Routine {
                         }
                     }
                 }
-                console.log("Execute")
             })
         }
 

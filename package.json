@@ -6,6 +6,9 @@
   "author": "Clément MERLET",
   "license": "MIT",
   "useWorkspaces": true,
+
+
+  "files": ["./sources/**/*"],
   "scripts": {
     "build": "node ./scripts/build",
     "test": "jest",
@@ -22,8 +25,6 @@
   },
   "dependencies": {
     "@babel/preset-env": "^7.14.4",
-    "babel-plugin-add-module-exports": "^1.0.4",
-    "babel-preset-minify": "^0.5.1",
     "better-sqlite3": "^7.4.3",
     "chalk": "^4.1.1",
     "crypto-js": "^4.1.1",

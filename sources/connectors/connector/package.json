@@ -1,6 +1,7 @@
 {
     "name": "@intendant/connector",
     "main": "./index.js",
+    "types": "./index.d.ts",
     "version": "0.0.17",
     "author": "Clément MERLET",
     "license": "apache-2.0",

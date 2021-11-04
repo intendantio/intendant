@@ -15,5 +15,7 @@ declare module '@intendant/connector' {
         public update(fields: Object): Promise<any>;
     }
 
-    export = Connector
+    export default Connector
+
 }
+

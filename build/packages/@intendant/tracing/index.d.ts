@@ -4,5 +4,6 @@ declare module '@intendant/tracing' {
         public static warning(object: String, message: String): Boolean;
         public static error(object: String, message: String): Boolean;
     }
-    export = Log
+    
+    export default Log
 }
