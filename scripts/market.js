@@ -13,8 +13,8 @@ update(chalk.white.bold.bgYellow(" >> ") + chalk(" git add ./public/* "))
 exec("git reset", () => {
     update(chalk.white.bold.bgYellow(" >> ") + chalk(" git add ./public/* "))
     exec("git add ./public/*", () => {
-        update(chalk.white.bold.bgYellow(" >> ") + chalk(" git commit -m 'Market - Auto update module & smartobject' ") )
-        exec('git commit -m "Market - Auto update module & smartobject"', () => {
+        update(chalk.white.bold.bgYellow(" >> ") + chalk(" git commit -m 'Publish - Update package' ") )
+        exec('git commit -m "Publish - Update package"', () => {
             update(chalk.white.bold.bgYellow(" >> ") + chalk(" git push "))
             exec("git push", () => {
                 update(chalk.white.bold.bgGreen(" >> ") + chalk(" Module publish ") + chalk.bold.green(" ✔"))

@@ -38,22 +38,13 @@ class Module extends React.Component {
                                         Identifiant
                                     </Typography>
                                 </TableCell>
-                                <TableCell align='left'>
-                                    <Typography variant='body1'>
-                                        Name
-                                    </Typography>
-                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {this.state.modules.slice(this.state.page * 10, (this.state.page + 1) * 10).map((pmodule) => (
-                                <Link to={"/module/" + md5(pmodule.id)} style={{ textDecoration: 'none', color: 'white', display: 'contents' }}>
+                                <Link to={"/module/" + md5(pmodule.name)} style={{ textDecoration: 'none', color: 'white', display: 'contents' }}>
                                     <TableRow hover key={pmodule.reference} style={{ cursor: 'pointer' }}>
                                         <TableCell align="left">
-                                            <Typography variant='body1'>
-                                                {pmodule.id}
-                                            </Typography>
-                                        </TableCell><TableCell align="left">
                                             <Typography variant='body1'>
                                                 {pmodule.name}
                                             </Typography>

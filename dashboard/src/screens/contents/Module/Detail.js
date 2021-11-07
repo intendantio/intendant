@@ -34,7 +34,7 @@ class Detail extends React.Component {
         } else {
             let _module = false
             result.data.forEach(pModule => {
-                if (md5(pModule.id) == this.state.hashId) {
+                if (md5(pModule.name) == this.state.hashId) {
                     _module = pModule
                 }
             })
@@ -60,7 +60,7 @@ class Detail extends React.Component {
             }
             tmp[argument.id] = value
         }
-        let result = await new Request().post({ settings: tmp, reference: this.state.module.reference }).fetch("/api/modules/" + md5(this.state.module.id) + "/actions/" + action)
+        let result = await new Request().post({ settings: tmp, reference: this.state.module.reference }).fetch("/api/modules/" + md5(this.state.module.name) + "/actions/" + action)
         if (result.error) {
             this.setState({
                 enabled: true,
@@ -84,17 +84,16 @@ class Detail extends React.Component {
                     <Paper elevation={2} style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
                         <div style={{ padding: 10 }}>
                             <Typography variant='h4' >
-                                {this.state.module.id}
+                                {this.state.module.name.split("/")[1]}
                             </Typography>
                             <Typography variant='subtitle1' >
-                                {this.state.module.module}
+                                {this.state.module.name}
                             </Typography>
                         </div>
                         <Divider />
                         <div style={{ padding: 10, paddingBottom: 0 }}>
                             {
                                 this.state.module.actions.map(action => {
-                                    console.log(action.id)
                                     return (
                                         <Paper style={{ marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', padding: 10 }}>
                                             <Button disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={this.state.loading == action.id ? 'contained' : 'outlined'} style={{ width: '250px', height: '100%' }} >

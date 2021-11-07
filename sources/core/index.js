@@ -17,11 +17,13 @@ import Math from './controllers/tools/Math'
 import SmartObjectManager from './managers/Smartobject'
 import ModulesManager from './managers/Modules'
 import RoutineManager from './managers/Routine'
+import Connector from './connector'
+import Tracing from './tracing'
 
 import fs from 'fs'
 
 class Core {
-    constructor(configuration, connector, logger) {
+    constructor(configuration) {
         if (configuration.tracing == undefined) {
             logger.verbose = () => { }
             logger.warning = () => { }
@@ -37,11 +39,12 @@ class Core {
                 logger.error = () => { }
             }
         }
-        logger.verbose(Package.name, "Start Core")
         this.configuration = configuration
-        this.logger = logger
-        this.connector = connector
+        this.logger = Tracing
+        this.connector = Connector
         this.salt = Math.random(16)
+
+        this.logger.verbose(Package.name, "Start Core")
 
         this.prepare()
 
@@ -73,16 +76,13 @@ class Core {
     prepare() {
         this.configuration.smartobjects = []
         this.configuration.modules = []
-        if(fs.existsSync("./.intendant") == false) {
-            fs.mkdirSync("./.intendant/@intendant",{recursive: true})
-        }
         let dirsModule = fs.readdirSync('./.intendant/@intendant')
         for (let dir = 0; dir < dirsModule.length; dir++) {
-            let currentConfiguration = JSON.parse(fs.readFileSync('./.intendant/@intendant/' + dirsModule[dir] + "/configuration.json").toString())
-            if(currentConfiguration.type == "smartobject") {
-                this.configuration.smartobjects.push(currentConfiguration.id)
-            } else if(currentConfiguration.type == "module") {
-                this.configuration.modules.push(currentConfiguration.id)
+            let currentConfiguration = JSON.parse(fs.readFileSync('./.intendant/@intendant/' + dirsModule[dir] + "/package.json").toString())
+            if(currentConfiguration.module == "smartobject") {
+                this.configuration.smartobjects.push(currentConfiguration.name)
+            } else if(currentConfiguration.module == "module") {
+                this.configuration.modules.push(currentConfiguration.name)
             }
         }
     }

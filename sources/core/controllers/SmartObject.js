@@ -369,7 +369,7 @@ class SmartObject extends Controller {
         let modules = []
         this.core.configuration.smartobjects.forEach(pModule => {
             try {
-                let configuration = require(pModule + "/configuration.json")
+                let configuration = require(pModule + "/Package.json")
                 modules.push(configuration)
             } catch (error) {
                 this.core.logger.warning(Package.name, "Impossible get configuration in " + pModule + " module")

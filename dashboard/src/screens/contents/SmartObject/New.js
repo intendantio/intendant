@@ -30,9 +30,9 @@ class NewSmartobject extends React.Component {
         }
     }
 
-    setModule(id) {
+    setModule(name) {
         this.state.types.forEach(pModule => {
-            if (pModule.id === id) {
+            if (pModule.name === name) {
                 this.setState({
                     module: pModule
                 })
@@ -60,7 +60,7 @@ class NewSmartobject extends React.Component {
                     value: this.state["settings-" + setting.name] ? this.state["settings-" + setting.name] : ""
                 })
             }
-            let result = await new Request().post({ module: this.state.module.id, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
+            let result = await new Request().post({ module: this.state.module.name, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
             if (result.error) {
                 this.setState({
                     enabled: true,
@@ -81,10 +81,10 @@ class NewSmartobject extends React.Component {
                             <TextField onChange={(event) => { this.setState({ reference: event.nativeEvent.target.value }) }} style={{ width: '150px', marginRight: 10 }} label="Reference" variant="outlined" />
                             <FormControl variant="outlined" style={{ marginRight: 10, width: '300px' }} >
                                 <InputLabel>Module</InputLabel>
-                                <Select value={this.state.module.id} onChange={(event) => { this.setModule(event.target.value) }} label="Connexion" >
+                                <Select value={this.state.module.name} onChange={(event) => { this.setModule(event.target.value) }} label="Connexion" >
                                     {
                                         this.state.types.map(pModule => {
-                                            return <MenuItem value={pModule.id} >{pModule.name}</MenuItem>
+                                            return <MenuItem value={pModule.name} >{pModule.name}</MenuItem>
                                         })
                                     }
                                 </Select>

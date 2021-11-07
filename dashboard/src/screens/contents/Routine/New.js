@@ -80,7 +80,6 @@ class NewRoutine extends React.Component {
     }
 
     updateWatch(watch) {
-        console.log(watch)
         let routine = this.state.routine
         routine.watch = watch
         this.setState({ routine: routine })

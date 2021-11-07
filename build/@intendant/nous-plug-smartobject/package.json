@@ -1,0 +1,79 @@
+{
+    "name": "@intendant/nous-plug-smartobject",
+    "main": "./index.js",
+    "author": "Clément MERLET",
+    "license": "apache-2.0",
+    "dependencies": {
+        "@intendant/smartobject": "latest",
+        "node-fetch": "^2.6.1",
+        "crypto-js": "^4.1.1"
+    },
+    "module": "smartobject",
+    "icon": "bulb-outline",
+    "settings": [
+        {
+            "id": "id",
+            "type": "string",
+            "name": "Plug identifiant"
+        },
+        {
+            "id": "client",
+            "type": "string",
+            "name": "Client identifiant"
+        },
+        {
+            "id": "secret",
+            "type": "string",
+            "name": "Secret authorisation"
+        },
+        {
+            "id": "domain",
+            "type": "string",
+            "name": "API domain"
+        }
+    ],
+    "actions": [
+        {
+            "id": "turnOn",
+            "name": "Turn on plug",
+            "description": "Turn on plug",
+            "settings": [
+                {
+                    "id": "code",
+                    "type": "select",
+                    "default": "switch_1",
+                    "values": [
+                        "switch_1",
+                        "switch_2",
+                        "switch_3",
+                        "switch_usb1"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "turnOff",
+            "name": "Turn off plug",
+            "description": "Turn off plug",
+            "settings": [
+                {
+                    "id": "code",
+                    "type": "select",
+                    "default": "switch_1",
+                    "values": [
+                        "switch_1",
+                        "switch_2",
+                        "switch_3",
+                        "switch_usb1"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "getState",
+            "name": "Get plug state",
+            "description": "Get plug state",
+            "settings": []
+        }
+    ]
+}

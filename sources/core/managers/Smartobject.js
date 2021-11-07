@@ -61,7 +61,7 @@ class Manager {
             if (this.configuration.smartobjects.includes(smartobject.module)) {
                 try {
                     let Module = require(require('path').resolve('./') + "/.intendant/" + smartobject["module"] + "/index.js")
-                    let moduleConfiguration = require(require('path').resolve('./') + "/.intendant/" + smartobject["module"] + "/configuration.json")
+                    let moduleConfiguration = require(require('path').resolve('./') + "/.intendant/" + smartobject["module"] + "/Package.json")
                     let instanceSmartObject = new Module(pSettings, this.core, moduleConfiguration)
                     let resultUpdateRequest = await sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
                     if (resultUpdateRequest.error) {
@@ -103,7 +103,7 @@ class Manager {
         let smartobjects = []
         this.configuration.smartobjects.forEach(smartobject => {
             try {
-                let configuration = require(require('path').resolve('./') + "/.intendant/" +  smartobject + "/configuration.json")
+                let configuration = require(require('path').resolve('./') + "/.intendant/" +  smartobject + "/Package.json")
                 smartobjects.push(configuration)
             } catch (error) {
                 this.core.logger.warning(Package.name, "Impossible get configuration in " + smartobject + " module")

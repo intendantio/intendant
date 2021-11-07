@@ -265,28 +265,6 @@ class Routine extends Controller {
         }
     }
 
-    getConfiguration() {
-        let triggers = []
-        let effects = []
-        this.core.configuration.routines.triggers.forEach(trigger => {
-            let pTrigger = require(trigger + "/configuration.json")
-            triggers.push(pTrigger)
-        })
-        this.core.configuration.routines.effects.forEach(effect => {
-            let pEffect = require(effect + "/configuration.json")
-            effects.push(pEffect)
-        })
-        return {
-            error: false,
-            message: "",
-            package: Package.name,
-            data: {
-                triggers: triggers,
-                effects: effects
-            }
-        }
-    }
-
 }
 
 export default Routine

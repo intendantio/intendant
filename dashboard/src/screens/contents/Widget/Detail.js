@@ -360,8 +360,6 @@ class Widget extends React.Component {
                                                                 />
                                                                 {
                                                                     content.content.split("\n").map(_content => {
-                                                                        console.log(this.state.needSave)
-                                                                        console.log(index)
                                                                         return (
                                                                             <Typography variant='body1' color={this.state.needSave == index ? 'primary' : 'inherit'} style={{ fontWeight: _content.type == 'title' ? 'bold' : 'normal' }}>
                                                                                 {_content}

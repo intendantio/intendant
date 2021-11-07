@@ -1,9 +1,7 @@
-const configuration = require('./intendant.json') 
-const console = require('@intendant/console-tracing')
+const configuration = require('./intendant.json')
 const core = require('@intendant/core')
-const connector = require('@intendant/sqlite-connector')
 const api = require('@intendant/core/gateways')
 
 api.initialisation(
-    new core(configuration,connector,console)
+    new core(configuration)
 )

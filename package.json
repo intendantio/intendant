@@ -1,21 +1,14 @@
 {
   "name": "intendant",
-  "version": "0.0.1",
   "repository": "https://github.com/intendantio/intendant",
   "private": "true",
   "author": "Clément MERLET",
-  "license": "MIT",
-  "useWorkspaces": true,
-
-
+  "license": "apache-2.0",
   "files": ["./sources/**/*"],
   "scripts": {
     "build": "node ./scripts/build",
-    "test": "jest",
     "market": "node ./scripts/market",
-    "dev": "node ./scripts/development && cd ./.dev && node index",
-    "dev-documentation": "cd documentation && npm run-script start",
-    "npm-publish": "node ./scripts/publish"
+    "dev": "node ./scripts/development && cd ./.dev && node index"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",

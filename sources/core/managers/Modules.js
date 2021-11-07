@@ -65,7 +65,7 @@ class Modules {
         let modules = []
         this.configuration.modules.forEach(pModule => {
             try {
-                let configuration = require(require('path').resolve('./') + "/.intendant/" + pModule + "/configuration.json")
+                let configuration = require(require('path').resolve('./') + "/.intendant/" + pModule + "/Package.json")
                 modules.push(configuration)
             } catch (error) {
                 this.core.logger.error(Package.name, "Impossible get configuration in " + pModule + " module")

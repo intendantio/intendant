@@ -13,7 +13,7 @@ class Market extends Controller {
         let resultMarketJSON = await resultMarket.json()
 
         resultMarketJSON = resultMarketJSON.filter(item => {
-            return item.package == pPackage
+            return item.name == pPackage
         })
 
         if(resultMarketJSON.length == 0) {

@@ -1,0 +1,7 @@
+{
+  "name": "@intendant/smartobject",
+  "main": "./index.js",
+  "module": "smartobject",
+  "author": "Clément MERLET",
+  "license": "apache-2.0"
+}

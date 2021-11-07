@@ -1,6 +1,5 @@
 {
   "name": "@intendant/dashboard",
-  "version": "0.0.1",
   "homepage": "/admin/",
   "dependencies": {
     "@material-ui/core": "^4.11.3",

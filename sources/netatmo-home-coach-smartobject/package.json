@@ -1,0 +1,56 @@
+{
+    "name": "@intendant/netatmo-home-coach-smartobject",
+    "main": "./index.js",
+    "typings": "./index.d.ts",
+    "module": "smartobject",
+    "icon": "sun-outline",
+    "author": "Clément MERLET",
+    "license": "apache-2.0",
+    "dependencies": {
+        "@intendant/smartobject": "latest",
+        "node-fetch": "^2.6.1",
+        "form-data": "^4.0.0"
+    },
+    "settings": [
+        {
+            "id": "clientId",
+            "type": "string",
+            "name": "Client id"
+        },
+        {
+            "id": "clientSecret",
+            "type": "string",
+            "name": "Client secret"
+        },
+        {
+            "id": "token",
+            "type": "string",
+            "name": "Refresh token"
+        },
+        {
+            "id": "device",
+            "type": "string",
+            "name": "Device id"
+        }
+    ],
+    "actions": [
+        {
+            "id": "dashboard",
+            "name": "Dashboard",
+            "description": "Get dashboard data",
+            "settings": []
+        },
+        {
+            "id": "configuration",
+            "name": "Configuration",
+            "description": "Get configuration",
+            "settings": []
+        },
+        {
+            "id": "place",
+            "name": "Place",
+            "description": "Get place",
+            "settings": []
+        }
+    ]
+}

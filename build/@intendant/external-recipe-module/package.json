@@ -1,0 +1,25 @@
+{
+    "name": "@intendant/external-recipe-module",
+    "main": "./index.js",
+    "author": "Clément MERLET",
+    "license": "apache-2.0",
+    "dependencies": {
+        "node-fetch": "^2.6.1",
+        "match-all": "^1.2.6"
+    },
+    "module": "module",
+    "actions": [
+        {
+            "id": "getRecipe",
+            "name": "Get Recipe",
+            "description": "",
+            "settings": [
+                {
+                    "id": "recipe",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        }
+    ]
+}

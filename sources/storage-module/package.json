@@ -1,0 +1,38 @@
+{
+    "name": "@intendant/internal-storage-module",
+    "main": "./index.js",
+    "author": "Clément MERLET",
+    "license": "apache-2.0",
+    "module": "module",
+    "actions": [
+        {
+            "id": "getItem",
+            "name": "Get item",
+            "description": "Get item in storage",
+            "settings": [
+                {
+                    "id": "reference",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        },
+        {
+            "id": "setItem",
+            "name": "Set item",
+            "description": "Set item in storage",
+            "settings": [
+                {
+                    "id": "reference",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "value",
+                    "type": "text",
+                    "default": ""
+                }
+            ]
+        }
+    ]
+}
