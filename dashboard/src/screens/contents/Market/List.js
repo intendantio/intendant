@@ -16,14 +16,16 @@ class Configuration extends React.Component {
             message: "",
             markets: [],
             pageMarket: 0,
-            severity: "error"
+            severity: "error",
+            loading: false
         }
     }
 
     async install(pPackage) {
+        this.setState({loading: true})
         let result = await new Request().post({ package: pPackage }).fetch("/api/markets/install")
         if (result.error) {
-            this.setState({ severity: "error",enabled: true, message: result.package + " : " + result.message })
+            this.setState({loading: false, severity: "error",enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({severity: "info", enabled: true, message: pPackage + " was installed" })
             this.componentDidMount()
@@ -31,9 +33,10 @@ class Configuration extends React.Component {
     }
 
     async uninstall(pPackage) {
+        this.setState({loading: true})
         let result = await new Request().post({ package: pPackage }).fetch("/api/markets/uninstall")
         if (result.error) {
-            this.setState({severity: "error", enabled: true, message: result.package + " : " + result.message })
+            this.setState({loading: false,severity: "error", enabled: true, message: result.package + " : " + result.message })
         } else {
             this.setState({severity: "info", enabled: true, message: pPackage + " was removed" })
             this.componentDidMount()
@@ -58,7 +61,7 @@ class Configuration extends React.Component {
         })
         resultModule.data.forEach(pModule => {
             resultMarket = resultMarket.map(market => {
-                if (market.package == pModule.id) {
+                if (market.name == pModule.name) {
                     market.alreadyInstall = true
                 }
 
@@ -67,14 +70,14 @@ class Configuration extends React.Component {
         })
         resultSmartobject.data.forEach(pModule => {
             resultMarket = resultMarket.map(market => {
-                if (market.package == pModule.id) {
+                if (market.name == pModule.name) {
                     market.alreadyInstall = true
                 }
 
                 return market
             })
         })
-        this.setState({ markets: resultMarket.filter(market => { return market.type == this.state.id }) })
+        this.setState({ markets: resultMarket.filter(market => { return market.name.includes("smartobject") }) })
         if (resultModule.error) {
             this.setState({ severity: "error",enabled: true, message: resultModule.package + " : " + resultModule.message })
         } else if (resultSmartobject.error) {
@@ -82,6 +85,7 @@ class Configuration extends React.Component {
         } else {
             this.setState({ modules: resultModule.data, smartobjects: resultSmartobject.data })
         }
+        this.setState({loading: false})
     }
 
     render() {
@@ -123,11 +127,11 @@ class Configuration extends React.Component {
                                         <Typography variant='body1'>
                                             {
                                                 pmodule.alreadyInstall ?
-                                                    <Button size='small' startIcon={<Close />} onClick={() => {this.uninstall(pmodule.package)}} variant="outlined" >
+                                                    <Button disabled={this.state.loading} size='small' startIcon={<Close />} onClick={() => {this.uninstall(pmodule.name)}} variant="outlined" >
                                                         Remove
                                                     </Button>
                                                     :
-                                                    <Button size='small' startIcon={<GetApp />} onClick={() => {this.install(pmodule.package)}} variant="outlined" disableElevation  >
+                                                    <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => {this.install(pmodule.name)}} variant="outlined" disableElevation  >
                                                         Install
                                                     </Button>
                                             }

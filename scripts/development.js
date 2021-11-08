@@ -77,41 +77,7 @@ const _ = async function () {
         })
 
     } else {
-        for (let rawIndex = 0; rawIndex < resultJSON.length; rawIndex++) {
-            if (fs.existsSync("./build/" + resultJSON[rawIndex].name)) {
-
-
-                let downloadUpdate = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy ") + resultJSON[rawIndex].name)
-
-                let configuration = JSON.parse(fs.readFileSync("./build/" + resultJSON[rawIndex].name + "/package.json"))
-                if (configuration.module != "core") {
-
-                fs.mkdirSync("./.dev/.intendant/" + resultJSON[rawIndex].name, { recursive: true })
-
-                
-                    fsextra.copySync("./build/" + resultJSON[rawIndex].name, ".dev/.intendant/" + resultJSON[rawIndex].name + "/", { recursive: true })
-                    let tmpPackage = JSON.parse(fs.readFileSync(require('path').resolve('./') + "/.dev/package.json").toString())
-                    let currentPackage = JSON.parse(fs.readFileSync(require('path').resolve('./') + "/.dev/.intendant/" + resultJSON[rawIndex].name + "/package.json").toString())
-                    for (let key in currentPackage.dependencies) {
-                        let dependencie = currentPackage.dependencies[key]
-                        let findInCurrent = false
-                        for (let tmpKey in tmpPackage.dependencies) {
-                            let tmpDependencie = tmpPackage.dependencies[tmpKey]
-                            if (key == tmpKey) {
-                                findInCurrent = tmpDependencie
-                            }
-                        }
-                        if (findInCurrent) { } else {
-                            tmpPackage.dependencies[key] = dependencie
-                        }
-                    }
-                    fs.writeFileSync(require('path').resolve('./') + "/.dev/package.json", JSON.stringify(tmpPackage), null, 4)
-                    downloadUpdate(chalk.white.bold.bgGreen(" >> ") + chalk(" Copy ") + chalk.green(" ✔"))
-                } else {
-                    downloadUpdate(chalk.white.bold.bgGreen(" >> ") + chalk(" Copy ") + chalk.green(" ✔"))
-                }
-            }
-        }
+       
         let downloadModule = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Install dependencies "))
 
         exec("cd ./.dev && yarn", (err, std, sder) => {

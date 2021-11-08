@@ -46,7 +46,6 @@ class Core {
 
         this.logger.verbose(Package.name, "Start Core")
 
-        this.prepare()
 
         /* Controller */
         this.controller = {}
@@ -71,21 +70,6 @@ class Core {
             this.manager.module = new ModulesManager(this)
         }, 100)
 
-    }
-
-    prepare() {
-        fs.mkdirSync(require('path').resolve('./') + '/.intendant/@intendant',{recursive: true})
-        this.configuration.smartobjects = []
-        this.configuration.modules = []
-        let dirsModule = fs.readdirSync(require('path').resolve('./') + '/.intendant/@intendant')
-        for (let dir = 0; dir < dirsModule.length; dir++) {
-            let currentConfiguration = JSON.parse(fs.readFileSync(require('path').resolve('./') + '/.intendant/@intendant/' + dirsModule[dir] + "/package.json").toString())
-            if (currentConfiguration.module == "smartobject") {
-                this.configuration.smartobjects.push(currentConfiguration.name)
-            } else if (currentConfiguration.module == "module") {
-                this.configuration.modules.push(currentConfiguration.name)
-            }
-        }
     }
 
 }

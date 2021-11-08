@@ -7,7 +7,7 @@
     "module": "smartobject",
     "icon": "radio-outline",
     "dependencies": {
-        "@intendant/smartobject": "latest",
+        "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-smartobject-0.0.1.tgz", 
         "node-fetch": "^2.6.1"
     },
     "settings": [

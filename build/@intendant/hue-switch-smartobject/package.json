@@ -38,7 +38,7 @@
         }
     ],
     "dependencies": {
-        "@intendant/smartobject": "latest",
+        "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-smartobject-0.0.1.tgz", 
         "moment": "^2.29.1",
         "node-fetch": "^2.6.1"
     }

@@ -7,6 +7,7 @@ class Manager {
         this.connector = core.connector
         this.logger = core.logger
         this.configuration = core.configuration
+        this.installSmartobjects = []
         this.logger.verbose(Package.name, "Start Manager")
         this.smartobjects = new Map()
         this.before()
@@ -37,7 +38,8 @@ class Manager {
 
     async restart() {
         this.core.logger.verbose(Package.name, "Restart Smartobject Manager")
-        await this.initialisation()
+        this.smartobjects = new Map()
+        await this.before()
     }
 
     async instanciate(smartobject) {
@@ -58,10 +60,10 @@ class Manager {
                 pSettings[setting.reference] = setting.value
             }
 
-            if (this.configuration.smartobjects.includes(smartobject.module)) {
+            if (this.installSmartobjects.includes(smartobject.module)) {
                 try {
-                    let Module = require(require('path').resolve('./') + "/.intendant/" + smartobject["module"] + "/index.js")
-                    let moduleConfiguration = require(require('path').resolve('./') + "/.intendant/" + smartobject["module"] + "/Package.json")
+                    let Module = require(smartobject["module"])
+                    let moduleConfiguration = require(smartobject["module"] + "/Package.json")
                     let instanceSmartObject = new Module(pSettings, this.core, moduleConfiguration)
                     let resultUpdateRequest = await sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
                     if (resultUpdateRequest.error) {
@@ -101,9 +103,9 @@ class Manager {
     getAll() {
         this.core.logger.verbose(Package.name, "Get all smartobject")
         let smartobjects = []
-        this.configuration.smartobjects.forEach(smartobject => {
+        this.installSmartobjects.forEach(smartobject => {
             try {
-                let configuration = require(require('path').resolve('./') + "/.intendant/" +  smartobject + "/Package.json")
+                let configuration = require(smartobject + "/Package.json")
                 smartobjects.push(configuration)
             } catch (error) {
                 this.core.logger.warning(Package.name, "Impossible get configuration in " + smartobject + " module")

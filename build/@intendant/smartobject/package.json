@@ -2,6 +2,7 @@
   "name": "@intendant/smartobject",
   "main": "./index.js",
   "module": "smartobject",
+  "version": "0.0.1",
   "author": "Clément MERLET",
   "license": "apache-2.0"
 }
