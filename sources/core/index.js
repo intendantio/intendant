@@ -78,7 +78,7 @@ class Core {
         this.configuration.modules = []
         let dirsModule = fs.readdirSync('./.intendant/@intendant')
         for (let dir = 0; dir < dirsModule.length; dir++) {
-            let currentConfiguration = JSON.parse(fs.readFileSync('./.intendant/@intendant/' + dirsModule[dir] + "/package.json").toString())
+            let currentConfiguration = JSON.parse(fs.readFileSync(require('path').resolve('./') + '/.intendant/@intendant/' + dirsModule[dir] + "/package.json").toString())
             if (currentConfiguration.module == "smartobject") {
                 this.configuration.smartobjects.push(currentConfiguration.name)
             } else if (currentConfiguration.module == "module") {

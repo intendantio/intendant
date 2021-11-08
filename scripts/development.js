@@ -62,12 +62,6 @@ const _ = async function () {
             fs.writeFileSync(require('path').resolve('./') + "/.dev/package.json", JSON.stringify(tmpPackage), null, 4)
             downloadUpdate(chalk.white.bold.bgGreen(" >> ") + chalk(" Download ") + chalk.green(" ✔"))
         }
-
-
-
-
-
-
         let downloadModule = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Install dependencies "))
 
         exec("cd ./.dev && yarn", (err, std, sder) => {

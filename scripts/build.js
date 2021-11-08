@@ -7,7 +7,6 @@ DraftLog(console)
 const { exec } = require('child_process')
 const fsextra = require('fs-extra')
 const fs = require('fs')
-const zipFolder = require('zip-a-folder')
 console.log()
 console.log(chalk.white.bold.bgMagenta(" Intendant - Build "))
 console.log()
@@ -33,7 +32,7 @@ exec("git describe --tags --abbrev=0", (err, stdout, stderr) => {
             version: currentTag.replace("\n", ""),
             name: configuration.name,
             type: configuration.module,
-            raw: "https://raw.githubusercontent.com/intendantio/intendant/main/public/" + configuration.name.split("/")[1] + ".zip"
+            raw: "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-" + configuration.name.split("/")[1] + "-" + configuration.version +".tgz"
         })
         update(chalk.white.bold.bgYellow(" >> ") + chalk(" Build ") + pModule)
         exec("cd scripts && ..\\node_modules\\.bin\\babel ../sources/" + pModule + " --out-dir ../build/" + configuration.name + " --config-file ./.babelrc", async (error) => {
@@ -42,7 +41,7 @@ exec("git describe --tags --abbrev=0", (err, stdout, stderr) => {
                 fsextra.appendFileSync("./build-error.log", error.stack)
                 update(chalk.white.bold.bgRed(" >> ") + chalk(" Error " + pModule) + chalk.bold.red(" X"))
             } else {
-                await zipFolder.zip("./build/" + configuration.name, "./public/" + pModule.replace("/", "-") + ".zip")
+                exec("cd public && npm pack ../build/" + configuration.name)
                 update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
             }
         })
