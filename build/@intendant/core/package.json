@@ -1,8 +1,6 @@
 {
     "name": "@intendant/core",
     "main": "./index.js",
-    "module": "core",
-    "version": "0.0.22",
     "author": "Clément MERLET",
     "version": "0.0.1",
     "license": "apache-2.0",

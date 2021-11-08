@@ -74,9 +74,10 @@ class Core {
     }
 
     prepare() {
+        fs.mkdirSync(require('path').resolve('./') + '/.intendant/@intendant',{recursive: true})
         this.configuration.smartobjects = []
         this.configuration.modules = []
-        let dirsModule = fs.readdirSync('./.intendant/@intendant')
+        let dirsModule = fs.readdirSync(require('path').resolve('./') + '/.intendant/@intendant')
         for (let dir = 0; dir < dirsModule.length; dir++) {
             let currentConfiguration = JSON.parse(fs.readFileSync(require('path').resolve('./') + '/.intendant/@intendant/' + dirsModule[dir] + "/package.json").toString())
             if (currentConfiguration.module == "smartobject") {
