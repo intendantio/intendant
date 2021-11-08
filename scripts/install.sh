@@ -1,5 +1,6 @@
 #!/bin/bash
 clear
+rm -rf index.js intendant.db intendant.js node_modules package.json package-lock.json;
 echo " 
     _                            _                  
     | |       _                  | |             _   
