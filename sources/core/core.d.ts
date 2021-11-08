@@ -1,6 +1,6 @@
 import Controller from './controllers/Controller'
-import Tracing from '@intendant/tracing'
-import Connector from '@intendant/connector'
+import Tracing from './tracing'
+import Connector from './connector'
 
 interface TracingConfiguration {
     verbose: Boolean,

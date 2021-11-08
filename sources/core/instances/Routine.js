@@ -7,6 +7,7 @@ class Routine {
 
     constructor(routine, core) {
         this.scheduler = new ToadScheduler.ToadScheduler()
+        this.job = {cancel: () => {}}
         this.core = core
         this.configuration = core.configuration
         this.logger = core.logger
@@ -191,7 +192,7 @@ class Routine {
                 new ToadScheduler.SimpleIntervalJob({ seconds: parseInt(this.watch) }, task)
             )
         } else if (this.mode == "week") {
-            Schedule.scheduleJob(this.watch,async () => {
+            this.job = Schedule.scheduleJob(this.watch,async () => {
                 this.logger.verbose(Package.name, "Routine n° " + this.id + " trigger")
                 let isValidTest = true
                 for (let indexTrigger = 0; indexTrigger < this.triggers.length; indexTrigger++) {
@@ -394,6 +395,7 @@ class Routine {
         }, {
             id: this.id
         })
+        this.job.cancel()
         this.scheduler.stop()
     }
 

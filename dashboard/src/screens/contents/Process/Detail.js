@@ -73,6 +73,7 @@ class NewProcess extends React.Component {
         this.state.source.actions.forEach(action => {
             if (action.id === id) { fAction = action }
         })
+        console.log(fAction)
         this.setState({ action: fAction })
     }
 
@@ -94,7 +95,6 @@ class NewProcess extends React.Component {
             }
             settings.push({ reference: setting.id, value: value })
         }
-
         let action = {
             source: this.state.source,
             action: this.state.action,
@@ -127,8 +127,6 @@ class NewProcess extends React.Component {
         }
     }
 
-
-
     async executeAction() {
         this.setState({ loading: true })
         let tmp = {}
@@ -142,7 +140,7 @@ class NewProcess extends React.Component {
         }
         let result = await new Request().post({ inputs: tmp }).fetch("/api/process/" + this.state.process.id + "/execute")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.setState({ loading: null, enabled: true, message: result.package + " : " + result.message })
         } else {
             if (result.data) {
                 this.setState({ executeInformation: JSON.stringify(result.data) })
@@ -152,7 +150,7 @@ class NewProcess extends React.Component {
     }
 
     async insertProfile(process, profile) {
-        let result = await new Request().post({idProfile: profile.id, }).fetch("/api/process/" + process.id + "/profiles")
+        let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/process/" + process.id + "/profiles")
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -209,7 +207,6 @@ class NewProcess extends React.Component {
         this.setState(tmp)
     }
 
-
     render() {
         if (this.state.process) {
             return (
@@ -230,7 +227,7 @@ class NewProcess extends React.Component {
                             {
                                 this.state.process.mode == "simple" ?
                                     this.state.process.mode === "simple" ?
-                                        <Button disabled={this.state.loading} style={{ alignSelf: 'center', marginLeft: 10, marginTop: 10 }} variant={this.state.process.enable === 2 ? "contained" : "outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Autorenew />}>
+                                        <Button disabled={this.state.loading} style={{ alignSelf: 'center', marginTop: 10 }} variant={this.state.process.enable === 2 ? "contained" : "outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Autorenew />}>
                                             {this.state.process.name}
                                         </Button> : null
                                     :
@@ -252,7 +249,7 @@ class NewProcess extends React.Component {
                                 this.state.process.inputs.filter(input => {
                                     return input.enable == this.state.process.enable
                                 }).map(input => {
-                                    return <Action setState={this.setState.bind(this)} action={input} orientation='vertical' />
+                                    return <Action setState={this.setState.bind(this)} action={input} flexDirection='column' orientation='horizontal' />
                                 })
                             }
                         </div>
@@ -445,8 +442,8 @@ class NewProcess extends React.Component {
                                         <ListItem style={{ padding: 1 }}  >
                                             <FormControlLabel control={<Switch
                                                 checked={state}
-                                                onChange={() => { 
-                                                    state ? this.deleteProfile(this.state.process,profile) : this.insertProfile(this.state.process,profile)
+                                                onChange={() => {
+                                                    state ? this.deleteProfile(this.state.process, profile) : this.insertProfile(this.state.process, profile)
                                                 }}
                                                 color="primary"
                                             />} label={profile.name} />
@@ -462,14 +459,14 @@ class NewProcess extends React.Component {
                         </IconButton>
                     </Paper>
                     <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        { this.state.message }
+                        {this.state.message}
                     </Alert>
                 </div>
             )
         } else {
             return (
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    { this.state.message }
+                    {this.state.message}
                 </Alert>
             )
         }

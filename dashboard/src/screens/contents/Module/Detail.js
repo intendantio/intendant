@@ -104,7 +104,7 @@ class Detail extends React.Component {
                                                     <div style={{ display: 'flex', flexDirection: 'row', marginTop: 10, marginBottom: 10 }}>
                                                         {
                                                             action.settings.map(setting => {
-                                                                return <Action orientation={'vertical'} setState={this.setState.bind(this)} action={setting} />
+                                                                return <Action flexDirection='column' orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
                                                             })
                                                         }
                                                     </div>

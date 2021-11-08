@@ -1,4 +1,4 @@
-import Connector from '@intendant/connector'
+import Connector from '../connector'
 import Core from '../core'
 
 declare class Controller {

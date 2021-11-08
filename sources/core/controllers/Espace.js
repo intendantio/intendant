@@ -1,5 +1,4 @@
 import Controller from "./Controller"
-import Package from '../package.json'
 
 class Espace extends Controller {
 

@@ -288,7 +288,7 @@ class NewWidget extends React.Component {
                                                             <div style={{ display: 'flex', paddingTop: 10, paddingBottom: 10, flexDirection: 'column' }}>
                                                                 {
                                                                     this.state.action.settings.map(setting => {
-                                                                        return <Action orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
+                                                                        return <Action flexDirection='column' orientation='horizontal'  setState={this.setState.bind(this)} action={setting} />
                                                                     })
                                                                 }
                                                             </div>

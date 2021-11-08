@@ -1,6 +1,6 @@
-import Connector from '@intendant/connector'
+import Connector from '../connector'
 
-import Core from '../index'
+import Core from '../core'
 
 declare module Modules {
 

@@ -4,8 +4,6 @@
   "author": "intendant",
   "license": "MIT",
   "dependencies": {
-    "@intendant/console-tracing": "latest",
-    "@intendant/sqlite-connector": "latest",
     "@intendant/core": "latest"
   }
 }

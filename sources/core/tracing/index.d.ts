@@ -3,5 +3,5 @@ declare class Console {
     public static warning(object: String, message: String): Boolean;
     public static error(object: String, message: String): Boolean;
 }
-export default Console
 
+export default Console

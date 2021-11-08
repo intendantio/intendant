@@ -96,6 +96,7 @@ class Market extends Controller {
         this.core.prepare()
 
         this.core.manager.module.restart()
+        
         await this.core.manager.smartobject.restart()
 
         return {

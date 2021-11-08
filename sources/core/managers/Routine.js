@@ -10,12 +10,10 @@ class RoutineCore {
         this.routines = new Map()
         this.logger.verbose(Package.name, "Start Routine Manager")
         this.initialisation()
-        setInterval(async () => {
-            await this.initialisation()
-        }, 5000)
     }
 
     async initialisation() {
+        this.logger.verbose(Package.name, "Update routine")
         let sqlRoutine = new this.core.connector(this.configuration, this.core, "routine")
         let routinesRequest = await sqlRoutine.getAll()
         if (routinesRequest.error) {
@@ -37,6 +35,7 @@ class RoutineCore {
             }
         })
     }
+
 }
 
 export default RoutineCore

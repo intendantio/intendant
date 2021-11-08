@@ -69,7 +69,7 @@ class Core {
             this.manager.smartobject = new SmartObjectManager(this)
             this.manager.routine = new RoutineManager(this)
             this.manager.module = new ModulesManager(this)
-        },100)
+        }, 100)
 
     }
 
@@ -79,14 +79,14 @@ class Core {
         let dirsModule = fs.readdirSync('./.intendant/@intendant')
         for (let dir = 0; dir < dirsModule.length; dir++) {
             let currentConfiguration = JSON.parse(fs.readFileSync('./.intendant/@intendant/' + dirsModule[dir] + "/package.json").toString())
-            if(currentConfiguration.module == "smartobject") {
+            if (currentConfiguration.module == "smartobject") {
                 this.configuration.smartobjects.push(currentConfiguration.name)
-            } else if(currentConfiguration.module == "module") {
+            } else if (currentConfiguration.module == "module") {
                 this.configuration.modules.push(currentConfiguration.name)
             }
         }
     }
-    
+
 }
 
 export default Core

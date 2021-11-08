@@ -257,6 +257,7 @@ class Routine extends Controller {
         if (routineRequest.error) {
             return routineRequest
         } else {
+            this.core.manager.routine.initialisation()
             return {
                 error: false,
                 message: "",

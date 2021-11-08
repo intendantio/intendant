@@ -29,7 +29,7 @@ class Source {
                     pModule.actions.forEach(action => {
                         actions.push({ id: action.id, name: action.name, settings: action.settings })
                     })
-                    sources.push({ id: pModule.id, name: "Module " + pModule.name, actions: actions, type: 'module' })
+                    sources.push({ id: pModule.name, name: "Module " + pModule.name, actions: actions, type: 'module' })
                 })
             }
             if (query.includes("process")) {
