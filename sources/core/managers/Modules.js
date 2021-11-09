@@ -8,18 +8,17 @@ class Modules {
         this.connector = core.connector
         this.logger = core.logger
         this.installModules = []
-        this.logger.verbose(Package.name, "Start Module Manager")
         this.modules = new Map()
     }
 
     restart() {
-        this.logger.verbose(Package.name, "Restart Module Manager")
+        this.logger.verbose(Package.name, "Module manager : restart")
         this.modules = new Map()
         this.installModules.forEach(async pModule => {
-            this.logger.verbose(Package.name, "Module " + pModule + " has installed")
             let Module = require(pModule)
             let instanceModule = new Module(this.core)
             this.modules.set(pModule, instanceModule)
+            this.logger.verbose(Package.name,"Module manager : instanciate module " + pModule + " successful")
         })
     }
 
@@ -27,6 +26,7 @@ class Modules {
         let find = false
         this.installModules.forEach(pModule => {
             if (md5(pModule) == hash) {
+                this.logger.verbose(Package.name,"Module manager : find hash module " + hash + " as " + pModule)
                 find = pModule
             }
         })
@@ -55,14 +55,13 @@ class Modules {
     }
 
     getAll() {
-        this.core.logger.verbose(Package.name, "Get all modules")
         let modules = []
         this.installModules.forEach(pModule => {
             try {
                 let configuration = require(pModule + "/Package.json")
                 modules.push(configuration)
             } catch (error) {
-                this.core.logger.error(Package.name, "Impossible get configuration in " + pModule + " module")
+                this.core.logger.error(Package.name, "Module manager : inaccessible configuration from module " + pModule)
                 this.core.logger.error(Package.name, JSON.stringify(error.toString()))
             }
         })

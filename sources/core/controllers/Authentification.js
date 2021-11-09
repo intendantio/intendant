@@ -60,14 +60,14 @@ class Authentification extends Controller {
         if(authorizationSplit.length != 2) {
             return {
                 error: true,
-                message: "Jwt Token invalid",
+                message: "Authentification controller : token invalid",
                 package: Package.name
             }
         }
         if(authorizationSplit[0] != "Bearer") {
             return {
                 error: true,
-                message: "Jwt Token invalid",
+                message: "Authentification controller : token invalid",
                 package: Package.name
             }
         }
@@ -110,10 +110,10 @@ class Authentification extends Controller {
                 login: jwt[1]
             })
             if(jwt[0] != this.core.salt) {
-                this.core.logger.warning(Package.name, "Jwt Token invalid")
+                this.core.logger.warning(Package.name, "Authentification controller : token invalid")
                 return {
                     error: true,
-                    message: "Jwt Token invalid",
+                    message: "Authentification controller : token invalid",
                     package: Package.name
                 }
             }
@@ -137,28 +137,28 @@ class Authentification extends Controller {
                                 user: userRequest.data.id
                             }
                         } else {
-                            this.core.logger.warning(Package.name, "Forbiden")
+                            this.core.logger.warning(Package.name, "Authentification controller : token invalid")
                             return {
                                 error: true,
-                                message: "Forbidden",
+                                message: "Authentification controller : forbiden",
                                 package: Package.name
                             }
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "User not found")
+                    this.core.logger.warning(Package.name, "Authentification controller : user invalid")
                     return {
                         error: true,
-                        message: "User invalid",
+                        message: "Authentification controller : user invalid",
                         package: Package.name
                     }
                 }
             }
         } else {
-            this.core.logger.warning(Package.name, "Jwt Token invalid")
+            this.core.logger.warning(Package.name, "Authentification controller : token invalid")
             return {
                 error: true,
-                message: "Jwt Token invalid",
+                message: "Authentification controller : token invalid",
                 package: Package.name
             }
         }
@@ -184,31 +184,31 @@ class Authentification extends Controller {
                         } else {
                             return {
                                 error: true,
-                                message: "Password is invalid",
+                                message: "Authentification controller : password is invalid",
                                 package: Package.name
                             }
                         }
                     } else {
                         return {
                             error: true,
-                            message: "Login is invalid",
+                            message: "Authentification controller : login is invalid",
                             package: Package.name
                         }
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Password is empty")
+                this.core.logger.warning(Package.name, "Authentification controller : password is empty")
                 return {
                     error: true,
-                    message: "Password is empty",
+                    message: "Authentification controller : password is empty",
                     package: Package.name
                 }
             }
         } else {
-            this.core.logger.warning(Package.name, "Login is empty")
+            this.core.logger.warning(Package.name, "Authentification controller : login is empty")
             return {
                 error: true,
-                message: "Login is empty",
+                message: "Authentification controller : login is empty",
                 package: Package.name
             }
         }

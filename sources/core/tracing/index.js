@@ -1,11 +1,13 @@
 import chalk from 'chalk'
 
+
 class Console {
 
     static verbose(object, message) {
         try {
             if (object && message) {
-                console.log(chalk.green.bgWhiteBright.inverse(" >> ") + chalk.green.bgWhiteBright.inverse(object) + (" " + message + " "))
+                let date = new Date()
+                console.log(chalk.green.bgWhiteBright.inverse(" >> " + date.getHours() + ":" + date.getMinutes() + " ") + chalk.green.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
                 return true
             }
             throw "Missing parameters"
@@ -17,7 +19,8 @@ class Console {
     static warning(object, message) {
         try {
             if (object && message) {
-                console.log(chalk.yellow.bgWhiteBright.inverse(" >> ") + chalk.yellow.bgWhiteBright.inverse(object) + (" " + message + " "))
+                let date = new Date()
+                console.log(chalk.yellow.bgWhiteBright.inverse(" >> " + date.getHours() + ":" + date.getMinutes() + " ") + chalk.yellow.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
                 return true
             }
             throw "Missing parameters"
@@ -29,7 +32,8 @@ class Console {
     static error(object, message) {
         try {
             if (object && message) {
-                console.log(chalk.red.bgWhiteBright.inverse(" >> ") + chalk.red.bgWhiteBright.inverse(object) + (" " + message + " "))
+                let date = new Date()
+                console.log(chalk.red.bgWhiteBright.inverse(" >> " + date.getHours() + ":" + date.getMinutes() + " ") + chalk.red.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
                 return true
             }
             throw "Missing parameters"

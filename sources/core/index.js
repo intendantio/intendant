@@ -41,13 +41,15 @@ class Core {
         }
         this.configuration = configuration
         this.logger = Tracing
+
+
         this.connector = Connector
         this.salt = Math.random(16)
 
-        this.logger.verbose(Package.name, "Start Core")
-
+        this.logger.verbose(Package.name, "Core : salt generate " + this.salt)
 
         /* Controller */
+        this.logger.verbose(Package.name, "Core : instanciate controller")
         this.controller = {}
         this.controller.routine = new Routine(this)
         this.controller.smartobject = new SmartObject(this)
@@ -64,6 +66,7 @@ class Core {
 
         setTimeout(() => {
             /* Manager */
+            this.logger.verbose(Package.name, "Core : instanciate manager")
             this.manager = {}
             this.manager.smartobject = new SmartObjectManager(this)
             this.manager.routine = new RoutineManager(this)

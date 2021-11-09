@@ -77,7 +77,7 @@ class Configuration extends React.Component {
                 return market
             })
         })
-        this.setState({ markets: resultMarket.filter(market => { return market.name.includes("smartobject") }) })
+        this.setState({ markets: resultMarket.filter(market => { return market.name.includes(this.state.id) }) })
         if (resultModule.error) {
             this.setState({ severity: "error",enabled: true, message: resultModule.package + " : " + resultModule.message })
         } else if (resultSmartobject.error) {

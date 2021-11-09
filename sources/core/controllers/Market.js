@@ -11,47 +11,45 @@ class Market extends Controller {
 
     async install(pPackage) {
 
+        this.core.logger.verbose(Package.name,"Market controller : download file from https://market.intendant.io")
         let resultMarket = await fetch("https://market.intendant.io")
         let resultMarketJSON = await resultMarket.json()
 
         resultMarketJSON = resultMarketJSON.filter(item => {
             return item.name == pPackage
         })
-
         if(resultMarketJSON.length == 0) {
-            this.core.logger.warning(Package.name,"Package not found")
+            this.core.logger.warning(Package.name,"Market controller : package not found " + pPackage)
             return {
                 package: Package.name,
                 message: "",
                 error: true
             }
         } else if(resultMarketJSON.length > 1) {
-            this.core.logger.warning(Package.name,"Package not found")
+            this.core.logger.warning(Package.name,"Market controller : package not found " + pPackage)
             return {
                 package: Package.name,
                 message: "",
                 error: true
             }
         } else {
-
-            this.core.logger.verbose(Package.name,"Find package " + pPackage)
             let item = resultMarketJSON[0]
+            this.core.logger.verbose(Package.name,"Market controller : install package " + item.raw)
 
-            this.core.logger.verbose(Package.name,"Start download package " + pPackage)
-
-
-            
             await new Promise((resolve, reject) => {
                 exec("npm install " +  item.raw + " --silent 2>&1 | tee t",(e,std,ster) => {
                     resolve()
                 })
             })
             
-            this.core.logger.verbose(Package.name,"Restart configuration")
+            this.core.logger.verbose(Package.name,"Market controller : install " + pPackage + " successful")
+
             if(pPackage.includes("smartobject")) {
+                this.core.logger.verbose(Package.name,"Market controller : restart smartobject manager")
                 this.core.manager.smartobject.installSmartobjects.push(pPackage)
                 await this.core.manager.smartobject.restart()
             } else if(pPackage.includes("module")) {
+                this.core.logger.verbose(Package.name,"Market controller : restart module manager")
                 this.core.manager.module.installModules.push(pPackage)
                 this.core.manager.module.restart()
             }
@@ -65,9 +63,9 @@ class Market extends Controller {
 
     async uninstall(pPackage) {
 
-        this.core.logger.verbose(Package.name,"Delete Package " + pPackage)
+        this.core.logger.verbose(Package.name,"Market controller : delete Package " + pPackage)
 
-        this.core.logger.verbose(Package.name,"Restart configuration")
+        this.core.logger.verbose(Package.name,"Market controller : restart configuration")
             
         this.core.manager.module.installModules = this.core.manager.module.installModules.filter((pModule) => {
             return pPackage != pModule

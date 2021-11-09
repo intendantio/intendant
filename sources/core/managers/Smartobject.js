@@ -8,13 +8,13 @@ class Manager {
         this.logger = core.logger
         this.configuration = core.configuration
         this.installSmartobjects = []
-        this.logger.verbose(Package.name, "Start Manager")
+        this.logger.verbose(Package.name, "Smartobject manager : start")
         this.smartobjects = new Map()
         this.before()
     }
 
     async before() {
-
+        this.logger.verbose(Package.name, "Smartobject manager : disable smartobjects")
         let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
         let result = await sqlSmartobject.updateAll({ status: 2 })
         if (result.error) {
@@ -37,7 +37,7 @@ class Manager {
     }
 
     async restart() {
-        this.core.logger.verbose(Package.name, "Restart Smartobject Manager")
+        this.core.logger.verbose(Package.name, "Smartobject manager : restart")
         this.smartobjects = new Map()
         await this.before()
     }
@@ -59,7 +59,6 @@ class Manager {
                 let setting = settings[index]
                 pSettings[setting.reference] = setting.value
             }
-
             if (this.installSmartobjects.includes(smartobject.module)) {
                 try {
                     let Module = require(smartobject["module"])
@@ -71,18 +70,19 @@ class Manager {
                         return
                     }
                     this.smartobjects.set(smartobject.reference, instanceSmartObject)
+                    this.logger.verbose(Package.name, "Smartobject manager : instanciate smartobject n°" + smartobject.id + " successful")
                 } catch (error) {
                     this.logger.warning(Package.name, error)
                 }
             } else {
                 await sqlSmartobject.updateAll({ status: 3 }, { id: smartobject.id })
-                this.logger.warning(Package.name, "Package " + smartobject.module + " has not installed")
+                this.logger.warning(Package.name, "Smartobject manager : missing smartobject library " + smartobject.module)
             }
         }
     }
 
     async update(id) {
-        this.core.logger.verbose(Package.name, "Update instance smartobject " + id)
+        this.core.logger.verbose(Package.name, "Smartobject manager : update smartobject n°" + id)
         let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
         let getRequest = await sqlSmartobject.getOne(id)
         if (getRequest.error) {
@@ -101,14 +101,14 @@ class Manager {
     }
 
     getAll() {
-        this.core.logger.verbose(Package.name, "Get all smartobject")
+        this.core.logger.verbose(Package.name, "Smartobject manager : get all smartobject configuration")
         let smartobjects = []
         this.installSmartobjects.forEach(smartobject => {
             try {
                 let configuration = require(smartobject + "/Package.json")
                 smartobjects.push(configuration)
             } catch (error) {
-                this.core.logger.warning(Package.name, "Impossible get configuration in " + smartobject + " module")
+                this.core.logger.warning(Package.name, "Smartobject manager : inaccessible configuration from module " + smartobject)
                 this.core.logger.warning(Package.name, JSON.stringify(error.toString()))
             }
         })
