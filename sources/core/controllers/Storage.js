@@ -4,11 +4,11 @@ import Package from '../package.json'
 class Storage extends Controller {
 
     async getItem(id) {
-        let requestGetOne = await this.sqlStorage.getOneByField({ id: id })
-        if (requestGetOne.error) {
-            return requestGetOne
-        }
         try {
+            let requestGetOne = await this.sqlStorage.getOneByField({ id: id })
+            if (requestGetOne.error) {
+                return requestGetOne
+            }
             return {
                 error: false,
                 package: Package.name,
@@ -17,38 +17,46 @@ class Storage extends Controller {
             }
         } catch (error) {
             await this.removeItem(id)
+            this.core.logger.error("Storage : " + error.toString())
             return {
-                error: false,
                 package: Package.name,
-                message: '',
-                data: {}
+                error: true,
+                message: "Internal server error"
             }
         }
-        
     }
 
     async setItem(id, value) {
-        let requestGetOne = await this.sqlStorage.getOneByField({ id: id })
-        if (requestGetOne.error) {
-            return requestGetOne
-        }
-        if (requestGetOne.data) {
-            let resultRemove = await this.sqlStorage.deleteAllByField({ id: id })
-            if (resultRemove.error) {
-                return resultRemove
+        try {
+            let requestGetOne = await this.sqlStorage.getOneByField({ id: id })
+            if (requestGetOne.error) {
+                return requestGetOne
             }
-        }
-        let resultInsertRequest = await this.sqlStorage.insert({
-            id: id,
-            value: JSON.stringify(value)
-        })
-        if (resultInsertRequest.error) {
-            return resultInsertRequest
-        }
-        return {
-            error: false,
-            package: Package.name,
-            message: ''
+            if (requestGetOne.data) {
+                let resultRemove = await this.sqlStorage.deleteAllByField({ id: id })
+                if (resultRemove.error) {
+                    return resultRemove
+                }
+            }
+            let resultInsertRequest = await this.sqlStorage.insert({
+                id: id,
+                value: JSON.stringify(value)
+            })
+            if (resultInsertRequest.error) {
+                return resultInsertRequest
+            }
+            return {
+                error: false,
+                package: Package.name,
+                message: ''
+            }
+        } catch (error) {
+            this.core.logger.error("Storage : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
         }
     }
 
@@ -65,14 +73,23 @@ class Storage extends Controller {
     }
 
     async clear() {
-        let resultTruncate = await this.sqlStorage.truncate()
-        if (resultTruncate.error) {
-            return resultTruncate
-        }
-        return {
-            error: false,
-            package: Package.name,
-            message: ''
+        try {
+            let resultTruncate = await this.sqlStorage.truncate()
+            if (resultTruncate.error) {
+                return resultTruncate
+            }
+            return {
+                error: false,
+                package: Package.name,
+                message: ''
+            }
+        } catch (error) {
+            this.core.logger.error("Storage : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
         }
     }
 

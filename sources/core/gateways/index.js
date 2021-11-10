@@ -23,9 +23,11 @@ class API {
         const app = Express()
         app.use(bodyParser.json({ limit: '50mb', extended: true }))
         app.use(cors.default())
+        
 
         app.use("/admin", Express.static(__dirname + '/../public'))
         app.use("/admin/*", Express.static(__dirname + '/../public'))
+
 
         Authorization(app,core)
         Authentification(app,core)

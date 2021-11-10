@@ -37,19 +37,25 @@ pModules.forEach((pModule, index) => {
             fsextra.appendFileSync("./build-error.log", error.stack)
             update(chalk.white.bold.bgRed(" >> ") + chalk(" Error " + pModule) + chalk.bold.red(" X"))
         } else {
-            exec("cd public && npm pack ../build/" + configuration.name)
-            update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
+            if( configuration.name == "@intendant/core") {
+                fs.writeFileSync("./public/index.json", JSON.stringify(marketStack))
+                if (process.argv[2] !== "--no-dashboard") {
+                    let updateBuildDashboard = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Build dashboard") + " ")
+                    exec("cd dashboard && yarn && npm run-script build", () => {
+                        updateBuildDashboard(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy dashboard") + " ")
+                        fsextra.mkdirSync("./build/@intendant/core/public")
+                        exec("cp -r ./dashboard/build/* ./build/@intendant/core/public", () => {
+                            updateBuildDashboard(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
+                            exec("cd public && npm pack ../build/" + configuration.name)
+                            update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
+                        })
+                    })
+                }
+            } else {
+                exec("cd public && npm pack ../build/" + configuration.name)
+                update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
+            }
         }
     })
 })
-fs.writeFileSync("./public/index.json", JSON.stringify(marketStack))
-if (process.argv[2] !== "--no-dashboard") {
-    let updateBuildDashboard = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Build dashboard") + " ")
-    exec("cd dashboard && yarn && npm run-script build", () => {
-        updateBuildDashboard(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy dashboard") + " ")
-        fsextra.mkdirSync("./build/@intendant/core/public")
-        exec("cp -r ./dashboard/build/* ./build/@intendant/core/public", () => {
-            updateBuildDashboard(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
-        })
-    })
-}
+

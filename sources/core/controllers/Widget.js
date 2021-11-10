@@ -32,201 +32,399 @@ class Widget extends Controller {
     }
 
     async getOne(idWidget) {
-        let requestWidget = await this.sqlWidget.getOne(idWidget)
-        if (requestWidget.error) {
-            return requestWidget
-        }
-        if (requestWidget.data == false) {
-            return {
-                error: true,
-                message: "Widget not found",
-                package: Package.name
+        try {
+            let requestWidget = await this.sqlWidget.getOne(idWidget)
+            if (requestWidget.error) {
+                return requestWidget
             }
-        }
-        let widget = requestWidget.data
-        let requestWidgetContent = await this.sqlWidgetContent.getAllByField({
-            widget: widget.id
-        })
-        if (requestWidgetContent.error) {
-            return requestWidgetContent
-        }
-        let _contents = []
-        let contents = requestWidgetContent.data
-        for (let indexSource = 0; indexSource < contents.length; indexSource++) {
-            let content = contents[indexSource]
-            let requestWidgetContentType = await this.sqlWidgetContentType.getOne(content.type)
-            if (requestWidgetContentType.error) {
-                return requestWidgetContentType
-            }
-            content.type = requestWidgetContentType.data
-            _contents.push(content)
-        }
-        contents = _contents
-        let requestWidgetSource = await this.sqlWidgetSource.getAllByField({
-            widget: widget.id
-        })
-        if (requestWidgetSource.error) {
-            return requestWidgetSource
-        }
-        let sources = []
-        for (let indexSource = 0; indexSource < requestWidgetSource.data.length; indexSource++) {
-            let source = requestWidgetSource.data[indexSource]
-            let requestWidgetSourceArgument = await this.sqlWidgetSourceArgument.getAllByField({
-                widget_source: source.id
-            })
-            if (requestWidgetSourceArgument.error) {
-                return requestWidgetSourceArgument
-            }
-            source.arguments = requestWidgetSourceArgument.data
-            sources.push(source)
-        }
-        let data = await this.getSource(sources)
-        widget.sources = sources
-        widget.contents = contents.map(content => {
-            content.native = content.content
-            let extracts = this.extract(content.content)
-            extracts.extracts.forEach(extract => {
-                let value = data.error ? data.package : _.get(data.data, extract.value)
-                if (Array.isArray(value) && content.type.reference == 'list') {
-                    let _content = ""
-                    value.forEach((_value, index) => {
-                        try {
-                            _content = _content + (index == 0 ? "" : "\n") + "- " + _value.toString()
-                        } catch (error) { }
-                    })
-                    value = _content
-                } else if (Array.isArray(value)) {
-                    let _content = ""
-                    value.forEach((_value, index) => {
-                        try {
-                            _content = _content + (index == 0 ? "" : " ") + _value.toString()
-                        } catch (error) { }
-                    })
-                    value = _content
+            if (requestWidget.data == false) {
+                return {
+                    error: true,
+                    message: "Widget not found",
+                    package: Package.name
                 }
-
-                extracts.content = extracts.content.replace(extract.key, value)
+            }
+            let widget = requestWidget.data
+            let requestWidgetContent = await this.sqlWidgetContent.getAllByField({
+                widget: widget.id
             })
-            content.content = extracts.content
-            return content
-        })
-        return {
-            error: false,
-            data: widget
+            if (requestWidgetContent.error) {
+                return requestWidgetContent
+            }
+            let _contents = []
+            let contents = requestWidgetContent.data
+            for (let indexSource = 0; indexSource < contents.length; indexSource++) {
+                let content = contents[indexSource]
+                let requestWidgetContentType = await this.sqlWidgetContentType.getOne(content.type)
+                if (requestWidgetContentType.error) {
+                    return requestWidgetContentType
+                }
+                content.type = requestWidgetContentType.data
+                _contents.push(content)
+            }
+            contents = _contents
+            let requestWidgetSource = await this.sqlWidgetSource.getAllByField({
+                widget: widget.id
+            })
+            if (requestWidgetSource.error) {
+                return requestWidgetSource
+            }
+            let sources = []
+            for (let indexSource = 0; indexSource < requestWidgetSource.data.length; indexSource++) {
+                let source = requestWidgetSource.data[indexSource]
+                let requestWidgetSourceArgument = await this.sqlWidgetSourceArgument.getAllByField({
+                    widget_source: source.id
+                })
+                if (requestWidgetSourceArgument.error) {
+                    return requestWidgetSourceArgument
+                }
+                source.arguments = requestWidgetSourceArgument.data
+                sources.push(source)
+            }
+            let data = await this.getSource(sources)
+            widget.sources = sources
+            widget.contents = contents.map(content => {
+                content.native = content.content
+                let extracts = this.extract(content.content)
+                extracts.extracts.forEach(extract => {
+                    let value = data.error ? data.package : _.get(data.data, extract.value)
+                    if (Array.isArray(value) && content.type.reference == 'list') {
+                        let _content = ""
+                        value.forEach((_value, index) => {
+                            try {
+                                _content = _content + (index == 0 ? "" : "\n") + "- " + _value.toString()
+                            } catch (error) { }
+                        })
+                        value = _content
+                    } else if (Array.isArray(value)) {
+                        let _content = ""
+                        value.forEach((_value, index) => {
+                            try {
+                                _content = _content + (index == 0 ? "" : " ") + _value.toString()
+                            } catch (error) { }
+                        })
+                        value = _content
+                    }
+
+                    extracts.content = extracts.content.replace(extract.key, value)
+                })
+                content.content = extracts.content
+                return content
+            })
+            return {
+                error: false,
+                data: widget
+            }
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
         }
+
     }
 
     async getSource(actions) {
-        let data = {}
-        for (let index = 0; index < actions.length; index++) {
-            let action = actions[index]
-            let pArguments = {}
-            action.arguments.forEach(argument => {
-                pArguments[argument.reference] = argument.value
-            })
-            if (action.type === "smartobject") {
-                let smartobjectRequest = await this.sqlSmartobject.getOne(action.object)
-                if (smartobjectRequest.error) {
-                    return smartobjectRequest
-                }
-                if(this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.reference)) {
-                    let resultAction = await this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.reference).action(action.action, pArguments)
+        try {
+            let data = {}
+            for (let index = 0; index < actions.length; index++) {
+                let action = actions[index]
+                let pArguments = {}
+                action.arguments.forEach(argument => {
+                    pArguments[argument.reference] = argument.value
+                })
+                if (action.type === "smartobject") {
+                    let smartobjectRequest = await this.sqlSmartobject.getOne(action.object)
+                    if (smartobjectRequest.error) {
+                        return smartobjectRequest
+                    }
+                    if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.reference)) {
+                        let resultAction = await this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.reference).action(action.action, pArguments)
+                        if (resultAction.error) {
+                            return resultAction
+                        }
+                        data[action.reference] = resultAction.data
+                    } else {
+                        return {
+                            error: true,
+                            package: Package.name,
+                            message: "Smartobject not found"
+                        }
+                    }
+                } else if (action.type === "module") {
+                    let resultAction = await this.core.manager.module.executeAction(action.object, action.action, pArguments)
                     if (resultAction.error) {
                         return resultAction
                     }
                     data[action.reference] = resultAction.data
                 } else {
+                    this.core.logger.error(Package.name, "Invalid type '" + action.type + "'")
                     return {
                         error: true,
-                        package: Package.name,
-                        message: "Smartobject not found"
+                        message: "Invalid type '" + action.type + "'",
+                        package: Package.name
                     }
                 }
-            } else if (action.type === "module") {
-                let resultAction = await this.core.manager.module.executeAction(action.object, action.action, pArguments)
-                if (resultAction.error) {
-                    return resultAction
-                }
-                data[action.reference] = resultAction.data
-            } else {
-                this.core.logger.error(Package.name, "Invalid type '" + action.type + "'")
-                return {
-                    error: true,
-                    message: "Invalid type '" + action.type + "'",
-                    package: Package.name
-                }
+            }
+            return {
+                error: false,
+                package: Package.name,
+                message: '',
+                data: data
+            }
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
             }
         }
-        return {
-            error: false,
-            package: Package.name,
-            message: '',
-            data: data
-        }
+
     }
 
     async getAll() {
-        let requestGetAll = await this.sqlWidget.getAll()
-        if (requestGetAll.error) {
-            return requestGetAll
-        }
-        let widgets = requestGetAll.data
-        let newWidget = []
-        for (let indexWidget = 0; indexWidget < widgets.length; indexWidget++) {
-            let widget = widgets[indexWidget]
-            let resultWidget = await this.getOne(widget.id)
-            if (resultWidget.error) {
-                return resultWidget
+        try {
+            let requestGetAll = await this.sqlWidget.getAll()
+            if (requestGetAll.error) {
+                return requestGetAll
             }
-            newWidget.push(resultWidget.data)
+            let widgets = requestGetAll.data
+            let newWidget = []
+            for (let indexWidget = 0; indexWidget < widgets.length; indexWidget++) {
+                let widget = widgets[indexWidget]
+                let resultWidget = await this.getOne(widget.id)
+                if (resultWidget.error) {
+                    return resultWidget
+                }
+                newWidget.push(resultWidget.data)
+            }
+            return {
+                error: false,
+                package: Package.name,
+                message: '',
+                data: newWidget
+            }
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
         }
-        return {
-            error: false,
-            package: Package.name,
-            message: '',
-            data: newWidget
-        }
+
     }
 
-    async insert(reference,icon,contents,sources) {
-        if (reference) {
-            if (icon) {
-                if (contents) {
-                    if (sources) {
-                        let resultInsertWidgetRequest = await this.sqlWidget.insert({
-                            reference: reference,
-                            icon: icon
-                        })
-                        if (resultInsertWidgetRequest.error) {
-                            return resultInsertWidgetRequest
-                        }
-                        let widgetId = resultInsertWidgetRequest.data.insertId
-                        for (let indexContent = 0; indexContent < contents.length; indexContent++) {
-                            let content = contents[indexContent]
-                            let resultInsertWidgetContentRequest = await this.sqlWidgetContent.insert({
-                                type: content.type.id,
-                                content: content.content,
-                                widget: widgetId
+    async insert(reference, icon, contents, sources) {
+        try {
+            if (reference) {
+                if (icon) {
+                    if (contents) {
+                        if (sources) {
+                            let resultInsertWidgetRequest = await this.sqlWidget.insert({
+                                reference: reference,
+                                icon: icon
                             })
-                            if (resultInsertWidgetContentRequest.error) {
-                                return resultInsertWidgetContentRequest
+                            if (resultInsertWidgetRequest.error) {
+                                return resultInsertWidgetRequest
+                            }
+                            let widgetId = resultInsertWidgetRequest.data.insertId
+                            for (let indexContent = 0; indexContent < contents.length; indexContent++) {
+                                let content = contents[indexContent]
+                                let resultInsertWidgetContentRequest = await this.sqlWidgetContent.insert({
+                                    type: content.type.id,
+                                    content: content.content,
+                                    widget: widgetId
+                                })
+                                if (resultInsertWidgetContentRequest.error) {
+                                    return resultInsertWidgetContentRequest
+                                }
+                            }
+                            for (let indexSource = 0; indexSource < sources.length; indexSource++) {
+                                let source = sources[indexSource]
+                                let resultInsertWidgetSourceRequest = await this.sqlWidgetSource.insert({
+                                    reference: source.reference,
+                                    widget: widgetId,
+                                    object: source.source.id,
+                                    action: source.action.id,
+                                    type: source.source.type,
+                                })
+                                if (resultInsertWidgetSourceRequest.error) {
+                                    return resultInsertWidgetSourceRequest
+                                }
+                                let sourceId = resultInsertWidgetSourceRequest.data.insertId
+                                for (let indexSourceArgument = 0; indexSourceArgument < source.arguments.length; indexSourceArgument++) {
+                                    let argument = source.arguments[indexSourceArgument]
+                                    let resultInsertWidgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.insert({
+                                        reference: argument.reference,
+                                        value: argument.value,
+                                        widget_source: sourceId
+                                    })
+                                    if (resultInsertWidgetSourceArgumentRequest.error) {
+                                        return resultInsertWidgetSourceArgumentRequest
+                                    }
+                                }
+                            }
+                            return {
+                                error: false,
+                                package: Package.name,
+                                message: ''
+                            }
+                        } else {
+                            this.core.logger.warning(Package.name, "Missing icon action when sources widget")
+                            return {
+                                error: true,
+                                message: "Missing sources action",
+                                package: Package.name
                             }
                         }
-                        for (let indexSource = 0; indexSource < sources.length; indexSource++) {
-                            let source = sources[indexSource]
-                            let resultInsertWidgetSourceRequest = await this.sqlWidgetSource.insert({
-                                reference: source.reference,
-                                widget: widgetId,
-                                object: source.source.id,
-                                action: source.action.id,
-                                type: source.source.type,
-                            })
-                            if (resultInsertWidgetSourceRequest.error) {
-                                return resultInsertWidgetSourceRequest
+                    } else {
+                        this.core.logger.warning(Package.name, "Missing icon action when contents widget")
+                        return {
+                            error: true,
+                            message: "Missing contents action",
+                            package: Package.name
+                        }
+                    }
+                } else {
+                    this.core.logger.warning(Package.name, "Missing icon action when insert widget")
+                    return {
+                        error: true,
+                        message: "Missing icon action",
+                        package: Package.name
+                    }
+                }
+            } else {
+                this.core.logger.warning(Package.name, "Missing reference action when insert widget")
+                return {
+                    error: true,
+                    message: "Missing reference action",
+                    package: Package.name
+                }
+            }
+
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
+        }
+
+    }
+
+    async update(idWidget, content) {
+        try {
+            if (content) {
+                let requestGetOne = await this.sqlWidget.getOne(idWidget)
+                if (requestGetOne.error) {
+                    return requestGetOne
+                }
+                let requestUpdate = await this.sqlWidgetContent.updateAll({ content: content.native }, { id: content.id })
+                if (requestUpdate.error) {
+                    return requestUpdate
+                }
+                return {
+                    error: false,
+                    package: Package.name,
+                    message: ''
+                }
+            } else {
+                this.core.logger.warning(Package.name, "Missing smartobject settings name")
+                return {
+                    error: true,
+                    message: "Missing smartobject settings name",
+                    package: Package.name
+                }
+            }
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
+        }
+
+    }
+
+    async delete(idWidget) {
+        try {
+            this.core.logger.verbose(Package.name, "Delete widget " + idWidget)
+            let widgetSourceRequest = await this.sqlWidgetSource.getAllByField({ widget: idWidget })
+            if (widgetSourceRequest.error) {
+                return widgetSourceRequest
+            }
+            let widgetSources = widgetSourceRequest.data
+            for (let index = 0; index < widgetSources.length; index++) {
+                let widgetSource = widgetSources[index]
+                let widgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.deleteAllByField({ widget_source: widgetSource.id })
+                if (widgetSourceArgumentRequest.error) {
+                    return widgetSourceArgumentRequest
+                }
+            }
+            let widgetSourceDeleteRequest = await this.sqlWidgetSource.deleteAllByField({ widget: idWidget })
+            if (widgetSourceDeleteRequest.error) {
+                return widgetSourceDeleteRequest
+            }
+            let widgetContentDeleteRequest = await this.sqlWidgetContent.deleteAllByField({ widget: idWidget })
+            if (widgetContentDeleteRequest.error) {
+                return widgetContentDeleteRequest
+            }
+            let widgetDeleteRequest = await this.sqlWidget.deleteOne(idWidget)
+            if (widgetDeleteRequest.error) {
+                return widgetDeleteRequest
+            }
+            return {
+                error: false,
+                message: "",
+                package: Package.name
+            }
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
+        }
+
+    }
+
+    async insertSource(idWidget, reference, source, action, pArguments) {
+        try {
+            if (reference) {
+                if (source) {
+                    if (action) {
+                        if (pArguments) {
+                            let widgetRequest = await this.sqlWidget.getOne(idWidget)
+                            if (widgetRequest.error) {
+                                return widgetRequest
                             }
-                            let sourceId = resultInsertWidgetSourceRequest.data.insertId
-                            for (let indexSourceArgument = 0; indexSourceArgument < source.arguments.length; indexSourceArgument++) {
-                                let argument = source.arguments[indexSourceArgument]
+                            if (widgetRequest.data == false) {
+                                return {
+                                    error: true,
+                                    message: "Widget not found",
+                                    package: Package.name
+                                }
+                            }
+                            let widgetSourceRequest = await this.sqlWidgetSource.insert({
+                                reference: reference,
+                                widget: idWidget,
+                                object: source.id,
+                                action: action.id,
+                                type: source.type,
+                            })
+                            if (widgetSourceRequest.error) {
+                                return widgetSourceRequest
+                            }
+                            let sourceId = widgetSourceRequest.data.insertId
+                            for (let indexSourceArgument = 0; indexSourceArgument < pArguments.length; indexSourceArgument++) {
+                                let argument = pArguments[indexSourceArgument]
                                 let resultInsertWidgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.insert({
                                     reference: argument.reference,
                                     value: argument.value,
@@ -236,267 +434,179 @@ class Widget extends Controller {
                                     return resultInsertWidgetSourceArgumentRequest
                                 }
                             }
-                        }
-                        return {
-                            error: false,
-                            package: Package.name,
-                            message: ''
+                            return {
+                                error: false,
+                                message: "",
+                                package: Package.name
+                            }
+                        } else {
+                            this.core.logger.warning(Package.name, "Missing arguments")
+                            return {
+                                error: true,
+                                message: "Missing arguments action",
+                                package: Package.name
+                            }
                         }
                     } else {
-                        this.core.logger.warning(Package.name, "Missing icon action when sources widget")
+                        this.core.logger.warning(Package.name, "Missing action")
                         return {
                             error: true,
-                            message: "Missing sources action",
+                            message: "Missing action action",
                             package: Package.name
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing icon action when contents widget")
+                    this.core.logger.warning(Package.name, "Missing source")
                     return {
                         error: true,
-                        message: "Missing contents action",
+                        message: "Missing source action",
                         package: Package.name
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing icon action when insert widget")
+                this.core.logger.warning(Package.name, "Missing reference")
                 return {
                     error: true,
-                    message: "Missing icon action",
+                    message: "Missing reference action",
                     package: Package.name
                 }
             }
-        } else {
-            this.core.logger.warning(Package.name, "Missing reference action when insert widget")
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
             return {
+                package: Package.name,
                 error: true,
-                message: "Missing reference action",
-                package: Package.name
+                message: "Internal server error"
             }
         }
+
     }
 
-    async update(idWidget, content) {
-        if (content) {
-            let requestGetOne = await this.sqlWidget.getOne(idWidget)
-            if (requestGetOne.error) {
-                return requestGetOne
+    async insertContent(idWidget, idType, content) {
+        try {
+            if (idType) {
+                if (content) {
+                    let widgetRequest = await this.sqlWidget.getOne(idWidget)
+                    if (widgetRequest.error) {
+                        return widgetRequest
+                    }
+                    if (widgetRequest.data == false) {
+                        return {
+                            error: true,
+                            message: "Widget not found",
+                            package: Package.name
+                        }
+                    }
+                    let widgetSourceRequest = await this.sqlWidgetContent.insert({
+                        type: idType,
+                        content: content,
+                        widget: idWidget,
+                    })
+                    if (widgetSourceRequest.error) {
+                        return widgetSourceRequest
+                    }
+                    return {
+                        error: false,
+                        message: "",
+                        package: Package.name
+                    }
+                } else {
+                    this.core.logger.warning(Package.name, "Missing content")
+                    return {
+                        error: true,
+                        message: "Missing content action",
+                        package: Package.name
+                    }
+                }
+            } else {
+                this.core.logger.warning(Package.name, "Missing type")
+                return {
+                    error: true,
+                    message: "Missing type action",
+                    package: Package.name
+                }
             }
-            let requestUpdate = await this.sqlWidgetContent.updateAll({ content: content.native }, { id: content.id })
-            if (requestUpdate.error) {
-                return requestUpdate
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
+        }
+
+    }
+
+    async deleteSource(idWidget, idSource) {
+        try {
+            let widgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.deleteAllByField({ widget_source: idSource })
+            if (widgetSourceArgumentRequest.error) {
+                return widgetSourceArgumentRequest
+            }
+            let widgetSourceRequest = await this.sqlWidgetSource.deleteAllByField({ widget: idWidget, id: idSource })
+            if (widgetSourceRequest.error) {
+                return widgetSourceRequest
+            }
+            return {
+                error: false,
+                message: "",
+                package: Package.name
+            }
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
+        }
+
+    }
+
+    async deleteContent(idWidget, idContent) {
+        try {
+            let widgetContentRequest = await this.sqlWidgetContent.deleteAllByField({ widget: idWidget, id: idContent })
+            if (widgetContentRequest.error) {
+                return widgetContentRequest
+            }
+            return {
+                error: false,
+                message: "",
+                package: Package.name
+            }
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
+        }
+
+    }
+
+    async getConfiguration() {
+        try {
+            let contentTypes = await this.sqlWidgetContentType.getAll()
+            if (contentTypes.error) {
+                return contentTypes
             }
             return {
                 error: false,
                 package: Package.name,
-                message: ''
-            }
-        } else {
-            this.core.logger.warning(Package.name, "Missing smartobject settings name")
-            return {
-                error: true,
-                message: "Missing smartobject settings name",
-                package: Package.name
-            }
-        }
-    }
-
-    async delete(idWidget) {
-        this.core.logger.verbose(Package.name, "Delete widget " + idWidget)
-        let widgetSourceRequest = await this.sqlWidgetSource.getAllByField({ widget: idWidget })
-        if (widgetSourceRequest.error) {
-            return widgetSourceRequest
-        }
-        let widgetSources = widgetSourceRequest.data
-        for (let index = 0; index < widgetSources.length; index++) {
-            let widgetSource = widgetSources[index]
-            let widgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.deleteAllByField({ widget_source: widgetSource.id })
-            if (widgetSourceArgumentRequest.error) {
-                return widgetSourceArgumentRequest
-            }
-        }
-        let widgetSourceDeleteRequest = await this.sqlWidgetSource.deleteAllByField({ widget: idWidget })
-        if (widgetSourceDeleteRequest.error) {
-            return widgetSourceDeleteRequest
-        }
-        let widgetContentDeleteRequest = await this.sqlWidgetContent.deleteAllByField({ widget: idWidget })
-        if (widgetContentDeleteRequest.error) {
-            return widgetContentDeleteRequest
-        }
-        let widgetDeleteRequest = await this.sqlWidget.deleteOne(idWidget)
-        if (widgetDeleteRequest.error) {
-            return widgetDeleteRequest
-        }
-        return {
-            error: false,
-            message: "",
-            package: Package.name
-        }
-    }
-
-    async insertSource(idWidget, reference, source, action, pArguments) {
-        if (reference) {
-            if (source) {
-                if (action) {
-                    if (pArguments) {
-                        let widgetRequest = await this.sqlWidget.getOne(idWidget)
-                        if (widgetRequest.error) {
-                            return widgetRequest
-                        }
-                        if (widgetRequest.data == false) {
-                            return {
-                                error: true,
-                                message: "Widget not found",
-                                package: Package.name
-                            }
-                        }
-                        let widgetSourceRequest = await this.sqlWidgetSource.insert({
-                            reference: reference,
-                            widget: idWidget,
-                            object: source.id,
-                            action: action.id,
-                            type: source.type,
-                        })
-                        if (widgetSourceRequest.error) {
-                            return widgetSourceRequest
-                        }
-                        let sourceId = widgetSourceRequest.data.insertId
-                        for (let indexSourceArgument = 0; indexSourceArgument < pArguments.length; indexSourceArgument++) {
-                            let argument = pArguments[indexSourceArgument]
-                            let resultInsertWidgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.insert({
-                                reference: argument.reference,
-                                value: argument.value,
-                                widget_source: sourceId
-                            })
-                            if (resultInsertWidgetSourceArgumentRequest.error) {
-                                return resultInsertWidgetSourceArgumentRequest
-                            }
-                        }
-                        return {
-                            error: false,
-                            message: "",
-                            package: Package.name
-                        }
-                    } else {
-                        this.core.logger.warning(Package.name, "Missing arguments")
-                        return {
-                            error: true,
-                            message: "Missing arguments action",
-                            package: Package.name
-                        }
-                    }
-                } else {
-                    this.core.logger.warning(Package.name, "Missing action")
-                    return {
-                        error: true,
-                        message: "Missing action action",
-                        package: Package.name
+                message: "",
+                data: {
+                    contents: {
+                        types: contentTypes.data
                     }
                 }
-            } else {
-                this.core.logger.warning(Package.name, "Missing source")
-                return {
-                    error: true,
-                    message: "Missing source action",
-                    package: Package.name
-                }
             }
-        } else {
-            this.core.logger.warning(Package.name, "Missing reference")
+        } catch (error) {
+            this.core.logger.error("Widget : " + error.toString())
             return {
+                package: Package.name,
                 error: true,
-                message: "Missing reference action",
-                package: Package.name
-            }
-        }
-    }
-
-    async insertContent(idWidget, idType , content) {
-        if (idType) {
-            if (content) {
-                let widgetRequest = await this.sqlWidget.getOne(idWidget)
-                if (widgetRequest.error) {
-                    return widgetRequest
-                }
-                if (widgetRequest.data == false) {
-                    return {
-                        error: true,
-                        message: "Widget not found",
-                        package: Package.name
-                    }
-                }
-                let widgetSourceRequest = await this.sqlWidgetContent.insert({
-                    type: idType,
-                    content: content,
-                    widget: idWidget,
-                })
-                if (widgetSourceRequest.error) {
-                    return widgetSourceRequest
-                }
-                return {
-                    error: false,
-                    message: "",
-                    package: Package.name
-                }
-            } else {
-                this.core.logger.warning(Package.name, "Missing content")
-                return {
-                    error: true,
-                    message: "Missing content action",
-                    package: Package.name
-                }
-            }
-        } else {
-            this.core.logger.warning(Package.name, "Missing type")
-            return {
-                error: true,
-                message: "Missing type action",
-                package: Package.name
-            }
-        }
-    }
-
-    async deleteSource(idWidget, idSource) {
-        let widgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.deleteAllByField({ widget_source: idSource })
-        if (widgetSourceArgumentRequest.error) {
-            return widgetSourceArgumentRequest
-        }
-        let widgetSourceRequest = await this.sqlWidgetSource.deleteAllByField({ widget: idWidget, id: idSource })
-        if (widgetSourceRequest.error) {
-            return widgetSourceRequest
-        }
-        return {
-            error: false,
-            message: "",
-            package: Package.name
-        }
-    }
-
-    async deleteContent(idWidget, idContent) {
-        let widgetContentRequest = await this.sqlWidgetContent.deleteAllByField({ widget: idWidget, id: idContent })
-        if (widgetContentRequest.error) {
-            return widgetContentRequest
-        }
-        return {
-            error: false,
-            message: "",
-            package: Package.name
-        }
-    }
-
-    async getConfiguration() {
-        let contentTypes =  await this.sqlWidgetContentType.getAll()
-        if(contentTypes.error) {
-            return contentTypes
-        }
-        return {
-            error: false,
-            package: Package.name,
-            message: "",
-            data: {
-                contents: {
-                    types: contentTypes.data
-                }
+                message: "Internal server error"
             }
         }
     }
