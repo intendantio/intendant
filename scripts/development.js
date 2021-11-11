@@ -13,8 +13,6 @@ console.log()
 let updateRemove = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Delete cache ") + " /Build")
 fsextra.removeSync("./.dev")
 
-fs.mkdirSync("./.dev/.intendant", { recursive: true })
-
 
 updateRemove(chalk.white.bold.bgGreen(" >> ") + chalk(" Delete cache") + chalk.green(" ✔"))
 
@@ -94,8 +92,6 @@ const _ = async function () {
 
     }
 }
-
-fs.mkdirSync("./.dev/.intendant/@intendant", { recursive: true })
 
 _()
 

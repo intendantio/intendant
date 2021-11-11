@@ -174,7 +174,7 @@ class ExternalWeather {
                         let resultRequest = await this.request(settings.city)
                         if (resultRequest.error) { return resultRequest }
                         let weather = resultRequest.data
-                        let day = weather["fcst_day_" + (settings.forecast + 1)]
+                        let day = weather["fcst_day_" + (parseInt(settings.forecast) + 1)]
                         let time = day.hourly_data[settings.time + "H00"]
                         let data = {
                             temperature: time.TMP2m,

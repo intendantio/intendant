@@ -166,7 +166,7 @@ class Routine extends Controller {
 
     async insert(name, icon, watch, triggers, effects, mode) {
         try {
-            if (typeof name == 'string' && typeof mode == 'string' && typeof icon == 'string' && typeof watch == 'string' && Array.isArray(triggers) && Array.isArray(effects)) {
+            if (typeof name == 'string' && typeof mode == 'string' && typeof icon == 'string' && (typeof watch == 'string' || typeof watch == 'number')&& Array.isArray(triggers) && Array.isArray(effects)) {
                 let resultInsert = await this.sqlRoutine.insert({
                     id: null,
                     name: name,

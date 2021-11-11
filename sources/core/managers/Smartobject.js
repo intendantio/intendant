@@ -1,4 +1,5 @@
 import Package from '../package'
+import fs from 'fs'
 
 class Manager {
 
@@ -104,8 +105,13 @@ class Manager {
                         this.logger.warning(Package.name, error)
                     }
                 } else {
-                    await sqlSmartobject.updateAll({ status: 3 }, { id: smartobject.id })
-                    this.logger.warning(Package.name, "Smartobject manager : missing smartobject library " + smartobject.module)
+                    if(fs.existsSync("./node_modules/" + smartobject.module)) {
+                        this.installSmartobjects.push(smartobject.module)
+                        this.instanciate(smartobject)
+                    } else {
+                        await sqlSmartobject.updateAll({ status: 3 }, { id: smartobject.id })
+                        this.logger.warning(Package.name, "Smartobject manager : missing smartobject library " + smartobject.module)
+                    }
                 }
             }
         } catch (error) {

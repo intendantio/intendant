@@ -371,7 +371,7 @@ class NewRoutine extends React.Component {
                                                 <div style={{ display: 'flex', flexDirection: 'column', paddingTop: 10, paddingBottom: 10 }}>
                                                     {
                                                         this.state.action.settings.map(setting => {
-                                                            return <Action setState={this.setState.bind(this)} action={setting} flexDirection='column' orientation='horizontal'  />
+                                                            return <div style={{marginTop: 5, marginBottom: 5}}><Action setState={this.setState.bind(this)} action={setting} flexDirection='column' orientation='horizontal'  /></div>
                                                         })
                                                     }
                                                 </div>
@@ -439,7 +439,7 @@ class NewRoutine extends React.Component {
                                                 <div style={{ display: 'flex', flexDirection: 'column', paddingTop: 10, paddingBottom: 10 }}>
                                                     {
                                                         this.state.action.settings.map(setting => {
-                                                            return <Action setState={this.setState.bind(this)} action={setting} />
+                                                            return <div style={{marginTop: 5, marginBottom: 5}}><Action setState={this.setState.bind(this)} action={setting} /></div>
                                                         })
                                                     }
                                                 </div>

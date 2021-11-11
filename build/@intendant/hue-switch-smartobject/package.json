@@ -2,7 +2,7 @@
     "name": "@intendant/hue-switch-smartobject",
     "main": "./index.js",
     "author": "Clément MERLET",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "apache-2.0",
     "module": "smartobject",
     "icon": "radio-outline",
@@ -25,16 +25,47 @@
     ],
     "actions": [
         {
-            "id": "getState",
-            "name": "Get state",
-            "description": "Get switch state",
+            "id": "event",
+            "name": "Get event",
+            "description": "Get switch event",
             "settings": []
         },
         {
-            "id": "getConfiguration",
+            "id": "configuration",
             "name": "Get configuration",
             "description": "Get switch configuration",
             "settings": []
+        },
+        {
+            "id": "state",
+            "name": "Get state",
+            "description": "Get switch state",
+            "settings": [
+                {
+                    "id": "event",
+                    "type": "text",
+                    "default": ""
+                },
+                {
+                    "id": "type",
+                    "type": "select",
+                    "default": "info",
+                    "values": [
+                        "initial_press",
+                        "repeat",
+                        "short_release",
+                        "long_release"
+                    ]
+                },
+                {
+                    "id": "duration",
+                    "type": "slider",
+                    "step": 1,
+                    "min": 1,
+                    "max": 10,
+                    "default": 1
+                }
+            ]
         }
     ],
     "dependencies": {

@@ -50,6 +50,8 @@ pModules.forEach((pModule, index) => {
                             update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
                         })
                     })
+                } else {
+                    update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
                 }
             } else {
                 exec("cd public && npm pack ../build/" + configuration.name)

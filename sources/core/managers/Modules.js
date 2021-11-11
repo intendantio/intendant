@@ -1,5 +1,7 @@
 import Package from '../package'
 import md5 from 'md5'
+import fetch from 'node-fetch'
+import fs from 'fs'
 
 class Modules {
 
@@ -9,6 +11,21 @@ class Modules {
         this.logger = core.logger
         this.installModules = []
         this.modules = new Map()
+        this.before()
+    }
+
+    async before() {
+        let resultMarket = await fetch("https://market.intendant.io")
+            let resultMarketJSON = await resultMarket.json()
+            resultMarketJSON = resultMarketJSON.filter(item => {
+                return item.name.includes("-module")
+            })
+            resultMarketJSON.forEach(pModule => {
+                if(fs.existsSync("./node_modules/" + pModule.name)) {
+                    this.installModules.push(pModule.name)
+                }
+            })
+            this.restart()
     }
 
     restart() {
@@ -16,11 +33,17 @@ class Modules {
             this.logger.verbose(Package.name, "Module manager : restart")
             this.modules = new Map()
             this.installModules.forEach(async pModule => {
-                let Module = require(pModule)
-                let instanceModule = new Module(this.core)
-                this.modules.set(pModule, instanceModule)
-                this.logger.verbose(Package.name, "Module manager : instanciate module " + pModule + " successful")
-            })
+                try {
+                    let Module = require(pModule)
+                    let instanceModule = new Module(this.core)
+                    this.modules.set(pModule, instanceModule)
+                    this.logger.verbose(Package.name, "Module manager : instanciate module " + pModule + " successful")
+                } catch (error) {
+                    this.installModules = this.installModules.filter(installModule => {
+                        return installModule != pModule
+                    })
+                }
+           })
         } catch (error) {
             this.core.logger.error("Module manager : " + error.toString())
             return {

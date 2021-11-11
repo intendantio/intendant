@@ -234,10 +234,10 @@ class NewProcess extends React.Component {
                                     <div style={{ flexDirection: 'column', display: 'flex', width: '20%' }}>
                                         {
                                             this.state.process.enable == 1 ?
-                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"contained"} onClick={() => { this.executeAction() }} color="default" startIcon={<Check />}>
+                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"contained"} onClick={() => { this.executeAction() }} color="default" >
                                                     {this.state.process.name_enable}
                                                 </Button> :
-                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Close />}>
+                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"outlined"} onClick={() => { this.executeAction() }} color="default" >
                                                     {this.state.process.name_disable}
                                                 </Button>
                                         }
