@@ -1,5 +1,5 @@
 {
-    "name": "@intendant/internal-list-manager-module",
+    "name": "@intendant/list-manager-module",
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.1",

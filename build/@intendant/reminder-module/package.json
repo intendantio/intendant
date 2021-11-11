@@ -1,5 +1,5 @@
 {
-    "name": "@intendant/internal-reminder-module",
+    "name": "@intendant/reminder-module",
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.1",

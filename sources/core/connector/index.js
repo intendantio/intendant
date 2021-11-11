@@ -298,7 +298,7 @@ class SQLite {
         if (typeof request == 'string') {
             try {
                 request = request.replace("DATE:NOW","date('now')")
-                let result = await this._connector.prepare(request).all()
+                let result = await this._connector.prepare(request).run()
                 return {
                     package: Package.name,
                     error: false,

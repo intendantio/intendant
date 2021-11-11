@@ -1,5 +1,5 @@
 {
-    "name": "@intendant/internal-storage-module",
+    "name": "@intendant/storage-module",
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.1",

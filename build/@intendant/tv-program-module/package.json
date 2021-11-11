@@ -1,5 +1,5 @@
 {
-    "name": "@intendant/external-tv-program-module",
+    "name": "@intendant/tv-program-module",
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.1",

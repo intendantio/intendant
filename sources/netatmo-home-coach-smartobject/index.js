@@ -95,7 +95,7 @@ class NetatmoHomeCoach extends SmartObject {
                     co2: dashboard.CO2,
                     noise: dashboard.Noise,
                     pressure: dashboard.Pressure,
-                    humidity: dashboard.humidity
+                    humidity: dashboard.Humidity
                 }
             }
         } else {

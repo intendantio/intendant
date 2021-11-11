@@ -42,11 +42,8 @@ class Core {
         this.configuration = configuration
         this.logger = Tracing
 
-
         this.connector = Connector
-        this.salt = Math.random(16)
-
-        this.logger.verbose(Package.name, "Core : salt generate " + this.salt)
+        this.salt = Package.name + "-" + Package.version
 
         /* Controller */
         this.logger.verbose(Package.name, "Core : instanciate controller")
