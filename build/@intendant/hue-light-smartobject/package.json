@@ -1,6 +1,42 @@
 {
     "name": "@intendant/hue-light-smartobject",
     "main": "./index.js",
+    "manufacturer": "Philips Hue",
+    "product": "light",
+    "tags": [
+        "Philips Hue",
+        "Light"
+    ],
+    "requirements": [
+        "Hue bridge"
+    ],
+    "models": [
+        {
+            "name": "Smart bulbs E27",
+            "image": "https://www.assets.signify.com/is/image/Signify/47cb6629bf2c4366a125acef00e3b13e",
+            "copyright": "Signify"
+        },
+        {
+            "name": "Smart bulbs E14",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/ae23f4cc1d7b4faa935cac1600c24370",
+            "copyright": "Signify"
+        },
+        {
+            "name": "Smart bulbs GU10",
+            "image": "https://www.assets.signify.com/is/image/Signify/15d0d478a22f42e0a66bace800d642d1",
+            "copyright": "Signify"
+        },
+        {
+            "name": "Smart bulbs GU10",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/a4e344c17bdb4c65a495ac0c0099ddc6",
+            "copyright": "Signify"
+        },
+        {
+            "name": "Other lamp",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/de22a74e31e74929a174ab0300df0aaa?&wid=340&hei=340&qlt=82&$jpglarge$",
+            "copyright": "Signify"
+        }
+    ],
     "author": "Clément MERLET",
     "version": "0.0.2",
     "license": "apache-2.0",

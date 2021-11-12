@@ -2,6 +2,22 @@
     "name": "@intendant/hue-plug-smartobject",
     "main": "./index.js",
     "module": "smartobject",
+    "manufacturer": "Philips Hue",
+    "product": "plug",
+    "tags": [
+        "Philips Hue",
+        "Plug"
+    ],
+    "requirements": [
+        "Hue bridge"
+    ],
+    "models": [
+        {
+            "name": "Smart plug",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/99c9759dfb95406ea862aa380084b790",
+            "copyright": "Signify"
+        }
+    ],
     "icon": "flash-outline",
     "author": "Clément MERLET",
     "version": "0.0.1",

@@ -3,6 +3,33 @@
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.2",
+    "manufacturer": "Philips Hue",
+    "product": "switch",
+    "tags": [
+        "Philips Hue",
+        "Switch",
+        "Button"
+    ],
+    "requirements": [
+        "Hue bridge"
+    ],
+    "models": [
+        {
+            "name": "Dimmer Switch v1",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/eaadc158a4d245958a48ab8700d270dd",
+            "copyright": "Signify"
+        },
+        {
+            "name": "Dimmer Switch v2",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/eaadc158a4d245958a48ab8700d270dd",
+            "copyright": "Signify"
+        },
+        {
+            "name": "Smart button",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/02ef5813714b4fbd98cdac2400a9bdbb?&wid=340&hei=340&qlt=82&$jpglarge$",
+            "copyright": "Signify"
+        }
+    ],
     "license": "apache-2.0",
     "module": "smartobject",
     "icon": "radio-outline",

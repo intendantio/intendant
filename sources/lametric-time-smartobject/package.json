@@ -3,6 +3,21 @@
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.1",
+    "manufacturer": "LaMetric",
+    "product": "clock",
+    "tags": [
+        "Lametric",
+        "Clock",
+        "Alarm"
+    ],
+    "requirements": [],
+    "models": [
+        {
+            "name": "LaMetric Time",
+            "image": "https://lametric.com/sites/default/files/2018-11/d_buynow.png",
+            "copyright": "LaMetric"
+        }
+    ],
     "license": "apache-2.0",
     "module": "smartobject",
     "icon": "radio-outline",

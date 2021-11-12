@@ -26,12 +26,40 @@ pModules.forEach((pModule, index) => {
     let update = console.draft(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy source ") + pModule)
     let configuration = JSON.parse(fs.readFileSync("./sources/" + pModule + "/package.json").toString())
     fsextra.copySync("./sources/" + pModule, "./build/" + configuration.name)
-    marketStack.push({
-        name: configuration.name,
-        raw: "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-" + configuration.name.split("/")[1] + "-" + configuration.version + ".tgz"
-    })
+    if(configuration.module == "smartobject") {
+        marketStack.push({
+            name: configuration.name,
+            icon: configuration.icon,
+            author: configuration.author,
+            version: configuration.version,
+            manufacturer: configuration.manufacturer,
+            tags: configuration.tags,
+            requirements: configuration.requirements,
+            type: configuration.module,
+            models: configuration.models,
+            product: configuration.product,
+            raw: "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-" + configuration.name.split("/")[1] + "-" + configuration.version + ".tgz"
+        })
+    } else {
+        marketStack.push({
+            name: configuration.name,
+            author: configuration.author,
+            type: configuration.module,
+            version: configuration.version,
+            raw: "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-" + configuration.name.split("/")[1] + "-" + configuration.version + ".tgz"
+        })
+    }
+    
+    
+    let os = require('os').type()
     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Build ") + pModule)
-    exec("cd scripts && ..\\node_modules\\.bin\\babel ../sources/" + pModule + " --out-dir ../build/" + configuration.name + " --config-file ./.babelrc", async (error) => {
+    let command = "cd scripts && ..\\node_modules\\.bin\\babel ../sources/" + pModule + " --out-dir ../build/" + configuration.name + " --config-file ./.babelrc"
+    if(os == "Darwin") {
+        command = "cd scripts && ../node_modules/.bin/babel ../sources/" + pModule + " --out-dir ../build/" + configuration.name + " --config-file ./.babelrc"
+    }
+
+
+    exec(command, async (error) => {
         if (error) {
             fsextra.appendFileSync("./build-error.log", "Build " + pModule + " : " + error.signal)
             fsextra.appendFileSync("./build-error.log", error.stack)

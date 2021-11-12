@@ -3,6 +3,27 @@
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.1",
+    "manufacturer": "Philips Hue",
+    "product": "motion sensor",
+    "tags": [
+        "Philips Hue",
+        "Motion Sensor"
+    ],
+    "requirements": [
+        "Hue bridge"
+    ],
+    "models": [
+        {
+            "name": "Motion sensor indoor",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/69bb149b9d0741c5b414ac2400a98475",
+            "copyright": "Signify"
+        },
+        {
+            "name": "Motion sensor outdoor",
+            "image": "https://www.assets.signify.com/is/image/PhilipsLighting/e23a5ee823c64fbf800dac2400a98ff5",
+            "copyright": "Signify"
+        }
+    ],
     "license": "apache-2.0",
     "dependencies": {
         "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-smartobject-0.0.1.tgz", 

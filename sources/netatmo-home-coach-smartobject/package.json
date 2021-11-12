@@ -4,6 +4,22 @@
     "typings": "./index.d.ts",
     "module": "smartobject",
     "icon": "sun-outline",
+    "manufacturer": "Netatmo",
+    "product": "air sensor",
+    "tags": [
+        "Netatmo",
+        "Air station",
+        "Humidity sensor",
+        "Co2 sensor"
+    ],
+    "requirements": [],
+    "models": [
+        {
+            "name": "Home coach",
+            "image": "https://medias.netatmo.com/images/products/NHC",
+            "copyright": "NETATMO"
+        }
+    ],
     "author": "Clément MERLET",
     "version": "0.0.1",
     "license": "apache-2.0",

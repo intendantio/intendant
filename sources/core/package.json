@@ -3,6 +3,7 @@
     "main": "./index.js",
     "author": "Clément MERLET",
     "version": "0.0.3",
+    "module": "core",
     "license": "apache-2.0",
     "dependencies": {
         "node-fetch": "^2.6.1",

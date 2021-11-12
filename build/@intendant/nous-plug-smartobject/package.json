@@ -4,6 +4,20 @@
     "author": "Clément MERLET",
     "version": "0.0.1",
     "license": "apache-2.0",
+    "manufacturer": "Nous",
+    "product": "plug",
+    "tags": [
+        "Nous",
+        "Power stripe"
+    ],
+    "requirements": [],
+    "models": [
+        {
+            "name": "A5 Smart power stripe",
+            "image": "https://nous.technology/share/resize/thumbs/261x288/UA-A5.jpg",
+            "copyright": "Nous"
+        }
+    ],
     "dependencies": {
         "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-smartobject-0.0.1.tgz", 
         "node-fetch": "^2.6.1",
