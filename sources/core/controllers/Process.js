@@ -232,7 +232,7 @@ class Process extends Controller {
                             if (Smartobject.error) {
                                 return Smartobject
                             }
-                            let resultAction = await this.core.manager.smartobject.smartobjects.get(Smartobject.data.reference).action(action.action, pArguments)
+                            let resultAction = await this.core.manager.smartobject.smartobjects.get(Smartobject.data.id).action(action.action, pArguments)
                             if (resultAction.error) {
                                 return resultAction
                             }

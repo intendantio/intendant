@@ -13,19 +13,22 @@ class NewSmartobject extends React.Component {
             reference: "",
             enabled: false,
             message: "",
-            types: []
+            types: [],
+            smartobjects: []
         }
     }
 
     async componentDidMount() {
         let resultType = await new Request().get().fetch("/api/configurations/smartobject")
-        if (resultType.error) {
+        let resultSmartobject = await new Request().get().fetch("/api/smartobjects")
+        if (resultType.error || resultSmartobject.error) {
             this.setState({ enabled: true, message: resultType.package + " : " + resultType.message })
         } else {
             this.setState({
                 enabled: false,
                 message: "",
-                types: resultType.data
+                types: resultType.data,
+                smartobjects: resultSmartobject.data
             })
         }
     }
@@ -100,14 +103,31 @@ class NewSmartobject extends React.Component {
                                     <Typography variant='body1' style={{ fontSize: 20 }}>Configuration</Typography>
                                     {
                                         this.state.module.settings.map(settings => {
-                                            return (
-                                                <TextField
-                                                    onChange={(event) => { this.updateSettings(settings.name, event.nativeEvent.target.value) }}
-                                                    style={{ width: '300px', marginTop: 10 }}
-                                                    label={settings.name}
-                                                    variant="outlined"
-                                                />
-                                            )
+                                            if (settings.type == "smartobject") {
+                                                return (
+                                                    <FormControl variant="outlined" style={{ marginTop: 10, width: '300px' }} >
+                                                    <InputLabel>{settings.name}</InputLabel>
+                                                        <Select onChange={(event) => { this.updateSettings(settings.name, event.target.value) }} label="Connexion" >
+                                                            {
+                                                                this.state.smartobjects.filter(smartobject => {
+                                                                    return smartobject.module == settings.reference
+                                                                }).map(pModule => {
+                                                                    return <MenuItem value={pModule.id} >{pModule.reference}</MenuItem>
+                                                                })
+                                                            }
+                                                        </Select>
+                                                    </FormControl>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TextField
+                                                        onChange={(event) => { this.updateSettings(settings.name, event.nativeEvent.target.value) }}
+                                                        style={{ width: '300px', marginTop: 10 }}
+                                                        label={settings.name}
+                                                        variant="outlined"
+                                                    />
+                                                )
+                                            }
                                         })
                                     }
                                 </div>
@@ -120,7 +140,7 @@ class NewSmartobject extends React.Component {
                     </IconButton>
                 </Paper>
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    { this.state.message }
+                    {this.state.message}
                 </Alert>
             </div>
         )

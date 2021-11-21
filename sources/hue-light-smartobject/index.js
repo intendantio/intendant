@@ -1,72 +1,94 @@
 import SmartObject from '@intendant/smartobject'
 import fetch from 'node-fetch'
 import Package from './package.json'
+import Https from 'https'
 import Color from './lib/color'
+
+const httpsAgent = new Https.Agent({
+    rejectUnauthorized: false,
+})
+
 
 class Light extends SmartObject {
 
-    constructor(settings,logger,core) {
-        super(settings,logger,core,Package)
+    constructor(settings, logger, core) {
+        super(settings, logger, core, Package)
     }
 
+    getHueSettings() {
+        if(this.core.manager.smartobject.smartobjects.has(parseInt(this.settings.hueBridge))) {
+            return {
+                error: false,
+                package: Package.name,
+                data: this.core.manager.smartobject.smartobjects.get(parseInt(this.settings.hueBridge)).settings,
+                message: ""
+            }
+        } else {
+            return {
+                error: true,
+                package: Package.name,
+                message: "Missing smartobject instance " + this.settings.hueBridge
+            }
+        }
+    }
 
     /*
         Action
     */
     async __turnOn(settings = {}) {
-        let color = settings.color ? Color.isHexColor(settings.color.slice(1,Infinity))   ? settings.color : "#ffffff" : "#ffffff"
-        var r = parseInt(color.substr(1,2), 16)
-        var g = parseInt(color.substr(3,2), 16)
-        var b = parseInt(color.substr(5,2), 16)
-        let hsl = Color.rgbToHsl(r,g,b)
-        var hue = parseInt(((Color.rgbToHsl(r, g, b)[0] * 360) * 65535) / 360);
-        let sat = parseInt(hsl[1] * 255)
-        let bri = parseInt(hsl[2] * 255)
-        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+        let resultHue = this.getHueSettings()
+        if(resultHue.error) {
+            return resultHue
+        }
+        let color = settings.color ? Color.isHexColor(settings.color.slice(1, Infinity)) ? settings.color : "#ffffff" : "#ffffff"
+        let position = Color.hexToLab(color)
+        if(settings.duration == undefined) {
+            settings.duration = 200
+        }
+        if(settings.brightness == undefined) {
+            settings.brightness = 70
+        }
+        let body = {
+            on: {
+                on: true
+            },
+            dimming: {
+                brightness: parseInt(settings.brightness),
+            },
+            color: {
+                xy: {
+                    x: position.x,
+                    y: position.y
+                }
+            },
+            dynamics: {
+                duration: parseInt(settings.duration)
+            }
+        }
+        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'hue-application-key': resultHue.data.apikey
             },
-            body: JSON.stringify({
-                on: true,
-                hue: hue,
-                sat: sat,
-                transitiontime: settings.transitiontime ? (settings.transitiontime * 10) : 40,
-                bri: parseInt(settings.brightness ? settings.brightness : bri)
-            })
+            agent: httpsAgent,
+            body: JSON.stringify(body)
         })
-        if(result.status == 200) {
+        if (result.status == 200) {
             let resultJSON = await result.json()
-            let error = {
-                error: false,
-                type: "",
-                description: ""
-            }
-            if (Array.isArray(resultJSON)) {
-                for (let index = 0; index < resultJSON.length; index++) {
-                    let item = resultJSON[index];
-                    if (item.error) {
-                        error = {
-                            error: true,
-                            type: item.error.type,
-                            message: item.error.description
-                        }
-                    }
-                }
-            }
-            if (error.error) {
+            if(resultJSON.errors.length > 0) {
                 return {
                     error: true,
                     package: Package.name,
-                    message: "Invalid request " + error.message
+                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
                 }
             } else {
                 return {
                     error: false,
                     package: Package.name,
                     message: "",
-                    data: resultJSON
+                    data: resultJSON.data[0]
                 }
             }
         } else {
@@ -79,47 +101,43 @@ class Light extends SmartObject {
     }
 
     async __turnOff(settings = {}) {
-        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+
+        let resultHue = this.getHueSettings()
+        if(resultHue.error) {
+            return resultHue
+        }
+
+        if(settings.duration == undefined) {
+            settings.duration = 200
+        }
+        let body = { 
+            on: { on: false },
+            dynamics: { duration: parseInt(settings.duration) }
+        }
+        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'hue-application-key': resultHue.data.apikey
             },
-            body: JSON.stringify({
-                on: false
-            })
+            agent: httpsAgent,
+            body: JSON.stringify(body)
         })
-        if(result.status == 200) {
+        if (result.status == 200) {
             let resultJSON = await result.json()
-            let error = {
-                error: false,
-                type: "",
-                message: ""
-            }
-            if (Array.isArray(resultJSON)) {
-                for (let index = 0; index < resultJSON.length; index++) {
-                    let item = resultJSON[index];
-                    if (item.error) {
-                        error = {
-                            error: true,
-                            type: item.error.type,
-                            message: item.error.description
-                        }
-                    }
-                }
-            }
-            if (error.error) {
+            if(resultJSON.errors.length > 0) {
                 return {
                     error: true,
                     package: Package.name,
-                    message: "Invalid request " + error.message
+                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
                 }
             } else {
                 return {
                     error: false,
                     package: Package.name,
                     message: "",
-                    data: resultJSON
+                    data: resultJSON.data[0]
                 }
             }
         } else {
@@ -131,52 +149,43 @@ class Light extends SmartObject {
         }
     }
 
-    async request() {
-        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id )
-        if(result.status == 200) {
-            let resultJSON = await result.json()
-            if (Array.isArray(resultJSON)) {
-                let item = resultJSON[0].error
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: "Invalid request " + item
-                }
-            } else {
-                return {
-                    error: false,
-                    package: Package.name,
-                    message: "",
-                    data: resultJSON
-                }
-            }
-        } else {
-            return {
-                error: true,
-                package: Package.name,
-                message: "Invalid status " + result.status
-            }
-        }
-    }
-
-    async __configuration(settings = {}) {
-        return await this.request()
-    }
 
     async __state(settings = {}) {
-        let result = await this.request()
-        if(result.error) {
-            return result
-        } 
-        return {
-            error: false,
-            package: Package.name,
-            message: "",
-            data: {
-                on: result.data.state.on,
-                brightness: result.data.state.bri,
-                color: result.data.state.hue,
-                staturation: result.data.state.sat,
+        let resultHue = this.getHueSettings()
+        if(resultHue.error) {
+            return resultHue
+        }
+
+        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'hue-application-key': resultHue.data.apikey
+            },
+            agent: httpsAgent
+        })
+        if (result.status == 200) {
+            let resultJSON = await result.json()
+            if(resultJSON.errors.length > 0) {
+                return {
+                    error: true,
+                    package: Package.name,
+                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
+                }
+            } else {
+                return {
+                    error: false,
+                    package: Package.name,
+                    message: "",
+                    data: resultJSON.data[0]
+                }
+            }
+        } else {
+            return {
+                error: true,
+                package: Package.name,
+                message: "Invalid status " + result.status
             }
         }
     }

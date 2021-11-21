@@ -12,11 +12,13 @@
         "Humidity sensor",
         "Co2 sensor"
     ],
+    "state": "compatible",
     "requirements": [],
     "models": [
         {
             "name": "Home coach",
             "image": "https://medias.netatmo.com/images/products/NHC",
+            "shop": "https://shop.netatmo.com/fr-fr/aircare/home-coach/homecoach",
             "copyright": "NETATMO"
         }
     ],

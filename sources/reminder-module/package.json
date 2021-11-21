@@ -5,7 +5,8 @@
     "version": "0.0.1",
     "license": "apache-2.0",
     "dependencies": {
-        "moment": "^2.29.1"
+        "moment": "^2.29.1",
+        "node-schedule": "^2.0.0"
     },
     "module": "module",
     "actions": [
@@ -20,34 +21,26 @@
                     "default": ""
                 },
                 {
-                    "id": "name",
+                    "id": "information",
                     "type": "text",
                     "default": ""
                 },
                 {
-                    "id": "action_active",
-                    "type": "text",
+                    "id": "repeating",
+                    "type": "checkbox",
                     "default": ""
                 },
                 {
-                    "id": "action_inactive",
+                    "id": "cron",
                     "type": "text",
                     "default": ""
-                },
-                {
-                    "id": "interval",
-                    "type": "slider",
-                    "min": 1,
-                    "max": 168,
-                    "default": 1,
-                    "step": 2
                 }
             ]
         },
         {
             "id": "getOne",
-            "name": "Get one reminder",
-            "description": "Get one reminder in storage",
+            "name": "Get reminder state",
+            "description": "Get one reminder state in storage",
             "settings": [
                 {
                     "id": "reference",
@@ -57,9 +50,9 @@
             ]
         },
         {
-            "id": "update",
-            "name": "Update active reminder",
-            "description": "Update active reminder in storage",
+            "id": "getAll",
+            "name": "Get all reminder state",
+            "description": "Get all reminder state in storage",
             "settings": [
                 {
                     "id": "reference",

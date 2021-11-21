@@ -32,7 +32,11 @@ class Market extends Controller {
                     error: true
                 }
             } else {
+
+
                 let item = resultMarketJSON[0]
+                
+
                 this.core.logger.verbose(Package.name, "Market controller : install package " + item.raw)
                 await new Promise((resolve, reject) => {
                     exec("npm install " + item.raw + " --silent 2>&1 | tee t", (e, std, ster) => {
@@ -69,6 +73,9 @@ class Market extends Controller {
         try {
             this.core.logger.verbose(Package.name, "Market controller : delete Package " + pPackage)
             this.core.logger.verbose(Package.name, "Market controller : restart configuration")
+            if(fs.existsSync("./node_modules/" + pPackage)) {
+                fs.rmSync("./node_modules/" + pPackage,{recursive:true,force: true})
+            }
             this.core.manager.module.installModules = this.core.manager.module.installModules.filter((pModule) => {
                 return pPackage != pModule
             })

@@ -38,6 +38,9 @@ pModules.forEach((pModule, index) => {
             type: configuration.module,
             models: configuration.models,
             product: configuration.product,
+            state: configuration.state,
+            settings: configuration.settings,
+            actions: configuration.actions,
             raw: "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-" + configuration.name.split("/")[1] + "-" + configuration.version + ".tgz"
         })
     } else {

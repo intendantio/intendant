@@ -75,7 +75,7 @@ class Manager {
         try {
             let sqlSmartobject = new this.connector(this.configuration, this.core, "smartobject")
             let sqlSmartobjectArgument = new this.connector(this.configuration, this.core, "smartobject_argument")
-            if (this.smartobjects.has(smartobject.reference) === false) {
+            if (this.smartobjects.has(smartobject.id) === false) {
                 let settingsRequest = await sqlSmartobjectArgument.getAllByField({ smartobject: smartobject.id })
                 if (settingsRequest.error) {
                     this.logger.warning(Package.name, settingsRequest.package + " : " + settingsRequest.message)
@@ -99,7 +99,7 @@ class Manager {
                             this.logger.warning(Package.name, resultUpdateRequest.message)
                             return
                         }
-                        this.smartobjects.set(smartobject.reference, instanceSmartObject)
+                        this.smartobjects.set(smartobject.id, instanceSmartObject)
                         this.logger.verbose(Package.name, "Smartobject manager : instanciate smartobject n°" + smartobject.id + " successful")
                     } catch (error) {
                         this.logger.warning(Package.name, error)
@@ -134,8 +134,8 @@ class Manager {
                 return getRequest
             }
             let smartobject = getRequest.data
-            if (this.smartobjects.has(smartobject.reference)) {
-                this.smartobjects.delete(smartobject.reference)
+            if (this.smartobjects.has(smartobject.id)) {
+                this.smartobjects.delete(smartobject.id)
             }
             await this.instanciate(smartobject)
             return {

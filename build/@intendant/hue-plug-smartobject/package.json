@@ -8,6 +8,7 @@
         "Philips Hue",
         "Plug"
     ],
+    "state": "compatible",
     "requirements": [
         "Hue bridge"
     ],
@@ -15,12 +16,13 @@
         {
             "name": "Smart plug",
             "image": "https://www.assets.signify.com/is/image/PhilipsLighting/99c9759dfb95406ea862aa380084b790",
+            "shop": "https://www.philips-hue.com/en-us/p/hue-smart-plug/046677552343",
             "copyright": "Signify"
         }
     ],
     "icon": "flash-outline",
     "author": "Clément MERLET",
-    "version": "0.0.1",
+    "version": "0.0.4",
     "license": "apache-2.0",
     "settings": [
         {
@@ -29,21 +31,17 @@
             "name": "Plug identifiant"
         },
         {
-            "id": "path",
-            "type": "string",
-            "name": "Hue Hub ip"
-        },
-        {
-            "id": "apikey",
-            "type": "string",
-            "name": "Hue authorisation"
+            "id": "hueBridge",
+            "type": "smartobject",
+            "reference": "@intendant/hue-bridge-smartobject",
+            "name": "Hue bridge instance"
         }
     ],
     "actions": [
         {
-            "id": "configuration",
-            "name": "Get configuration",
-            "description": "Get description configuration",
+            "id": "state",
+            "name": "Get state",
+            "description": "Get state",
             "settings": []
         },
         {

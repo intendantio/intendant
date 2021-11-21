@@ -9,8 +9,8 @@ class SmartObject {
         this.logger = core.logger
         this.core = core
         this.moduleConfiguration.settings.map(setting => {
-            if (typeof this.settings[setting.id] != setting.type) {
-                throw Package.name + ">Missing settings>" + setting.id
+            if (this.settings[setting.id] == undefined || this.settings[setting.id] == null) {
+                throw Package.name + ">Missing settings>" + this.id  + "-" + setting.id
             }
         })
     }

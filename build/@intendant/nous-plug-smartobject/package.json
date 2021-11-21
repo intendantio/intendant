@@ -10,11 +10,13 @@
         "Nous",
         "Power stripe"
     ],
+    "state": "in progress",
     "requirements": [],
     "models": [
         {
             "name": "A5 Smart power stripe",
             "image": "https://nous.technology/share/resize/thumbs/261x288/UA-A5.jpg",
+            "shop": "https://nous.technology/product/nous-a5-smart-power-strip.html",
             "copyright": "Nous"
         }
     ],

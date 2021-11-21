@@ -1,6 +1,11 @@
 import SmartObject from '@intendant/smartobject'
 import fetch from 'node-fetch'
 import Package from './package.json'
+import Https from 'https'
+
+const httpsAgent = new Https.Agent({
+    rejectUnauthorized: false,
+})
 
 class Plug extends SmartObject {
 
@@ -8,135 +13,146 @@ class Plug extends SmartObject {
         super(settings, logger, core, Package)
     }
 
+    getHueSettings() {
+        if(this.core.manager.smartobject.smartobjects.has(parseInt(this.settings.hueBridge))) {
+            return {
+                error: false,
+                package: Package.name,
+                data: this.core.manager.smartobject.smartobjects.get(parseInt(this.settings.hueBridge)).settings,
+                message: ""
+            }
+        } else {
+            return {
+                error: true,
+                package: Package.name,
+                message: "Missing smartobject instance " + this.settings.hueBridge
+            }
+        }
+    }
+    
     /*
         Action
     */
     async __turnOn(settings = {}) {
-        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+        let resultHue = this.getHueSettings()
+        if(resultHue.error) {
+            return resultHue
+        }
+        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'hue-application-key': resultHue.data.apikey
             },
-            body: JSON.stringify({ on: true })
+            agent: httpsAgent,
+            body: JSON.stringify({
+                on: {
+                    on: true
+                }
+            })
         })
         if (result.status == 200) {
             let resultJSON = await result.json()
-            let error = {
-                error: false,
-                type: "",
-                description: ""
-            }
-            if (Array.isArray(resultJSON)) {
-                for (let index = 0; index < resultJSON.length; index++) {
-                    let item = resultJSON[index];
-                    if (item.error) {
-                        error = {
-                            error: true,
-                            type: item.error.type,
-                            message: item.error.description
-                        }
-                    }
-                }
-            }
-            if (error.error) {
+            if(resultJSON.errors.length > 0) {
                 return {
                     error: true,
                     package: Package.name,
-                    message: "Invalid request"
+                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
                 }
             } else {
                 return {
                     error: false,
                     package: Package.name,
                     message: "",
-                    data: resultJSON
+                    data: resultJSON.data[0]
                 }
             }
         } else {
             return {
                 error: true,
                 package: Package.name,
-                message: "Invalid status"
+                message: "Invalid status " + result.status
             }
         }
     }
 
     async __turnOff(settings = {}) {
-        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id + "/state", {
+        let resultHue = this.getHueSettings()
+        if(resultHue.error) {
+            return resultHue
+        }
+        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'hue-application-key': resultHue.data.apikey
             },
-            body: JSON.stringify({ on: false })
+            agent: httpsAgent,
+            body: JSON.stringify({ on: { on: false } })
         })
         if (result.status == 200) {
             let resultJSON = await result.json()
-            let error = {
-                error: false,
-                type: "",
-                message: ""
-            }
-            if (Array.isArray(resultJSON)) {
-                for (let index = 0; index < resultJSON.length; index++) {
-                    let item = resultJSON[index];
-                    if (item.error) {
-                        error = {
-                            error: true,
-                            type: item.error.type,
-                            message: item.error.description
-                        }
-                    }
-                }
-            }
-            if (error.error) {
+            if(resultJSON.errors.length > 0) {
                 return {
                     error: true,
                     package: Package.name,
-                    message: "Invalid request"
+                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
                 }
             } else {
                 return {
                     error: false,
-                    message: "",
                     package: Package.name,
-                    data: resultJSON
+                    message: "",
+                    data: resultJSON.data[0]
                 }
             }
         } else {
             return {
                 error: true,
                 package: Package.name,
-                message: "Invalid status"
+                message: "Invalid status " + result.status
             }
         }
-
     }
 
-    async __configuration(settings = {}) {
-        let result = await fetch("http://" + this.settings.path + "/api/" + this.settings.apikey + "/lights/" + this.settings.id)
+
+    async __state(settings = {}) {
+        let resultHue = this.getHueSettings()
+        if(resultHue.error) {
+            return resultHue
+        }
+        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'hue-application-key': resultHue.data.apikey
+            },
+            agent: httpsAgent
+        })
         if (result.status == 200) {
             let resultJSON = await result.json()
-            if (Array.isArray(resultJSON)) {
+            if(resultJSON.errors.length > 0) {
                 return {
                     error: true,
                     package: Package.name,
-                    message: "Invalid request"
+                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
                 }
             } else {
                 return {
                     error: false,
                     package: Package.name,
                     message: "",
-                    data: resultJSON
+                    data: resultJSON.data[0]
                 }
             }
         } else {
             return {
                 error: true,
                 package: Package.name,
-                message: "Invalid status"
+                message: "Invalid status " + result.status
             }
         }
     }

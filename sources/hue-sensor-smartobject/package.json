@@ -9,6 +9,7 @@
         "Philips Hue",
         "Motion Sensor"
     ],
+    "state": "compatible",
     "requirements": [
         "Hue bridge"
     ],
@@ -16,11 +17,13 @@
         {
             "name": "Motion sensor indoor",
             "image": "https://www.assets.signify.com/is/image/PhilipsLighting/69bb149b9d0741c5b414ac2400a98475",
+            "shop": "https://www.philips-hue.com/en-us/p/hue-motion-sensor/046677473389",
             "copyright": "Signify"
         },
         {
             "name": "Motion sensor outdoor",
             "image": "https://www.assets.signify.com/is/image/PhilipsLighting/e23a5ee823c64fbf800dac2400a98ff5",
+            "shop": "https://www.philips-hue.com/en-us/p/hue-outdoor-sensor/046677541736",
             "copyright": "Signify"
         }
     ],
@@ -37,14 +40,10 @@
             "name": "Sensor identifiant"
         },
         {
-            "id": "path",
-            "type": "string",
-            "name": "Hue Hub ip"
-        },
-        {
-            "id": "apikey",
-            "type": "string",
-            "name": "Hue authorisation"
+            "id": "hueBridge",
+            "type": "smartobject",
+            "reference": "@intendant/hue-bridge-smartobject",
+            "name": "Hue bridge instance"
         }
     ],
     "actions": [

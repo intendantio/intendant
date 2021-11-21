@@ -24,6 +24,7 @@
     "babel-preset-minify": "^0.5.1",
     "better-sqlite3": "^7.4.3",
     "chalk": "^4.1.1",
+    "chroma-js": "^2.1.2",
     "crypto-js": "^4.1.1",
     "draftlog": "^1.0.13",
     "extract-zip": "^2.0.1",
@@ -32,6 +33,7 @@
     "moment": "^2.29.1",
     "node-fetch": "^2.6.1",
     "node-schedule": "^2.0.0",
+    "pex-color": "^1.1.1",
     "zip-a-folder": "^1.1.0"
   }
 }

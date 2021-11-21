@@ -10,11 +10,13 @@
         "Clock",
         "Alarm"
     ],
+    "state": "in progress",
     "requirements": [],
     "models": [
         {
             "name": "LaMetric Time",
             "image": "https://lametric.com/sites/default/files/2018-11/d_buynow.png",
+            "shop": "https://lametric.com/fr-FR",
             "copyright": "LaMetric"
         }
     ],

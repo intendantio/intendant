@@ -66,8 +66,10 @@ class Core {
             this.logger.verbose(Package.name, "Core : instanciate manager")
             this.manager = {}
             this.manager.smartobject = new SmartObjectManager(this)
-            this.manager.routine = new RoutineManager(this)
             this.manager.module = new ModulesManager(this)
+            setTimeout(() => {
+                this.manager.routine = new RoutineManager(this)
+            },5000)
         }, 100)
 
     }

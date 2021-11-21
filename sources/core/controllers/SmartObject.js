@@ -154,13 +154,15 @@ class SmartObject extends Controller {
             let profiles = smartobjectProfileRequest.data
             let actions = []
             let icon = null
-            if (this.core.manager.smartobject.smartobjects.has(smartobject.reference)) {
-                actions = this.core.manager.smartobject.smartobjects.get(smartobject.reference).moduleConfiguration.actions
+            if (this.core.manager.smartobject.smartobjects.has(smartobject.id)) {
+                actions = this.core.manager.smartobject.smartobjects.get(smartobject.id).moduleConfiguration.actions
                 actions = actions.map(action => {
                     action.allow = false
                     return action
                 })
-                icon = this.core.manager.smartobject.smartobjects.get(smartobject.reference).moduleConfiguration.icon
+                icon = this.core.manager.smartobject.smartobjects.get(smartobject.id).moduleConfiguration.icon
+            } else {
+                
             }
             return {
                 error: false,
@@ -410,8 +412,8 @@ class SmartObject extends Controller {
                             package: Package.name
                         }
                     }
-                    if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.reference)) {
-                        let instanceSmartobject = this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.reference)
+                    if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.id)) {
+                        let instanceSmartobject = this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.id)
                         let smartobject = await this.getOne(instanceSmartobject.id)
 
                         if (this.isAllow(smartobject.data, idProfile, force)) {

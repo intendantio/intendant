@@ -122,7 +122,7 @@ class Routine {
                                 let sqlSmartobject = new this.core.connector(this.configuration, this.core, "smartobject")
                                 let resultSmartobject = await sqlSmartobject.getOne(effect.source)
                                 if (resultSmartobject.error) {
-                                    this.logger.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.error)
+                                    this.logger.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.message)
                                     this.close()
                                     return
                                 }
@@ -131,6 +131,7 @@ class Routine {
                                 effect.arguments.map(argument => {
                                     settingsEffectSmartobject[argument.reference] = argument.value
                                 })
+                                this.logger.verbose(Package.name, "Execute action " + smartobject.id + " " + effect.action)
                                 let executeEffectSmartobjectResult = await this.core.controller.smartobject.executeAction(
                                     smartobject.id,
                                     effect.action,
@@ -139,7 +140,7 @@ class Routine {
                                     true
                                 )
                                 if (executeEffectSmartobjectResult.error) {
-                                    this.logger.warning(Package.name, executeEffectSmartobjectResult.package + " " + executeEffectSmartobjectResult.error)
+                                    this.logger.warning(Package.name, executeEffectSmartobjectResult.package + " " + executeEffectSmartobjectResult.message)
                                     this.close()
                                     return
                                 }
@@ -151,7 +152,7 @@ class Routine {
                                 })
                                 let executeEffectModuleResult = await this.core.manager.module.executeAction(effect.source, effect.action, settingsEffectModule)
                                 if (executeEffectModuleResult.error) {
-                                    this.logger.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.error)
+                                    this.logger.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.message)
                                     this.close()
                                     return
                                 }
@@ -160,7 +161,7 @@ class Routine {
                                 let sqlProcess = new this.core.connector(this.configuration, this.core, "process")
                                 let resultProcess = await sqlProcess.getOne(effect.source)
                                 if (resultProcess.error) {
-                                    this.logger.warning(Package.name, resultProcess.package + " " + resultProcess.error)
+                                    this.logger.warning(Package.name, resultProcess.package + " " + resultProcess.message)
                                     await this.sqlRoutine.updateAll({
                                         status: 0
                                     }, {

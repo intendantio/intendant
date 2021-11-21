@@ -7,38 +7,44 @@
         "Philips Hue",
         "Light"
     ],
+    "state": "compatible",
     "requirements": [
         "Hue bridge"
     ],
     "models": [
         {
-            "name": "Smart bulbs E27",
+            "name": "Smart bulbs E26",
             "image": "https://www.assets.signify.com/is/image/Signify/47cb6629bf2c4366a125acef00e3b13e",
+            "shop": "https://www.philips-hue.com/en-us/p/hue-white-and-color-ambiance-1-pack-e26/046677563257",
             "copyright": "Signify"
         },
         {
-            "name": "Smart bulbs E14",
+            "name": "Smart bulbs E12",
             "image": "https://www.assets.signify.com/is/image/PhilipsLighting/ae23f4cc1d7b4faa935cac1600c24370",
+            "shop": "https://www.philips-hue.com/en-us/p/hue-white-and-color-ambiance-single-bulb-e12/046677556969",
             "copyright": "Signify"
         },
         {
             "name": "Smart bulbs GU10",
             "image": "https://www.assets.signify.com/is/image/Signify/15d0d478a22f42e0a66bace800d642d1",
+            "shop": "https://www.philips-hue.com/en-us/p/hue-white-and-color-ambiance-1-pack-gu10/046677542337",
             "copyright": "Signify"
         },
         {
-            "name": "Smart bulbs GU10",
+            "name": "Play light bar",
             "image": "https://www.assets.signify.com/is/image/PhilipsLighting/a4e344c17bdb4c65a495ac0c0099ddc6",
+            "shop": "https://www.philips-hue.com/en-us/p/hue-white-and-color-ambiance-play-light-bar-single-pack/7820130U7",
             "copyright": "Signify"
         },
         {
             "name": "Other lamp",
             "image": "https://www.assets.signify.com/is/image/PhilipsLighting/de22a74e31e74929a174ab0300df0aaa?&wid=340&hei=340&qlt=82&$jpglarge$",
+            "shop": "https://www.philips-hue.com/en-us/products/all-products",
             "copyright": "Signify"
         }
     ],
     "author": "Clément MERLET",
-    "version": "0.0.2",
+    "version": "0.0.5",
     "license": "apache-2.0",
     "module": "smartobject",
     "icon": "bulb-outline",
@@ -49,23 +55,13 @@
             "name": "Light identifiant"
         },
         {
-            "id": "path",
-            "type": "string",
-            "name": "Hue Hub ip"
-        },
-        {
-            "id": "apikey",
-            "type": "string",
-            "name": "Hue authorisation"
+            "id": "hueBridge",
+            "type": "smartobject",
+            "reference": "@intendant/hue-bridge-smartobject",
+            "name": "Hue bridge instance"
         }
     ],
     "actions": [
-        {
-            "id": "configuration",
-            "name": "Get configuration",
-            "description": "Get description configuration",
-            "settings": []
-        },
         {
             "id": "state",
             "name": "Get state",
@@ -76,7 +72,16 @@
             "id": "turnOff",
             "name": "Turn off light",
             "description": "Turn off light",
-            "settings": []
+            "settings": [
+                {
+                    "id": "duration",
+                    "type": "slider",
+                    "step": 200,
+                    "min": 200,
+                    "max": 5000,
+                    "default": 200
+                }
+            ]
         },
         {
             "id": "turnOn",
@@ -88,16 +93,16 @@
                     "type": "slider",
                     "step": 1,
                     "min": 1,
-                    "max": 255,
-                    "default":255
+                    "max": 100,
+                    "default": 100
                 },
                 {
-                    "id": "transitiontime",
+                    "id": "duration",
                     "type": "slider",
-                    "step": 1,
-                    "min": 1,
-                    "max": 10,
-                    "default": 1
+                    "step": 200,
+                    "min": 200,
+                    "max": 5000,
+                    "default": 200
                 },
                 {
                     "id": "color",
@@ -108,7 +113,8 @@
         }
     ],
     "dependencies": {
-        "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-smartobject-0.0.1.tgz", 
+        "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-smartobject-0.0.1.tgz",
+        "chroma-js": "^2.1.2",
         "node-fetch": "^2.6.1"
     }
 }

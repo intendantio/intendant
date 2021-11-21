@@ -140,8 +140,8 @@ class Widget extends Controller {
                     if (smartobjectRequest.error) {
                         return smartobjectRequest
                     }
-                    if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.reference)) {
-                        let resultAction = await this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.reference).action(action.action, pArguments)
+                    if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.id)) {
+                        let resultAction = await this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.id).action(action.action, pArguments)
                         if (resultAction.error) {
                             return resultAction
                         }
