@@ -21,6 +21,6 @@ curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/in
 echo "> Download intendant.db";
 curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/intendant.db > intendant.db;
 echo "> Installation dependencies";
-npm install --silent;
+npm install --silent &>/dev/null;
 echo "> Installation successful";
 echo "> Start with 'node index.js'";
