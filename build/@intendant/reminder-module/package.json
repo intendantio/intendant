@@ -2,7 +2,7 @@
     "name": "@intendant/reminder-module",
     "main": "./index.js",
     "author": "Clément MERLET",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "apache-2.0",
     "dependencies": {
         "moment": "^2.29.1",
@@ -32,27 +32,15 @@
                 },
                 {
                     "id": "cron",
-                    "type": "text",
+                    "type": "cron",
                     "default": ""
                 }
             ]
         },
         {
             "id": "getOne",
-            "name": "Get reminder state",
-            "description": "Get one reminder state in storage",
-            "settings": [
-                {
-                    "id": "reference",
-                    "type": "text",
-                    "default": ""
-                }
-            ]
-        },
-        {
-            "id": "getAll",
-            "name": "Get all reminder state",
-            "description": "Get all reminder state in storage",
+            "name": "Get reminder",
+            "description": "Get one reminder in storage",
             "settings": [
                 {
                     "id": "reference",

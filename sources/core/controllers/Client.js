@@ -76,6 +76,20 @@ class Client extends Controller {
 
     }
 
+    async getAll() {
+        try {
+            return await this.sqlClient.getAll()
+        } catch (error) {
+            this.core.logger.error("Client : " + error.toString())
+            return {
+                package: Package.name,
+                error: true,
+                message: "Internal server error"
+            }
+        }
+    }
+
+
     async notify(title, message) {
         try {
             let clientRequest = await this.sqlClient.getAll()

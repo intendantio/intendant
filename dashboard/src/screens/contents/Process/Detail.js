@@ -73,7 +73,6 @@ class NewProcess extends React.Component {
         this.state.source.actions.forEach(action => {
             if (action.id === id) { fAction = action }
         })
-        console.log(fAction)
         this.setState({ action: fAction })
     }
 

@@ -22,5 +22,12 @@ export default (app, core) => {
             }
         }
     })
+
+    app.get("/api/test", async (request, res) => {
+        let r = await core.controller.client.getAll()
+        let tokens = r.data.map(v => v.token)
+        core.controller.notification.notify("Intendant","notify - test", tokens)
+        res.send({})
+    })
     
 }

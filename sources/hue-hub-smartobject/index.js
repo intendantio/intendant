@@ -9,7 +9,7 @@ const httpsAgent = new Https.Agent({
 })
 
 
-class Light extends SmartObject {
+class Hub extends SmartObject {
 
     constructor(settings, logger, core) {
         super(settings, logger, core, Package)
@@ -189,4 +189,4 @@ class Light extends SmartObject {
 
 }
 
-export default Light
+export default Hub

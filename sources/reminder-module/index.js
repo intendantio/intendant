@@ -2,7 +2,7 @@ import Package from './package.json'
 import Moment from 'moment'
 import Schedule from 'node-schedule'
 
-class InternalListManager {
+class Reminder {
 
     constructor(core) {
         this.core = core
@@ -27,9 +27,21 @@ class InternalListManager {
     }
 
     instanciate(data) {
-        this.job = Schedule.scheduleJob(data.cron,async () => {
-            
+        this.core.logger.verbose(Package.name, "Instanciate " + data.reference + " at cron " + data.cron)
+        this["job-" + data.reference] = Schedule.scheduleJob(data.cron,async () => {
+            this.core.logger.verbose(Package.name, "Execution job " + data.reference)
+            if(data.repeating == false) { 
+                this["job-" + data.reference].cancel() 
+            }
+            let result = await this.core.controller.client.getAll()
+            let tokens = result.data.map(data => data.token)
+            await this.core.controller.notification.notify("Intendant",data.information, tokens)
         })
+        return {
+            error: false,
+            package: Package.name,
+            message: ""
+        }
     }
 
     async __create(settings = {}) {
@@ -66,9 +78,7 @@ class InternalListManager {
         if(result.error) {
             return result
         } 
-
         let reminder = result.data
-
         if(reminder == false) {
             return {
                 package: Package.name,
@@ -76,10 +86,6 @@ class InternalListManager {
                 error: true
             }
         }
-
-        reminder.active = !(reminder.flag  + (reminder.interval * 60 * 60 * 1000) > Moment().unix())
-        reminder.action = reminder.active ? reminder.action_active : reminder.action_inactive
-
         return {
             package: Package.name,
             message: "",
@@ -87,26 +93,6 @@ class InternalListManager {
             data: reminder
         }
     }
-
-    async __update(settings = {}) {
-        let result = await this.core.controller.storage.getItem(Package.name + "/" + settings.reference)
-        if(result.error) {
-            return result
-        } 
-
-        let reminder = result.data
-
-        if(reminder == false) {
-            return {
-                package: Package.name,
-                message: "Reminder with reference " + settings.reference + " is not found",
-                error: true
-            }
-        }
-        reminder.flag = Moment().unix()
-        return await this.core.controller.storage.setItem(Package.name,reminder)
-    }
-
 }
 
-export default InternalListManager
+export default Reminder

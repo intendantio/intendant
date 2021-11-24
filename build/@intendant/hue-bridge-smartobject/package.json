@@ -37,6 +37,7 @@
     ],
     "actions": [],
     "dependencies": {
+        "toad-scheduler": "^1.0.2",
         "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-smartobject-0.0.1.tgz"
     }
 }

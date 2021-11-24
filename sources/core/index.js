@@ -12,6 +12,7 @@ import Cache from './controllers/Cache'
 import User from './controllers/User'
 import Espace from './controllers/Espace'
 import Market from './controllers/Market'
+import Notification from './controllers/Notification'
 import Math from './controllers/tools/Math'
 
 import SmartObjectManager from './managers/Smartobject'
@@ -60,7 +61,7 @@ class Core {
         this.controller.cache = new Cache(this)
         this.controller.espace = new Espace(this)
         this.controller.market = new Market(this)
-
+        this.controller.notification = new Notification(this)
         setTimeout(() => {
             /* Manager */
             this.logger.verbose(Package.name, "Core : instanciate manager")

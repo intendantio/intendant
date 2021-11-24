@@ -47,11 +47,14 @@ class Week extends React.Component {
     render() {
         return (<div style={{ display: 'flex', paddingTop: 10, paddingBottom: 10, paddingLeft: 5, paddingRight: 5, flexDirection: 'column' }}>
             <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'center', alignItems: 'center', flex: 1, justifyContent: 'space-between' }}>
-                <div style={{ flex: 1 }}>
-                    <IconButton size='small' onClick={() => { this.props.onChangeMode() }} variant='outlined'>
-                        <Cached />
-                    </IconButton>
-                </div>
+                {
+                    this.props.noChangeMode ? null : 
+                    <div style={{ flex: 1 }}>
+                        <IconButton size='small' onClick={() => { this.props.onChangeMode() }} variant='outlined'>
+                            <Cached />
+                        </IconButton>
+                    </div>
+                }
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
                     <Button fullWidth size='small' variant={this.state.sunday ? 'contained' : 'outlined'} onClick={() => {this.setState({sunday: !this.state.sunday},() => {this.calculate()})}}  >{"Sunday"}</Button>
                 </div>
