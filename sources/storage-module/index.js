@@ -7,7 +7,7 @@ class InternalListManager {
     }
 
     async __setItem(settings = {}) {
-        return await this.core.controller.storage.setItem(Package.name,settings.value)
+        return await this.core.controller.storage.setItem(Package.name + "/" + settings.reference,settings.value)
     }
 
     async __getItem(settings = {}) {

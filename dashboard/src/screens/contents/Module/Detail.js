@@ -19,7 +19,8 @@ class Detail extends React.Component {
             module: null,
             enabled: false,
             message: "",
-            executeInformation: ""
+            executeInformation: "",
+            severity: "error"
         }
     }
 
@@ -28,6 +29,7 @@ class Detail extends React.Component {
         if (result.error) {
             this.setState({
                 enabled: true,
+                severity: "error",
                 message: result.package + " : " + result.message
             })
             this.props.history.push('/module')
@@ -64,6 +66,7 @@ class Detail extends React.Component {
         if (result.error) {
             this.setState({
                 enabled: true,
+                severity: "error",
                 message: result.package + " : " + result.message
             })
             this.setState({ loading: null })
@@ -71,6 +74,12 @@ class Detail extends React.Component {
             if (result.data) {
                 this.setState({
                     executeInformation: JSON.stringify(result.data)
+                })
+            } else {
+                this.setState({
+                    enabled: true,
+                    severity: "success",
+                    message: "Success"
                 })
             }
             this.componentDidMount()
@@ -130,14 +139,14 @@ class Detail extends React.Component {
                                 null
                         }
                     </Paper>
-                    <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
+                    <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={this.state.severity}>
                         {this.state.message}
                     </AlertComponent>
                 </div>
             )
         } else {
             return (
-                <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
+                <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={this.state.severity}>
                     {this.state.message}
                 </AlertComponent>
             )

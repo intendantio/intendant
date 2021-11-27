@@ -21,27 +21,17 @@ class Week extends React.Component {
     calculate() {
         let timeSplit = this.state.time.split(":")
         if(timeSplit.length != 2) { return }
-        let value = '0 ' + timeSplit[1] + ' ' +  timeSplit[0]  + ' * * ' +  
-        
+        let value =  timeSplit[1] + ' ' +  timeSplit[0]  + ' * * ' +  
             (this.state.sunday ? "0," : "") +
             (this.state.monday ? "1," : "") +
             (this.state.tuesday ? "2," : "") +
             (this.state.wednesday ? "3," : "") +
             (this.state.thursday ? "4," : "") +
             (this.state.friday ? "5," : "") +
-            (this.state.saturday ? "6," : "");
+            (this.state.saturday ? "6," : "")
 
-        value = value.slice(0,value.length - 1 );
-
-
-        if((parseInt(timeSplit[1]) + parseInt(timeSplit[0]) * 60) > 1440 ) {
-            this.setState({
-                time: ""
-            })
-            return
-        } else {
-            this.props.onChange(value)
-        }
+        value = value.slice(0,value.length - 1 )
+        this.props.onChange(value)
     }
 
     render() {
@@ -77,7 +67,7 @@ class Week extends React.Component {
                     <Button fullWidth size='small' variant={this.state.saturday ? 'contained' : 'outlined'} onClick={() => {this.setState({saturday: !this.state.saturday},() => {this.calculate()})}} >{"Saturday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }} >
-                    <TextField  defaultValue='00:00' type='time' size='small' value={this.state.time}  onChange={(event) => { this.setState({ time: event.currentTarget.value },() => {this.calculate()}) }}  placeholder='hh:mm' variant='outlined' />
+                    <TextField  defaultValue='00:00'  size='small' value={this.state.time}  onChange={(event) => { this.setState({ time: event.currentTarget.value },() => {this.calculate()}) }}  placeholder='hh:mm' variant='outlined' />
                 </div>
             </div>
         </div>

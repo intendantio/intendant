@@ -83,40 +83,70 @@ class Widget extends Controller {
             }
             let data = await this.getSource(sources)
             widget.sources = sources
+            let addonsContents = []
             widget.contents = contents.map(content => {
                 content.native = content.content
                 let extracts = this.extract(content.content)
                 extracts.extracts.forEach(extract => {
-                    let value = data.error ? data.package : _.get(data.data, extract.value)
-                    if (Array.isArray(value) && content.type.reference == 'list') {
-                        let _content = ""
-                        value.forEach((_value, index) => {
-                            try {
-                                _content = _content + (index == 0 ? "" : "\n") + "- " + _value.toString()
-                            } catch (error) { }
-                        })
-                        value = _content
-                    } else if (Array.isArray(value)) {
-                        let _content = ""
-                        value.forEach((_value, index) => {
-                            try {
-                                _content = _content + (index == 0 ? "" : " ") + _value.toString()
-                            } catch (error) { }
-                        })
-                        value = _content
+                    let value = ""
+                    if(content.type.reference == 'list') {
+                        let depth = extract.value.split("[x].").length
+                        if(depth == 2) {
+                            let setData = extract.value.split("[x].")[0]
+                            let subData = extract.value.split("[x].")[1]
+                            let setValue = _.get(data.data, setData)
+                            if(Array.isArray(setValue)) {
+                                setValue.forEach(sValue => {
+                                    addonsContents.push({
+                                        id: content.id,
+                                        widget: 1,
+                                        type: content.type,
+                                        native: content.native,
+                                        content:  extracts.content.replace(extract.key, _.get(sValue,subData))
+                                    })
+                                })
+                                extracts.content = ""
+                            } else {
+                                extracts.content = extracts.content.replace(extract.key,'NotArray')
+                            }
+                        } else if(depth > 2) {
+                            extracts.content = extracts.content.replace(extract.key, 'MultipleArray')
+                        } else if(depth == 1) {
+                            extracts.content = extracts.content.replace(extract.key, "UnknownArray")
+                        }
+                    } else {
+                        value = data.error ? data.package : _.get(data.data, extract.value)
+                        if(typeof value == 'object') {
+                            value = JSON.stringify(value)
+                        } else if(typeof value == 'boolean') {
+                            value = 'Boolean'
+                        } else if(Array.isArray(value)) {
+                            value = 'Array'
+                        }
+                        extracts.content = extracts.content.replace(extract.key, value)
                     }
 
-                    extracts.content = extracts.content.replace(extract.key, value)
                 })
+                if(content.type.reference == 'list' && extracts.content == "") {
+                    return undefined
+                }
+
                 content.content = extracts.content
                 return content
+            })
+            widget.contents = widget.contents.filter(content => {
+                return content != undefined
+            })
+            addonsContents.forEach(addonsContent => {
+                widget.contents.push(addonsContent)
             })
             return {
                 error: false,
                 data: widget
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            console.log(error)
+            this.core.logger.error("Widget : " + JSON.stringify(error.toString()) )
             return {
                 package: Package.name,
                 error: true,

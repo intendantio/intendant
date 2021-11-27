@@ -260,7 +260,7 @@ class SQLite {
                     } else if (field == "DATE:NOW") {
                         values = values + "datetime('now'),"
                     } else if (typeof field == 'string') {
-                        values = values + "'" + field + "',"
+                        values = values + "'" + field.replace(/'/g, "''") + "',"
                     }
                 }
                 values = values.slice(0, -1)
@@ -366,7 +366,7 @@ class SQLite {
             } else if (value == "DATE:NOW") {
                 statment = statment + field + "=date('now'),"
             } else if (typeof value == 'string') {
-                statment = statment + field + "='" + value + "',"
+                statment = statment + field + "='" + value.replace(/'/g, "''") + "',"
             }
             total = total + 1
         }
