@@ -36,158 +36,187 @@ class Light extends SmartObject {
         Action
     */
     async __turnOn(settings = {}) {
-        let resultHue = this.getHueSettings()
-        if(resultHue.error) {
-            return resultHue
-        }
-        let color = settings.color ? Color.isHexColor(settings.color.slice(1, Infinity)) ? settings.color : "#ffffff" : "#ffffff"
-        let position = Color.hexToLab(color)
-        if(settings.duration == undefined) {
-            settings.duration = 200
-        }
-        if(settings.brightness == undefined) {
-            settings.brightness = 70
-        }
-        let body = {
-            on: {
-                on: true
-            },
-            dimming: {
-                brightness: parseInt(settings.brightness),
-            },
-            color: {
-                xy: {
-                    x: position.x,
-                    y: position.y
-                }
-            },
-            dynamics: {
-                duration: parseInt(settings.duration)
+        try {
+            let resultHue = this.getHueSettings()
+            if(resultHue.error) {
+                return resultHue
             }
-        }
-        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'hue-application-key': resultHue.data.apikey
-            },
-            agent: httpsAgent,
-            body: JSON.stringify(body)
-        })
-        if (result.status == 200) {
-            let resultJSON = await result.json()
-            if(resultJSON.errors.length > 0) {
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
+            let color = settings.color ? Color.isHexColor(settings.color.slice(1, Infinity)) ? settings.color : "#ffffff" : "#ffffff"
+            let position = Color.hexToLab(color)
+            if(settings.duration == undefined) {
+                settings.duration = 200
+            }
+            if(settings.brightness == undefined) {
+                settings.brightness = 70
+            }
+            let body = {
+                on: {
+                    on: true
+                },
+                dimming: {
+                    brightness: parseInt(settings.brightness),
+                },
+                color: {
+                    xy: {
+                        x: position.x,
+                        y: position.y
+                    }
+                },
+                dynamics: {
+                    duration: parseInt(settings.duration)
+                }
+            }
+            let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'hue-application-key': resultHue.data.apikey
+                },
+                agent: httpsAgent,
+                body: JSON.stringify(body)
+            })
+            if (result.status == 200) {
+                let resultJSON = await result.json()
+                if(resultJSON.errors.length > 0) {
+                    return {
+                        error: true,
+                        package: Package.name,
+                        message: "Invalid request " + JSON.stringify(resultJSON.errors)
+                    }
+                } else {
+                    return {
+                        error: false,
+                        package: Package.name,
+                        message: "",
+                        data: resultJSON.data[0]
+                    }
                 }
             } else {
                 return {
-                    error: false,
+                    error: true,
                     package: Package.name,
-                    message: "",
-                    data: resultJSON.data[0]
+                    message: "Invalid status " + result.status
                 }
             }
-        } else {
+        } catch (error) {
+            this.core.logger.error(Package.name,JSON.stringify(error.toString()))
             return {
                 error: true,
                 package: Package.name,
-                message: "Invalid status " + result.status
+                message: "Internal error server"
             }
         }
+        
     }
 
     async __turnOff(settings = {}) {
+        try {
+            let resultHue = this.getHueSettings()
+            if(resultHue.error) {
+                return resultHue
+            }
 
-        let resultHue = this.getHueSettings()
-        if(resultHue.error) {
-            return resultHue
-        }
-
-        if(settings.duration == undefined) {
-            settings.duration = 200
-        }
-        let body = { 
-            on: { on: false },
-            dynamics: { duration: parseInt(settings.duration) }
-        }
-        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'hue-application-key': resultHue.data.apikey
-            },
-            agent: httpsAgent,
-            body: JSON.stringify(body)
-        })
-        if (result.status == 200) {
-            let resultJSON = await result.json()
-            if(resultJSON.errors.length > 0) {
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
+            if(settings.duration == undefined) {
+                settings.duration = 200
+            }
+            let body = { 
+                on: { on: false },
+                dynamics: { duration: parseInt(settings.duration) }
+            }
+            let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'hue-application-key': resultHue.data.apikey
+                },
+                agent: httpsAgent,
+                body: JSON.stringify(body)
+            })
+            if (result.status == 200) {
+                let resultJSON = await result.json()
+                if(resultJSON.errors.length > 0) {
+                    return {
+                        error: true,
+                        package: Package.name,
+                        message: "Invalid request " + JSON.stringify(resultJSON.errors)
+                    }
+                } else {
+                    return {
+                        error: false,
+                        package: Package.name,
+                        message: "",
+                        data: resultJSON.data[0]
+                    }
                 }
             } else {
                 return {
-                    error: false,
+                    error: true,
                     package: Package.name,
-                    message: "",
-                    data: resultJSON.data[0]
+                    message: "Invalid status " + result.status
                 }
             }
-        } else {
+        } catch (error) {
+            this.core.logger.error(Package.name,JSON.stringify(error.toString()))
             return {
                 error: true,
                 package: Package.name,
-                message: "Invalid status " + result.status
+                message: "Internal error server"
             }
         }
+        
     }
 
 
     async __state(settings = {}) {
-        let resultHue = this.getHueSettings()
-        if(resultHue.error) {
-            return resultHue
-        }
+        try {
+            let resultHue = this.getHueSettings()
+            if(resultHue.error) {
+                return resultHue
+            }
 
-        let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'hue-application-key': resultHue.data.apikey
-            },
-            agent: httpsAgent
-        })
-        if (result.status == 200) {
-            let resultJSON = await result.json()
-            if(resultJSON.errors.length > 0) {
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: "Invalid request " + JSON.stringify(resultJSON.errors)
+            let result = await fetch("https://" + resultHue.data.path + "/clip/v2/resource/light/" + this.settings.id, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'hue-application-key': resultHue.data.apikey
+                },
+                agent: httpsAgent
+            })
+            if (result.status == 200) {
+                let resultJSON = await result.json()
+                if(resultJSON.errors.length > 0) {
+                    return {
+                        error: true,
+                        package: Package.name,
+                        message: "Invalid request " + JSON.stringify(resultJSON.errors)
+                    }
+                } else {
+                    return {
+                        error: false,
+                        package: Package.name,
+                        message: "",
+                        data: resultJSON.data[0]
+                    }
                 }
             } else {
                 return {
-                    error: false,
+                    error: true,
                     package: Package.name,
-                    message: "",
-                    data: resultJSON.data[0]
+                    message: "Invalid status " + result.status
                 }
             }
-        } else {
+        } catch (error) {
+            this.core.logger.error(Package.name,JSON.stringify(error.toString()))
             return {
                 error: true,
                 package: Package.name,
-                message: "Invalid status " + result.status
+                message: "Internal error server"
             }
         }
+        
     }
 
 }

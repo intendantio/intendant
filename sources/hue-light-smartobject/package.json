@@ -44,7 +44,7 @@
         }
     ],
     "author": "Clément MERLET",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "license": "apache-2.0",
     "module": "smartobject",
     "icon": "bulb-outline",
