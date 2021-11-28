@@ -94,6 +94,9 @@ class Widget extends Controller {
                         if(depth == 2) {
                             let setData = extract.value.split("[x]")[0]
                             let subData = extract.value.split("[x]")[1]
+                            if(subData.length > 0) {
+                                subData = subData.substring(1)
+                            }
                             let setValue = _.get(data.data, setData)
                             if(Array.isArray(setValue)) {
                                 setValue.forEach(sValue => {
