@@ -44,7 +44,7 @@ class NetatmoHomeCoach extends SmartObject {
             let resultJSON = await result.json()
             if (resultJSON.status === "ok") {
                 await this.core.controller.cache.insert({
-                    reference: Package.name,
+                    reference: Package.name + "-" + this.settings.clientId,
                     data: resultJSON,
                     interval: 3600
                 })

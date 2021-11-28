@@ -5,6 +5,7 @@ class Cache extends Controller {
 
     async get(data) {
         try {
+            this.core.logger.verbose(Package.name, "Get cache [" + data.reference + "]")
             await this.check()
             let result = await this.sqlCache.getOneByField({reference: data.reference})
             if(result.error) {
@@ -29,7 +30,7 @@ class Cache extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Cache : " + error.toString())
+            this.core.logger.error("Get cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -54,7 +55,7 @@ class Cache extends Controller {
                 })
             }
         } catch (error) {
-            this.core.logger.error("Cache : " + error.toString())
+            this.core.logger.error("Insert cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -75,7 +76,7 @@ class Cache extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Cache : " + error.toString())
+            this.core.logger.error("Check cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,

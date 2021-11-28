@@ -73,6 +73,13 @@ class Market extends Controller {
         try {
             this.core.logger.verbose(Package.name, "Market controller : delete Package " + pPackage)
             this.core.logger.verbose(Package.name, "Market controller : restart configuration")
+            
+            await new Promise((resolve, reject) => {
+                exec("npm uninstall " + pPackage + " --silent 2>&1 | tee t", (e, std, ster) => {
+                    resolve()
+                })
+            })
+            
             if(fs.existsSync("./node_modules/" + pPackage)) {
                 fs.rmSync("./node_modules/" + pPackage,{recursive:true,force: true})
             }

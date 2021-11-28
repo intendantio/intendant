@@ -2,7 +2,7 @@
     "name": "@intendant/reminder-module",
     "main": "./index.js",
     "author": "Clément MERLET",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "license": "apache-2.0",
     "dependencies": {
         "moment": "^2.29.1",
