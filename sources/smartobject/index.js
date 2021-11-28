@@ -16,7 +16,6 @@ class SmartObject {
     }
 
     async action(action, settings) {
-        this.logger.verbose(Package.name,"Execute " + action)
         if (this["__" + action]) {
             try {
                 this.core.controller.smartobject.updateLastUse(this.id)

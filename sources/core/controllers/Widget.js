@@ -90,10 +90,10 @@ class Widget extends Controller {
                 extracts.extracts.forEach(extract => {
                     let value = ""
                     if(content.type.reference == 'list') {
-                        let depth = extract.value.split("[x].").length
+                        let depth = extract.value.split("[x]").length
                         if(depth == 2) {
-                            let setData = extract.value.split("[x].")[0]
-                            let subData = extract.value.split("[x].")[1]
+                            let setData = extract.value.split("[x]")[0]
+                            let subData = extract.value.split("[x]")[1]
                             let setValue = _.get(data.data, setData)
                             if(Array.isArray(setValue)) {
                                 setValue.forEach(sValue => {
@@ -102,7 +102,7 @@ class Widget extends Controller {
                                         widget: 1,
                                         type: content.type,
                                         native: content.native,
-                                        content:  extracts.content.replace(extract.key, _.get(sValue,subData))
+                                        content:  extracts.content.replace(extract.key, subData == "" ? sValue :  _.get(sValue,subData))
                                     })
                                 })
                                 extracts.content = ""

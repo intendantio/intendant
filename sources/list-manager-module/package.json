@@ -2,7 +2,7 @@
     "name": "@intendant/list-manager-module",
     "main": "./index.js",
     "author": "Clément MERLET",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "apache-2.0",
     "module": "module",
     "actions": [
@@ -38,18 +38,6 @@
             "id": "getOne",
             "name": "Get one list",
             "description": "Get one list",
-            "settings": [
-                {
-                    "id": "reference",
-                    "type": "text",
-                    "default": ""
-                }
-            ]
-        },
-        {
-            "id": "getSize",
-            "name": "Get size in one list",
-            "description": "Get size in one list",
             "settings": [
                 {
                     "id": "reference",

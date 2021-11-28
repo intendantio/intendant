@@ -4,6 +4,6 @@
   "author": "intendant",
   "license": "MIT",
   "dependencies": {
-    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-core-0.0.7.tgz"
+    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-core-0.0.8.tgz"
   }
 }

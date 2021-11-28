@@ -3,23 +3,21 @@ import Package from './package.json'
 class InternalListManager {
 
     constructor(core) {
-        this.storageKey = Package.name
         this.core = core
         this.lists = {}
         this.initialisation()
     }
 
     async initialisation() {
-        let storageList = await this.core.controller.storage.getItem(Package.name)
-        if (storageList && storageList.data.lists) {
-            this.lists = storageList.data.lists
-        } else {
-            await this.core.controller.storage.setItem(Package.name, { lists: {}})
+        let resultStorage = await this.core.controller.storage.getItem(Package.name)
+        if(resultStorage.error) {
+            return resultStorage
         }
-    }
-
-    async synchronize() {
-        await this.core.controller.storage.setItem(Package.name, { lists: this.lists })
+        if (resultStorage.data) {
+            this.lists = resultStorage.data
+        } else {
+            await this.core.controller.storage.setItem(Package.name,{})
+        }
     }
 
 
@@ -28,7 +26,6 @@ class InternalListManager {
         for (let keyList in this.lists) {
             _lists.push(keyList)
         }
-
         return {
             error: false,
             package: Package.name,
@@ -36,34 +33,6 @@ class InternalListManager {
             data: _lists
         }
     }
-
-    async __getSize(settings = {}) {
-        if (settings.reference) {
-            if (this.lists[settings.reference]) {
-                return {
-                    error: false,
-                    package: Package.name,
-                    message: '',
-                    data: {
-                        size: this.lists[settings.reference].length
-                    }
-                }
-            } else {
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: 'List is missing'
-                }
-            }
-        } else {
-            return {
-                error: true,
-                package: Package.name,
-                message: 'Reference is missing'
-            }
-        }
-    }
-
 
     async __getOne(settings = {}) {
         if (settings.reference) {
@@ -100,7 +69,7 @@ class InternalListManager {
                 }
             } else {
                 this.lists[settings.reference] = []
-                await this.synchronize()
+                await this.core.controller.storage.setItem(Package.name, this.lists)
                 return {
                     error: false,
                     package: Package.name,
@@ -121,7 +90,7 @@ class InternalListManager {
             if (settings.item) {
                 if (this.lists[settings.reference]) {
                     this.lists[settings.reference].push(settings.item)
-                    await this.synchronize()
+                    await this.core.controller.storage.setItem(Package.name, this.lists)
                     return {
                         error: false,
                         package: Package.name,
@@ -156,7 +125,7 @@ class InternalListManager {
                 if (this.lists[settings.reference]) {
                     if (this.lists[settings.reference][settings.index]) {
                         this.lists[settings.reference].splice(settings.index, 1)
-                        await this.synchronize()
+                        await this.core.controller.storage.setItem(Package.name, this.lists )
                         return {
                             error: false,
                             package: Package.name,
@@ -196,7 +165,7 @@ class InternalListManager {
         if (settings.reference) {
             if (this.lists[settings.reference]) {
                 this.lists[settings.reference] = []
-                await this.synchronize()
+                await this.core.controller.storage.setItem(Package.name, this.lists )
                 return {
                     error: false,
                     package: Package.name,
@@ -222,7 +191,7 @@ class InternalListManager {
         if (settings.reference) {
             if (this.lists[settings.reference]) {
                 delete this.lists[settings.reference]
-                await this.synchronize()
+                await this.core.controller.storage.setItem(Package.name, this.lists)
                 return {
                     error: false,
                     package: Package.name,
