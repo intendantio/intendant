@@ -2,8 +2,6 @@ const DraftLog = require('draftlog')
 const chalk = require('chalk')
 DraftLog(console)
 
-
-
 const { exec } = require('child_process')
 const fsextra = require('fs-extra')
 const fs = require('fs')

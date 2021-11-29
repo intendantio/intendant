@@ -16,6 +16,7 @@ import Client from './Client'
 import Widget from './Widget'
 import Configuration from './Configuration'
 import Market from './Market'
+import Open from 'open'
 
 class API {
 
@@ -51,6 +52,7 @@ class API {
         app.listen(core.configuration.port, () => {
             core.logger.verbose(Package.name, "Gateway : Instanciate Intendant")
             core.logger.verbose(Package.name, "Gateway : start listening localhost:" + core.configuration.port)
+            Open("http://localhost:" + core.configuration.port)
         })
     }
 

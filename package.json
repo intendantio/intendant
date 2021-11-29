@@ -33,6 +33,7 @@
     "moment": "^2.29.1",
     "node-fetch": "^2.6.1",
     "node-schedule": "^2.0.0",
+    "open": "^8.4.0",
     "pex-color": "^1.1.1",
     "zip-a-folder": "^1.1.0"
   }
