@@ -26,7 +26,7 @@
 
 The installation system makes it possible to add connected object **easily and quickly**. 
 
-No requirements are necessary to install Intendant on your comptuter.
+No requirements are necessary to install Intendant on your computer.
 
 See more on [https://intendant.io](https://intendant.io)
 
