@@ -70,7 +70,7 @@ class Main extends React.Component {
                             <Route exact path="/user/new" component={NewUser} />
                             <Route exact path="/user/:id/password" component={NewPassword} />
                             <Route exact path="/configuration" component={Configuration} />
-                            <Route exact path="/market/:id" component={Market} />
+                            <Route exact path="/market" component={Market} />
                             <Route exact path="/authorization" component={Authorization} />
                         </Switch>
                     </div>

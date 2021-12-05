@@ -82,7 +82,7 @@ class Sidebar extends React.Component {
                                 <ListItemText primary={"User"} />
                             </ListItem>
                         </Link>
-                        <Link to="/market/smartobject" style={{ textDecoration: 'none', color: 'white' }}>
+                        <Link to="/market" style={{ textDecoration: 'none', color: 'white' }}>
                             <ListItem button key={"market"} >
                                 <ListItemIcon>
                                     <ShoppingCart />

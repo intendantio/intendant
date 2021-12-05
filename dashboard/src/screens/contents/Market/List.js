@@ -11,7 +11,6 @@ class Configuration extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            id: props.match.params.id,
             enabled: false,
             message: "",
             markets: [],
@@ -22,31 +21,24 @@ class Configuration extends React.Component {
     }
 
     async install(pPackage) {
-        this.setState({loading: true})
+        this.setState({ loading: true })
         let result = await new Request().post({ package: pPackage }).fetch("/api/markets/install")
         if (result.error) {
-            this.setState({loading: false, severity: "error",enabled: true, message: result.package + " : " + result.message })
+            this.setState({ loading: false, severity: "error", enabled: true, message: result.package + " : " + result.message })
         } else {
-            this.setState({severity: "info", enabled: true, message: pPackage + " was installed" })
+            this.setState({ severity: "info", enabled: true, message: pPackage + " was installed" })
             this.componentDidMount()
         }
     }
 
     async uninstall(pPackage) {
-        this.setState({loading: true})
+        this.setState({ loading: true })
         let result = await new Request().post({ package: pPackage }).fetch("/api/markets/uninstall")
         if (result.error) {
-            this.setState({loading: false,severity: "error", enabled: true, message: result.package + " : " + result.message })
+            this.setState({ loading: false, severity: "error", enabled: true, message: result.package + " : " + result.message })
         } else {
-            this.setState({severity: "info", enabled: true, message: pPackage + " was removed" })
+            this.setState({ severity: "info", enabled: true, message: pPackage + " was removed" })
             this.componentDidMount()
-        }
-    }
-    componentDidUpdate() {
-        if (this.props.match.params.id != this.state.id) {
-            this.setState({
-                id: this.props.match.params.id
-            }, () => { this.componentDidMount() })
         }
     }
 
@@ -56,36 +48,47 @@ class Configuration extends React.Component {
         let result = await fetch("https://market.intendant.io")
         let resultMarket = await result.json()
         resultMarket = resultMarket.map(market => {
-            market.alreadyInstall = false
+            market.mode = "install"
+            market.currentVersion = "0.0.0"
             return market
         })
         resultModule.data.forEach(pModule => {
             resultMarket = resultMarket.map(market => {
                 if (market.name == pModule.name) {
-                    market.alreadyInstall = true
+                    market.currentVersion = pModule.version
+                    if (market.version == pModule.version) {
+                        market.mode = "remove"
+                    } else {
+                        market.mode = "update"
+                    }
                 }
-
                 return market
+
             })
         })
         resultSmartobject.data.forEach(pModule => {
             resultMarket = resultMarket.map(market => {
                 if (market.name == pModule.name) {
-                    market.alreadyInstall = true
+                    market.currentVersion = pModule.version
+                    if (market.version == pModule.version) {
+                        market.mode = "remove"
+                    } else {
+                        market.mode = "update"
+                    }
                 }
 
                 return market
             })
         })
-        this.setState({ markets: resultMarket.filter(market => { return market.name.includes(this.state.id) }) })
+        this.setState({ markets: resultMarket })
         if (resultModule.error) {
-            this.setState({ severity: "error",enabled: true, message: resultModule.package + " : " + resultModule.message })
+            this.setState({ severity: "error", enabled: true, message: resultModule.package + " : " + resultModule.message })
         } else if (resultSmartobject.error) {
-            this.setState({ severity: "error",enabled: true, message: resultSmartobject.package + " : " + resultSmartobject.message })
+            this.setState({ severity: "error", enabled: true, message: resultSmartobject.package + " : " + resultSmartobject.message })
         } else {
             this.setState({ modules: resultModule.data, smartobjects: resultSmartobject.data })
         }
-        this.setState({loading: false})
+        this.setState({ loading: false })
     }
 
     render() {
@@ -102,7 +105,12 @@ class Configuration extends React.Component {
                                 </TableCell>
                                 <TableCell align='left'>
                                     <Typography variant='body1'>
-                                        Dependencies
+                                        Type
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align='center'>
+                                    <Typography variant='body1'>
+                                        Version
                                     </Typography>
                                 </TableCell>
                                 <TableCell align='center'>
@@ -113,7 +121,7 @@ class Configuration extends React.Component {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.state.markets.slice(this.state.pageMarket * 10, (this.state.pageMarket + 1) * 10).map((pmodule) => (
+                            {this.state.markets.slice(this.state.pageMarket * 20, (this.state.pageMarket + 1) * 20).map((pmodule) => (
                                 <TableRow hover key={pmodule.reference} style={{ cursor: 'pointer' }}>
                                     <TableCell align="left">
                                         <Typography variant='body1'>
@@ -121,19 +129,36 @@ class Configuration extends React.Component {
                                         </Typography>
                                     </TableCell><TableCell align="left">
                                         <Typography variant='body1'>
-                                            None
+                                            {pmodule.type}
+                                        </Typography>
+                                    </TableCell><TableCell align="center">
+                                        <Typography variant='body1'>
+                                            {pmodule.version}
                                         </Typography>
                                     </TableCell><TableCell align="center">
                                         <Typography variant='body1'>
                                             {
-                                                pmodule.alreadyInstall ?
-                                                    <Button disabled={this.state.loading} size='small' startIcon={<Close />} onClick={() => {this.uninstall(pmodule.name)}} variant="outlined" >
+                                                pmodule.type == "core" ?
+                                                null
+                                                :
+                                                pmodule.mode == "remove" ?
+                                                    <Button disabled={this.state.loading} size='small' startIcon={<Close />} onClick={() => { this.uninstall(pmodule.name) }} variant="outlined" >
                                                         Remove
                                                     </Button>
                                                     :
-                                                    <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => {this.install(pmodule.name)}} variant="outlined" disableElevation  >
-                                                        Install
-                                                    </Button>
+                                                    pmodule.mode == "install" ?
+                                                        <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                            Install
+                                                        </Button>
+                                                        :
+                                                        pmodule.mode == "update" ?
+                                                            <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                Update
+                                                            </Button>
+                                                            :
+                                                            <Button disabled={true} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                Unknown
+                                                            </Button>
                                             }
                                         </Typography>
                                     </TableCell>
@@ -143,19 +168,10 @@ class Configuration extends React.Component {
                     </Table>
                 </TableContainer>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                    <div style={{ flexDirection: 'row', display: 'flex' }}>
-                        <Paper style={{ width: 50, height: 50, marginTop: 10, padding: 5, marginBottom: 10, textAlign: 'center', justifyContent: 'space-around', alignContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
-                            <Link to={this.state.id == "smartobject" ? "/market/module" : "/market/smartobject"} style={{ textDecoration: 'none', color: 'white' }}>
-                                <IconButton style={{ borderRadius: 0 }}>
-                                    {this.state.id != "smartobject" ? <DevicesOther /> : <Category />}
-                                </IconButton>
-                            </Link>
-                        </Paper>
-                    </div>
                     <TablePagination
                         component="div"
                         count={this.state.markets.length}
-                        rowsPerPage={10}
+                        rowsPerPage={20}
                         page={this.state.pageMarket}
                         rowsPerPageOptions={[]}
                         onChangePage={(event, page) => { this.setState({ pageMarket: page }) }}
