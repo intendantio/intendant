@@ -77,6 +77,8 @@ typings/
 # Optional REPL history
 .node_repl_history
 
+development
+intendant.module.json
 
 # Yarn Integrity file
 .yarn-integrity

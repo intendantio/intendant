@@ -10,7 +10,7 @@
   "scripts": {
     "build": "node ./scripts/build",
     "market": "node ./scripts/market",
-    "dev": "node ./scripts/development && cd ./.dev && node index"
+    "dev": "node ./scripts/development"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
