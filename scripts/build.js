@@ -37,6 +37,8 @@ const main = async (path) => {
                             })
                         })
                     })
+                } else {
+                    update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
                 }
             } else {
                 childProcess.exec("cd " + path + "/releases && npm pack ../builds", () => {
