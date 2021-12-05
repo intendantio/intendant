@@ -2,8 +2,8 @@
   "name": "intendant",
   "description": "Template intendant",
   "author": "intendant",
-  "license": "MIT",
+  "license": "GPL-3.0+",
   "dependencies": {
-    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/public/intendant-core-0.0.10.tgz"
+    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.0.11.tgz"
   }
 }

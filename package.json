@@ -3,7 +3,7 @@
   "repository": "https://github.com/intendantio/intendant",
   "private": "true",
   "author": "Clément MERLET",
-  "license": "apache-2.0",
+  "license": "GPL-3.0+",
   "files": [
     "./sources/**/*"
   ],

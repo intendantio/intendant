@@ -107,12 +107,25 @@ class NewSmartobject extends React.Component {
                                                 return (
                                                     <FormControl variant="outlined" style={{ marginTop: 10, width: '300px' }} >
                                                     <InputLabel>{settings.name}</InputLabel>
-                                                        <Select onChange={(event) => { this.updateSettings(settings.name, event.target.value) }} label="Connexion" >
+                                                        <Select onChange={(event) => { this.updateSettings(settings.name, event.target.value) }}  >
                                                             {
                                                                 this.state.smartobjects.filter(smartobject => {
                                                                     return smartobject.module == settings.reference
                                                                 }).map(pModule => {
                                                                     return <MenuItem value={pModule.id} >{pModule.reference}</MenuItem>
+                                                                })
+                                                            }
+                                                        </Select>
+                                                    </FormControl>
+                                                )
+                                            } else if(settings.type == "select") {
+                                                return (
+                                                    <FormControl variant="outlined" style={{ marginTop: 10, width: '300px' }} >
+                                                    <InputLabel>{settings.name}</InputLabel>
+                                                        <Select onChange={(event) => { this.updateSettings(settings.name, event.target.value) }}  >
+                                                            {
+                                                                settings.values.map(pModule => {
+                                                                    return <MenuItem value={pModule} >{pModule}</MenuItem>
                                                                 })
                                                             }
                                                         </Select>

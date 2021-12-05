@@ -85,5 +85,5 @@ Give a ⭐️ if this project helped you!
 ## 📝 License
 
 Copyright © 2021 [Clément MERLET](https://github.com/3jedgcm).<br />
-This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
+This project is [GPL-3.0+](https://opensource.org/licenses/GPL-3.0) licensed.
 
