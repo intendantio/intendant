@@ -5,9 +5,6 @@
   <h1 align="center">Intendant - Automate your home easily</h1>
 </p>
   <a href="https://intendant.io/docs/getting-started" target="_blank">
-    <img alt="Version" src="https://img.shields.io/badge/Version-0.0.16-blue.svg?cacheSeconds=2592000" />
-  </a>
-  <a href="https://intendant.io/docs/getting-started" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/Documentation-yes-brightgreen.svg" />
   </a>
   <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
