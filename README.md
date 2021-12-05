@@ -13,8 +13,8 @@
   <a href="https://play.google.com/store/apps/details?id=intendant.io" target="_blank">
     <img alt="AppStore" src="https://img.shields.io/badge/AppStore-in%20progress-orange">
   </a>
-  <a href="https://choosealicense.com/licenses/mit/" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  <a href="https://opensource.org/licenses/GPL-3.0" target="_blank">
+    <img alt="License: GPL-3.0" src="https://img.shields.io/badge/License-GPL-yellow.svg" />
   </a>
 
 # What is it? 
