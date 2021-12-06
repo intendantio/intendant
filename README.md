@@ -56,10 +56,6 @@ Starting server
 node index.js
 ```
 
-## Simple demo
-
-You can access a demo platform with login `admin` and password `admin` on [demo.intendant.io](https://demo.intendant.io/admin/)
-
 ## Docs
 
 The complete documentation is available on [intendant.io](https://intendant.io)
