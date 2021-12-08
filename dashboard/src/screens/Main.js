@@ -1,9 +1,7 @@
 import React from 'react'
-import { Toolbar, AppBar } from '@material-ui/core'
 import SmartObject from './contents/SmartObject/List'
 import DetailSmartObject from './contents/SmartObject/Detail'
 import NewSmartObject from './contents/SmartObject/New'
-import Authorization from './contents/Authorization/List'
 import ListProcess from './contents/Process/List'
 import NewProcess from './contents/Process/New'
 import DetailProcess from './contents/Process/Detail'
@@ -71,7 +69,6 @@ class Main extends React.Component {
                             <Route exact path="/user/:id/password" component={NewPassword} />
                             <Route exact path="/configuration" component={Configuration} />
                             <Route exact path="/market" component={Market} />
-                            <Route exact path="/authorization" component={Authorization} />
                         </Switch>
                     </div>
                 </main>

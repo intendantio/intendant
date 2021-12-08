@@ -11,7 +11,7 @@ class Sidebar extends React.Component {
         }
         return (
             <Drawer variant="persistent" anchor="left" open={true} style={{ width: 240 }} >
-                <div style={{ width: 240 }}>
+                <div style={{ width: 240, display:'flex', justifyContent:'space-between' }}>
                     <List>
                         <div style={{display:'flex', justifyContent:'flex-start', padding: 5, alignContent:'center', alignSelf:'center', alignItems:'center'}}>
                         <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ height: '7vh', width: '7vh', borderRadius: 7, marginLeft: 15 }} />
@@ -64,14 +64,6 @@ class Sidebar extends React.Component {
                                     <AccountTree />
                                 </ListItemIcon>
                                 <ListItemText primary={"Routine"} />
-                            </ListItem>
-                        </Link>
-                        <Link to="/authorization" style={{ textDecoration: 'none', color: 'white' }}>
-                            <ListItem button key={"authorization"} >
-                                <ListItemIcon>
-                                    <Https />
-                                </ListItemIcon>
-                                <ListItemText primary={"Authorization"} />
                             </ListItem>
                         </Link>
                         <Link to="/user" style={{ textDecoration: 'none', color: 'white' }}>
