@@ -2,6 +2,8 @@ import Package from '../package.json'
 import * as ToadScheduler from 'toad-scheduler'
 import Schedule from 'node-schedule'
 import _ from 'lodash'
+import Connector from '../connector'
+import Tracing from '../utils/Tracing'
 
 class Routine {
 
@@ -10,14 +12,13 @@ class Routine {
         this.job = {cancel: () => {}}
         this.core = core
         this.configuration = core.configuration
-        this.logger = core.logger
         this.id = routine.id
         this.name = routine.name
         this.triggers = routine.triggers
         this.effects = routine.effects
         this.watch = routine.watch
         this.mode = routine.mode
-        this.sqlRoutine = new this.core.connector(this.configuration, this.core, "routine")
+        this.sqlRoutine = new Connector("routine")
         if (this.mode == "counter") {
             let task = new ToadScheduler.Task(this.id, async () => {
                 let isValidTest = true
@@ -25,10 +26,10 @@ class Routine {
                     let trigger = this.triggers[indexTrigger]
                     switch (trigger.type) {
                         case "smartobject":
-                            let sqlSmartobject = new this.core.connector(this.configuration, this.core, "smartobject")
+                            let sqlSmartobject = new Connector("smartobject")
                             let resultSmartobject = await sqlSmartobject.getOne(trigger.source)
                             if (resultSmartobject.error) {
-                                this.logger.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.error)
+                                Tracing.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.error)
                                 await this.sqlRoutine.updateAll({
                                     status: 0
                                 }, {
@@ -50,7 +51,7 @@ class Routine {
                                 true
                             )
                             if (executeTriggerSmartobjectResult.error) {
-                                this.logger.warning(Package.name, executeTriggerSmartobjectResult.package + " " + executeTriggerSmartobjectResult.error)
+                                Tracing.warning(Package.name, executeTriggerSmartobjectResult.package + " " + executeTriggerSmartobjectResult.error)
                                 this.close()
                                 return
                             }
@@ -69,7 +70,7 @@ class Routine {
                             })
                             let executeEffectModuleResult = await this.core.manager.module.executeAction(effect.source, effect.action, settingsEffectModule)
                             if (executeEffectModuleResult.error) {
-                                this.logger.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.error)
+                                Tracing.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.error)
                                 this.close()
                                 return
                             }
@@ -82,10 +83,10 @@ class Routine {
                             }
                             break
                         case "process":
-                            let sqlProcess = new this.core.connector(this.configuration, this.core, "process")
+                            let sqlProcess = new Connector("process")
                             let resultProcess = await sqlProcess.getOne(trigger.source)
                             if (resultProcess.error) {
-                                this.logger.warning(Package.name, resultProcess.package + " " + resultProcess.error)
+                                Tracing.warning(Package.name, resultProcess.package + " " + resultProcess.error)
                                 await this.sqlRoutine.updateAll({ status: 0 }, { id: this.id })
                                 this.close()
                                 return
@@ -96,7 +97,7 @@ class Routine {
                             })
                             let executeTriggerProcessResult = await this.core.controller.process.executeAction(trigger.source, -1, settingsTriggerProcess, true)
                             if (executeTriggerProcessResult.error) {
-                                this.logger.warning(Package.name, executeTriggerProcessResult.package + " " + executeTriggerProcessResult.error)
+                                Tracing.warning(Package.name, executeTriggerProcessResult.package + " " + executeTriggerProcessResult.error)
                                 this.close()
                                 return
                             }
@@ -109,7 +110,7 @@ class Routine {
                             }
                             break
                         default:
-                            this.logger.warning(Package.name, "Type not found")
+                            Tracing.warning(Package.name, "Type not found")
                             this.close()
                             break
                     }
@@ -119,10 +120,10 @@ class Routine {
                         let effect = this.effects[indexEffect]
                         switch (effect.type) {
                             case "smartobject":
-                                let sqlSmartobject = new this.core.connector(this.configuration, this.core, "smartobject")
+                                let sqlSmartobject = new Connector("smartobject")
                                 let resultSmartobject = await sqlSmartobject.getOne(effect.source)
                                 if (resultSmartobject.error) {
-                                    this.logger.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.message)
+                                    Tracing.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.message)
                                     this.close()
                                     return
                                 }
@@ -131,7 +132,7 @@ class Routine {
                                 effect.arguments.map(argument => {
                                     settingsEffectSmartobject[argument.reference] = argument.value
                                 })
-                                this.logger.verbose(Package.name, "Execute action " + smartobject.id + " " + effect.action)
+                                Tracing.verbose(Package.name, "Execute action " + smartobject.id + " " + effect.action)
                                 let executeEffectSmartobjectResult = await this.core.controller.smartobject.executeAction(
                                     smartobject.id,
                                     effect.action,
@@ -140,7 +141,7 @@ class Routine {
                                     true
                                 )
                                 if (executeEffectSmartobjectResult.error) {
-                                    this.logger.warning(Package.name, executeEffectSmartobjectResult.package + " " + executeEffectSmartobjectResult.message)
+                                    Tracing.warning(Package.name, executeEffectSmartobjectResult.package + " " + executeEffectSmartobjectResult.message)
                                     this.close()
                                     return
                                 }
@@ -152,16 +153,16 @@ class Routine {
                                 })
                                 let executeEffectModuleResult = await this.core.manager.module.executeAction(effect.source, effect.action, settingsEffectModule)
                                 if (executeEffectModuleResult.error) {
-                                    this.logger.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.message)
+                                    Tracing.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.message)
                                     this.close()
                                     return
                                 }
                                 break
                             case "process":
-                                let sqlProcess = new this.core.connector(this.configuration, this.core, "process")
+                                let sqlProcess = new Connector("process")
                                 let resultProcess = await sqlProcess.getOne(effect.source)
                                 if (resultProcess.error) {
-                                    this.logger.warning(Package.name, resultProcess.package + " " + resultProcess.message)
+                                    Tracing.warning(Package.name, resultProcess.package + " " + resultProcess.message)
                                     await this.sqlRoutine.updateAll({
                                         status: 0
                                     }, {
@@ -176,13 +177,13 @@ class Routine {
                                 })
                                 let executeEffectProcessResult = await this.core.controller.process.executeAction(effect.source, -1, settingsEffectProcess, true)
                                 if (executeEffectProcessResult.error) {
-                                    this.logger.warning(Package.name, executeEffectProcessResult.package + " " + executeEffectProcessResult.error)
+                                    Tracing.warning(Package.name, executeEffectProcessResult.package + " " + executeEffectProcessResult.error)
                                     this.close()
                                     return
                                 }
                                 break
                             default:
-                                this.logger.warning(Package.name, "Type not found")
+                                Tracing.warning(Package.name, "Type not found")
                                 this.close()
                                 break
                         }
@@ -194,16 +195,16 @@ class Routine {
             )
         } else if (this.mode == "week") {
             this.job = Schedule.scheduleJob(this.watch,async () => {
-                this.logger.verbose(Package.name, "Routine n° " + this.id + " trigger")
+                Tracing.verbose(Package.name, "Routine n° " + this.id + " trigger")
                 let isValidTest = true
                 for (let indexTrigger = 0; indexTrigger < this.triggers.length; indexTrigger++) {
                     let trigger = this.triggers[indexTrigger]
                     switch (trigger.type) {
                         case "smartobject":
-                            let sqlSmartobject = new this.core.connector(this.configuration, this.core, "smartobject")
+                            let sqlSmartobject = new Connector("smartobject")
                             let resultSmartobject = await sqlSmartobject.getOne(trigger.source)
                             if (resultSmartobject.error) {
-                                this.logger.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.error)
+                                Tracing.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.error)
                                 await this.sqlRoutine.updateAll({
                                     status: 0
                                 }, {
@@ -225,7 +226,7 @@ class Routine {
                                 true
                             )
                             if (executeTriggerSmartobjectResult.error) {
-                                this.logger.warning(Package.name, executeTriggerSmartobjectResult.package + " " + executeTriggerSmartobjectResult.error)
+                                Tracing.warning(Package.name, executeTriggerSmartobjectResult.package + " " + executeTriggerSmartobjectResult.error)
                                 this.close()
                                 return
                             }
@@ -244,7 +245,7 @@ class Routine {
                             })
                             let executeEffectModuleResult = await this.core.manager.module.executeAction(effect.source, effect.action, settingsEffectModule)
                             if (executeEffectModuleResult.error) {
-                                this.logger.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.error)
+                                Tracing.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.error)
                                 this.close()
                                 return
                             }
@@ -257,10 +258,10 @@ class Routine {
                             }
                             break
                         case "process":
-                            let sqlProcess = new this.core.connector(this.configuration, this.core, "process")
+                            let sqlProcess = new Connector("process")
                             let resultProcess = await sqlProcess.getOne(trigger.source)
                             if (resultProcess.error) {
-                                this.logger.warning(Package.name, resultProcess.package + " " + resultProcess.error)
+                                Tracing.warning(Package.name, resultProcess.package + " " + resultProcess.error)
                                 await this.sqlRoutine.updateAll({ status: 0 }, { id: this.id })
                                 this.close()
                                 return
@@ -271,7 +272,7 @@ class Routine {
                             })
                             let executeTriggerProcessResult = await this.core.controller.process.executeAction(trigger.source, -1, settingsTriggerProcess, true)
                             if (executeTriggerProcessResult.error) {
-                                this.logger.warning(Package.name, executeTriggerProcessResult.package + " " + executeTriggerProcessResult.error)
+                                Tracing.warning(Package.name, executeTriggerProcessResult.package + " " + executeTriggerProcessResult.error)
                                 this.close()
                                 return
                             }
@@ -284,7 +285,7 @@ class Routine {
                             }
                             break
                         default:
-                            this.logger.warning(Package.name, "Type not found")
+                            Tracing.warning(Package.name, "Type not found")
                             this.close()
                             break
                     }
@@ -294,10 +295,10 @@ class Routine {
                         let effect = this.effects[indexEffect]
                         switch (effect.type) {
                             case "smartobject":
-                                let sqlSmartobject = new this.core.connector(this.configuration, this.core, "smartobject")
+                                let sqlSmartobject = new Connector("smartobject")
                                 let resultSmartobject = await sqlSmartobject.getOne(effect.source)
                                 if (resultSmartobject.error) {
-                                    this.logger.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.error)
+                                    Tracing.warning(Package.name, resultSmartobject.package + " " + resultSmartobject.error)
                                     this.close()
                                     return
                                 }
@@ -314,7 +315,7 @@ class Routine {
                                     true
                                 )
                                 if (executeEffectSmartobjectResult.error) {
-                                    this.logger.warning(Package.name, executeEffectSmartobjectResult.package + " " + executeEffectSmartobjectResult.error)
+                                    Tracing.warning(Package.name, executeEffectSmartobjectResult.package + " " + executeEffectSmartobjectResult.error)
                                     this.close()
                                     return
                                 }
@@ -326,16 +327,16 @@ class Routine {
                                 })
                                 let executeEffectModuleResult = await this.core.manager.module.executeAction(effect.source, effect.action, settingsEffectModule)
                                 if (executeEffectModuleResult.error) {
-                                    this.logger.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.error)
+                                    Tracing.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.error)
                                     this.close()
                                     return
                                 }
                                 break
                             case "process":
-                                let sqlProcess = new this.core.connector(this.configuration, this.core, "process")
+                                let sqlProcess = new Connector("process")
                                 let resultProcess = await sqlProcess.getOne(effect.source)
                                 if (resultProcess.error) {
-                                    this.logger.warning(Package.name, resultProcess.package + " " + resultProcess.error)
+                                    Tracing.warning(Package.name, resultProcess.package + " " + resultProcess.error)
                                     await this.sqlRoutine.updateAll({
                                         status: 0
                                     }, {
@@ -350,13 +351,13 @@ class Routine {
                                 })
                                 let executeEffectProcessResult = await this.core.controller.process.executeAction(effect.source, -1, settingsEffectProcess, true)
                                 if (executeEffectProcessResult.error) {
-                                    this.logger.warning(Package.name, executeEffectProcessResult.package + " " + executeEffectProcessResult.error)
+                                    Tracing.warning(Package.name, executeEffectProcessResult.package + " " + executeEffectProcessResult.error)
                                     this.close()
                                     return
                                 }
                                 break
                             default:
-                                this.logger.warning(Package.name, "Type not found")
+                                Tracing.warning(Package.name, "Type not found")
                                 this.close()
                                 break
                         }

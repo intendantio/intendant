@@ -14,10 +14,11 @@ import Espace from './controllers/Espace'
 import Market from './controllers/Market'
 import Notification from './controllers/Notification'
 
+import API from './gateways'
+
 import SmartObjectManager from './managers/Smartobject'
 import ModulesManager from './managers/Modules'
 import RoutineManager from './managers/Routine'
-import Connector from './connector'
 import Tracing from './utils/Tracing'
 
 class Core {
@@ -25,6 +26,8 @@ class Core {
         this.configuration = configuration
 
         this.salt = Package.name + "-" + Package.version
+
+        this.api = new API(this)
 
         /* Controller */
         Tracing.verbose(Package.name, "Core : instanciate controller")
@@ -42,6 +45,7 @@ class Core {
         this.controller.espace = new Espace(this)
         this.controller.market = new Market(this)
         this.controller.notification = new Notification(this)
+        
         setTimeout(() => {
             /* Manager */
             Tracing.verbose(Package.name, "Core : instanciate manager")

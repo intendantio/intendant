@@ -4,7 +4,7 @@ import Tracing from '../utils/Tracing'
 
 class Connector {
 
-    constructor() {
+    constructor(name) {
         try {
             this._name = name
             this._connector = Connection.getInstance()

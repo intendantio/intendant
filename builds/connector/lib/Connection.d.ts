@@ -1,4 +1,4 @@
-class Connection {
+declare class Connection {
     public static getInstance(): Object;
 }
 

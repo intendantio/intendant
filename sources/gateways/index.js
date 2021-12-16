@@ -16,11 +16,11 @@ import Client from './Client'
 import Widget from './Widget'
 import Configuration from './Configuration'
 import Market from './Market'
-import Open from 'open'
+import Tracing from '../utils/Tracing'
 
 class API {
 
-    static initialisation(core) {
+    constructor(core) {
         const app = Express()
         app.use(bodyParser.json({ limit: '50mb', extended: true }))
         app.use(cors.default())
@@ -50,9 +50,8 @@ class API {
         })
 
         app.listen(core.configuration.port, () => {
-            core.logger.verbose(Package.name, "Gateway : Instanciate Intendant")
-            core.logger.verbose(Package.name, "Gateway : start listening localhost:" + core.configuration.port)
-            Open("http://localhost:" + core.configuration.port)
+            Tracing.verbose(Package.name, "Gateway : Instanciate Intendant")
+            Tracing.verbose(Package.name, "Gateway : start listening localhost:" + core.configuration.port)
         })
     }
 

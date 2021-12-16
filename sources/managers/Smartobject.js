@@ -91,8 +91,7 @@ class Manager {
                 if (this.installSmartobjects.includes(smartobject.module)) {
                     try {
                         let Module = require(smartobject["module"])
-                        let moduleConfiguration = require(smartobject["module"] + "/package.json")
-                        let instanceSmartObject = new Module(pSettings, this.core, moduleConfiguration)
+                        let instanceSmartObject = new Module(this.core, pSettings, Tracing)
                         let resultUpdateRequest = await sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
                         if (resultUpdateRequest.error) {
                             Tracing.warning(Package.name, resultUpdateRequest.message)

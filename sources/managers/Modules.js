@@ -34,7 +34,7 @@ class Modules {
             this.installModules.forEach(async pModule => {
                 try {
                     let Module = require(pModule)
-                    let instanceModule = new Module(this.core)
+                    let instanceModule = new Module(this.core, Tracing)
                     this.modules.set(pModule, instanceModule)
                     Tracing.verbose(Package.name, "Module manager : instanciate module " + pModule + " successful")
                 } catch (error) {
