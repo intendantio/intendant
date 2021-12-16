@@ -1,11 +1,12 @@
 import Controller from "./Controller"
 import Package from '../package.json'
+import Tracing from "../utils/Tracing"
 
 class Storage extends Controller {
 
     async getItem(id) {
         try {
-            this.core.logger.verbose(Package.name, "Get storage [" + id + "]")
+            Tracing.verbose(Package.name, "Get storage [" + id + "]")
             let requestGetOne = await this.sqlStorage.getOneByField({ id: id })
             if (requestGetOne.error) {
                 return requestGetOne
@@ -18,7 +19,7 @@ class Storage extends Controller {
             }
         } catch (error) {
             await this.removeItem(id)
-            this.core.logger.error("Storage : " + error.toString())
+            Tracing.error("Storage : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -29,7 +30,7 @@ class Storage extends Controller {
 
     async setItem(id, value) {
         try {
-            this.core.logger.verbose(Package.name, "Set storage [" + id + "] " + JSON.stringify(value))
+            Tracing.verbose(Package.name, "Set storage [" + id + "] " + JSON.stringify(value))
 
             let requestGetOne = await this.sqlStorage.getOneByField({ id: id })
             if (requestGetOne.error) {
@@ -41,7 +42,7 @@ class Storage extends Controller {
                     return resultRemove
                 }
             }
-            this.core.logger.verbose(Package.name, "Insert [" + id + "] ")
+            Tracing.verbose(Package.name, "Insert [" + id + "] ")
 
             let resultInsertRequest = await this.sqlStorage.insert({
                 id: id,
@@ -56,7 +57,7 @@ class Storage extends Controller {
                 message: ''
             }
         } catch (error) {
-            this.core.logger.error("Storage : " + error.toString())
+            Tracing.error("Storage : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -66,7 +67,7 @@ class Storage extends Controller {
     }
 
     async removeItem(id) {
-        this.core.logger.verbose(Package.name, "Remove [" + id + "] in storage")
+        Tracing.verbose(Package.name, "Remove [" + id + "] in storage")
         let resultRemove = await this.sqlStorage.deleteAllByField({ id: id })
         if (resultRemove.error) {
             return resultRemove
@@ -79,7 +80,7 @@ class Storage extends Controller {
     }
 
     async clear() {
-        this.core.logger.verbose(Package.name, "Clear storage")
+        Tracing.verbose(Package.name, "Clear storage")
         try {
             let resultTruncate = await this.sqlStorage.truncate()
             if (resultTruncate.error) {
@@ -91,7 +92,7 @@ class Storage extends Controller {
                 message: ''
             }
         } catch (error) {
-            this.core.logger.error("Storage : " + error.toString())
+            Tracing.error("Storage : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

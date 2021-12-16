@@ -1,4 +1,5 @@
 import Controller from "./Controller"
+import Tracing from "../utils/Tracing"
 
 class Espace extends Controller {
 
@@ -6,7 +7,7 @@ class Espace extends Controller {
         try {
             return this.sqlEspace.getAll()
         } catch (error) {
-            this.core.logger.error("Espace : " + error.toString())
+            Tracing.error("Espace : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

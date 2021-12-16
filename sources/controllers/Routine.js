@@ -1,5 +1,6 @@
 import Controller from './Controller'
 import Package from '../package.json'
+import Tracing from "../utils/Tracing"
 
 class Routine extends Controller {
 
@@ -17,7 +18,7 @@ class Routine extends Controller {
             )
             return resultInsert
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -31,7 +32,7 @@ class Routine extends Controller {
             let arrRoutines = []
             let routinesRequest = await this.sqlRoutine.getAll()
             if (routinesRequest.error) {
-                this.core.logger.warning(Package.name, routinesRequest.message)
+                Tracing.warning(Package.name, routinesRequest.message)
                 return routinesRequest
             }
             let routines = routinesRequest.data
@@ -50,7 +51,7 @@ class Routine extends Controller {
                 data: arrRoutines
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -81,7 +82,7 @@ class Routine extends Controller {
                 data: arrEffects
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -112,7 +113,7 @@ class Routine extends Controller {
                 data: arrTriggers
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -155,7 +156,7 @@ class Routine extends Controller {
                 data: routine
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -247,7 +248,7 @@ class Routine extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -272,7 +273,7 @@ class Routine extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -314,7 +315,7 @@ class Routine extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -337,7 +338,7 @@ class Routine extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Routine : " + error.toString())
+            Tracing.error("Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

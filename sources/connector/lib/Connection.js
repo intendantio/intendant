@@ -4,7 +4,7 @@ import fs from 'fs'
 let instance = null
 
 class Connection {
-    static getInstance(configuration) {
+    static getInstance() {
         if (instance === null) {
             if (fs.existsSync("intendant.db")) {
                 instance = betterSqlite3("intendant.db")

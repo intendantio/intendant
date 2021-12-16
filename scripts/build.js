@@ -49,6 +49,12 @@ const main = async (path) => {
     })
 }
 
+if(fsextra.existsSync('./intendant.module.json') == false) {
+    fsextra.writeJsonSync('./intendant.module.json',[
+        "./"
+    ])
+}
+
 const configurations = require('../intendant.module.json')
 
 configurations.forEach(configuration => {

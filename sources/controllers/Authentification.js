@@ -2,6 +2,7 @@ import Jwt from './tools/Jwt'
 import md5 from "md5"
 import Controller from "./Controller"
 import Package from '../package.json'
+import Tracing from "../utils/Tracing"
 
 class Authentification extends Controller {
 
@@ -9,7 +10,7 @@ class Authentification extends Controller {
         try {
             return await this.sqlAuthorization.getAll()
         } catch (error) {
-            this.core.logger.error("Authentification : " + error.toString())
+            Tracing.error("Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -60,7 +61,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Authentification : " + error.toString())
+            Tracing.error("Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -96,7 +97,7 @@ class Authentification extends Controller {
                 method: request.method
             })
             if (resultRequest.error) {
-                this.core.logger.warning(Package.name, resultRequest.message + request.method + " " + request.url)
+                Tracing.warning(Package.name, resultRequest.message + request.method + " " + request.url)
                 return {
                     error: true,
                     message: resultRequest.messsage + " " + request.method + " " + request.url,
@@ -129,7 +130,7 @@ class Authentification extends Controller {
                     login: jwt[1]
                 })
                 if (jwt[0] != this.core.salt) {
-                    this.core.logger.warning(Package.name, "Authentification controller : token invalid")
+                    Tracing.warning(Package.name, "Authentification controller : token invalid")
                     return {
                         error: true,
                         message: "Authentification controller : token invalid",
@@ -156,7 +157,7 @@ class Authentification extends Controller {
                                     user: userRequest.data.id
                                 }
                             } else {
-                                this.core.logger.warning(Package.name, "Authentification controller : token invalid")
+                                Tracing.warning(Package.name, "Authentification controller : token invalid")
                                 return {
                                     error: true,
                                     message: "Authentification controller : forbiden",
@@ -165,7 +166,7 @@ class Authentification extends Controller {
                             }
                         }
                     } else {
-                        this.core.logger.warning(Package.name, "Authentification controller : user invalid")
+                        Tracing.warning(Package.name, "Authentification controller : user invalid")
                         return {
                             error: true,
                             message: "Authentification controller : user invalid",
@@ -174,7 +175,7 @@ class Authentification extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Authentification controller : token invalid")
+                Tracing.warning(Package.name, "Authentification controller : token invalid")
                 return {
                     error: true,
                     message: "Authentification controller : token invalid",
@@ -182,7 +183,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Authentification : " + error.toString())
+            Tracing.error("Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -226,7 +227,7 @@ class Authentification extends Controller {
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Authentification controller : password is empty")
+                    Tracing.warning(Package.name, "Authentification controller : password is empty")
                     return {
                         error: true,
                         message: "Authentification controller : password is empty",
@@ -234,7 +235,7 @@ class Authentification extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Authentification controller : login is empty")
+                Tracing.warning(Package.name, "Authentification controller : login is empty")
                 return {
                     error: true,
                     message: "Authentification controller : login is empty",
@@ -242,7 +243,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Authentification : " + error.toString())
+            Tracing.error("Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -297,7 +298,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Authentification : " + error.toString())
+            Tracing.error("Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

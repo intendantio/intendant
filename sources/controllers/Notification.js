@@ -1,12 +1,13 @@
 import Controller from "./Controller"
 import fetch from 'node-fetch'
 import Package from '../package.json'
+import Tracing from "../utils/Tracing"
 
 class Notification extends Controller {
 
     async notify(title, message, tokens) {
         let tmpBody = []
-        this.core.logger.verbose(Package.name,"Send notification " + title + " " + message + " at " + tokens.length + " token(s)")
+        Tracing.verbose(Package.name,"Send notification " + title + " " + message + " at " + tokens.length + " token(s)")
         tokens.forEach(client => {
             tmpBody.push({
                 "to": client,

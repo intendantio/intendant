@@ -1,4 +1,5 @@
 import Controller from "./Controller"
+import Tracing from "../utils/Tracing"
 
 class Profile extends Controller {
 
@@ -6,7 +7,7 @@ class Profile extends Controller {
         try {
             return await this.sqlProfile.getAll()
         } catch (error) {
-            this.core.logger.error("Profile : " + error.toString())
+            Tracing.error("Profile : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -19,7 +20,7 @@ class Profile extends Controller {
         try {
             return await this.sqlAuthorization.getOne(idProfile)
         } catch (error) {
-            this.core.logger.error("Profile : " + error.toString())
+            Tracing.error("Profile : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

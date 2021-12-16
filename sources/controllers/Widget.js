@@ -1,6 +1,8 @@
 import Controller from "./Controller"
 import Package from '../package.json'
 import _ from 'lodash'
+import Tracing from "../utils/Tracing"
+
 class Widget extends Controller {
 
     extract(str) {
@@ -149,7 +151,7 @@ class Widget extends Controller {
             }
         } catch (error) {
             console.log(error)
-            this.core.logger.error("Widget : " + JSON.stringify(error.toString()) )
+            Tracing.error("Widget : " + JSON.stringify(error.toString()) )
             return {
                 package: Package.name,
                 error: true,
@@ -193,7 +195,7 @@ class Widget extends Controller {
                     }
                     data[action.reference] = resultAction.data
                 } else {
-                    this.core.logger.error(Package.name, "Invalid type '" + action.type + "'")
+                    Tracing.error(Package.name, "Invalid type '" + action.type + "'")
                     return {
                         error: true,
                         message: "Invalid type '" + action.type + "'",
@@ -208,7 +210,7 @@ class Widget extends Controller {
                 data: data
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -241,7 +243,7 @@ class Widget extends Controller {
                 data: newWidget
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -307,7 +309,7 @@ class Widget extends Controller {
                                 message: ''
                             }
                         } else {
-                            this.core.logger.warning(Package.name, "Missing icon action when sources widget")
+                            Tracing.warning(Package.name, "Missing icon action when sources widget")
                             return {
                                 error: true,
                                 message: "Missing sources action",
@@ -315,7 +317,7 @@ class Widget extends Controller {
                             }
                         }
                     } else {
-                        this.core.logger.warning(Package.name, "Missing icon action when contents widget")
+                        Tracing.warning(Package.name, "Missing icon action when contents widget")
                         return {
                             error: true,
                             message: "Missing contents action",
@@ -323,7 +325,7 @@ class Widget extends Controller {
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing icon action when insert widget")
+                    Tracing.warning(Package.name, "Missing icon action when insert widget")
                     return {
                         error: true,
                         message: "Missing icon action",
@@ -331,7 +333,7 @@ class Widget extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing reference action when insert widget")
+                Tracing.warning(Package.name, "Missing reference action when insert widget")
                 return {
                     error: true,
                     message: "Missing reference action",
@@ -340,7 +342,7 @@ class Widget extends Controller {
             }
 
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -367,7 +369,7 @@ class Widget extends Controller {
                     message: ''
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing smartobject settings name")
+                Tracing.warning(Package.name, "Missing smartobject settings name")
                 return {
                     error: true,
                     message: "Missing smartobject settings name",
@@ -375,7 +377,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -387,7 +389,7 @@ class Widget extends Controller {
 
     async delete(idWidget) {
         try {
-            this.core.logger.verbose(Package.name, "Delete widget " + idWidget)
+            Tracing.verbose(Package.name, "Delete widget " + idWidget)
             let widgetSourceRequest = await this.sqlWidgetSource.getAllByField({ widget: idWidget })
             if (widgetSourceRequest.error) {
                 return widgetSourceRequest
@@ -418,7 +420,7 @@ class Widget extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -473,7 +475,7 @@ class Widget extends Controller {
                                 package: Package.name
                             }
                         } else {
-                            this.core.logger.warning(Package.name, "Missing arguments")
+                            Tracing.warning(Package.name, "Missing arguments")
                             return {
                                 error: true,
                                 message: "Missing arguments action",
@@ -481,7 +483,7 @@ class Widget extends Controller {
                             }
                         }
                     } else {
-                        this.core.logger.warning(Package.name, "Missing action")
+                        Tracing.warning(Package.name, "Missing action")
                         return {
                             error: true,
                             message: "Missing action action",
@@ -489,7 +491,7 @@ class Widget extends Controller {
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing source")
+                    Tracing.warning(Package.name, "Missing source")
                     return {
                         error: true,
                         message: "Missing source action",
@@ -497,7 +499,7 @@ class Widget extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing reference")
+                Tracing.warning(Package.name, "Missing reference")
                 return {
                     error: true,
                     message: "Missing reference action",
@@ -505,7 +507,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -544,7 +546,7 @@ class Widget extends Controller {
                         package: Package.name
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing content")
+                    Tracing.warning(Package.name, "Missing content")
                     return {
                         error: true,
                         message: "Missing content action",
@@ -552,7 +554,7 @@ class Widget extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing type")
+                Tracing.warning(Package.name, "Missing type")
                 return {
                     error: true,
                     message: "Missing type action",
@@ -560,7 +562,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -586,7 +588,7 @@ class Widget extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -608,7 +610,7 @@ class Widget extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -635,7 +637,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Widget : " + error.toString())
+            Tracing.error("Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

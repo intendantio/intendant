@@ -3,6 +3,7 @@ import Math from './tools/Math'
 import md5 from "md5"
 import Controller from "./Controller"
 import Package from '../package.json'
+import Tracing from "../utils/Tracing"
 
 class User extends Controller {
 
@@ -10,7 +11,7 @@ class User extends Controller {
         try {
             return await this.sqlUser.getOne(id)
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -31,7 +32,7 @@ class User extends Controller {
             }
             return result
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -47,7 +48,7 @@ class User extends Controller {
                 return resultUserAdmin
             }
             if (resultUserAdmin.data == false) {
-                this.core.logger.warning(Package.name, "User not found")
+                Tracing.warning(Package.name, "User not found")
                 return {
                     error: true,
                     message: "User invalid",
@@ -55,7 +56,7 @@ class User extends Controller {
                 }
             }
             if (resultUserAdmin.data.login == "admin") {
-                this.core.logger.warning(Package.name, "Cannot delete admin")
+                Tracing.warning(Package.name, "Cannot delete admin")
                 return {
                     error: true,
                     message: "Cannot delete admin",
@@ -76,7 +77,7 @@ class User extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -95,14 +96,14 @@ class User extends Controller {
                     } else {
                         let account = accountRequest.data
                         if (account) {
-                            this.core.logger.warning(Package.name, "Login is already register")
+                            Tracing.warning(Package.name, "Login is already register")
                             return {
                                 error: true,
                                 message: "Login is already register",
                                 package: Package.name
                             }
                         } else {
-                            this.core.logger.verbose(Package.name, "Insert user " + login)
+                            Tracing.verbose(Package.name, "Insert user " + login)
                             let salt = Math.random(16)
                             let saltPassword = md5(password + salt)
                             let insertAccountRequest = await this.sqlUser.insert({
@@ -124,7 +125,7 @@ class User extends Controller {
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Password is empty")
+                    Tracing.warning(Package.name, "Password is empty")
                     return {
                         error: true,
                         message: "Password is empty",
@@ -132,7 +133,7 @@ class User extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Login is empty")
+                Tracing.warning(Package.name, "Login is empty")
                 return {
                     error: true,
                     message: "Login is empty",
@@ -140,7 +141,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -169,7 +170,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -218,7 +219,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -246,7 +247,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -276,7 +277,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("User : " + error.toString())
+            Tracing.error("User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

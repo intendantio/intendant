@@ -1,5 +1,5 @@
 import Connector from '../connector'
-import Core from '../core'
+import Core from '..'
 
 declare class Controller {
     constructor(core: Core);

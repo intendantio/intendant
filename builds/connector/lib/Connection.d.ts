@@ -1,6 +1,8 @@
-export class Connection {
-    public static getInstance(configuration: Object): Object;
+class Connection {
+    public static getInstance(): Object;
 }
+
+export default Connection
 
 
 

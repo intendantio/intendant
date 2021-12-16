@@ -1,18 +1,19 @@
 import Controller from "./Controller";
 import Package from '../package.json'
+import Tracing from "../utils/Tracing"
 
 class Cache extends Controller {
 
     async get(data) {
         try {
-            this.core.logger.verbose(Package.name, "Get cache [" + data.reference + "]")
+            Tracing.verbose(Package.name, "Get cache [" + data.reference + "]")
             await this.check()
             let result = await this.sqlCache.getOneByField({reference: data.reference})
             if(result.error) {
                 return result
             }
             if(result.data) {
-                this.core.logger.verbose(Package.name,"Find cache " + data.reference)
+                Tracing.verbose(Package.name,"Find cache " + data.reference)
                 return {
                     error: false,
                     message: "",
@@ -30,7 +31,7 @@ class Cache extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Get cache " + error.toString())
+            Tracing.error("Get cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -55,7 +56,7 @@ class Cache extends Controller {
                 })
             }
         } catch (error) {
-            this.core.logger.error("Insert cache " + error.toString())
+            Tracing.error("Insert cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -76,7 +77,7 @@ class Cache extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Check cache " + error.toString())
+            Tracing.error("Check cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,

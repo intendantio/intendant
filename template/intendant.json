@@ -1,10 +1,4 @@
 {
     "port": "8000",
-    "token": "UwZumJrkchtdWbEhSFYNgNvk73zvkM4qA7VXLuZTNNHsuQZyZUgwDbGfLkKzRBQxXeYh9Zzg",
-    "connector": {},
-    "tracing": {
-        "verbose": true,
-        "warning": true,
-        "error": true
-    }
+    "token": "UwZumJrkchtdWbEhSFYNgNvk73zvkM4qA7VXLuZTNNHsuQZyZUgwDbGfLkKzRBQxXeYh9Zzg"
 }

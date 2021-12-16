@@ -1,5 +1,6 @@
 import Package from '../package'
 import Controller from './Controller'
+import Tracing from "../utils/Tracing"
 
 class SmartObject extends Controller {
 
@@ -28,7 +29,7 @@ class SmartObject extends Controller {
                 data: pSmartObjects
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -39,7 +40,7 @@ class SmartObject extends Controller {
 
     async deleteArguments(idArgument) {
         try {
-            this.core.logger.verbose(Package.name, "Delete smartobject_argument to [" + idArgument + "]")
+            Tracing.verbose(Package.name, "Delete smartobject_argument to [" + idArgument + "]")
             let getRequest = await this.sqlSmartobjectArgument.getOne(idArgument)
             if (getRequest.error) {
                 return getRequest
@@ -61,7 +62,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -72,7 +73,7 @@ class SmartObject extends Controller {
 
     async insertArguments(idSmartobject, reference, value) {
         try {
-            this.core.logger.verbose(Package.name, "Insert smartobject_argument to " + idSmartobject + " [" + reference + ":" + value + "]")
+            Tracing.verbose(Package.name, "Insert smartobject_argument to " + idSmartobject + " [" + reference + ":" + value + "]")
             if (reference) {
                 if (value) {
                     let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
@@ -98,7 +99,7 @@ class SmartObject extends Controller {
                         package: Package.name
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing smartobject_argument value")
+                    Tracing.warning(Package.name, "Missing smartobject_argument value")
                     return {
                         error: true,
                         message: "Missing smartobject_argument value",
@@ -106,7 +107,7 @@ class SmartObject extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing smartobject_argument reference")
+                Tracing.warning(Package.name, "Missing smartobject_argument reference")
                 return {
                     error: true,
                     message: "Missing smartobject_argument reference",
@@ -114,7 +115,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -173,7 +174,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -206,7 +207,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -240,7 +241,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -262,7 +263,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -282,7 +283,7 @@ class SmartObject extends Controller {
                         }
                         let smartobject = smartobjectRequest.data
                         if (smartobject) {
-                            this.core.logger.warning(Package.name, "Smartobject already exist")
+                            Tracing.warning(Package.name, "Smartobject already exist")
                             return {
                                 error: true,
                                 message: "Smartobject already exist",
@@ -322,7 +323,7 @@ class SmartObject extends Controller {
                             }
                         }
                     } else {
-                        this.core.logger.warning(Package.name, "Missing smartobject arguments")
+                        Tracing.warning(Package.name, "Missing smartobject arguments")
                         return {
                             error: true,
                             message: "Missing smartobject arguments",
@@ -330,7 +331,7 @@ class SmartObject extends Controller {
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing smartobject reference")
+                    Tracing.warning(Package.name, "Missing smartobject reference")
                     return {
                         error: true,
                         message: "Missing smartobject reference",
@@ -338,7 +339,7 @@ class SmartObject extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing smartobject module")
+                Tracing.warning(Package.name, "Missing smartobject module")
                 return {
                     error: true,
                     message: "Missing smartobject module",
@@ -346,7 +347,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -372,7 +373,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -420,7 +421,7 @@ class SmartObject extends Controller {
                             }
                         }
                     } else {
-                        this.core.logger.warning(Package.name, "Smartobject " + reference + " is missing")
+                        Tracing.warning(Package.name, "Smartobject " + reference + " is missing")
                         return {
                             error: true,
                             message: "Smartobject " + reference + " is not loaded",
@@ -428,7 +429,7 @@ class SmartObject extends Controller {
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing smartobject arguments when executeAction")
+                    Tracing.warning(Package.name, "Missing smartobject arguments when executeAction")
                     return {
                         error: true,
                         message: "Missing smartobject arguments",
@@ -436,7 +437,7 @@ class SmartObject extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing smartobject action when executeAction")
+                Tracing.warning(Package.name, "Missing smartobject action when executeAction")
                 return {
                     error: true,
                     message: "Missing smartobject action",
@@ -444,7 +445,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -455,14 +456,14 @@ class SmartObject extends Controller {
 
     async getConfiguration() {
         try {
-            this.core.logger.verbose(Package.name, "Get all modules")
+            Tracing.verbose(Package.name, "Get all modules")
             let modules = []
             this.core.configuration.smartobjects.forEach(pModule => {
                 try {
                     let configuration = require(pModule + "/package.json")
                     modules.push(configuration)
                 } catch (error) {
-                    this.core.logger.warning(Package.name, "Impossible get configuration in " + pModule + " module")
+                    Tracing.warning(Package.name, "Impossible get configuration in " + pModule + " module")
                 }
             })
             return {
@@ -472,7 +473,7 @@ class SmartObject extends Controller {
                 data: modules
             }
         } catch (error) {
-            this.core.logger.error("SmartObject : " + error.toString())
+            Tracing.error("SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

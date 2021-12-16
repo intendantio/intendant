@@ -1,16 +1,15 @@
 import Connection from './lib/Connection'
 import Package from '../package.json'
+import Tracing from '../utils/Tracing'
 
-class SQLite {
+class Connector {
 
-    constructor(configuration, core, name) {
+    constructor() {
         try {
-            this._core = core
             this._name = name
-            this._configuration = configuration
-            this._connector = Connection.getInstance(configuration)
+            this._connector = Connection.getInstance()
         } catch (error) {
-            this._core.logger.error(Package.name, "Error occured in " + this._name + " table")
+            Tracing.error(Package.name, "Error occured in " + this._name + " table")
             throw error
         }
     }
@@ -18,8 +17,8 @@ class SQLite {
 
     check(exec) {
         if(this._connector.open == false) {
-            this._core.logger.error(Package.name, "Unable to connect at database " + this._configuration.connector.database + " " + this._name)
-            this._core.logger.error(Package.name, "Please check the configuration of the connector and the status of the database")
+            Tracing.error(Package.name, "Unable to connect at database " + this._name)
+            Tracing.error(Package.name, "Please check the configuration of the connector and the status of the database")
             process.exit(0)
         } else if(this._connector.inTransaction) {
             setTimeout(() => {
@@ -41,7 +40,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
                     error: true,
@@ -70,7 +69,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
                     error: true,
@@ -99,7 +98,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
                     error: true,
@@ -127,7 +126,7 @@ class SQLite {
             }
         } catch (error) {
             let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-            this._core.logger.error(Package.name, message)
+            Tracing.error(Package.name, message)
             return {
                 package: Package.name,
                 error: true,
@@ -148,7 +147,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
                     error: true,
@@ -176,7 +175,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
                     error: true,
@@ -204,7 +203,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
                     error: true,
@@ -231,7 +230,7 @@ class SQLite {
             }
         } catch (error) {
             let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-            this._core.logger.error(Package.name, message)
+            Tracing.error(Package.name, message)
             return {
                 package: Package.name,
                 error: true,
@@ -277,7 +276,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
                     error: true,
@@ -307,7 +306,7 @@ class SQLite {
                 }
             } catch (error) {
                 let message = this._name + " catch an error : " + JSON.stringify(error.toString())
-                this._core.logger.error(Package.name, message)
+                Tracing.error(Package.name, message)
                 return {
                     error: true,
                     package: Package.name,
@@ -379,4 +378,4 @@ class SQLite {
 
 }
 
-export default SQLite
+export default Connector

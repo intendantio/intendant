@@ -1,4 +1,5 @@
 import Package from '../package'
+import Tracing from '../utils/Tracing'
 import md5 from 'md5'
 import fetch from 'node-fetch'
 import fs from 'fs'
@@ -7,8 +8,6 @@ class Modules {
 
     constructor(core) {
         this.core = core
-        this.connector = core.connector
-        this.logger = core.logger
         this.installModules = []
         this.modules = new Map()
         this.before()
@@ -30,22 +29,22 @@ class Modules {
 
     restart() {
         try {
-            this.logger.verbose(Package.name, "Module manager : restart")
+            Tracing.verbose(Package.name, "Module manager : restart")
             this.modules = new Map()
             this.installModules.forEach(async pModule => {
                 try {
                     let Module = require(pModule)
                     let instanceModule = new Module(this.core)
                     this.modules.set(pModule, instanceModule)
-                    this.logger.verbose(Package.name, "Module manager : instanciate module " + pModule + " successful")
+                    Tracing.verbose(Package.name, "Module manager : instanciate module " + pModule + " successful")
                 } catch (error) {
                     this.installModules = this.installModules.filter(installModule => {
                         return installModule != pModule
                     })
                 }
-           })
+            })
         } catch (error) {
-            this.core.logger.error("Module manager : " + error.toString())
+            Tracing.error("Module manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -58,7 +57,7 @@ class Modules {
         let find = false
         this.installModules.forEach(pModule => {
             if (md5(pModule) == hash) {
-                this.logger.verbose(Package.name, "Module manager : find hash module " + hash + " as " + pModule)
+                Tracing.verbose(Package.name, "Module manager : find hash module " + hash + " as " + pModule)
                 find = pModule
             }
         })
@@ -86,7 +85,7 @@ class Modules {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Module manager : " + error.toString())
+            Tracing.error("Module manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -103,8 +102,8 @@ class Modules {
                     let configuration = require(pModule + "/package.json")
                     modules.push(configuration)
                 } catch (error) {
-                    this.core.logger.error(Package.name, "Module manager : inaccessible configuration from module " + pModule)
-                    this.core.logger.error(Package.name, JSON.stringify(error.toString()))
+                    Tracing.error(Package.name, "Module manager : inaccessible configuration from module " + pModule)
+                    Tracing.error(Package.name, JSON.stringify(error.toString()))
                 }
             })
             return {
@@ -114,7 +113,7 @@ class Modules {
                 data: modules
             }
         } catch (error) {
-            this.core.logger.error("Module manager : " + error.toString())
+            Tracing.error("Module manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

@@ -1,5 +1,6 @@
 import Controller from "./Controller"
 import Package from '../package.json'
+import Tracing from "../utils/Tracing"
 
 class Process extends Controller {
 
@@ -57,7 +58,7 @@ class Process extends Controller {
                 data: process
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -90,7 +91,7 @@ class Process extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -119,7 +120,7 @@ class Process extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -153,7 +154,7 @@ class Process extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -186,7 +187,7 @@ class Process extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -225,7 +226,7 @@ class Process extends Controller {
                         }
                         pArguments[argument.reference] = argument.value
                     })
-                    this.core.logger.verbose(Package.name, "Argument inflate " + JSON.stringify(pArguments))
+                    Tracing.verbose(Package.name, "Argument inflate " + JSON.stringify(pArguments))
                     if (action.enable === process.enable || process.mode === "simple") {
                         if (action.type === "smartobject") {
                             let Smartobject = await this.sqlSmartobject.getOne(action.object)
@@ -244,7 +245,7 @@ class Process extends Controller {
                             }
                             data.push(resultAction.data)
                         } else {
-                            this.core.logger.error(Package.name, "Invalid type '" + action.type + "'")
+                            Tracing.error(Package.name, "Invalid type '" + action.type + "'")
                             return {
                                 error: true,
                                 message: "Invalid type '" + action.type + "'",
@@ -270,7 +271,7 @@ class Process extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -344,7 +345,7 @@ class Process extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -390,7 +391,7 @@ class Process extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -419,7 +420,7 @@ class Process extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -464,7 +465,7 @@ class Process extends Controller {
                                         package: Package.name
                                     }
                                 } else {
-                                    this.core.logger.warning(Package.name, "Reference already exist")
+                                    Tracing.warning(Package.name, "Reference already exist")
                                     return {
                                         error: true,
                                         message: "Reference already exist",
@@ -472,7 +473,7 @@ class Process extends Controller {
                                     }
                                 }
                             } else {
-                                this.core.logger.warning(Package.name, "Missing process settings enable")
+                                Tracing.warning(Package.name, "Missing process settings enable")
                                 return {
                                     error: true,
                                     message: "Missing process settings enable",
@@ -480,7 +481,7 @@ class Process extends Controller {
                                 }
                             }
                         } else {
-                            this.core.logger.warning(Package.name, "Missing process settings type")
+                            Tracing.warning(Package.name, "Missing process settings type")
                             return {
                                 error: true,
                                 message: "Missing process settings type",
@@ -488,7 +489,7 @@ class Process extends Controller {
                             }
                         }
                     } else {
-                        this.core.logger.warning(Package.name, "Missing process settings name")
+                        Tracing.warning(Package.name, "Missing process settings name")
                         return {
                             error: true,
                             message: "Missing process settings name",
@@ -496,7 +497,7 @@ class Process extends Controller {
                         }
                     }
                 } else {
-                    this.core.logger.warning(Package.name, "Missing process settings reference")
+                    Tracing.warning(Package.name, "Missing process settings reference")
                     return {
                         error: true,
                         message: "Missing process settings reference",
@@ -504,7 +505,7 @@ class Process extends Controller {
                     }
                 }
             } else {
-                this.core.logger.warning(Package.name, "Missing process settings id")
+                Tracing.warning(Package.name, "Missing process settings id")
                 return {
                     error: true,
                     message: "Missing process settings id",
@@ -512,7 +513,7 @@ class Process extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -536,7 +537,7 @@ class Process extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            this.core.logger.error("Process : " + error.toString())
+            Tracing.error("Process : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

@@ -1,12 +1,13 @@
 import Controller from "./Controller"
 import Package from '../package.json'
 import fetch from 'node-fetch'
+import Tracing from "../utils/Tracing"
 
 class Client extends Controller {
 
     async insert(settings = {}) {
         try {
-            this.core.logger.verbose(Package.name, "Insert client [" + settings.imei + "]")
+            Tracing.verbose(Package.name, "Insert client [" + settings.imei + "]")
             if (settings.imei) {
                 if (settings.name) {
                     if (settings.token) {
@@ -66,7 +67,7 @@ class Client extends Controller {
                 }
             }
         } catch (error) {
-            this.core.logger.error("Client : " + error.toString())
+            Tracing.error("Client : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -80,7 +81,7 @@ class Client extends Controller {
         try {
             return await this.sqlClient.getAll()
         } catch (error) {
-            this.core.logger.error("Client : " + error.toString())
+            Tracing.error("Client : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -114,7 +115,7 @@ class Client extends Controller {
                 body: JSON.stringify(tmpBody)
             })
         } catch (error) {
-            this.core.logger.error("Client : " + error.toString())
+            Tracing.error("Client : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
