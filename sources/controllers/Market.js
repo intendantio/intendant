@@ -13,7 +13,13 @@ class Market extends Controller {
     async install(pPackage) {
         try {
             Tracing.verbose(Package.name, "Market controller : download file from https://market.intendant.io")
-            let resultMarket = await fetch("https://market.intendant.io")
+            let resultMarket = await fetch("https://market.intendant.io", {
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': 0
+                }
+            })
             let resultMarketJSON = await resultMarket.json()
             resultMarketJSON = resultMarketJSON.filter(item => {
                 return item.name == pPackage
