@@ -17,9 +17,16 @@ const main = async () => {
     for (let index = 0; index < modules.length; index++) {
         let result = await fetch(modules[index] + "/raw/main/sources/package.json")
         let resultJSON = await result.json()
-        let resultMain = await fetch(modules[index] + "/raw/main/package.json")
+        let resultMain = await fetch(modules[index] + "/raw/main/package.json", {
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': 0
+            }
+        })
         let resultMainJSON = await resultMain.json()
         let raw = modules[index].replace("https://github.com","https://raw.githubusercontent.com") + "/main/releases/" + resultMainJSON.name + "-" + resultJSON.version + ".tgz"
+        console.log(raw + " > " + resultJSON.version)
         markets.push({
             name: resultJSON.name,
             icon: resultJSON.icon,
