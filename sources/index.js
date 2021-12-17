@@ -31,21 +31,22 @@ class Core {
 
         /* Controller */
         Tracing.verbose(Package.name, "Core : instanciate controller")
-        this.controller = {}
-        this.controller.routine = new Routine(this)
-        this.controller.smartobject = new SmartObject(this)
-        this.controller.authentification = new Authentification(this)
-        this.controller.profile = new Profile(this)
-        this.controller.process = new Process(this)
-        this.controller.storage = new Storage(this)
-        this.controller.client = new Client(this)
-        this.controller.widget = new Widget(this)
-        this.controller.user = new User(this)
-        this.controller.cache = new Cache(this)
-        this.controller.espace = new Espace(this)
-        this.controller.market = new Market(this)
-        this.controller.notification = new Notification(this)
-        
+        this.controller = {
+            routine: new Routine(this),
+            smartobject: new SmartObject(this),
+            authentification: new Authentification(this),
+            profile: new Profile(this),
+            process: new Process(this),
+            storage: new Storage(this),
+            client: new Client(this),
+            widget: new Widget(this),
+            user: new User(this),
+            cache: new Cache(this),
+            espace: new Espace(this),
+            market: new Market(this),
+            notification: new Notification(this)
+        }
+
         setTimeout(() => {
             /* Manager */
             Tracing.verbose(Package.name, "Core : instanciate manager")
@@ -54,7 +55,7 @@ class Core {
             this.manager.module = new ModulesManager(this)
             setTimeout(() => {
                 this.manager.routine = new RoutineManager(this)
-            },5000)
+            }, 5000)
         }, 100)
 
     }

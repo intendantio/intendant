@@ -1,26 +1,37 @@
-import Controller from './controllers/Controller'
+import Authentification from './controllers/Authentification'
+import Cache from './controllers/Cache'
+import Client from './controllers/Client'
+import Espace from './controllers/Espace'
+import Market from './controllers/Market'
+import Notification from './controllers/Notification'
+import Process from './controllers/Process'
+import Profile from './controllers/Profile'
+import Routine from './controllers/Routine'
+import Smartobject from './controllers/Smartobject'
+import Storage from './controllers/Storage'
+import User from './controllers/User'
+import Widget from './controllers/Widget'
 import Connector from './connector'
 import API from './gateways'
 
+interface Configuration { }
+
+interface Managers { }
 
 interface Controllers {
-    routine: Controller,
-    smartobject: Controller,
-    authentification: Controller,
-    profile: Controller,
-    process: Controller,
-    storage: Controller,
-    client: Controller,
-    widget: Controller,
-    user: Controller,
-    cache: Controller,
-    espace: Controller,
-    market: Controller,
-    notification: Controller
-}
-
-interface Managers {
-
+    storage: Storage,
+    smartobject: Smartobject,
+    routine: Routine,
+    profile: Profile,
+    process: Process,
+    client: Client,
+    widget: Widget,
+    user: User,
+    cache: Cache,
+    espace: Espace,
+    market: Market,
+    notification: Notification,
+    authentification: Authentification
 }
 
 declare class Core {

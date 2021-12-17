@@ -37,11 +37,7 @@ class Market extends Controller {
                     error: true
                 }
             } else {
-
-
                 let item = resultMarketJSON[0]
-                
-
                 Tracing.verbose(Package.name, "Market controller : install package " + item.raw)
                 await new Promise((resolve, reject) => {
                     exec("npm install " + item.raw + " --silent 2>&1 | tee t", (e, std, ster) => {

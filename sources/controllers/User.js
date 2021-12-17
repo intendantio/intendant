@@ -7,9 +7,9 @@ import Tracing from "../utils/Tracing"
 
 class User extends Controller {
 
-    async getOne(id) {
+    async getOne(idUser) {
         try {
-            return await this.sqlUser.getOne(id)
+            return await this.sqlUser.getOne(idUser)
         } catch (error) {
             Tracing.error("User : " + error.toString())
             return {
@@ -180,23 +180,23 @@ class User extends Controller {
 
     }
 
-    async update(id, login, profile) {
+    async update(idUser, login, profile) {
         try {
             if (login) {
                 if (profile) {
-                    let result = await this.sqlUser.getOne(id)
+                    let result = await this.sqlUser.getOne(idUser)
                     if (result.error) {
                         return result
                     }
                     let user = result.data
                     if (user.login != login) {
-                        let resultUser = this.sqlUser.updateAll({ login: login }, { id: id })
+                        let resultUser = this.sqlUser.updateAll({ login: login }, { id: idUser })
                         if (resultUser.error) {
                             return result
                         }
                     }
                     if (user.profile != profile) {
-                        let resultProfile = this.sqlUser.updateAll({ profile: profile }, { id: id })
+                        let resultProfile = this.sqlUser.updateAll({ profile: profile }, { id: idUser })
                         if (resultProfile.error) {
                             return result
                         }
@@ -229,14 +229,14 @@ class User extends Controller {
 
     }
 
-    async updatePassword(id, password) {
+    async updatePassword(idUser, password) {
         try {
             let salt = Math.random(16)
-            let userRequest = await this.sqlUser.updateAll({ password: md5(password + salt) }, { id: id })
+            let userRequest = await this.sqlUser.updateAll({ password: md5(password + salt) }, { id: idUser })
             if (userRequest.error) {
                 return userRequest
             } else {
-                let saltRequest = await this.sqlUser.updateAll({ salt: salt }, { id: id })
+                let saltRequest = await this.sqlUser.updateAll({ salt: salt }, { id: idUser })
                 if (saltRequest.error) {
                     return saltRequest
                 }

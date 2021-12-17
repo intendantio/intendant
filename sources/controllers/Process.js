@@ -129,7 +129,6 @@ class Process extends Controller {
         }
     }
 
-
     async insertProcessProfile(idProcess, idProfile) {
         try {
             let ProcessRequest = await this.sqlProcess.getOne(idProcess)
@@ -208,7 +207,7 @@ class Process extends Controller {
 
     async executeAction(idProcess, profile, inputs, force = false) {
         try {
-            let processRequest = await this.getOne(idProcess, profile, force)
+            let processRequest = await this.getOne(idProcess)
             if (processRequest.error) {
                 return processRequest
             }

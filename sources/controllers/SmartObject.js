@@ -357,13 +357,13 @@ class SmartObject extends Controller {
 
     }
 
-    async delete(id) {
+    async delete(idSmartobject) {
         try {
-            let historyettingsRequest = await this.sqlSmartobjectArgument.deleteAllByField({ smartobject: id })
+            let historyettingsRequest = await this.sqlSmartobjectArgument.deleteAllByField({ smartobject: idSmartobject })
             if (historyettingsRequest.error) {
                 return historyettingsRequest
             }
-            let smartobjectRequest = await this.sqlSmartobject.deleteOne(id)
+            let smartobjectRequest = await this.sqlSmartobject.deleteOne(idSmartobject)
             if (smartobjectRequest.error) {
                 return smartobjectRequest
             }

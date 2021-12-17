@@ -90,41 +90,6 @@ class Client extends Controller {
         }
     }
 
-
-    async notify(title, message) {
-        try {
-            let clientRequest = await this.sqlClient.getAll()
-            if (clientRequest.error) {
-                return clientRequest
-            }
-            let tmpBody = []
-            clientRequest.data.forEach(client => {
-                if (client.token !== "") {
-                    tmpBody.push({
-                        "to": client.token,
-                        "title": "intendant - " + title,
-                        "body": message
-                    })
-                }
-            })
-            await fetch("https://exp.host/--/api/v2/push/send", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': "application/json"
-                },
-                body: JSON.stringify(tmpBody)
-            })
-        } catch (error) {
-            Tracing.error("Client : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
-        }
-
-    }
-
 }
 
 export default Client
