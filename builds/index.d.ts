@@ -35,6 +35,7 @@ interface Controllers {
 }
 
 declare class Core {
+    
     constructor(configuration: Configuration);
 
     public configuration: Configuration;
