@@ -1,0 +1,34 @@
+{
+    "entry": [
+        "sources/index.js",
+        "builds/index.js",
+        "scripts/*.js"
+    ],
+    "extensions": [
+        ".js"
+    ],
+    "ignorePatterns": [
+        "**/node_modules/**",
+        "development/**",
+        "development/**",
+        "template/**",
+        "dashboard/**",
+        "builds/public/**"
+    ],
+    "ignoreUnused": [
+        "@babel/preset-env",
+        "babel-plugin-add-module-exports",
+        "babel-preset-minify",
+        "draftlog"
+    ],
+    "ignoreUnimported": [
+        "**/*.d.ts",
+        "builds/index.js",
+        "scripts/build.js",
+        "scripts/development.js",
+        "scripts/market.js",
+        "sources/index.js"
+    ],
+    "ignoreUnresolved": ["*"],
+    "moduleDirectory": ["node_modules"]
+}

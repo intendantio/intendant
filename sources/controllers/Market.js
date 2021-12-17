@@ -1,8 +1,6 @@
 import Controller from "./Controller"
 import fetch from 'node-fetch'
-import extract from 'extract-zip'
 import fs from 'fs'
-import npm from 'npm'
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
 
