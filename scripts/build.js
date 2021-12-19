@@ -16,6 +16,14 @@ const main = async (path) => {
     fsextra.copySync(path + "/sources", path + "/builds")
     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Build from " + path))
     
+    let build = "it-" + Math.random().toString(36).replace(/[^a-z]+/g, '')
+    
+    let pPackage = fsextra.readJSONSync(path + "/builds/package.json")
+    
+    pPackage.build = build
+
+    fsextra.writeJsonSync(path + "/builds/package.json",pPackage)
+
     let command = ".\\node_modules\\.bin\\babel " + path + "/sources --out-dir " + path + "/builds --config-file ./scripts/.babelrc"
     if (os == "Darwin") {
         command = "./node_modules/.bin/babel " + path + "/sources --out-dir " + path + "/builds --config-file ./scripts/.babelrc"

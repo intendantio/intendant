@@ -2,6 +2,10 @@ import chalk from 'chalk'
 
 class Tracing {
 
+    static pure(message) {
+        console.log(message)
+    }
+
     static verbose(object, message) {
         try {
             if (object && message) {

@@ -14,6 +14,7 @@ import Espace from './controllers/Espace'
 import Market from './controllers/Market'
 import Notification from './controllers/Notification'
 
+
 import API from './gateways'
 
 import SmartObjectManager from './managers/Smartobject'
@@ -23,6 +24,17 @@ import Tracing from './utils/Tracing'
 
 class Core {
     constructor(configuration) {
+        console.clear()
+        Tracing.pure(""+
+        "       _                            _                          \n"+
+        "      | |       _                  | |             _           \n"+
+        "      | |____ _| |_ _____ ____   __| |_____ ____ _| |_         \n"+
+        "      | |  _ (_   _) ___ |  _ \\ / _  (____ |  _ (_   _)       \n"+
+        "      | | | | || |_| ____| | | ( (_| / ___ | | | || |_         \n"+
+        "      |_|_| |_| \\__)_____)_| |_|\\____\\_____|_| |_| \\__)    \n"+
+        "")
+        Tracing.pure("           Version: " + Package.version + " Build: " + Package.build)
+        Tracing.pure("")
         this.configuration = configuration
 
         this.salt = Package.name + "-" + Package.version
