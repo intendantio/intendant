@@ -36,7 +36,7 @@ class Modules {
                     let Module = require(pModule)
                     let instanceModule = new Module(this.core, Tracing)
                     this.modules.set(pModule, instanceModule)
-                    Tracing.verbose(Package.name, "Module manager : instanciate module " + pModule + " successful")
+                    Tracing.verbose(Package.name, "Module manager : instanciate module [" + pModule + "] successful")
                 } catch (error) {
                     this.installModules = this.installModules.filter(installModule => {
                         return installModule != pModule
@@ -44,7 +44,7 @@ class Modules {
                 }
             })
         } catch (error) {
-            Tracing.error("Module manager : " + error.toString())
+            Tracing.error(Package.name,"Module manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -85,7 +85,7 @@ class Modules {
                 }
             }
         } catch (error) {
-            Tracing.error("Module manager : " + error.toString())
+            Tracing.error(Package.name,"Module manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -103,7 +103,7 @@ class Modules {
                     modules.push(configuration)
                 } catch (error) {
                     Tracing.error(Package.name, "Module manager : inaccessible configuration from module " + pModule)
-                    Tracing.error(Package.name, JSON.stringify(error.toString()))
+                    Tracing.error(Package.name, error.toString())
                 }
             })
             return {
@@ -113,7 +113,7 @@ class Modules {
                 data: modules
             }
         } catch (error) {
-            Tracing.error("Module manager : " + error.toString())
+            Tracing.error(Package.name,"Module manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

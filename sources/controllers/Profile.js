@@ -7,7 +7,7 @@ class Profile extends Controller {
         try {
             return await this.sqlProfile.getAll()
         } catch (error) {
-            Tracing.error("Profile : " + error.toString())
+            Tracing.error(Package.name,"Profile : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -20,7 +20,7 @@ class Profile extends Controller {
         try {
             return await this.sqlAuthorization.getOne(idProfile)
         } catch (error) {
-            Tracing.error("Profile : " + error.toString())
+            Tracing.error(Package.name,"Profile : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

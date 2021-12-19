@@ -39,7 +39,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
@@ -68,7 +68,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
@@ -97,7 +97,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
@@ -125,7 +125,7 @@ class Connector {
                 message: ""
             }
         } catch (error) {
-            let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+            let message = this._name + " catch an error : " + error.toString()
             Tracing.error(Package.name, message)
             return {
                 package: Package.name,
@@ -146,7 +146,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
@@ -174,7 +174,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
@@ -202,7 +202,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
@@ -229,7 +229,7 @@ class Connector {
                 message: ""
             }
         } catch (error) {
-            let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+            let message = this._name + " catch an error : " + error.toString()
             Tracing.error(Package.name, message)
             return {
                 package: Package.name,
@@ -275,7 +275,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     package: Package.name,
@@ -305,7 +305,7 @@ class Connector {
                     message: ""
                 }
             } catch (error) {
-                let message = this._name + " catch an error : " + JSON.stringify(error.toString())
+                let message = this._name + " catch an error : " + error.toString()
                 Tracing.error(Package.name, message)
                 return {
                     error: true,

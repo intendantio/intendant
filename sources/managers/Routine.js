@@ -36,7 +36,7 @@ class RoutineCore {
                 }
             })
         } catch (error) {
-            Tracing.error("Routine manager : " + error.toString())
+            Tracing.error(Package.name,"Routine manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

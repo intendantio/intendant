@@ -42,7 +42,7 @@ class Controller {
             this.sqlCache = new Connector("cache")
             
         } catch (error) {
-            Tracing.error("Controller : " + error.toString())
+            Tracing.error(Package.name,"Controller : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

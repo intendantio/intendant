@@ -151,7 +151,7 @@ class Widget extends Controller {
             }
         } catch (error) {
             console.log(error)
-            Tracing.error("Widget : " + JSON.stringify(error.toString()) )
+            Tracing.error(Package.name,"Widget : " + error.toString() )
             return {
                 package: Package.name,
                 error: true,
@@ -210,7 +210,7 @@ class Widget extends Controller {
                 data: data
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -243,7 +243,7 @@ class Widget extends Controller {
                 data: newWidget
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -342,7 +342,7 @@ class Widget extends Controller {
             }
 
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -377,7 +377,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -420,7 +420,7 @@ class Widget extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -507,7 +507,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -562,7 +562,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -588,7 +588,7 @@ class Widget extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -610,7 +610,7 @@ class Widget extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -637,7 +637,7 @@ class Widget extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Widget : " + error.toString())
+            Tracing.error(Package.name,"Widget : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

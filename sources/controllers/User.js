@@ -11,7 +11,7 @@ class User extends Controller {
         try {
             return await this.sqlUser.getOne(idUser)
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -32,7 +32,7 @@ class User extends Controller {
             }
             return result
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -77,7 +77,7 @@ class User extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -141,7 +141,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -170,7 +170,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -219,7 +219,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -247,7 +247,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -277,7 +277,7 @@ class User extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("User : " + error.toString())
+            Tracing.error(Package.name,"User : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

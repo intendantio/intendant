@@ -10,7 +10,7 @@ class Authentification extends Controller {
         try {
             return await this.sqlAuthorization.getAll()
         } catch (error) {
-            Tracing.error("Authentification : " + error.toString())
+            Tracing.error(Package.name,"Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -61,7 +61,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Authentification : " + error.toString())
+            Tracing.error(Package.name,"Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -183,7 +183,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Authentification : " + error.toString())
+            Tracing.error(Package.name,"Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -243,7 +243,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Authentification : " + error.toString())
+            Tracing.error(Package.name,"Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -298,7 +298,7 @@ class Authentification extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Authentification : " + error.toString())
+            Tracing.error(Package.name,"Authentification : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

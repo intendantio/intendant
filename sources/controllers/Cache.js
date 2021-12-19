@@ -31,7 +31,7 @@ class Cache extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Get cache " + error.toString())
+            Tracing.error(Package.name,"Get cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -56,7 +56,7 @@ class Cache extends Controller {
                 })
             }
         } catch (error) {
-            Tracing.error("Insert cache " + error.toString())
+            Tracing.error(Package.name,"Insert cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -77,7 +77,7 @@ class Cache extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Check cache " + error.toString())
+            Tracing.error(Package.name,"Check cache " + error.toString())
             return {
                 package: Package.name,
                 error: true,

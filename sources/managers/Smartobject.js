@@ -25,7 +25,7 @@ class Manager {
             }
             await this.initialisation()
         } catch (error) {
-            Tracing.error("Smartobject manager : " + error.toString())
+            Tracing.error(Package.name,"Smartobject manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -46,7 +46,7 @@ class Manager {
                 await this.instanciate(smartobject)
             })
         } catch (error) {
-            Tracing.error("Smartobject manager : " + error.toString())
+            Tracing.error(Package.name,"Smartobject manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -61,7 +61,7 @@ class Manager {
             this.smartobjects = new Map()
             await this.before()
         } catch (error) {
-            Tracing.error("Smartobject manager : " + error.toString())
+            Tracing.error(Package.name,"Smartobject manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -113,7 +113,7 @@ class Manager {
                 }
             }
         } catch (error) {
-            Tracing.error("Smartobject manager : " + error.toString())
+            Tracing.error(Package.name,"Smartobject manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -126,7 +126,7 @@ class Manager {
     async update(id) {
         try {
             Tracing.verbose(Package.name, "Smartobject manager : update smartobject n°" + id)
-            let sqlSmartobject = new this.connector("smartobject")
+            let sqlSmartobject = new Connector("smartobject")
             let getRequest = await sqlSmartobject.getOne(id)
             if (getRequest.error) {
                 return getRequest
@@ -142,7 +142,7 @@ class Manager {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Smartobject manager : " + error.toString())
+            Tracing.error(Package.name, "Smartobject manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -161,7 +161,7 @@ class Manager {
                     smartobjects.push(configuration)
                 } catch (error) {
                     Tracing.warning(Package.name, "Smartobject manager : inaccessible configuration from module " + smartobject)
-                    Tracing.warning(Package.name, JSON.stringify(error.toString()))
+                    Tracing.warning(Package.name, error.toString())
                 }
             })
             return {
@@ -171,7 +171,7 @@ class Manager {
                 data: smartobjects
             }
         } catch (error) {
-            Tracing.error("Smartobject manager : " + error.toString())
+            Tracing.error(Package.name,"Smartobject manager : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

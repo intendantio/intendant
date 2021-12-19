@@ -57,6 +57,7 @@ class Routine {
                             }
                             if (trigger.result != null) {
                                 let result = executeTriggerSmartobjectResult.data
+                                //Tracing.verbose(Package.name, "Check condition is " + _.get(result, trigger.result) + " " + trigger.statement + " " + trigger.expected)
                                 let isCondition = this.test(_.get(result, trigger.result), trigger.statement, trigger.expected)
                                 if (isCondition == false) {
                                     isValidTest = false
@@ -76,6 +77,7 @@ class Routine {
                             }
                             if (trigger.result != null) {
                                 let result = executeEffectModuleResult.data
+                                //Tracing.verbose(Package.name, "Check condition is " + _.get(result, trigger.result) + " " + trigger.statement + " " + trigger.expected)
                                 let isCondition = this.test(_.get(result, trigger.result), trigger.statement, trigger.expected)
                                 if (isCondition == false) {
                                     isValidTest = false
@@ -103,6 +105,7 @@ class Routine {
                             }
                             if (trigger.result != null) {
                                 let result = executeTriggerProcessResult.data
+                                //Tracing.verbose(Package.name, "Check condition is " + _.get(result, trigger.result) + " " + trigger.statement + " " + trigger.expected)
                                 let isCondition = this.test(_.get(result, trigger.result), trigger.statement, trigger.expected)
                                 if (isCondition == false) {
                                     isValidTest = false
@@ -116,6 +119,7 @@ class Routine {
                     }
                 }
                 if (isValidTest) {
+                    Tracing.verbose(Package.name, "Routine n°" + this.id + " executed")
                     for (let indexEffect = 0; indexEffect < this.effects.length; indexEffect++) {
                         let effect = this.effects[indexEffect]
                         switch (effect.type) {
@@ -132,7 +136,6 @@ class Routine {
                                 effect.arguments.map(argument => {
                                     settingsEffectSmartobject[argument.reference] = argument.value
                                 })
-                                Tracing.verbose(Package.name, "Execute action " + smartobject.id + " " + effect.action)
                                 let executeEffectSmartobjectResult = await this.core.controller.smartobject.executeAction(
                                     smartobject.id,
                                     effect.action,

@@ -29,7 +29,7 @@ class SmartObject extends Controller {
                 data: pSmartObjects
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -62,7 +62,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -115,7 +115,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -174,7 +174,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -207,7 +207,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -241,7 +241,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -263,7 +263,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -347,7 +347,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -373,7 +373,7 @@ class SmartObject extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -445,7 +445,7 @@ class SmartObject extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -473,7 +473,7 @@ class SmartObject extends Controller {
                 data: modules
             }
         } catch (error) {
-            Tracing.error("SmartObject : " + error.toString())
+            Tracing.error(Package.name,"SmartObject : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

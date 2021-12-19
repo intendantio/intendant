@@ -7,7 +7,7 @@ class Espace extends Controller {
         try {
             return this.sqlEspace.getAll()
         } catch (error) {
-            Tracing.error("Espace : " + error.toString())
+            Tracing.error(Package.name,"Espace : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

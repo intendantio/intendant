@@ -18,7 +18,7 @@ class Routine extends Controller {
             )
             return resultInsert
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -51,7 +51,7 @@ class Routine extends Controller {
                 data: arrRoutines
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -82,7 +82,7 @@ class Routine extends Controller {
                 data: arrEffects
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -113,7 +113,7 @@ class Routine extends Controller {
                 data: arrTriggers
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -156,7 +156,7 @@ class Routine extends Controller {
                 data: routine
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -248,7 +248,7 @@ class Routine extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -273,7 +273,7 @@ class Routine extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -315,7 +315,7 @@ class Routine extends Controller {
                 package: Package.name
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -338,7 +338,7 @@ class Routine extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Routine : " + error.toString())
+            Tracing.error(Package.name,"Routine : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

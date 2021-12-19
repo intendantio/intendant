@@ -67,7 +67,7 @@ class Client extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Client : " + error.toString())
+            Tracing.error(Package.name,"Client : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -81,7 +81,7 @@ class Client extends Controller {
         try {
             return await this.sqlClient.getAll()
         } catch (error) {
-            Tracing.error("Client : " + error.toString())
+            Tracing.error(Package.name,"Client : " + error.toString())
             return {
                 package: Package.name,
                 error: true,

@@ -61,7 +61,7 @@ class Market extends Controller {
                 }
             }
         } catch (error) {
-            Tracing.error("Market : " + error.toString())
+            Tracing.error(Package.name,"Market : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
@@ -98,7 +98,7 @@ class Market extends Controller {
                 error: false
             }
         } catch (error) {
-            Tracing.error("Market : " + error.toString())
+            Tracing.error(Package.name,"Market : " + error.toString())
             return {
                 package: Package.name,
                 error: true,
