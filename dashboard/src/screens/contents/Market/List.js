@@ -31,6 +31,17 @@ class Configuration extends React.Component {
         }
     }
 
+    async upgrade(pPackage) {
+        this.setState({ loading: true })
+        let result = await new Request().post({ package: pPackage }).fetch("/api/markets/upgrade")
+        if (result.error) {
+            this.setState({ loading: false, severity: "error", enabled: true, message: result.package + " : " + result.message })
+        } else {
+            this.setState({ severity: "info", enabled: true, message: pPackage + " was upgraded" })
+            this.componentDidMount()
+        }
+    }
+
     async uninstall(pPackage) {
         this.setState({ loading: true })
         let result = await new Request().post({ package: pPackage }).fetch("/api/markets/uninstall")
@@ -45,11 +56,23 @@ class Configuration extends React.Component {
     async componentDidMount() {
         let resultModule = await new Request().get().fetch("/api/configurations/module")
         let resultSmartobject = await new Request().get().fetch("/api/configurations/smartobject")
+        let resultPing = await new Request().get().fetch("/api/ping")
         let result = await fetch("https://market.intendant.io")
         let resultMarket = await result.json()
         resultMarket = resultMarket.map(market => {
             market.mode = "install"
             market.currentVersion = "0.0.0"
+            return market
+        })
+        resultMarket = resultMarket.map(market => {
+            if (market.name == "@intendant/core") {
+                if (resultPing.version != market.version) {
+                    market.mode = "upgrade"
+                } else {
+                    market.mode = "none"
+                }
+                market.currentVersion = resultPing.version
+            }
             return market
         })
         resultModule.data.forEach(pModule => {
@@ -138,27 +161,34 @@ class Configuration extends React.Component {
                                     </TableCell><TableCell align="center">
                                         <Typography variant='body1'>
                                             {
-                                                pmodule.type == "core" ?
-                                                null
-                                                :
-                                                pmodule.mode == "remove" ?
-                                                    <Button disabled={this.state.loading} size='small' startIcon={<Close />} onClick={() => { this.uninstall(pmodule.name) }} variant="outlined" >
-                                                        Remove
-                                                    </Button>
-                                                    :
-                                                    pmodule.mode == "install" ?
-                                                        <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
-                                                            Install
+                                                    pmodule.mode == "none" ? 
+                                                    <Typography variant='body1'>
+                                                        Updated
+                                                    </Typography>
+                                                        :
+                                                    pmodule.mode == "remove" ?
+                                                        <Button disabled={this.state.loading} size='small' startIcon={<Close />} onClick={() => { this.uninstall(pmodule.name) }} variant="outlined" >
+                                                            Remove
                                                         </Button>
                                                         :
-                                                        pmodule.mode == "update" ?
-                                                            <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
-                                                                Update
+                                                        pmodule.mode == "upgrade" ?
+                                                            <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.uninstall(pmodule.name) }} variant="outlined" >
+                                                                Upgrade
                                                             </Button>
                                                             :
-                                                            <Button disabled={true} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
-                                                                Unknown
-                                                            </Button>
+                                                            pmodule.mode == "install" ?
+                                                                <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                    Install
+                                                                </Button>
+                                                                :
+                                                                pmodule.mode == "update" ?
+                                                                    <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                        Update
+                                                                    </Button>
+                                                                    :
+                                                                    <Button disabled={true} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                        Unknown
+                                                                    </Button>
                                             }
                                         </Typography>
                                     </TableCell>
