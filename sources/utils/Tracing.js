@@ -1,6 +1,22 @@
 import chalk from 'chalk'
+import Package from '../package.json'
 
 class Tracing {
+
+    static welcome() {
+        Tracing.pure(""+
+        "       _                            _                          \n"+
+        "      | |       _                  | |             _           \n"+
+        "      | |____ _| |_ _____ ____   __| |_____ ____ _| |_         \n"+
+        "      | |  _ (_   _) ___ |  _ \\ / _  (____ |  _ (_   _)       \n"+
+        "      | | | | || |_| ____| | | ( (_| / ___ | | | || |_         \n"+
+        "      |_|_| |_| \\__)_____)_| |_|\\____\\_____|_| |_| \\__)    \n"+
+        "")
+        Tracing.pure("           Version: " + Package.version + " Build: " + Package.build)
+        Tracing.pure("")
+        return true
+    }
+
 
     static pure(message) {
         console.log(message)

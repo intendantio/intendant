@@ -1,127 +1,132 @@
 import Package from '../package'
 import Tracing from '../utils/Tracing'
+import StackTrace from '../utils/StackTrace'
+import Result from '../utils/Result'
 import md5 from 'md5'
 import fetch from 'node-fetch'
 import fs from 'fs'
 
-class Modules {
+class ModulesManager {
 
     constructor(core) {
         this.core = core
-        this.installModules = []
-        this.modules = new Map()
+
+        /* Private */
+        this._packages = []
+        this._instances = new Map()
+
         this.before()
     }
 
+    
+
     async before() {
-        let resultMarket = await fetch("https://market.intendant.io")
+        try {
+            Tracing.verbose(Package.name, "Start module manager")
+            let resultMarket = await fetch("https://market.intendant.io")
             let resultMarketJSON = await resultMarket.json()
-            resultMarketJSON = resultMarketJSON.filter(item => {
-                return item.name.includes("-module")
+            resultMarketJSON.filter(pModule => {
+                return pModule.type == "module" && fs.existsSync("./node_modules/" + pModule.name)
+            }).forEach(pModule => {
+                this._packages.push(pModule.name)
             })
-            resultMarketJSON.forEach(pModule => {
-                if(fs.existsSync("./node_modules/" + pModule.name)) {
-                    this.installModules.push(pModule.name)
-                }
-            })
-            this.restart()
+            return this.restart()
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when executing before function")
+            return new Result(Package.name, true, "Error occurred when executing before function")
+        }
     }
 
     restart() {
         try {
-            Tracing.verbose(Package.name, "Module manager : restart")
-            this.modules = new Map()
-            this.installModules.forEach(async pModule => {
+            this._instances = new Map()
+            for (let indexPackage = 0; indexPackage < this._packages.length; indexPackage++) {
                 try {
-                    let Module = require(pModule)
+                    let pPackage = this._packages[indexPackage]
+                    let Module = require(pPackage)
                     let instanceModule = new Module(this.core, Tracing)
-                    this.modules.set(pModule, instanceModule)
-                    Tracing.verbose(Package.name, "Module manager : instanciate module [" + pModule + "] successful")
+                    this._instances.set(pPackage, instanceModule)
+                    Tracing.verbose(Package.name, "Instanciate " + pPackage)
                 } catch (error) {
-                    this.installModules = this.installModules.filter(installModule => {
-                        return installModule != pModule
+                    StackTrace.save(error)
+                    Tracing.error(Package.name, "Error occurred when instanciate " + pPackage)
+                    this._packages = this._packages.filter(installModule => {
+                        return installModule != pPackage
                     })
                 }
-            })
-        } catch (error) {
-            Tracing.error(Package.name,"Module manager : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
             }
+            return new Result(Package.name, false, "")
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when restart module manager")
+            return new Result(Package.name, true, "Error occurred when restart module manager")
         }
     }
 
     getByHash(hash) {
-        let find = false
-        this.installModules.forEach(pModule => {
+        let data = false
+        this._packages.forEach(pModule => {
             if (md5(pModule) == hash) {
-                Tracing.verbose(Package.name, "Module manager : find hash module " + hash + " as " + pModule)
-                find = pModule
+                data = pModule
             }
         })
-        return find
+        return new Result(Package.name, false, "", data)
     }
 
-    async executeAction(tool, action, settings) {
+    async executeAction(name, action, settings) {
         try {
-            if (this.modules.has(tool)) {
-                let mTool = this.modules.get(tool)
-                if (typeof mTool["__" + action] === "function") {
-                    return await mTool["__" + action](settings)
+            if (this._instances.has(name)) {
+                let pModule = this._instances.get(name)
+                if (typeof pModule["__" + action] === "function") {
+                    return await pModule["__" + action](settings)
                 } else {
-                    return {
-                        error: true,
-                        package: Package.name,
-                        message: 'Action not found'
-                    }
+                    return new Result(Package.name, true, "Action not found")
                 }
             } else {
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: 'Module not found'
-                }
+                return new Result(Package.name, true, "Module not found")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Module manager : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when executing an action in module manager")
+            return new Result(Package.name, true, "Error occurred when executing an action in module manager")
         }
     }
 
     getAll() {
         try {
             let modules = []
-            this.installModules.forEach(pModule => {
-                try {
-                    let configuration = require(pModule + "/package.json")
-                    modules.push(configuration)
-                } catch (error) {
-                    Tracing.error(Package.name, "Module manager : inaccessible configuration from module " + pModule)
-                    Tracing.error(Package.name, error.toString())
-                }
-            })
-            return {
-                error: false,
-                package: Package.name,
-                message: '',
-                data: modules
+            for (let indexPackage = 0; indexPackage < this._packages.length; indexPackage++) {
+                let pPackage = this._packages[indexPackage]
+                let configuration = require(pPackage + "/package.json")
+                modules.push(configuration)
             }
+            return new Result(Package.name, false, "", modules)
         } catch (error) {
-            Tracing.error(Package.name,"Module manager : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all configuration in module manager")
+            return new Result(Package.name, true, "Error occurred when get all configuration in module manage")
         }
+    }
+
+    get packages() {
+        return this._packages
+    }
+
+    get instances() {
+        return this._instances
+    }
+
+    set instances(instances) {
+        this._instances = instances
+        return this.instances
+    }
+    
+    set packages(packages) {
+        this._packages = packages
+        return this.packages
     }
 }
 
 
-export default Modules
+export default ModulesManager

@@ -2,7 +2,12 @@ import Package from '../package'
 import Controller from './Controller'
 import Tracing from "../utils/Tracing"
 
-class SmartObject extends Controller {
+class Smartobject extends Controller {
+
+    constructor(smartobjectManager) {
+        super()
+        this.smartobjectManager = smartobjectManager
+    }
 
     async getAll() {
         try {
@@ -52,7 +57,7 @@ class SmartObject extends Controller {
             if (deleteAllRequest.error) {
                 return deleteAllRequest
             }
-            let updateRequest = await this.core.manager.smartobject.update(smartobjectArgument.smartobject)
+            let updateRequest = await this.smartobjectManager.update(smartobjectArgument.smartobject)
             if (updateRequest.error) {
                 return updateRequest
             }
@@ -89,7 +94,7 @@ class SmartObject extends Controller {
                     if (insertRequest.error) {
                         return insertRequest
                     }
-                    let updateRequest = await this.core.manager.smartobject.update(smartobjectRequest.data.id)
+                    let updateRequest = await this.smartobjectManager.update(smartobjectRequest.data.id)
                     if (updateRequest.error) {
                         return updateRequest
                     }
@@ -155,9 +160,9 @@ class SmartObject extends Controller {
             let profiles = smartobjectProfileRequest.data
             let actions = []
             let icon = null
-            if (this.core.manager.smartobject.smartobjects.has(smartobject.id)) {
-                actions = this.core.manager.smartobject.smartobjects.get(smartobject.id).getActions()
-                icon = this.core.manager.smartobject.smartobjects.get(smartobject.id).moduleConfiguration.icon
+            if (this.smartobjectManager.instances.has(smartobject.id)) {
+                actions = this.smartobjectManager.instances.get(smartobject.id).getActions()
+                icon = this.smartobjectManager.instances.get(smartobject.id).moduleConfiguration.icon
             }
             return {
                 error: false,
@@ -314,7 +319,7 @@ class SmartObject extends Controller {
                                         return insertSettngsRequest
                                     }
                                 }
-                                this.core.manager.smartobject.update(smartObjectId)
+                                this.smartobjectManager.update(smartObjectId)
                                 return {
                                     error: false,
                                     message: "",
@@ -407,8 +412,8 @@ class SmartObject extends Controller {
                             package: Package.name
                         }
                     }
-                    if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.id)) {
-                        let instanceSmartobject = this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.id)
+                    if (this.smartobjectManager.instances.has(smartobjectRequest.data.id)) {
+                        let instanceSmartobject = this.smartobjectManager.instances.get(smartobjectRequest.data.id)
                         let smartobject = await this.getOne(instanceSmartobject.id)
 
                         if (this.isAllow(smartobject.data, idProfile, force)) {
@@ -454,9 +459,11 @@ class SmartObject extends Controller {
         }
     }
 
+    /* Deprecated */
     async getConfiguration() {
         try {
-            Tracing.verbose(Package.name, "Get all modules")
+            Tracing.warning(Package.name, "getConfiguration() is deprecated")
+            /*
             let modules = []
             this.core.configuration.smartobjects.forEach(pModule => {
                 try {
@@ -466,6 +473,7 @@ class SmartObject extends Controller {
                     Tracing.warning(Package.name, "Impossible get configuration in " + pModule + " module")
                 }
             })
+            */
             return {
                 error: false,
                 package: Package.name,
@@ -485,4 +493,4 @@ class SmartObject extends Controller {
 
 }
 
-export default SmartObject
+export default Smartobject

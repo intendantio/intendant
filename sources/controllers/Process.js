@@ -4,6 +4,12 @@ import Tracing from "../utils/Tracing"
 
 class Process extends Controller {
 
+    constructor(smartobjectManager,moduleManager) {
+        super()
+        this.moduleManager = moduleManager
+        this.smartobjectManager = smartobjectManager
+    }
+
     async getOne(idProcess) {
         try {
             let processRequest = await this.sqlProcess.getOne(idProcess)

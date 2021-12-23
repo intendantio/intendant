@@ -155,12 +155,19 @@ class User extends Controller {
         try {
             let result = await this.getStarted()
             if (result.getStarted) {
-                if (password && typeof password == 'string' && password.length >= 4) {
-                    return this.insert("admin", password, '1')
+                if (password && typeof password == 'string') {
+                    if(password.length >= 4) {
+                        return this.insert("admin", password, '1')
+                    } else {
+                        return {
+                            error: Package.name,
+                            message: "Too small password"
+                        }
+                    }
                 } else {
                     return {
                         error: Package.name,
-                        message: "Missing password"
+                        message: "Invalid password type"
                     }
                 }
             } else {

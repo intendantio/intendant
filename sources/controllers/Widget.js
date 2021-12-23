@@ -5,6 +5,12 @@ import Tracing from "../utils/Tracing"
 
 class Widget extends Controller {
 
+    constructor(smartobjectManager,moduleManager) {
+        super()
+        this.moduleManager = moduleManager
+        this.smartobjectManager = smartobjectManager
+    }
+
     extract(str) {
         let newTmp = ""
         let arrTmp = []
@@ -175,8 +181,8 @@ class Widget extends Controller {
                     if (smartobjectRequest.error) {
                         return smartobjectRequest
                     }
-                    if (this.core.manager.smartobject.smartobjects.has(smartobjectRequest.data.id)) {
-                        let resultAction = await this.core.manager.smartobject.smartobjects.get(smartobjectRequest.data.id).action(action.action, pArguments)
+                    if (this.smartobjectManager.smartobjects.has(smartobjectRequest.data.id)) {
+                        let resultAction = await this.smartobjectManager.smartobjects.get(smartobjectRequest.data.id).action(action.action, pArguments)
                         if (resultAction.error) {
                             return resultAction
                         }
@@ -189,7 +195,7 @@ class Widget extends Controller {
                         }
                     }
                 } else if (action.type === "module") {
-                    let resultAction = await this.core.manager.module.executeAction(action.object, action.action, pArguments)
+                    let resultAction = await this.moduleManager.module.executeAction(action.object, action.action, pArguments)
                     if (resultAction.error) {
                         return resultAction
                     }

@@ -7,7 +7,7 @@ export default (app, core) => {
             res.send(authorization)
         } else {
             res.send(await core.manager.module.executeAction(
-                core.manager.module.getByHash(request.params.idModule), 
+                core.manager.module.getByHash(request.params.idModule).data, 
                 request.params.idAction, 
                 request.body.settings
             ))

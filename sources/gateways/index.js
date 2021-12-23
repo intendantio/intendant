@@ -50,8 +50,7 @@ class API {
         })
 
         app.listen(core.configuration.port, () => {
-            Tracing.verbose(Package.name, "Gateway : Instanciate Intendant")
-            Tracing.verbose(Package.name, "Gateway : start listening localhost:" + core.configuration.port)
+            Tracing.verbose(Package.name, "Listening localhost:" + core.configuration.port)
         })
     }
 

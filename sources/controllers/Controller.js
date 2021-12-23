@@ -3,10 +3,8 @@ import Connector from '../connector'
 import Tracing from "../utils/Tracing"
 
 class Controller {
-    constructor(core) {
+    constructor() {
         try {
-            this.core = core
-
             this.sqlRoutine = new Connector("routine")
             this.sqlRoutineEffect = new Connector("routine_effect")
             this.sqlRoutineEffectArgument = new Connector("routine_effect_argument")

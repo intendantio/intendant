@@ -16,14 +16,14 @@ class Connector {
 
 
     check(exec) {
-        if(this._connector.open == false) {
+        if (this._connector.open == false) {
             Tracing.error(Package.name, "Unable to connect at database " + this._name)
             Tracing.error(Package.name, "Please check the configuration of the connector and the status of the database")
             process.exit(0)
-        } else if(this._connector.inTransaction) {
+        } else if (this._connector.inTransaction) {
             setTimeout(() => {
                 this.check(exec)
-            },2000)
+            }, 2000)
         }
     }
 
@@ -255,7 +255,7 @@ class Connector {
                     } else if (typeof field == 'boolean') {
                         values = values + "'" + field + "',"
                     } else if (field.slice(0, 11) == "DATE:CUSTOM") {
-                        values = values +  "datetime('now', '+" + field.slice(11) + " second'),"
+                        values = values + "datetime('now', '+" + field.slice(11) + " second'),"
                     } else if (field == "DATE:NOW") {
                         values = values + "datetime('now'),"
                     } else if (typeof field == 'string') {
@@ -267,7 +267,7 @@ class Connector {
                 keys = keys.slice(0, -1)
                 keys = keys + ")"
                 let result = await this._connector.prepare("INSERT INTO " + this._name + " " + keys + " VALUES " + values).run()
-                result = { insertId: result.lastInsertRowid } 
+                result = { insertId: result.lastInsertRowid }
                 return {
                     package: Package.name,
                     error: false,
@@ -296,7 +296,7 @@ class Connector {
         this.check("execute")
         if (typeof request == 'string') {
             try {
-                request = request.replace("DATE:NOW","date('now')")
+                request = request.replace("DATE:NOW", "date('now')")
                 let result = await this._connector.prepare(request).run()
                 return {
                     package: Package.name,
@@ -327,15 +327,15 @@ class Connector {
         let statment = " WHERE "
         for (let field in fields) {
             let value = fields[field];
-            
+
             if (total > 0) {
                 statment = statment + " AND "
             }
-            if(typeof value == "object") {
+            if (typeof value == "object") {
                 if (value.value == "DATE:NOW") {
-                    statment = statment + field + value.statement  +  "date('now')"
-                }  else {
-                    statment = statment + field + value.statement  +  "'" + value.value + "'"
+                    statment = statment + field + value.statement + "date('now')"
+                } else {
+                    statment = statment + field + value.statement + "'" + value.value + "'"
                 }
             } else {
                 statment = statment + field + "='" + value + "'"

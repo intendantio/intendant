@@ -3,21 +3,25 @@ import md5 from "md5"
 import Controller from "./Controller"
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
+import Result from "../utils/Result"
+import StackTrace from '../utils/StackTrace'
 
 class Authentification extends Controller {
+
+    constructor(token, salt) {
+        super()
+        this.token = token
+        this.salt = salt
+    }
 
     async getAll() {
         try {
             return await this.sqlAuthorization.getAll()
         } catch (error) {
-            Tracing.error(Package.name,"Authentification : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all authorization")
+            return new Result(Package.name, true, "Error occurred when get all authorization")
         }
-
     }
 
     async getAllAuthorizationByProfile(idprofile) {
@@ -53,20 +57,13 @@ class Authentification extends Controller {
                             })
                         }
                     })
-                    return {
-                        data: tmp,
-                        package: Package.name,
-                        message: ''
-                    }
+                    return new Result(Package.name, false, "", tmp)
                 }
             }
         } catch (error) {
-            Tracing.error(Package.name,"Authentification : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all authorization by profile")
+            return new Result(Package.name, true, "Error occurred when get all authorization by profile")
         }
     }
 
@@ -78,18 +75,10 @@ class Authentification extends Controller {
             }
             let authorizationSplit = authorization.split(" ")
             if (authorizationSplit.length != 2) {
-                return {
-                    error: true,
-                    message: "Authentification controller : token invalid",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Invalid token")
             }
             if (authorizationSplit[0] != "Bearer") {
-                return {
-                    error: true,
-                    message: "Authentification controller : token invalid",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Invalid token")
             }
             let token = authorizationSplit[1]
             let resultRequest = await this.sqlAuthorization.getOneByField({
@@ -97,45 +86,37 @@ class Authentification extends Controller {
                 method: request.method
             })
             if (resultRequest.error) {
-                Tracing.warning(Package.name, resultRequest.message + request.method + " " + request.url)
-                return {
-                    error: true,
-                    message: resultRequest.messsage + " " + request.method + " " + request.url,
-                    package: Package.name
-                }
+                return resultRequest
             }
             if (resultRequest.data == false) {
-                await this.sqlAuthorization.insert({
+                let resultInsert = await this.sqlAuthorization.insert({
                     id: null,
                     reference: request.url,
                     method: request.method,
                     secure: '1'
                 })
-                resultRequest = await this.sqlAuthorization.getOneByField({
+                if (resultInsert.error) {
+                    return resultRequest
+                }
+                let resultGetOne = await this.sqlAuthorization.getOneByField({
                     reference: request.url,
                     method: request.method
                 })
-            }
-            if (resultRequest.data.secure === 0) {
-                return {
-                    error: false,
-                    message: 'ok',
-                    package: Package.name
+                if (resultGetOne.error) {
+                    return resultGetOne
                 }
             }
-            let resultJwt = Jwt.verifyAccessToken(token, this.core.configuration.token)
+            if (resultRequest.data.secure === 0) {
+                return new Result(Package.name, false, "")
+            }
+            let resultJwt = Jwt.verifyAccessToken(token, this.token)
             if (resultJwt.valid) {
                 let jwt = resultJwt.login.split("~")
                 let userRequest = await this.sqlUser.getOneByField({
                     login: jwt[1]
                 })
-                if (jwt[0] != this.core.salt) {
-                    Tracing.warning(Package.name, "Authentification controller : token invalid")
-                    return {
-                        error: true,
-                        message: "Authentification controller : token invalid",
-                        package: Package.name
-                    }
+                if (jwt[0] != this.salt) {
+                    return new Result(Package.name, true, "Invalid token")
                 }
                 if (userRequest.error) {
                     return userRequest
@@ -157,40 +138,24 @@ class Authentification extends Controller {
                                     user: userRequest.data.id
                                 }
                             } else {
-                                Tracing.warning(Package.name, "Authentification controller : token invalid")
-                                return {
-                                    error: true,
-                                    message: "Authentification controller : forbiden",
-                                    package: Package.name
-                                }
+                                Tracing.warning(Package.name, "Forbidden")
+                                return new Result(Package.name, true, "Forbidden")
                             }
                         }
                     } else {
-                        Tracing.warning(Package.name, "Authentification controller : user invalid")
-                        return {
-                            error: true,
-                            message: "Authentification controller : user invalid",
-                            package: Package.name
-                        }
+                        Tracing.warning(Package.name, "Invalid user")
+                        return new Result(Package.name, true, "Invalid user")
                     }
                 }
             } else {
-                Tracing.warning(Package.name, "Authentification controller : token invalid")
-                return {
-                    error: true,
-                    message: "Authentification controller : token invalid",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Invalid token")
+                return new Result(Package.name, true, "Invalid token")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Authentification : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when check authorization")
+            return new Result(Package.name, true, "Error occurred when check authorization")
         }
-
     }
 
     async getToken(login, password) {
@@ -209,46 +174,29 @@ class Authentification extends Controller {
                                     message: "",
                                     package: Package.name,
                                     profile: account.profile,
-                                    token: Jwt.generateAccessToken(this.core.salt + "~" + login, this.core.configuration.token)
+                                    token: Jwt.generateAccessToken(this.salt + "~" + login, this.token)
                                 }
                             } else {
-                                return {
-                                    error: true,
-                                    message: "Authentification controller : password is invalid",
-                                    package: Package.name
-                                }
+                                Tracing.warning(Package.name, "Invalid password")
+                                return new Result(Package.name, true, "Invalid password")
                             }
                         } else {
-                            return {
-                                error: true,
-                                message: "Authentification controller : login is invalid",
-                                package: Package.name
-                            }
+                            Tracing.warning(Package.name, "Invalid login")
+                            return new Result(Package.name, true, "Invalid login")
                         }
                     }
                 } else {
-                    Tracing.warning(Package.name, "Authentification controller : password is empty")
-                    return {
-                        error: true,
-                        message: "Authentification controller : password is empty",
-                        package: Package.name
-                    }
+                    Tracing.warning(Package.name, "Password is empty")
+                    return new Result(Package.name, true, "Password is empty")
                 }
             } else {
-                Tracing.warning(Package.name, "Authentification controller : login is empty")
-                return {
-                    error: true,
-                    message: "Authentification controller : login is empty",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Login is empty")
+                return new Result(Package.name, true, "Login is empty")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Authentification : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get token")
+            return new Result(Package.name, true, "Error occurred when get token")
         }
     }
 
@@ -266,19 +214,11 @@ class Authentification extends Controller {
                     if (deleteRequest.error) {
                         return deleteRequest
                     } else {
-                        return {
-                            error: false,
-                            message: '',
-                            package: Package.name
-                        }
+                        return new Result(Package.name, false, "")
                     }
                 } else {
                     if (resultRequest.data) {
-                        return {
-                            error: false,
-                            message: '',
-                            package: Package.name
-                        }
+                        return new Result(Package.name, false, "")
                     } else {
                         let insertRequest = await this.sqlAuthorizationProfile.insert({
                             id: null,
@@ -288,22 +228,15 @@ class Authentification extends Controller {
                         if (insertRequest.error) {
                             return insertRequest
                         } else {
-                            return {
-                                error: false,
-                                message: '',
-                                package: Package.name
-                            }
+                            return new Result(Package.name, false, "")
                         }
                     }
                 }
             }
         } catch (error) {
-            Tracing.error(Package.name,"Authentification : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update authorization")
+            return new Result(Package.name, true, "Error occurred when update authorization")
         }
     }
 

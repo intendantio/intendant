@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;class Result{constructor(a,b,c,d={}){this.package=a,this.error=b,this.message=c,this.data=d}}var _default=Result;exports.default=_default,module.exports=exports.default;

@@ -2,7 +2,7 @@ import Connector from '../connector'
 import Core from '..'
 
 declare class Controller {
-    constructor(core: Core);
+    constructor();
 
     core: Core;
     sqlRoutine: Connector;

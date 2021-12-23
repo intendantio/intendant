@@ -4,6 +4,11 @@ import Tracing from "../utils/Tracing"
 
 class Routine extends Controller {
 
+    constructor(routineManager) {
+        super()
+        this.routineManager = routineManager
+    }
+
     async duplicate(idRoutine) {
         try {
             let result = await this.getOne(idRoutine)
@@ -330,7 +335,7 @@ class Routine extends Controller {
             if (routineRequest.error) {
                 return routineRequest
             } else {
-                this.core.manager.routine.initialisation()
+                this.routineManager.initialisation()
                 return {
                     error: false,
                     message: "",
