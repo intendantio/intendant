@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Button, Checkbox, Fade, Paper, Typography,Modal, Slider, FormControl, Select, MenuItem, InputLabel } from '@material-ui/core'
+import { TextField, Button, Checkbox, Fade, Paper, Typography, Modal, Slider, FormControl, Select, MenuItem, InputLabel } from '@material-ui/core'
 import { TwitterPicker } from 'react-color'
 import WeekSchedul from './WeekSchedul'
 import Theme from '../Theme'
@@ -41,22 +41,22 @@ class Action extends React.Component {
             case 'text':
                 return (
                     <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, minWidth: '150px' }} >
-                        <TextField variant="outlined" placeholder={this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
+                        <TextField variant="outlined" placeholder={this.state.action.id == "default" ? "" : this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
                     </div>
                 )
             case 'cron':
                 return (
                     <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
                         <Modal open={this.state.modal} onClose={() => { this.setState({ modal: false }) }} >
-                        <Fade in={this.state.modal} >
-                            <Paper style={style}>
-                            <WeekSchedul noChangeMode onChange={(value) => { this.updateAction(this.state.action, value); this.setState({value: value}) }} onChangeMode={() => { }} />
-                            </Paper>
-                        </Fade>
-                    </Modal>
-                        <Button variant='outlined' style={{flexDirection:'column', width: '200px'}} size='large' onClick={() => {this.setState({modal: true})}}>
-                            <Typography style={{fontSize: this.state.value.length > 0 ? 12 : 14, padding: 8, color: this.state.value.length > 0 ? 'white': 'rgba(255, 255, 255, 0.6)' }}>
-                                {this.state.value.length == 0 ? this.state.action.id : this.state.value}
+                            <Fade in={this.state.modal} >
+                                <Paper style={style}>
+                                    <WeekSchedul noChangeMode onChange={(value) => { this.updateAction(this.state.action, value); this.setState({ value: value }) }} onChangeMode={() => { }} />
+                                </Paper>
+                            </Fade>
+                        </Modal>
+                        <Button variant='outlined' style={{ flexDirection: 'column', width: '200px' }} size='large' onClick={() => { this.setState({ modal: true }) }}>
+                            <Typography style={{ fontSize: this.state.value.length > 0 ? 12 : 14, padding: 8, color: this.state.value.length > 0 ? 'white' : 'rgba(255, 255, 255, 0.6)' }}>
+                                {this.state.value.length == 0 ? this.state.action.id == "default" ? "" : this.state.action.id : this.state.value}
                             </Typography>
                         </Button>
                     </div>
@@ -71,8 +71,11 @@ class Action extends React.Component {
                 return (
                     <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10 }} >
                         <FormControl variant="outlined" style={{ width: '150px' }} >
-                            <InputLabel>{this.state.action.id}</InputLabel>
-                            <Select onChange={(event) => { this.updateAction(this.state.action, event.target.value) }} label={this.state.action.id} >
+                            {
+                                this.state.action.id == "default" ? null :
+                                    <InputLabel>{this.state.action.id}</InputLabel>
+                            }
+                            <Select onChange={(event) => { this.updateAction(this.state.action, event.target.value) }} label={this.state.action.id == "default" ? null : this.state.action.id} >
                                 {
                                     this.state.action.values.map(value => {
                                         return <MenuItem value={value} >{value}</MenuItem>
@@ -96,11 +99,16 @@ class Action extends React.Component {
                 )
             case 'slider':
                 return (
-                    <div elevation={3} style={{minWidth: 100, height: "fit-content", alignSelf: 'flex-start', borderWidth: 1, borderStyle: 'solid', borderRadius: 5, borderColor: 'rgba(255, 255, 255, 0.23)', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15, marginRight: 10 }} >
-                        <Typography variant='body1' style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', padding: 0 }} >
-                            {this.state.action.id}
-                        </Typography>
-                        <div style={{ marginBottom: 2, marginTop: 2 }} />
+                    <div elevation={3} style={{ minWidth: 100, height: "fit-content", alignSelf: 'flex-start', borderWidth: 1, borderStyle: 'solid', borderRadius: 5, borderColor: 'rgba(255, 255, 255, 0.23)', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15, marginRight: 10 }} >
+                        {
+                            this.state.action.id == "default" ? null :
+                                <>
+                                    <Typography variant='body1' style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', padding: 0 }} >
+                                        {this.state.action.id}
+                                    </Typography>
+                                    <div style={{ marginBottom: 2, marginTop: 2 }} />
+                                </>
+                        }
                         <Slider
                             defaultValue={0}
                             valueLabelDisplay="auto"
@@ -115,9 +123,12 @@ class Action extends React.Component {
             case 'checkbox':
                 return (
                     <div elevation={3} style={{ height: "fit-content", alignSelf: 'center', borderWidth: 1, borderStyle: 'solid', borderRadius: 5, borderColor: 'rgba(255, 255, 255, 0.23)', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15, marginRight: 10 }} >
-                        <Typography variant='body1' style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', padding: 0 }}>
-                            {this.state.action.id}
-                        </Typography>
+                        {
+                            this.state.action.id == "default" ? null :
+                                <Typography variant='body1' style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', padding: 0 }}>
+                                    {this.state.action.id}
+                                </Typography>
+                        }
                         <Checkbox defaultChecked={this.state.action.default} color='primary' onChange={(event, value) => { this.updateAction(this.state.action, value) }} />
                     </div>
                 )

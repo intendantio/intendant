@@ -22,7 +22,6 @@ class Smartobject extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/users")
         let resultProfile = await new Request().get().fetch("/api/profiles")
-        console.log(result)
         if (result.error) {
             this.setState({
                 enabled: true,

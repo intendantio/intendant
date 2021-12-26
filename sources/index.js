@@ -36,6 +36,7 @@ class Core {
         this.manager = {}
         this.manager.smartobject = new SmartObjectManager(this)
         this.manager.module = new ModulesManager(this)
+        this.manager.routine = new RoutineManager(this)
 
         /* Controller */
         this.controller = {
@@ -55,7 +56,6 @@ class Core {
         }
 
         
-        this.manager.routine = new RoutineManager(this)
             
         setTimeout(() => {
             this.api = new API(this)
