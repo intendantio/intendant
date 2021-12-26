@@ -3,7 +3,7 @@ import md5 from 'md5'
 import JSONPretty from 'react-json-pretty'
 
 import { Alert } from '@material-ui/lab'
-import { Close } from '@material-ui/icons'
+import { Close } from '@mui/icons-material'
 import { Paper, Typography, Divider, Button, IconButton } from '@material-ui/core'
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'

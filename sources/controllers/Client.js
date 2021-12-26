@@ -1,13 +1,13 @@
 import Controller from "./Controller"
 import Package from '../package.json'
-import fetch from 'node-fetch'
+import StackTrace from "../utils/StackTrace"
 import Tracing from "../utils/Tracing"
+import Result from "../utils/Result"
 
 class Client extends Controller {
 
     async insert(settings = {}) {
         try {
-            Tracing.verbose(Package.name, "Insert client [" + settings.imei + "]")
             if (settings.imei) {
                 if (settings.name) {
                     if (settings.token) {
@@ -33,60 +33,33 @@ class Client extends Controller {
                             if (requestClient.error) {
                                 return requestClient
                             }
-                            return {
-                                error: false,
-                                package: Package.name,
-                                message: ''
-                            }
+                            return new Result(Package.name,false,"")
                         } else {
-                            return {
-                                error: true,
-                                package: Package.name,
-                                message: 'User is missing'
-                            }
+                            return new Result(Package.name,true,"Missing user")
                         }
                     } else {
-                        return {
-                            error: true,
-                            package: Package.name,
-                            message: 'Token is missing'
-                        }
+                        return new Result(Package.name,true,"Missing token")
                     }
                 } else {
-                    return {
-                        error: true,
-                        package: Package.name,
-                        message: 'Name is missing'
-                    }
+                    return new Result(Package.name,true,"Missing name")
                 }
             } else {
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: 'Imei is missing'
-                }
+                return new Result(Package.name,true,"Missing imei")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Client : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert client")
+            return new Result(Package.name, true, "Error occurred when insert client")
         }
-
     }
 
     async getAll() {
         try {
             return await this.sqlClient.getAll()
         } catch (error) {
-            Tracing.error(Package.name,"Client : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all client")
+            return new Result(Package.name, true, "Error occurred when get all client")
         }
     }
 

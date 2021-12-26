@@ -5,7 +5,7 @@ import Alert from '../components/Alert'
 import Main from './Main'
 import GetStarted from './GetStarted'
 import Request from '../utils/Request'
-import { Settings } from '@material-ui/icons'
+import { Settings } from '@mui/icons-material'
 
 class Authentification extends React.Component {
 

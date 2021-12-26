@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Popover, InputAdornment, Checkbox, Typography, Paper, Grid, InputLabel, MenuItem, FormControl, Select, TableBody, TableContainer, TextField, TableCell, Table, TableRow, Switch, Button, IconButton } from '@material-ui/core'
 
-import { Delete, List } from '@material-ui/icons'
+import { Delete, List } from '@mui/icons-material'
 
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'

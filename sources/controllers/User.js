@@ -4,6 +4,8 @@ import md5 from "md5"
 import Controller from "./Controller"
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
+import StackTrace from '../utils/StackTrace'
+import Result from '../utils/Result'
 
 class User extends Controller {
 
@@ -11,12 +13,9 @@ class User extends Controller {
         try {
             return await this.sqlUser.getOne(idUser)
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get one user")
+            return new Result(Package.name, true, "Error occurred when get one user")
         }
     }
 
@@ -32,12 +31,9 @@ class User extends Controller {
             }
             return result
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all user")
+            return new Result(Package.name, true, "Error occurred when get all user")
         }
     }
 
@@ -48,20 +44,12 @@ class User extends Controller {
                 return resultUserAdmin
             }
             if (resultUserAdmin.data == false) {
-                Tracing.warning(Package.name, "User not found")
-                return {
-                    error: true,
-                    message: "User invalid",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Invalid user")
+                return new Result(Package.name, true, "Invalid user")
             }
             if (resultUserAdmin.data.login == "admin") {
                 Tracing.warning(Package.name, "Cannot delete admin")
-                return {
-                    error: true,
-                    message: "Cannot delete admin",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Cannot delete admin")
             }
             let resultClient = this.sqlClient.deleteAllByField({ user: idUser })
             if (resultClient.error) {
@@ -71,18 +59,11 @@ class User extends Controller {
             if (resultUser.error) {
                 return resultUser
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete one user")
+            return new Result(Package.name, true, "Error occurred when delete one user")
         }
     }
 
@@ -96,12 +77,8 @@ class User extends Controller {
                     } else {
                         let account = accountRequest.data
                         if (account) {
-                            Tracing.warning(Package.name, "Login is already register")
-                            return {
-                                error: true,
-                                message: "Login is already register",
-                                package: Package.name
-                            }
+                            Tracing.warning(Package.name, "Login already exist")
+                            return new Result(Package.name, true, "Login already exist")
                         } else {
                             Tracing.verbose(Package.name, "Insert user " + login)
                             let salt = Math.random(16)
@@ -116,37 +93,22 @@ class User extends Controller {
                             if (insertAccountRequest.error) {
                                 return insertAccountRequest
                             } else {
-                                return {
-                                    error: false,
-                                    message: "",
-                                    package: Package.name
-                                }
+                                return new Result(Package.name, false, "")
                             }
                         }
                     }
                 } else {
-                    Tracing.warning(Package.name, "Password is empty")
-                    return {
-                        error: true,
-                        message: "Password is empty",
-                        package: Package.name
-                    }
+                    Tracing.warning(Package.name, "Empty password")
+                    return new Result(Package.name, true, "Empty password")
                 }
             } else {
-                Tracing.warning(Package.name, "Login is empty")
-                return {
-                    error: true,
-                    message: "Login is empty",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Empty login")
+                return new Result(Package.name, true, "Empty login")
             }
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert user")
+            return new Result(Package.name, true, "Error occurred when insert user")
         }
 
     }
@@ -159,30 +121,21 @@ class User extends Controller {
                     if(password.length >= 4) {
                         return this.insert("admin", password, '1')
                     } else {
-                        return {
-                            error: Package.name,
-                            message: "Too small password"
-                        }
+                        Tracing.warning(Package.name, "Too small password")
+                        return new Result(Package.name, true, "Too small password")
                     }
                 } else {
-                    return {
-                        error: Package.name,
-                        message: "Invalid password type"
-                    }
+                    Tracing.warning(Package.name, "Invalid password")
+                    return new Result(Package.name, true, "Invalid password")
                 }
             } else {
-                return {
-                    error: Package.name,
-                    message: "Invalid cycle state"
-                }
+                Tracing.warning(Package.name, "Invalid cycle state")
+                return new Result(Package.name, true, "Invalid cycle state")
             }
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert admin")
+            return new Result(Package.name, true, "Error occurred when insert admin")
         }
 
     }
@@ -208,30 +161,17 @@ class User extends Controller {
                             return result
                         }
                     }
-                    return {
-                        error: false,
-                        message: "",
-                        package: Package.name
-                    }
+                    return new Result(Package.name, false, "")
                 } else {
-                    return {
-                        error: Package.name,
-                        message: "Missing profile"
-                    }
+                    return new Result(Package.name, true, "Missing profile")
                 }
             } else {
-                return {
-                    error: Package.name,
-                    message: "Missing login"
-                }
+                return new Result(Package.name, true, "Missing login")
             }
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update user")
+            return new Result(Package.name, true, "Error occurred when update user")
         }
 
     }
@@ -247,19 +187,12 @@ class User extends Controller {
                 if (saltRequest.error) {
                     return saltRequest
                 }
-                return {
-                    error: false,
-                    message: "",
-                    package: Package.name
-                }
+                return new Result(Package.name, false, "")
             }
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update password")
+            return new Result(Package.name, true, "Error occurred when update password")
         }
 
     }
@@ -270,26 +203,17 @@ class User extends Controller {
             if (resultUser.error) {
                 return resultUser
             }
+            let result = new Result(Package.name,false,"")
             if (resultUser.data == false) {
-                return {
-                    error: false,
-                    message: "",
-                    getStarted: true
-                }
+                result.getStarted = true
             } else {
-                return {
-                    error: false,
-                    message: "",
-                    getStarted: false
-                }
+                result.getStarted = false
             }
+            return result
         } catch (error) {
-            Tracing.error(Package.name,"User : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get started")
+            return new Result(Package.name, true, "Error occurred when get started")
         }
 
     }

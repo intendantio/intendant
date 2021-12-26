@@ -1,14 +1,16 @@
-import RoutineInstance from '../instances/Routine'
+import Instance from '../instances/Routine'
 import Package from '../package'
 import Connector from '../connector'
 import Tracing from '../utils/Tracing'
+import Result from '../utils/Result'
+import StackTrace from '../utils/StackTrace'
 
-class RoutineCore {
+class RoutinesManager {
 
     constructor(core) {
         this.core = core
         this.configuration = this.core.configuration
-        this.routines = new Map()
+        this._instances = new Map()
         Tracing.verbose(Package.name, "Routine manager : start")
         this.initialisation()
     }
@@ -23,28 +25,25 @@ class RoutineCore {
             }
             let routines = routinesRequest.data
             routines.forEach(async routine => {
-                let exist = this.routines.has(routine.id)
+                let exist = this._instances.has(routine.id)
                 if (routine.status === 0 && exist) {
-                    Tracing.verbose(Package.name, "Routine manager : disable routine n°" + routine.id)
-                    this.routines.get(routine.id).close()
-                    this.routines.delete(routine.id)
+                    Tracing.verbose(Package.name, "Routine n°" + routine.id + " stop")
+                    this._instances.get(routine.id).close()
+                    this._instances.delete(routine.id)
                 } else if (routine.status === 1 && exist === false) {
-                    Tracing.verbose(Package.name, "Routine manager : enable routine n°" + routine.id)
+                    Tracing.verbose(Package.name, "Routine n°" + routine.id + " start")
                     let result = await this.core.controller.routine.getOne(routine.id)
                     routine = result.data
-                    this.routines.set(routine.id, new RoutineInstance(routine, this.core))
+                    this._instances.set(routine.id, new Instance(routine, this.core))
                 }
             })
         } catch (error) {
-            Tracing.error(Package.name,"Routine manager : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get token")
+            return new Result(Package.name, true, "Error occurred when routine initialisation")
         }
     }
 
 }
 
-export default RoutineCore
+export default RoutinesManager

@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from "react-router-dom"
 
 import { IconButton, Paper, TableBody, TableContainer, TableHead, TableCell, Table, TableRow, TablePagination, Typography } from '@material-ui/core'
-import { Add, Delete, FileCopy, PlayArrow, Edit, Pause } from '@material-ui/icons'
+import { Add, Delete, FileCopy, PlayArrow, Edit, Pause } from '@mui/icons-material'
 
 import Alert from '../../../components/Alert'
 import Theme from '../../../Theme'

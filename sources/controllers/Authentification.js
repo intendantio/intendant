@@ -130,13 +130,10 @@ class Authentification extends Controller {
                             return resultAuthorizationProfile
                         } else {
                             if (resultAuthorizationProfile.data) {
-                                return {
-                                    error: false,
-                                    message: 'ok',
-                                    package: Package.name,
-                                    profile: userRequest.data.profile,
-                                    user: userRequest.data.id
-                                }
+                                let result = new Result(Package.name,false,"")
+                                result.profile = userRequest.data.profile
+                                result.user = userRequest.data.id
+                                return result
                             } else {
                                 Tracing.warning(Package.name, "Forbidden")
                                 return new Result(Package.name, true, "Forbidden")
@@ -169,13 +166,10 @@ class Authentification extends Controller {
                         let account = accountRequest.data
                         if (account) {
                             if (md5(password + account.salt) === account.password) {
-                                return {
-                                    error: false,
-                                    message: "",
-                                    package: Package.name,
-                                    profile: account.profile,
-                                    token: Jwt.generateAccessToken(this.salt + "~" + login, this.token)
-                                }
+                                let result = new Result(Package.name,false,"")
+                                result.profile = account.profile
+                                result.token = Jwt.generateAccessToken(this.salt + "~" + login, this.token)
+                                return result
                             } else {
                                 Tracing.warning(Package.name, "Invalid password")
                                 return new Result(Package.name, true, "Invalid password")

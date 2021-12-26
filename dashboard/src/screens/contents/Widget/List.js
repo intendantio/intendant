@@ -1,5 +1,5 @@
 import React from 'react'
-import { Add } from '@material-ui/icons'
+import { Add } from '@mui/icons-material'
 import { Typography, Paper, TableBody, TableContainer , TableHead ,TableCell, Table, TableRow, TablePagination, IconButton  } from '@material-ui/core'
 import { Link } from "react-router-dom"
 import Alert from '../../../components/Alert'

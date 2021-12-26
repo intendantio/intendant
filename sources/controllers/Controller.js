@@ -1,6 +1,9 @@
 import Package from '../package.json'
 import Connector from '../connector'
+
+import StackTrace from "../utils/StackTrace"
 import Tracing from "../utils/Tracing"
+import Result from "../utils/Result"
 
 class Controller {
     constructor() {
@@ -40,12 +43,9 @@ class Controller {
             this.sqlCache = new Connector("cache")
             
         } catch (error) {
-            Tracing.error(Package.name,"Controller : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when construct an controller")
+            return new Result(Package.name, true, "Error occurred when construct an controller")
         }
     }
 }

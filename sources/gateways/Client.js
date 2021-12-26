@@ -1,5 +1,7 @@
+import Result from '../utils/Result'
+
 export default (app, core) => {
-    
+
     app.post("/api/client", async (request, res) => {
         request.url = '/client'
         let authorization = await core.controller.authentification.checkAuthorization(request)
@@ -14,11 +16,7 @@ export default (app, core) => {
                     user: authorization.user
                 }))
             } else {
-                return {
-                    error: true,
-                    package: Package.name,
-                    message: 'Missing parametter'
-                }
+                res.send(new Result(Package.name, true, "Missing parametter"))
             }
         }
     })
@@ -26,8 +24,8 @@ export default (app, core) => {
     app.get("/api/test", async (request, res) => {
         let r = await core.controller.client.getAll()
         let tokens = r.data.map(v => v.token)
-        core.controller.notification.notify("Intendant","notify - test", tokens)
+        core.controller.notification.notify("Intendant", "notify - test", tokens)
         res.send({})
     })
-    
+
 }

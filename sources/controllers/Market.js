@@ -9,7 +9,7 @@ import StackTrace from "../utils/StackTrace"
 
 class Market extends Controller {
 
-    constructor(smartobjectManager,moduleManager) {
+    constructor(smartobjectManager, moduleManager) {
         super()
         this.moduleManager = moduleManager
         this.smartobjectManager = smartobjectManager
@@ -31,10 +31,10 @@ class Market extends Controller {
             })
             if (resultMarketJSON.length == 0) {
                 Tracing.warning(Package.name, "Package not found " + pPackage)
-                return new Result(Package.name,true,"Package not found " + pPackage)
+                return new Result(Package.name, true, "Package not found " + pPackage)
             } else if (resultMarketJSON.length > 1) {
                 Tracing.warning(Package.name, "Package not found " + pPackage)
-                return new Result(Package.name,true,"Package not found " + pPackage)
+                return new Result(Package.name, true, "Package not found " + pPackage)
             } else {
                 let item = resultMarketJSON[0]
                 Tracing.verbose(Package.name, "Install " + item.name)
@@ -50,7 +50,7 @@ class Market extends Controller {
                     this.moduleManager.packages.push(pPackage)
                     this.moduleManager.restart()
                 }
-                return new Result(Package.name,false,"")
+                return new Result(Package.name, false, "")
             }
         } catch (error) {
             StackTrace.save(error)
@@ -62,15 +62,15 @@ class Market extends Controller {
     async uninstall(pPackage) {
         try {
             Tracing.verbose(Package.name, "Uninstall " + pPackage)
-            
+
             await new Promise((resolve, reject) => {
                 exec("npm uninstall " + pPackage + " --silent 2>&1 | tee t", (e, std, ster) => {
                     resolve()
                 })
             })
-            
-            if(fs.existsSync("./node_modules/" + pPackage)) {
-                fs.rmSync("./node_modules/" + pPackage,{recursive:true,force: true})
+
+            if (fs.existsSync("./node_modules/" + pPackage)) {
+                fs.rmSync("./node_modules/" + pPackage, { recursive: true, force: true })
             }
             this.moduleManager.packages = this.moduleManager.packages.filter((pModule) => {
                 return pPackage != pModule
@@ -80,7 +80,7 @@ class Market extends Controller {
             })
             this.moduleManager.restart()
             await this.smartobjectManager.restart()
-            
+
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)

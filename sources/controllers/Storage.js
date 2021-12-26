@@ -13,10 +13,10 @@ class Storage extends Controller {
                 return requestGetOne
             }
             return new Result(
-                Package.name, 
-                false, 
-                "", 
-                requestGetOne.data ? JSON.parse(requestGetOne.data.value) : requestGetOne.data 
+                Package.name,
+                false,
+                "",
+                requestGetOne.data ? JSON.parse(requestGetOne.data.value) : requestGetOne.data
             )
         } catch (error) {
             StackTrace.save(error)
@@ -44,7 +44,7 @@ class Storage extends Controller {
             if (resultInsertRequest.error) {
                 return resultInsertRequest
             }
-            return new Result(Package.name,false,"")
+            return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when set item in storage")
@@ -58,13 +58,12 @@ class Storage extends Controller {
             if (resultRemove.error) {
                 return resultRemove
             }
-            return new Result(Package.name,false,"")
+            return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when remove item in storage")
             return new Result(Package.name, true, "Error occurred when remove item in storage")
         }
-        
     }
 
     async clear() {
@@ -73,7 +72,7 @@ class Storage extends Controller {
             if (resultTruncate.error) {
                 return resultTruncate
             }
-            return new Result(Package.name,false,"")
+            return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when clear storage")

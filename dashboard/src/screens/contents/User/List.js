@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom"
 import Moment from 'moment'
-import { Add, Delete, Settings } from '@material-ui/icons'
+import { Add, Delete, Settings, QrCode } from '@mui/icons-material'
 import { FormControl, Button, MenuItem, Select, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@material-ui/core'
 import Request from '../../../utils/Request'
 import Alert from '../../../components/Alert'
@@ -22,6 +22,7 @@ class Smartobject extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/users")
         let resultProfile = await new Request().get().fetch("/api/profiles")
+        console.log(result)
         if (result.error) {
             this.setState({
                 enabled: true,
@@ -103,6 +104,9 @@ class Smartobject extends React.Component {
                                                     </FormControl>
                                                 </TableCell>
                                                 <TableCell align="right">
+                                                    <IconButton onClick={() => { this.props.history.push('/qrcode/' + btoa(window.location.origin + "|" + user.login + "|") ) }} style={{ borderRadius: 3 }}>
+                                                        <QrCode />
+                                                    </IconButton>
                                                     <IconButton onClick={() => { this.props.history.push('/user/' + user.id +  "/password") }} style={{ borderRadius: 3 }}>
                                                         <Settings />
                                                     </IconButton>

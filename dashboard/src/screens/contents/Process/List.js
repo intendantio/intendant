@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom"
-import { Add } from '@material-ui/icons'
+import { Add } from '@mui/icons-material'
 import { Typography, TablePagination, TableRow, Table, TableCell, TableHead, TableContainer, TableBody, Paper, IconButton } from '@material-ui/core'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Drawer, List, Typography, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
-import {ShoppingCart, DevicesOther, ExitToApp, AccountTree, Category, DeviceHub, Https, Extension, Settings, Person} from '@material-ui/icons'
+import {ShoppingCart, DevicesOther, ExitToApp, AccountTree, Category, DeviceHub, Https, Extension, Settings, Person} from '@mui/icons-material'
 import { Link } from "react-router-dom"
 
 class Sidebar extends React.Component {

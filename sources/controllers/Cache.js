@@ -1,6 +1,8 @@
 import Controller from "./Controller";
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
+import Result from "../utils/Result"
+import StackTrace from "../utils/StackTrace";
 
 class Cache extends Controller {
 
@@ -8,46 +10,39 @@ class Cache extends Controller {
         try {
             Tracing.verbose(Package.name, "Get cache [" + data.reference + "]")
             await this.check()
-            let result = await this.sqlCache.getOneByField({reference: data.reference})
-            if(result.error) {
+            let resultGetOne = await this.sqlCache.getOneByField({ reference: data.reference })
+            if (resultGetOne.error) {
                 return result
             }
-            if(result.data) {
-                Tracing.verbose(Package.name,"Find cache " + data.reference)
-                return {
-                    error: false,
-                    message: "",
-                    cache: true,
-                    data: JSON.parse(Buffer.from(result.data.value,"base64").toString('utf-8')).cache,
-                    package: Package.name
-                }
+            if (resultGetOne.data) {
+                let result = new Result(
+                    Package.name,
+                    false,
+                    "",
+                    JSON.parse(Buffer.from(resultGetOne.data.value, "base64").toString('utf-8')).cache
+                )
+                result.cache = true
+                return result
             } else {
-                return {
-                    error: false,
-                    message: "",
-                    cache: false,
-                    data: false,
-                    package: Package.name
-                }
+                let result = new Result(Package.name, false, "", false)
+                result.cache = false
+                return result
             }
         } catch (error) {
-            Tracing.error(Package.name,"Get cache " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all cache")
+            return new Result(Package.name, true, "Error occurred when get all cache")
         }
     }
 
     async insert(data) {
         try {
             await this.check()
-            let resultReference = await this.sqlCache.getOneByField({reference: data.reference})
-            if(resultReference.error) {
+            let resultReference = await this.sqlCache.getOneByField({ reference: data.reference })
+            if (resultReference.error) {
                 return resultReference
-            } else if(resultReference.data == false) {
-                let dataMessage =  Buffer.from(JSON.stringify({cache:data.data})).toString('base64') 
+            } else if (resultReference.data == false) {
+                let dataMessage = Buffer.from(JSON.stringify({ cache: data.data })).toString('base64')
                 return await this.sqlCache.insert({
                     id: null,
                     reference: data.reference,
@@ -56,12 +51,9 @@ class Cache extends Controller {
                 })
             }
         } catch (error) {
-            Tracing.error(Package.name,"Insert cache " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert cache")
+            return new Result(Package.name, true, "Error occurred when insert cache")
         }
     }
 
@@ -71,18 +63,11 @@ class Cache extends Controller {
             if (result.error) {
                 return result
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Check cache " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when check cache")
+            return new Result(Package.name, true, "Error occurred when check cache")
         }
     }
 

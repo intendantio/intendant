@@ -1,6 +1,8 @@
 import Controller from './Controller'
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
+import Result from '../utils/Result'
+import StackTrace from '../utils/StackTrace'
 
 class Routine extends Controller {
 
@@ -23,12 +25,9 @@ class Routine extends Controller {
             )
             return resultInsert
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when duplicate an routine")
+            return new Result(Package.name, true, "Error occurred when duplicate an routine")
         }
     }
 
@@ -49,19 +48,11 @@ class Routine extends Controller {
                 }
                 arrRoutines.push(resultRoutine.data)
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name,
-                data: arrRoutines
-            }
+            return new Result(Package.name, false, "", arrRoutines)
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all routine")
+            return new Result(Package.name, true, "Error occurred when get all routine")
         }
     }
 
@@ -82,17 +73,11 @@ class Routine extends Controller {
                 effect.arguments = argumentsRequests.data
                 arrEffects.push(effect)
             }
-            return {
-                error: false,
-                data: arrEffects
-            }
+            return new Result(Package.name, false, "", arrEffects)
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all effect by routine")
+            return new Result(Package.name, true, "Error occurred when get all effect by routine")
         }
     }
 
@@ -113,17 +98,11 @@ class Routine extends Controller {
                 trigger.arguments = argumentsRequests.data
                 arrTriggers.push(trigger)
             }
-            return {
-                error: false,
-                data: arrTriggers
-            }
+            return new Result(Package.name, false, "", arrTriggers)
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all trigger by routine")
+            return new Result(Package.name, true, "Error occurred when get all trigger by routine")
         }
     }
 
@@ -134,11 +113,7 @@ class Routine extends Controller {
                 return routineRequest
             }
             if (routineRequest.data == false) {
-                return {
-                    error: true,
-                    message: "Routine not found",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Routine not found")
             }
             let routine = routineRequest.data
             let effectsRequest = await this.getAllEffectByRoutine(routine.id)
@@ -153,26 +128,17 @@ class Routine extends Controller {
             let triggers = triggersRequest.data
             routine.triggers = triggers
             routine.effects = effects
-
-            return {
-                error: false,
-                message: "",
-                package: Package.name,
-                data: routine
-            }
+            return new Result(Package.name, false, "", routine)
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get one routine")
+            return new Result(Package.name, true, "Error occurred when get one routine")
         }
     }
 
     async insert(name, icon, watch, triggers, effects, mode) {
         try {
-            if (typeof name == 'string' && typeof mode == 'string' && typeof icon == 'string' && (typeof watch == 'string' || typeof watch == 'number')&& Array.isArray(triggers) && Array.isArray(effects)) {
+            if (typeof name == 'string' && typeof mode == 'string' && typeof icon == 'string' && (typeof watch == 'string' || typeof watch == 'number') && Array.isArray(triggers) && Array.isArray(effects)) {
                 let resultInsert = await this.sqlRoutine.insert({
                     id: null,
                     name: name,
@@ -241,24 +207,13 @@ class Routine extends Controller {
                     }
                 }
             } else {
-                return {
-                    error: true,
-                    message: "Missing parameters",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Missing parameters")
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert routine")
+            return new Result(Package.name, true, "Error occurred when insert routine")
         }
     }
 
@@ -272,18 +227,11 @@ class Routine extends Controller {
             if (resultInsert.error) {
                 return resultInsert
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update routine")
+            return new Result(Package.name, true, "Error occurred when update routine")
         }
     }
 
@@ -314,18 +262,11 @@ class Routine extends Controller {
             await this.sqlRoutineEffect.deleteAllByField({ routine: idRoutine })
             await this.sqlRoutineTrigger.deleteAllByField({ routine: idRoutine })
             await this.sqlRoutine.deleteOne(idRoutine)
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete routine")
+            return new Result(Package.name, true, "Error occurred when delete routine")
         }
     }
 
@@ -336,19 +277,12 @@ class Routine extends Controller {
                 return routineRequest
             } else {
                 this.routineManager.initialisation()
-                return {
-                    error: false,
-                    message: "",
-                    package: Package.name
-                }
+                return new Result(Package.name, false, "")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Routine : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update status routine")
+            return new Result(Package.name, true, "Error occurred when update status routine")
         }
     }
 

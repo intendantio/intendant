@@ -1,5 +1,7 @@
 import Controller from "./Controller"
 import Tracing from "../utils/Tracing"
+import StackTrace from "../utils/StackTrace"
+import Result from "../utils/Result"
 
 class Profile extends Controller {
 
@@ -7,12 +9,9 @@ class Profile extends Controller {
         try {
             return await this.sqlProfile.getAll()
         } catch (error) {
-            Tracing.error(Package.name,"Profile : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all profile")
+            return new Result(Package.name, true, "Error occurred when get all profile")
         }
     }
 
@@ -20,12 +19,9 @@ class Profile extends Controller {
         try {
             return await this.sqlAuthorization.getOne(idProfile)
         } catch (error) {
-            Tracing.error(Package.name,"Profile : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get one profile")
+            return new Result(Package.name, true, "Error occurred when get one profile")
         }
     }
 

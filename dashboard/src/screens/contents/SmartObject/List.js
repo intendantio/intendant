@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom"
 import Moment from 'moment'
-import { Add } from '@material-ui/icons'
+import { Add } from '@mui/icons-material'
 import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton  } from '@material-ui/core'
 import Icon from '../../../utils/Icon'
 import Request from '../../../utils/Request'

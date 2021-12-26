@@ -5,7 +5,7 @@ import Request from '../../../utils/Request'
 import Source from '../../../utils/Source'
 
 import { Popover, InputAdornment, TableRow, Table, MenuItem, FormControl, TableCell, IconButton, Typography, InputLabel, Button, TextField, Paper, TableBody, TableContainer, TableHead, Divider, Select } from '@material-ui/core'
-import { Close, Add, List } from '@material-ui/icons'
+import { Close, Add, List } from '@mui/icons-material'
 import IconList from '../../../components/IconList'
 
 class NewWidget extends React.Component {

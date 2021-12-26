@@ -4,7 +4,7 @@ import { IconButton, Typography, TablePagination, TableRow, Table, TableCell, Ta
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
 import { Link } from "react-router-dom"
-import { Category, DevicesOther, Close, GetApp } from '@material-ui/icons'
+import { Category, DevicesOther, Close, GetApp } from '@mui/icons-material'
 
 class Configuration extends React.Component {
 

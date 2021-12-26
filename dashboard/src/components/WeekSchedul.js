@@ -1,6 +1,6 @@
 import React from 'react'
 import { TextField, Button, IconButton } from '@material-ui/core'
-import { Save, Cached } from '@material-ui/icons'
+import { Save, Cached } from '@mui/icons-material'
 
 class Week extends React.Component {
 

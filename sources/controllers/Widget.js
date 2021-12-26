@@ -2,10 +2,12 @@ import Controller from "./Controller"
 import Package from '../package.json'
 import _ from 'lodash'
 import Tracing from "../utils/Tracing"
+import StackTrace from '../utils/StackTrace'
+import Result from '../utils/Result'
 
 class Widget extends Controller {
 
-    constructor(smartobjectManager,moduleManager) {
+    constructor(smartobjectManager, moduleManager) {
         super()
         this.moduleManager = moduleManager
         this.smartobjectManager = smartobjectManager
@@ -46,11 +48,7 @@ class Widget extends Controller {
                 return requestWidget
             }
             if (requestWidget.data == false) {
-                return {
-                    error: true,
-                    message: "Widget not found",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Widget not found")
             }
             let widget = requestWidget.data
             let requestWidgetContent = await this.sqlWidgetContent.getAllByField({
@@ -97,51 +95,49 @@ class Widget extends Controller {
                 let extracts = this.extract(content.content)
                 extracts.extracts.forEach(extract => {
                     let value = ""
-                    if(content.type.reference == 'list') {
+                    if (content.type.reference == 'list') {
                         let depth = extract.value.split("[x]").length
-                        if(depth == 2) {
+                        if (depth == 2) {
                             let setData = extract.value.split("[x]")[0]
                             let subData = extract.value.split("[x]")[1]
-                            if(subData.length > 0) {
+                            if (subData.length > 0) {
                                 subData = subData.substring(1)
                             }
                             let setValue = _.get(data.data, setData)
-                            if(Array.isArray(setValue)) {
+                            if (Array.isArray(setValue)) {
                                 setValue.forEach(sValue => {
                                     addonsContents.push({
                                         id: content.id,
                                         widget: 1,
                                         type: content.type,
                                         native: content.native,
-                                        content:  extracts.content.replace(extract.key, subData == "" ? sValue :  _.get(sValue,subData))
+                                        content: extracts.content.replace(extract.key, subData == "" ? sValue : _.get(sValue, subData))
                                     })
                                 })
                                 extracts.content = ""
                             } else {
-                                extracts.content = extracts.content.replace(extract.key,'NotArray')
+                                extracts.content = extracts.content.replace(extract.key, 'NotArray')
                             }
-                        } else if(depth > 2) {
+                        } else if (depth > 2) {
                             extracts.content = extracts.content.replace(extract.key, 'MultipleArray')
-                        } else if(depth == 1) {
+                        } else if (depth == 1) {
                             extracts.content = extracts.content.replace(extract.key, "UnknownArray")
                         }
                     } else {
                         value = data.error ? data.package : _.get(data.data, extract.value)
-                        if(typeof value == 'object') {
+                        if (typeof value == 'object') {
                             value = JSON.stringify(value)
-                        } else if(typeof value == 'boolean') {
+                        } else if (typeof value == 'boolean') {
                             value = 'Boolean'
-                        } else if(Array.isArray(value)) {
+                        } else if (Array.isArray(value)) {
                             value = 'Array'
                         }
                         extracts.content = extracts.content.replace(extract.key, value)
                     }
-
                 })
-                if(content.type.reference == 'list' && extracts.content == "") {
+                if (content.type.reference == 'list' && extracts.content == "") {
                     return undefined
                 }
-
                 content.content = extracts.content
                 return content
             })
@@ -151,18 +147,11 @@ class Widget extends Controller {
             addonsContents.forEach(addonsContent => {
                 widget.contents.push(addonsContent)
             })
-            return {
-                error: false,
-                data: widget
-            }
+            return new Result(Package.name, false, "", widget)
         } catch (error) {
-            console.log(error)
-            Tracing.error(Package.name,"Widget : " + error.toString() )
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get one widget")
+            return new Result(Package.name, true, "Error occurred when get one widget")
         }
 
     }
@@ -181,47 +170,31 @@ class Widget extends Controller {
                     if (smartobjectRequest.error) {
                         return smartobjectRequest
                     }
-                    if (this.smartobjectManager.smartobjects.has(smartobjectRequest.data.id)) {
-                        let resultAction = await this.smartobjectManager.smartobjects.get(smartobjectRequest.data.id).action(action.action, pArguments)
+                    if (this.smartobjectManager.instances.has(smartobjectRequest.data.id)) {
+                        let resultAction = await this.smartobjectManager.instances.get(smartobjectRequest.data.id).action(action.action, pArguments)
                         if (resultAction.error) {
                             return resultAction
                         }
                         data[action.reference] = resultAction.data
                     } else {
-                        return {
-                            error: true,
-                            package: Package.name,
-                            message: "Smartobject not found"
-                        }
+                        return new Result(Package.name, true, "Smartobject not found")
                     }
                 } else if (action.type === "module") {
-                    let resultAction = await this.moduleManager.module.executeAction(action.object, action.action, pArguments)
+                    let resultAction = await this.moduleManager.executeAction(action.object, action.action, pArguments)
                     if (resultAction.error) {
                         return resultAction
                     }
                     data[action.reference] = resultAction.data
                 } else {
-                    Tracing.error(Package.name, "Invalid type '" + action.type + "'")
-                    return {
-                        error: true,
-                        message: "Invalid type '" + action.type + "'",
-                        package: Package.name
-                    }
+                    Tracing.error(Package.name, "Invalid type")
+                    return new Result(Package.name, true, "Invalid type")
                 }
             }
-            return {
-                error: false,
-                package: Package.name,
-                message: '',
-                data: data
-            }
+            return new Result(Package.name, false, "", data)
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get source widget")
+            return new Result(Package.name, true, "Error occurred when get source widget")
         }
 
     }
@@ -242,19 +215,11 @@ class Widget extends Controller {
                 }
                 newWidget.push(resultWidget.data)
             }
-            return {
-                error: false,
-                package: Package.name,
-                message: '',
-                data: newWidget
-            }
+            return new Result(Package.name, false, "", newWidget)
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all widget")
+            return new Result(Package.name, true, "Error occurred when get all widget")
         }
 
     }
@@ -309,51 +274,28 @@ class Widget extends Controller {
                                     }
                                 }
                             }
-                            return {
-                                error: false,
-                                package: Package.name,
-                                message: ''
-                            }
+                            return new Result(Package.name, false, "")
                         } else {
-                            Tracing.warning(Package.name, "Missing icon action when sources widget")
-                            return {
-                                error: true,
-                                message: "Missing sources action",
-                                package: Package.name
-                            }
+                            Tracing.warning(Package.name, "Missing source")
+                            return new Result(Package.name, true, "Missing source")
                         }
                     } else {
-                        Tracing.warning(Package.name, "Missing icon action when contents widget")
-                        return {
-                            error: true,
-                            message: "Missing contents action",
-                            package: Package.name
-                        }
+                        Tracing.warning(Package.name, "Missing content")
+                        return new Result(Package.name, true, "Missing content")
                     }
                 } else {
-                    Tracing.warning(Package.name, "Missing icon action when insert widget")
-                    return {
-                        error: true,
-                        message: "Missing icon action",
-                        package: Package.name
-                    }
+                    Tracing.warning(Package.name, "Missing icon")
+                    return new Result(Package.name, true, "Missing icon")
                 }
             } else {
-                Tracing.warning(Package.name, "Missing reference action when insert widget")
-                return {
-                    error: true,
-                    message: "Missing reference action",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Missing reference")
+                return new Result(Package.name, true, "Missing reference")
             }
 
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert widget")
+            return new Result(Package.name, true, "Error occurred when insert widget")
         }
 
     }
@@ -369,26 +311,15 @@ class Widget extends Controller {
                 if (requestUpdate.error) {
                     return requestUpdate
                 }
-                return {
-                    error: false,
-                    package: Package.name,
-                    message: ''
-                }
+                return new Result(Package.name, false, "")
             } else {
-                Tracing.warning(Package.name, "Missing smartobject settings name")
-                return {
-                    error: true,
-                    message: "Missing smartobject settings name",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Missing content")
+                return new Result(Package.name, false, "Missing content")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update widget")
+            return new Result(Package.name, true, "Error occurred when update widget")
         }
 
     }
@@ -420,18 +351,11 @@ class Widget extends Controller {
             if (widgetDeleteRequest.error) {
                 return widgetDeleteRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete widget")
+            return new Result(Package.name, true, "Error occurred when delete widget")
         }
 
     }
@@ -447,11 +371,7 @@ class Widget extends Controller {
                                 return widgetRequest
                             }
                             if (widgetRequest.data == false) {
-                                return {
-                                    error: true,
-                                    message: "Widget not found",
-                                    package: Package.name
-                                }
+                                return new Result(Package.name, true, "Widget not found")
                             }
                             let widgetSourceRequest = await this.sqlWidgetSource.insert({
                                 reference: reference,
@@ -475,50 +395,27 @@ class Widget extends Controller {
                                     return resultInsertWidgetSourceArgumentRequest
                                 }
                             }
-                            return {
-                                error: false,
-                                message: "",
-                                package: Package.name
-                            }
+                            return new Result(Package.name, false, "")
                         } else {
                             Tracing.warning(Package.name, "Missing arguments")
-                            return {
-                                error: true,
-                                message: "Missing arguments action",
-                                package: Package.name
-                            }
+                            return new Result(Package.name, true, "Missing arguments")
                         }
                     } else {
                         Tracing.warning(Package.name, "Missing action")
-                        return {
-                            error: true,
-                            message: "Missing action action",
-                            package: Package.name
-                        }
+                        return new Result(Package.name, true, "Missing action")
                     }
                 } else {
                     Tracing.warning(Package.name, "Missing source")
-                    return {
-                        error: true,
-                        message: "Missing source action",
-                        package: Package.name
-                    }
+                    return new Result(Package.name, true, "Missing source")
                 }
             } else {
                 Tracing.warning(Package.name, "Missing reference")
-                return {
-                    error: true,
-                    message: "Missing reference action",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Missing reference")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert source widget")
+            return new Result(Package.name, true, "Error occurred when insert source widget")
         }
 
     }
@@ -532,11 +429,7 @@ class Widget extends Controller {
                         return widgetRequest
                     }
                     if (widgetRequest.data == false) {
-                        return {
-                            error: true,
-                            message: "Widget not found",
-                            package: Package.name
-                        }
+                        return new Result(Package.name, true, "Widget not found")
                     }
                     let widgetSourceRequest = await this.sqlWidgetContent.insert({
                         type: idType,
@@ -546,34 +439,19 @@ class Widget extends Controller {
                     if (widgetSourceRequest.error) {
                         return widgetSourceRequest
                     }
-                    return {
-                        error: false,
-                        message: "",
-                        package: Package.name
-                    }
+                    return new Result(Package.name, false, "")
                 } else {
                     Tracing.warning(Package.name, "Missing content")
-                    return {
-                        error: true,
-                        message: "Missing content action",
-                        package: Package.name
-                    }
+                    return new Result(Package.name, true, "Missing content")
                 }
             } else {
                 Tracing.warning(Package.name, "Missing type")
-                return {
-                    error: true,
-                    message: "Missing type action",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "Missing type")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert content widget")
+            return new Result(Package.name, true, "Error occurred when insert content widget")
         }
 
     }
@@ -588,18 +466,11 @@ class Widget extends Controller {
             if (widgetSourceRequest.error) {
                 return widgetSourceRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete source widget")
+            return new Result(Package.name, true, "Error occurred when delete source widget")
         }
 
     }
@@ -610,18 +481,11 @@ class Widget extends Controller {
             if (widgetContentRequest.error) {
                 return widgetContentRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete content widget")
+            return new Result(Package.name, true, "Error occurred when delete content widget")
         }
 
     }
@@ -632,23 +496,15 @@ class Widget extends Controller {
             if (contentTypes.error) {
                 return contentTypes
             }
-            return {
-                error: false,
-                package: Package.name,
-                message: "",
-                data: {
-                    contents: {
-                        types: contentTypes.data
-                    }
+            return new Result(Package.name, false, "", {
+                contents: {
+                    types: contentTypes.data
                 }
-            }
+            })
         } catch (error) {
-            Tracing.error(Package.name,"Widget : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get configuration widget")
+            return new Result(Package.name, true, "Error occurred when get configuration widget")
         }
     }
 

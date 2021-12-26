@@ -1,6 +1,8 @@
 import Package from '../package'
 import Controller from './Controller'
 import Tracing from "../utils/Tracing"
+import Result from '../utils/Result'
+import StackTrace from '../utils/StackTrace'
 
 class Smartobject extends Controller {
 
@@ -27,25 +29,16 @@ class Smartobject extends Controller {
                     }
                 }
             }
-            return {
-                error: false,
-                package: Package.name,
-                message: '',
-                data: pSmartObjects
-            }
+            return new Result(Package.name, false, "",pSmartObjects)
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all smartobject")
+            return new Result(Package.name, true, "Error occurred when get all smartobject")
         }
     }
 
     async deleteArguments(idArgument) {
         try {
-            Tracing.verbose(Package.name, "Delete smartobject_argument to [" + idArgument + "]")
             let getRequest = await this.sqlSmartobjectArgument.getOne(idArgument)
             if (getRequest.error) {
                 return getRequest
@@ -61,24 +54,16 @@ class Smartobject extends Controller {
             if (updateRequest.error) {
                 return updateRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete smartobject argument")
+            return new Result(Package.name, true, "Error occurred when delete smartobject argument")
         }
     }
 
     async insertArguments(idSmartobject, reference, value) {
         try {
-            Tracing.verbose(Package.name, "Insert smartobject_argument to " + idSmartobject + " [" + reference + ":" + value + "]")
             if (reference) {
                 if (value) {
                     let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
@@ -98,34 +83,19 @@ class Smartobject extends Controller {
                     if (updateRequest.error) {
                         return updateRequest
                     }
-                    return {
-                        error: false,
-                        message: "",
-                        package: Package.name
-                    }
+                    return new Result(Package.name, false, "")
                 } else {
-                    Tracing.warning(Package.name, "Missing smartobject_argument value")
-                    return {
-                        error: true,
-                        message: "Missing smartobject_argument value",
-                        package: Package.name
-                    }
+                    Tracing.warning(Package.name, "Missing value")
+                    return new Result(Package.name, true, "Missing value") 
                 }
             } else {
-                Tracing.warning(Package.name, "Missing smartobject_argument reference")
-                return {
-                    error: true,
-                    message: "Missing smartobject_argument reference",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Missing reference")
+                return new Result(Package.name, true, "Missing reference") 
             }
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert smartobject argument")
+            return new Result(Package.name, true, "Error occurred when insert smartobject argument")
         }
     }
 
@@ -136,11 +106,8 @@ class Smartobject extends Controller {
                 return smartobjectRequest
             }
             if (smartobjectRequest.data === false) {
-                return {
-                    error: true,
-                    message: "Smartobject not found",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Smartobject not found")
+                return new Result(Package.name, true, "Smartobject not found") 
             }
             let smartobject = smartobjectRequest.data
             let argumentsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: smartobject["id"] })
@@ -164,27 +131,21 @@ class Smartobject extends Controller {
                 actions = this.smartobjectManager.instances.get(smartobject.id).getActions()
                 icon = this.smartobjectManager.instances.get(smartobject.id).moduleConfiguration.icon
             }
-            return {
-                error: false,
-                data: {
-                    id: smartobject.id,
-                    icon: icon,
-                    module: smartobject.module,
-                    reference: smartobject.reference,
-                    lastUse: smartobject.last_use,
-                    status: status,
-                    arguments: argumentsData,
-                    actions: actions,
-                    profiles: profiles
-                }
-            }
+            return new Result(Package.name, false, "", {
+                id: smartobject.id,
+                icon: icon,
+                module: smartobject.module,
+                reference: smartobject.reference,
+                lastUse: smartobject.last_use,
+                status: status,
+                arguments: argumentsData,
+                actions: actions,
+                profiles: profiles
+            }) 
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get one smartobject")
+            return new Result(Package.name, true, "Error occurred when get one smartobject")
         }
     }
 
@@ -206,18 +167,11 @@ class Smartobject extends Controller {
                     return insertProfile
                 }
             }
-            return {
-                error: false,
-                message: '',
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert smartobject profile")
+            return new Result(Package.name, true, "Error occurred when insert smartobject profile")
         }
 
     }
@@ -240,18 +194,11 @@ class Smartobject extends Controller {
                     return deleteProfileRequest
                 }
             }
-            return {
-                error: false,
-                message: '',
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete smartobject profile")
+            return new Result(Package.name, true, "Error occurred when delete smartobject profile")
         }
 
     }
@@ -262,18 +209,11 @@ class Smartobject extends Controller {
             if (updateRequest.error) {
                 return updateRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update last smartobject use")
+            return new Result(Package.name, true, "Error occurred when update last smartobject use")
         }
     }
 
@@ -289,11 +229,7 @@ class Smartobject extends Controller {
                         let smartobject = smartobjectRequest.data
                         if (smartobject) {
                             Tracing.warning(Package.name, "Smartobject already exist")
-                            return {
-                                error: true,
-                                message: "Smartobject already exist",
-                                package: Package.name
-                            }
+                            return new Result(Package.name,true,"Smartobject already exist") 
                         } else {
                             let data = {
                                 id: null,
@@ -320,44 +256,25 @@ class Smartobject extends Controller {
                                     }
                                 }
                                 this.smartobjectManager.update(smartObjectId)
-                                return {
-                                    error: false,
-                                    message: "",
-                                    package: Package.name
-                                }
+                                return new Result(Package.name, false, "")
                             }
                         }
                     } else {
-                        Tracing.warning(Package.name, "Missing smartobject arguments")
-                        return {
-                            error: true,
-                            message: "Missing smartobject arguments",
-                            package: Package.name
-                        }
+                        Tracing.warning(Package.name, "Missing arguments")
+                        return new Result(Package.name,true,"Missing arguments")
                     }
                 } else {
-                    Tracing.warning(Package.name, "Missing smartobject reference")
-                    return {
-                        error: true,
-                        message: "Missing smartobject reference",
-                        package: Package.name
-                    }
+                    Tracing.warning(Package.name, "Missing reference")
+                    return new Result(Package.name,true,"Missing reference")
                 }
             } else {
-                Tracing.warning(Package.name, "Missing smartobject module")
-                return {
-                    error: true,
-                    message: "Missing smartobject module",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Missing module")
+                return new Result(Package.name,true,"Missing module")
             }
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert smartobject")
+            return new Result(Package.name, true, "Error occurred when insert smartobject")
         }
 
     }
@@ -372,18 +289,11 @@ class Smartobject extends Controller {
             if (smartobjectRequest.error) {
                 return smartobjectRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete smartobject")
+            return new Result(Package.name, true, "Error occurred when delete smartobject")
         }
     }
 
@@ -406,90 +316,35 @@ class Smartobject extends Controller {
                         return smartobjectRequest
                     }
                     if (smartobjectRequest.data == false) {
-                        return {
-                            error: true,
-                            message: "Smartobject not found",
-                            package: Package.name
-                        }
+                        return new Result(Package.name,true,"Smartobject not found")
                     }
                     if (this.smartobjectManager.instances.has(smartobjectRequest.data.id)) {
                         let instanceSmartobject = this.smartobjectManager.instances.get(smartobjectRequest.data.id)
                         let smartobject = await this.getOne(instanceSmartobject.id)
-
                         if (this.isAllow(smartobject.data, idProfile, force)) {
                             return instanceSmartobject.action(idAction, pArguments)
                         } else {
-                            return {
-                                error: true,
-                                message: "You are not allowed",
-                                package: Package.name
-                            }
+                            Tracing.warning(Package.name, "Not allowed")
+                            return new Result(Package.name,true,"You are not allowed")
                         }
                     } else {
-                        Tracing.warning(Package.name, "Smartobject " + reference + " is missing")
-                        return {
-                            error: true,
-                            message: "Smartobject " + reference + " is not loaded",
-                            package: Package.name
-                        }
+                        Tracing.warning(Package.name, "Smartobject missing")
+                        return new Result(Package.name,true,"Smartobject missing")
                     }
                 } else {
-                    Tracing.warning(Package.name, "Missing smartobject arguments when executeAction")
-                    return {
-                        error: true,
-                        message: "Missing smartobject arguments",
-                        package: Package.name
-                    }
+                    Tracing.warning(Package.name, "Missing argument")
+                    return new Result(Package.name,true,"Missing arguments")
                 }
             } else {
-                Tracing.warning(Package.name, "Missing smartobject action when executeAction")
-                return {
-                    error: true,
-                    message: "Missing smartobject action",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Missing action")
+                return new Result(Package.name,true,"Missing action")
             }
         } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when execute smartobject action")
+            return new Result(Package.name, true, "Error occurred when execute smartobject action")
         }
     }
-
-    /* Deprecated */
-    async getConfiguration() {
-        try {
-            Tracing.warning(Package.name, "getConfiguration() is deprecated")
-            /*
-            let modules = []
-            this.core.configuration.smartobjects.forEach(pModule => {
-                try {
-                    let configuration = require(pModule + "/package.json")
-                    modules.push(configuration)
-                } catch (error) {
-                    Tracing.warning(Package.name, "Impossible get configuration in " + pModule + " module")
-                }
-            })
-            */
-            return {
-                error: false,
-                package: Package.name,
-                message: '',
-                data: modules
-            }
-        } catch (error) {
-            Tracing.error(Package.name,"SmartObject : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
-        }
-    }
-
 
 }
 

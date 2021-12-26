@@ -1,6 +1,6 @@
 import React from 'react'
 import { IconButton, TextField, Select, MenuItem, FormControl, InputLabel, Typography, Paper } from '@material-ui/core'
-import { Save } from '@material-ui/icons'
+import { Save } from '@mui/icons-material'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
 

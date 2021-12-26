@@ -1,6 +1,6 @@
 import React from 'react'
 import { Popover, InputAdornment, FormControlLabel, Modal, Fade, Select, MenuItem, Checkbox, Slider, FormControl, InputLabel, Card, Typography, Button, TextField, IconButton, Paper } from '@material-ui/core'
-import { Save, Add, List, Cached } from '@material-ui/icons'
+import { Save, Add, List, Cached } from '@mui/icons-material'
 import Alert from '../../../components/Alert'
 import Source from '../../../utils/Source'
 import Action from '../../../components/Action'

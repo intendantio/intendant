@@ -17,6 +17,7 @@ import NewWidget from './contents/Widget/New'
 import DetailWidget from './contents/Widget/Detail'
 import User from './contents/User/List'
 import NewUser from './contents/User/New'
+import QrCode from './contents/QrCode/QrCode'
 import NewPassword from './contents/User/NewPassword'
 import Sidebar from '../components/Sidebar'
 
@@ -64,6 +65,7 @@ class Main extends React.Component {
                             <Route exact path="/process" component={ListProcess} />
                             <Route exact path="/process/new" component={NewProcess} />
                             <Route exact path="/process/:id" component={DetailProcess} />
+                            <Route exact path="/qrcode/:id" component={QrCode} />
                             <Route exact path="/user" component={User} />
                             <Route exact path="/user/new" component={NewUser} />
                             <Route exact path="/user/:id/password" component={NewPassword} />

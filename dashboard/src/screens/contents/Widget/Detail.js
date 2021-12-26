@@ -1,7 +1,7 @@
 import React from 'react'
 import Action from '../../../components/Action'
 import { FormControl, Select, InputLabel, MenuItem, Paper, Typography, Divider, IconButton, TextField, TableCell, TableBody, TableContainer, TableHead, Table, TableRow } from '@material-ui/core'
-import { Close, Add, Delete, ArrowUpward, ArrowDownward } from '@material-ui/icons'
+import { Close, Add, Delete, ArrowUpward, ArrowDownward } from '@mui/icons-material'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
 import Source from '../../../utils/Source'

@@ -1,10 +1,12 @@
 import Controller from "./Controller"
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
+import Result from '../utils/Result'
+import StackTrace from "../utils/StackTrace"
 
 class Process extends Controller {
 
-    constructor(smartobjectManager,moduleManager) {
+    constructor(smartobjectManager, moduleManager) {
         super()
         this.moduleManager = moduleManager
         this.smartobjectManager = smartobjectManager
@@ -17,11 +19,7 @@ class Process extends Controller {
                 return processRequest
             }
             if (processRequest.data === false) {
-                return {
-                    error: true,
-                    message: "Process not found",
-                    package: Package.name
-                }
+                return new Result(Package.name, false, "Process not found")
             }
             let actionRequest = await this.sqlProcessAction.getAllByField({ process: idProcess })
             if (actionRequest.error) {
@@ -57,19 +55,11 @@ class Process extends Controller {
             })
             process.profiles = processProfileRequest.data
             process.espace = espaceRequest.data
-            return {
-                error: false,
-                message: '',
-                package: Package.name,
-                data: process
-            }
+            return new Result(Package.name, false, "", process)
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get one process")
+            return new Result(Package.name, true, "Error occurred when get one process")
         }
     }
 
@@ -89,20 +79,12 @@ class Process extends Controller {
                     }
                     tmpProcesss.push(resultProcess.data)
                 }
-                return {
-                    error: false,
-                    message: '',
-                    package: Package.name,
-                    data: tmpProcesss
-                }
+                return new Result(Package.name, false, "", tmpProcesss)
             }
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all process")
+            return new Result(Package.name, true, "Error occurred when get all process")
         }
     }
 
@@ -114,24 +96,20 @@ class Process extends Controller {
             }
             for (let indexProcess = 0; indexProcess < processActionRequest.data.length; indexProcess++) {
                 let action = processActionRequest.data[indexProcess];
-                await this.sqlProcessActionArgument.deleteAllByField({ process_action: action.id })
+                let processActionArgumentRequest = await this.sqlProcessActionArgument.deleteAllByField({ process_action: action.id })
+                if (processActionArgumentRequest.error) {
+                    return processActionArgumentRequest
+                }
             }
             await this.sqlProcessInput.deleteAllByField({ process: idProcess })
             await this.sqlProcessAction.deleteAllByField({ process: idProcess })
             await this.sqlProcessProfile.deleteAllByField({ process: idProcess })
             await this.sqlProcess.deleteOne(idProcess)
-            return {
-                error: false,
-                message: '',
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete one process")
+            return new Result(Package.name, true, "Error occurred when delete one process")
         }
     }
 
@@ -153,18 +131,11 @@ class Process extends Controller {
                     return insertProfile
                 }
             }
-            return {
-                error: false,
-                message: '',
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert process profile")
+            return new Result(Package.name, true, "Error occurred when insert process profile")
         }
     }
 
@@ -174,7 +145,6 @@ class Process extends Controller {
             if (ProcessRequest.error) {
                 return ProcessRequest
             }
-            let Process = ProcessRequest.data
             let profileRequest = await this.sqlProcessProfile.getOneByField({ Process: idProcess, profile: idProfile })
             if (profileRequest.error) {
                 return profileRequest
@@ -186,18 +156,11 @@ class Process extends Controller {
                     return deleteProfileRequest
                 }
             }
-            return {
-                error: false,
-                message: '',
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete process profile")
+            return new Result(Package.name, true, "Error occurred when delete process profile")
         }
     }
 
@@ -231,14 +194,13 @@ class Process extends Controller {
                         }
                         pArguments[argument.reference] = argument.value
                     })
-                    Tracing.verbose(Package.name, "Argument inflate " + JSON.stringify(pArguments))
                     if (action.enable === process.enable || process.mode === "simple") {
                         if (action.type === "smartobject") {
-                            let Smartobject = await this.sqlSmartobject.getOne(action.object)
-                            if (Smartobject.error) {
-                                return Smartobject
+                            let getOneSmartobject = await this.sqlSmartobject.getOne(action.object)
+                            if (getOneSmartobject.error) {
+                                return getOneSmartobject
                             }
-                            let resultAction = await this.core.manager.smartobject.smartobjects.get(Smartobject.data.id).action(action.action, pArguments)
+                            let resultAction = await this.core.manager.smartobject.smartobjects.get(getOneSmartobject.data.id).action(action.action, pArguments)
                             if (resultAction.error) {
                                 return resultAction
                             }
@@ -250,38 +212,25 @@ class Process extends Controller {
                             }
                             data.push(resultAction.data)
                         } else {
-                            Tracing.error(Package.name, "Invalid type '" + action.type + "'")
-                            return {
-                                error: true,
-                                message: "Invalid type '" + action.type + "'",
-                                package: Package.name
-                            }
+                            Tracing.error(Package.name, "Invalid action type")
+                            return new Result(Package.name, false, "Invalid action type")
                         }
                     }
                 }
                 if (process.mode === "switch") {
-                    await this.sqlProcess.updateAll({ enable: process.enable == 0 ? 1 : 0 }, { id: process.id })
+                    let updateAll = await this.sqlProcess.updateAll({ enable: process.enable == 0 ? 1 : 0 }, { id: process.id })
+                    if (updateAll.error) {
+                        return updateAll
+                    }
                 }
-                return {
-                    error: false,
-                    message: '',
-                    package: Package.name,
-                    data: data
-                }
+                return new Result(Package.name, false, "", data)
             } else {
-                return {
-                    error: true,
-                    message: "You are not allowed",
-                    package: Package.name
-                }
+                return new Result(Package.name, true, "You are not allowed")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when execute process")
+            return new Result(Package.name, true, "Error occurred when execute process")
         }
     }
 
@@ -344,18 +293,11 @@ class Process extends Controller {
                     return insertProcessInputRequest
                 }
             }
-            return {
-                error: false,
-                message: '',
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert process")
+            return new Result(Package.name, true, "Error occurred when insert process")
         }
     }
 
@@ -390,18 +332,11 @@ class Process extends Controller {
                     return insertProcessActionArgumentRequest
                 }
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert action process")
+            return new Result(Package.name, true, "Error occurred when insert action process")
         }
     }
 
@@ -419,18 +354,11 @@ class Process extends Controller {
             if (processActionRequest.error) {
                 return processActionRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete action process")
+            return new Result(Package.name, true, "Error occurred when delete action process")
         }
     }
 
@@ -464,66 +392,35 @@ class Process extends Controller {
                                     if (insertRequest.error) {
                                         return insertRequest
                                     }
-                                    return {
-                                        error: false,
-                                        message: "",
-                                        package: Package.name
-                                    }
+                                    return new Result(Package.name, false, "")
                                 } else {
                                     Tracing.warning(Package.name, "Reference already exist")
-                                    return {
-                                        error: true,
-                                        message: "Reference already exist",
-                                        package: Package.name
-                                    }
+                                    return new Result(Package.name, true, "Reference already exist")
                                 }
                             } else {
-                                Tracing.warning(Package.name, "Missing process settings enable")
-                                return {
-                                    error: true,
-                                    message: "Missing process settings enable",
-                                    package: Package.name
-                                }
+                                Tracing.warning(Package.name, "Missing enable")
+                                return new Result(Package.name, true, "Missing enable")
                             }
                         } else {
-                            Tracing.warning(Package.name, "Missing process settings type")
-                            return {
-                                error: true,
-                                message: "Missing process settings type",
-                                package: Package.name
-                            }
+                            Tracing.warning(Package.name, "Missing type")
+                            return new Result(Package.name, true, "Missing type")
                         }
                     } else {
-                        Tracing.warning(Package.name, "Missing process settings name")
-                        return {
-                            error: true,
-                            message: "Missing process settings name",
-                            package: Package.name
-                        }
+                        Tracing.warning(Package.name, "Missing name")
+                        return new Result(Package.name, true, "Missing name")
                     }
                 } else {
-                    Tracing.warning(Package.name, "Missing process settings reference")
-                    return {
-                        error: true,
-                        message: "Missing process settings reference",
-                        package: Package.name
-                    }
+                    Tracing.warning(Package.name, "Missing reference")
+                    return new Result(Package.name, true, "Missing reference")
                 }
             } else {
-                Tracing.warning(Package.name, "Missing process settings id")
-                return {
-                    error: true,
-                    message: "Missing process settings id",
-                    package: Package.name
-                }
+                Tracing.warning(Package.name, "Missing process id")
+                return new Result(Package.name, true, "Missing process id")
             }
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert input process")
+            return new Result(Package.name, true, "Error occurred when insert input process")
         }
     }
 
@@ -536,18 +433,11 @@ class Process extends Controller {
             if (deleteInputRequest.error) {
                 return deleteInputRequest
             }
-            return {
-                error: false,
-                message: "",
-                package: Package.name
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name,"Process : " + error.toString())
-            return {
-                package: Package.name,
-                error: true,
-                message: "Internal server error"
-            }
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when delete input process")
+            return new Result(Package.name, true, "Error occurred when delete input process")
         }
     }
 

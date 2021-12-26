@@ -3,7 +3,7 @@ import JSONPretty from 'react-json-pretty'
 
 import { MenuItem, Switch, ListItem, FormControlLabel, Checkbox, InputLabel, IconButton, TableHead, TextField, Typography, Paper, Divider, TableBody, TableContainer, TableCell, Table, TableRow, FormControl, Select, Button } from '@material-ui/core'
 
-import { Check, Close, Delete, Autorenew, Add } from '@material-ui/icons'
+import { Check, Close, Delete, Autorenew, Add } from '@mui/icons-material'
 
 import Alert from '../../../components/Alert'
 import Action from '../../../components/Action'
