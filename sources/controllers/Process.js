@@ -200,13 +200,13 @@ class Process extends Controller {
                             if (getOneSmartobject.error) {
                                 return getOneSmartobject
                             }
-                            let resultAction = await this.core.manager.smartobject.smartobjects.get(getOneSmartobject.data.id).action(action.action, pArguments)
+                            let resultAction = await this.smartobjectManager.smartobjects.get(getOneSmartobject.data.id).action(action.action, pArguments)
                             if (resultAction.error) {
                                 return resultAction
                             }
                             data.push(resultAction.data)
                         } else if (action.type === "module") {
-                            let resultAction = await this.core.manager.module.executeAction(action.object, action.action, pArguments)
+                            let resultAction = await this.moduleManager.executeAction(action.object, action.action, pArguments)
                             if (resultAction.error) {
                                 return resultAction
                             }
