@@ -59,6 +59,43 @@ class Market extends Controller {
         }
     }
 
+    async upgrade(pPackage) {
+        try {
+            Tracing.verbose(Package.name, "Download list from https://market.intendant.io")
+            let resultMarket = await fetch("https://market.intendant.io", {
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': 0
+                }
+            })
+            let resultMarketJSON = await resultMarket.json()
+            resultMarketJSON = resultMarketJSON.filter(item => {
+                return item.name == pPackage
+            })
+            if (resultMarketJSON.length == 0) {
+                Tracing.warning(Package.name, "Package not found " + pPackage)
+                return new Result(Package.name, true, "Package not found " + pPackage)
+            } else if (resultMarketJSON.length > 1) {
+                Tracing.warning(Package.name, "Package not found " + pPackage)
+                return new Result(Package.name, true, "Package not found " + pPackage)
+            } else {
+                let item = resultMarketJSON[0]
+                Tracing.verbose(Package.name, "Upgrade " + item.name)
+                await new Promise((resolve, reject) => {
+                    exec("npm install " + item.raw + " --silent 2>&1 | tee t", (e, std, ster) => {
+                        resolve()
+                    })
+                })
+                process.exit()
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when install new package")
+            return new Result(Package.name, true, "Error occurred install new package")
+        }
+    }
+
     async uninstall(pPackage) {
         try {
             Tracing.verbose(Package.name, "Uninstall " + pPackage)
@@ -88,6 +125,7 @@ class Market extends Controller {
             return new Result(Package.name, true, "Error occurred when uninstall a package")
         }
     }
+
 }
 
 export default Market

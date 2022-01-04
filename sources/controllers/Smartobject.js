@@ -120,6 +120,11 @@ class Smartobject extends Controller {
                 return statusRequest
             }
             let status = statusRequest.data
+            let localisationRequest = await this.sqlLocalisation.getOne(smartobject["localisation"])
+            if (localisationRequest.error) {
+                return localisationRequest
+            }
+            let localisation = localisationRequest.data
             let smartobjectProfileRequest = await this.sqlSmartobjectProfile.getAllByField({ smartobject: smartobject["id"] })
             if (smartobjectProfileRequest.error) {
                 return smartobjectProfileRequest
@@ -140,7 +145,8 @@ class Smartobject extends Controller {
                 status: status,
                 arguments: argumentsData,
                 actions: actions,
-                profiles: profiles
+                profiles: profiles,
+                localisation: localisation
             }) 
         } catch (error) {
             StackTrace.save(error)
@@ -217,47 +223,67 @@ class Smartobject extends Controller {
         }
     }
 
-    async insert(pModule, reference, pArguments) {
+    async updateLocalisation(idSmartobject,idLocalisation) {
+        try {
+            let updateRequest = await this.sqlSmartobject.updateAll({ localisation: idLocalisation }, { id: idSmartobject })
+            if (updateRequest.error) {
+                return updateRequest
+            }
+            return new Result(Package.name, false, "")
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update localisation smartobject")
+            return new Result(Package.name, true, "Error occurred when update localisation smartobject")
+        }
+    }
+
+    async insert(pModule, reference, pArguments, pLocalisation) {
         try {
             if (pModule) {
                 if (reference) {
                     if (pArguments) {
-                        let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: reference })
-                        if (smartobjectRequest.error) {
-                            return smartobjectRequest
-                        }
-                        let smartobject = smartobjectRequest.data
-                        if (smartobject) {
-                            Tracing.warning(Package.name, "Smartobject already exist")
-                            return new Result(Package.name,true,"Smartobject already exist") 
-                        } else {
-                            let data = {
-                                id: null,
-                                module: pModule,
-                                status: '2',
-                                reference: reference,
-                                last_use: "DATE:NOW"
+                        if(pLocalisation) {
+                            let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: reference })
+                            if (smartobjectRequest.error) {
+                                return smartobjectRequest
                             }
-                            let insertRequest = await this.sqlSmartobject.insert(data)
-                            if (insertRequest.error) {
-                                return insertRequest
+                            let smartobject = smartobjectRequest.data
+                            if (smartobject) {
+                                Tracing.warning(Package.name, "Smartobject already exist")
+                                return new Result(Package.name,true,"Smartobject already exist") 
                             } else {
-                                let smartObjectId = insertRequest.data.insertId
-                                for (let index = 0; index < pArguments.length; index++) {
-                                    let setting = pArguments[index]
-                                    let insertSettngsRequest = await this.sqlSmartobjectArgument.insert({
-                                        id: null,
-                                        smartobject: smartObjectId,
-                                        reference: setting.reference,
-                                        value: setting.value
-                                    })
-                                    if (insertSettngsRequest.error) {
-                                        return insertSettngsRequest
-                                    }
+                                let data = {
+                                    id: null,
+                                    module: pModule,
+                                    status: '2',
+                                    reference: reference,
+                                    last_use: "DATE:NOW",
+                                    localisation: pLocalisation
                                 }
-                                this.smartobjectManager.update(smartObjectId)
-                                return new Result(Package.name, false, "")
+                                let insertRequest = await this.sqlSmartobject.insert(data)
+                                if (insertRequest.error) {
+                                    return insertRequest
+                                } else {
+                                    let smartObjectId = insertRequest.data.insertId
+                                    for (let index = 0; index < pArguments.length; index++) {
+                                        let setting = pArguments[index]
+                                        let insertSettngsRequest = await this.sqlSmartobjectArgument.insert({
+                                            id: null,
+                                            smartobject: smartObjectId,
+                                            reference: setting.reference,
+                                            value: setting.value
+                                        })
+                                        if (insertSettngsRequest.error) {
+                                            return insertSettngsRequest
+                                        }
+                                    }
+                                    this.smartobjectManager.update(smartObjectId)
+                                    return new Result(Package.name, false, "")
+                                }
                             }
+                        } else {
+                            Tracing.warning(Package.name, "Missing localisation")
+                            return new Result(Package.name,true,"Missing localisation")
                         }
                     } else {
                         Tracing.warning(Package.name, "Missing arguments")

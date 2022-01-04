@@ -1,6 +1,6 @@
 import React from 'react'
 import { Drawer, List, Typography, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
-import {ShoppingCart, DevicesOther, ExitToApp, AccountTree, Category, DeviceHub, Https, Extension, Settings, Person} from '@mui/icons-material'
+import {ShoppingCart,House,  DevicesOther, ExitToApp, AccountTree, Category, DeviceHub, Https, Extension, Settings, Person} from '@mui/icons-material'
 import { Link } from "react-router-dom"
 
 class Sidebar extends React.Component {
@@ -32,6 +32,14 @@ class Sidebar extends React.Component {
                                     <DevicesOther />
                                 </ListItemIcon>
                                 <ListItemText primary={"Smartobject"} />
+                            </ListItem>
+                        </Link>
+                        <Link to="/localisation" style={{ textDecoration: 'none', color: 'white' }}>
+                            <ListItem button key={"localisation"}>
+                                <ListItemIcon>
+                                    <House />
+                                </ListItemIcon>
+                                <ListItemText primary={"Room"} />
                             </ListItem>
                         </Link>
                         <Link to="/module" style={{ textDecoration: 'none', color: 'white' }}>

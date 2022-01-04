@@ -59,6 +59,12 @@ class Configuration extends React.Component {
         let resultPing = await new Request().get().fetch("/api/ping")
         let result = await fetch("https://market.intendant.io")
         let resultMarket = await result.json()
+
+        if(resultPing.error || resultSmartobject.error || resultModule.error) {
+            this.setState({ loading: false, severity: "error", enabled: true, message:  resultPing.package + " : " + resultPing.message })
+            return 
+        } 
+
         resultMarket = resultMarket.map(market => {
             market.mode = "install"
             market.currentVersion = "0.0.0"
@@ -172,7 +178,7 @@ class Configuration extends React.Component {
                                                         </Button>
                                                         :
                                                         pmodule.mode == "upgrade" ?
-                                                            <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.uninstall(pmodule.name) }} variant="outlined" >
+                                                            <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.upgrade(pmodule.name) }} variant="outlined" >
                                                                 Upgrade
                                                             </Button>
                                                             :

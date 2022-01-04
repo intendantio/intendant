@@ -40,6 +40,9 @@ class Controller {
             this.sqlProcessProfile = new Connector("process_profile")
             this.sqlProcessInput = new Connector("process_input")
 
+            this.sqlLocalisation = new Connector("localisation")
+            this.sqlLocalisationProfile = new Connector("localisation_profile")
+
             this.sqlCache = new Connector("cache")
             
         } catch (error) {

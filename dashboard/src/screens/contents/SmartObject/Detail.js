@@ -1,6 +1,6 @@
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
-import { Paper, Typography, TableContainer, TableBody, Divider, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch } from '@material-ui/core'
+import { Paper, Typography, TableContainer,FormControl,InputLabel,Select,MenuItem, TableBody, Divider, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import { FileCopy, Delete, Close, Add } from '@mui/icons-material'
 import AlertComponent from '../../../components/Alert'
@@ -15,6 +15,7 @@ class DetailSmartObject extends React.Component {
             id: props.match.params.id,
             smartobject: null,
             profiles: [],
+            localisations: [],
             enabled: false,
             loading: null,
             message: "",
@@ -26,11 +27,12 @@ class DetailSmartObject extends React.Component {
 
     async componentDidMount() {
         let resultProfile = await new Request().get().fetch("/api/profiles")
+        let resultLocalisation = await new Request().get().fetch("/api/localisations")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects/" + this.state.id)
-        if (resultProfile.error || resultSmartobject.error) {
+        if (resultProfile.error || resultSmartobject.error || resultLocalisation.error) {
             this.props.history.push('/smartobject')
         } else {
-            this.setState({ smartobject: resultSmartobject.data, profiles: resultProfile.data })
+            this.setState({ smartobject: resultSmartobject.data, profiles: resultProfile.data, localisations: resultLocalisation.data })
         }
         this.setState({ loading: null })
     }
@@ -101,6 +103,25 @@ class DetailSmartObject extends React.Component {
         } else {
             this.componentDidMount()
         }
+    }
+
+    async updateLocalisation(smartobject,localisation) {
+        let result = await new Request().post({idLocalisation: localisation.id, }).fetch("/api/smartobjects/" + smartobject.id + "/localisation")
+        if (result.error) {
+            this.setState({ enabled: true, message: result.package + " : " + result.message })
+        } else {
+            this.componentDidMount()
+        }
+    }
+
+    
+    setLocalisation(id) {
+        this.state.localisations.forEach(pLocalisation => {
+            if (pLocalisation.id === id) {
+                this.state.smartobject.localisation = pLocalisation
+                this.updateLocalisation(this.state.smartobject,pLocalisation)
+            }
+        })
     }
 
     render() {
@@ -208,6 +229,23 @@ class DetailSmartObject extends React.Component {
                                 :
                                 null
                         }
+                        <div style={{ padding: 10, paddingBottom: 0 }}>
+                            <Typography variant='h5' >
+                                Localisation
+                            </Typography>
+                            <div style={{ marginTop: 20, marginBottom: 10, display: 'flex', flexDirection: 'row' }}>
+                                <FormControl variant="outlined" style={{ marginRight: 10, width: '300px' }} >
+                                    <InputLabel>Localisation</InputLabel>
+                                    <Select value={this.state.smartobject.localisation.id} onChange={(event) => { this.setLocalisation(event.target.value) }} label="Connexion" >
+                                        {
+                                            this.state.localisations.map(pLocalisation => {
+                                                return <MenuItem value={pLocalisation.id} >{pLocalisation.name}</MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </div>
+                        </div>
                         <div style={{ padding: 10, paddingBottom: 0 }}>
                             <Typography variant='h5' >
                                 Authorization

@@ -3,7 +3,10 @@
   "description": "Template intendant",
   "author": "intendant",
   "license": "GPL-3.0+",
+  "scripts": {
+      "start": "node index.js && npm start"
+  },
   "dependencies": {
-    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.0.15.tgz"
+    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.0.17.tgz"
   }
 }

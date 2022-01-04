@@ -90,7 +90,7 @@ class Action extends React.Component {
                     <div elevation={3} style={{ alignItems: 'flex-start', display: 'flex', padding: 10, marginRight: 5, flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row' }} >
                         <TwitterPicker
                             styles={{ padding: 0 }}
-                            colors={['#FF6900', '#FCB900', '#7BDCB5', '#00D084', '#8ED1FC', '#0693E3', '#ABB8C3', '#EB144C', '#F78DA7', '#9900EF']}
+                            colors={['#d00a0a', '#FF6900', '#FCB900', '#F9DE79' ,  '#F78DA7', '#9900EF' , '#0e60f4',  '#8ED1FC', '#11f4b8', '#53b909']}
                             triangle='hide'
                             color={this.state.value}
                             onChangeComplete={(color) => { this.updateAction(this.state.action, color.hex) }}

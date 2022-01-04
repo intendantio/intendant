@@ -10,25 +10,29 @@ class NewSmartobject extends React.Component {
         super(props)
         this.state = {
             module: false,
+            localisation: false,
             reference: "",
             enabled: false,
             message: "",
             types: [],
-            smartobjects: []
+            smartobjects: [],
+            localisations: []
         }
     }
 
     async componentDidMount() {
         let resultType = await new Request().get().fetch("/api/configurations/smartobject")
+        let resultLocalisation = await new Request().get().fetch("/api/localisations")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects")
-        if (resultType.error || resultSmartobject.error) {
-            this.setState({ enabled: true, message: resultType.package + " : " + resultType.message })
+        if (resultType.error || resultSmartobject.error || resultLocalisation.error) {
+            this.setState({ enabled: true, message: resultSmartobject.message + " : " + resultType.message + " : " + resultLocalisation.message})
         } else {
             this.setState({
                 enabled: false,
                 message: "",
                 types: resultType.data,
-                smartobjects: resultSmartobject.data
+                smartobjects: resultSmartobject.data,
+                localisations: resultLocalisation.data
             })
         }
     }
@@ -43,6 +47,16 @@ class NewSmartobject extends React.Component {
         })
     }
 
+    setLocalisation(id) {
+        this.state.localisations.forEach(pLocalisation => {
+            if (pLocalisation.id === id) {
+                this.setState({
+                    localisation: pLocalisation
+                })
+            }
+        })
+    }
+
     updateSettings(key, value) {
         let tmp = {}
         tmp["settings-" + key] = value
@@ -52,6 +66,8 @@ class NewSmartobject extends React.Component {
     async add() {
         if (this.state.reference === "") {
             this.setState({ enabled: true, message: "Missing-parameter : reference is empty" })
+        } else if (this.state.localisation === false) {
+            this.setState({ enabled: true, message: "Missing-parameter : localisation not selected" })
         } else if (this.state.module.name === "") {
             this.setState({ enabled: true, message: "Missing-parameter : type not selected" })
         } else {
@@ -63,7 +79,7 @@ class NewSmartobject extends React.Component {
                     value: this.state["settings-" + setting.name] ? this.state["settings-" + setting.name] : ""
                 })
             }
-            let result = await new Request().post({ module: this.state.module.name, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
+            let result = await new Request().post({localisation: this.state.localisation.id,  module: this.state.module.name, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
             if (result.error) {
                 this.setState({
                     enabled: true,
@@ -88,6 +104,16 @@ class NewSmartobject extends React.Component {
                                     {
                                         this.state.types.map(pModule => {
                                             return <MenuItem value={pModule.name} >{pModule.name}</MenuItem>
+                                        })
+                                    }
+                                </Select>
+                            </FormControl>
+                            <FormControl variant="outlined" style={{ marginRight: 10, width: '300px' }} >
+                                <InputLabel>Localisation</InputLabel>
+                                <Select value={this.state.localisation.name} onChange={(event) => { this.setLocalisation(event.target.value) }} label="Connexion" >
+                                    {
+                                        this.state.localisations.map(pLocalisation => {
+                                            return <MenuItem value={pLocalisation.id} >{pLocalisation.name}</MenuItem>
                                         })
                                     }
                                 </Select>

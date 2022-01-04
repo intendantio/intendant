@@ -35,6 +35,8 @@ declare class Controller {
     sqlProcessProfile: Connector;
     sqlProcessInput: Connector;
     sqlCache: Connector;
+    sqlLocalisation: Connector;
+    sqlLocalisationProfile: Connector;
 }
 
 export default Controller

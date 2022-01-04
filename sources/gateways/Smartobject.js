@@ -34,7 +34,8 @@ export default (app, core) => {
             res.send(await core.controller.smartobject.insert(
                 request.body.module,
                 request.body.reference,
-                request.body.settings
+                request.body.settings,
+                request.body.localisation
             ))
         }
     })
@@ -123,6 +124,18 @@ export default (app, core) => {
                     request.params.idProfile
                 ))
             }
+    })
+    
+    //Update localisations
+    
+    app.post("/api/smartobjects/:idSmartobject/localisation", async (request, res) => {
+        request.url = "/smartobjects/:idSmartobject/localisation"
+        let authorization = await core.controller.authentification.checkAuthorization(request)
+        if (authorization.error) {
+            res.send(authorization)
+        } else {
+            res.send(await core.controller.smartobject.updateLocalisation(request.params.idSmartobject,request.body.idLocalisation))
+        }
     })
 
 }

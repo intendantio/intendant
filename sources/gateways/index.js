@@ -16,6 +16,7 @@ import Client from './Client'
 import Widget from './Widget'
 import Configuration from './Configuration'
 import Market from './Market'
+import Localisation from './Localisation'
 import Tracing from '../utils/Tracing'
 
 class API {
@@ -44,6 +45,7 @@ class API {
         Widget(app,core)
         Configuration(app,core)
         Market(app,core)
+        Localisation(app,core)
 
         app.use((request, res) => {
             res.redirect('/admin')

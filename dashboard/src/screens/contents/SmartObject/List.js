@@ -63,6 +63,11 @@ class Smartobject extends React.Component {
                                             </TableCell>
                                             <TableCell align="center">
                                                 <Typography variant='body1'>
+                                                    Localisation
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Typography variant='body1'>
                                                     Last use
                                                 </Typography>
                                             </TableCell>
@@ -80,6 +85,11 @@ class Smartobject extends React.Component {
                                                     <TableCell align="center">
                                                         <Typography variant='body1'>
                                                             <img style={{ height: 25, width: 25, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + smartobject.status.icon + ".svg"} />
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="center">
+                                                        <Typography variant='body1'>
+                                                            {capitalizeFirstLetter(smartobject.localisation.name)}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell align="center">
@@ -119,6 +129,10 @@ class Smartobject extends React.Component {
             </>
         )
     }
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default Smartobject

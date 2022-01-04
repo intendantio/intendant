@@ -13,11 +13,11 @@ import User from './controllers/User'
 import Espace from './controllers/Espace'
 import Market from './controllers/Market'
 import Notification from './controllers/Notification'
-
+import Localisation from './controllers/Localisation'
 
 import API from './gateways'
 
-import SmartObjectManager from './managers/Smartobject'
+import SmartobjectManager from './managers/Smartobject'
 import ModulesManager from './managers/Modules'
 import RoutineManager from './managers/Routine'
 import Tracing from './utils/Tracing'
@@ -29,12 +29,11 @@ class Core {
 
         this.configuration = configuration
 
-        this.salt = Package.name + "-" + Package.version
-
+        this.salt = Package.name
 
         /* Manager */
         this.manager = {}
-        this.manager.smartobject = new SmartObjectManager(this)
+        this.manager.smartobject = new SmartobjectManager(this)
         this.manager.module = new ModulesManager(this)
         this.manager.routine = new RoutineManager(this)
 
@@ -55,12 +54,10 @@ class Core {
             notification: new Notification()
         }
 
-        
-            
+        this.controller.localisation = new Localisation(this.controller.smartobject)
         setTimeout(() => {
             this.api = new API(this)
         },1000)
-
     }
 
 }

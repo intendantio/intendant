@@ -200,7 +200,7 @@ class Process extends Controller {
                             if (getOneSmartobject.error) {
                                 return getOneSmartobject
                             }
-                            let resultAction = await this.smartobjectManager.smartobjects.get(getOneSmartobject.data.id).action(action.action, pArguments)
+                            let resultAction = await this.smartobjectManager.instances.get(getOneSmartobject.data.id).action(action.action, pArguments)
                             if (resultAction.error) {
                                 return resultAction
                             }

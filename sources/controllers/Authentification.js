@@ -115,6 +115,12 @@ class Authentification extends Controller {
                 let userRequest = await this.sqlUser.getOneByField({
                     login: jwt[1]
                 })
+                if(jwt[0] == "anonymous") {
+                    let result = new Result(Package.name, false, "")
+                    result.profile = 1
+                    result.user = 1
+                    return result
+                }
                 if (jwt[0] != this.salt) {
                     return new Result(Package.name, true, "Invalid token")
                 }
@@ -130,7 +136,7 @@ class Authentification extends Controller {
                             return resultAuthorizationProfile
                         } else {
                             if (resultAuthorizationProfile.data) {
-                                let result = new Result(Package.name,false,"")
+                                let result = new Result(Package.name, false, "")
                                 result.profile = userRequest.data.profile
                                 result.user = userRequest.data.id
                                 return result
@@ -166,7 +172,7 @@ class Authentification extends Controller {
                         let account = accountRequest.data
                         if (account) {
                             if (md5(password + account.salt) === account.password) {
-                                let result = new Result(Package.name,false,"")
+                                let result = new Result(Package.name, false, "")
                                 result.profile = account.profile
                                 result.token = Jwt.generateAccessToken(this.salt + "~" + login, this.token)
                                 return result
@@ -231,6 +237,16 @@ class Authentification extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when update authorization")
             return new Result(Package.name, true, "Error occurred when update authorization")
+        }
+    }
+
+    async getAnonymousToken(service) {
+        try {
+            return new Result(Package.name, false, "", Jwt.generateAccessToken("anonymous~" + service, this.token))
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get token")
+            return new Result(Package.name, true, "Error occurred when get token")
         }
     }
 

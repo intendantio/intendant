@@ -20,6 +20,10 @@ import NewUser from './contents/User/New'
 import QrCode from './contents/QrCode/QrCode'
 import NewPassword from './contents/User/NewPassword'
 import Sidebar from '../components/Sidebar'
+import Localisation from './contents/Localisation/List'
+import NewLocalisation from './contents/Localisation/New'
+import DetailLocalisation from './contents/Localisation/Detail'
+import Authorisation from './contents/Authorisation/List'
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
@@ -61,6 +65,7 @@ class Main extends React.Component {
                             <Route exact path="/widget" component={Widget} />
                             <Route exact path="/widget/new" component={NewWidget} />
                             <Route exact path="/widget/authorization" component={Widget} />
+                            <Route exact path="/widget/authorization" component={Widget} />
                             <Route exact path="/widget/:id" component={DetailWidget} />
                             <Route exact path="/process" component={ListProcess} />
                             <Route exact path="/process/new" component={NewProcess} />
@@ -71,6 +76,10 @@ class Main extends React.Component {
                             <Route exact path="/user/:id/password" component={NewPassword} />
                             <Route exact path="/configuration" component={Configuration} />
                             <Route exact path="/market" component={Market} />
+                            <Route exact path="/localisation" component={Localisation} />
+                            <Route exact path="/localisation/new" component={NewLocalisation} />
+                            <Route exact path="/localisation/:id" component={DetailLocalisation} />
+                            <Route exect path="/authorisation" component={Authorisation} />
                         </Switch>
                     </div>
                 </main>
