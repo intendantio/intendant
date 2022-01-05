@@ -21,6 +21,7 @@ import SmartobjectManager from './managers/Smartobject'
 import ModulesManager from './managers/Modules'
 import RoutineManager from './managers/Routine'
 import Tracing from './utils/Tracing'
+import Essential from './controllers/Essential'
 
 class Core {
     constructor(configuration) {
@@ -44,7 +45,6 @@ class Core {
             routine: new Routine(this.manager.routine),
             widget: new Widget(this.manager.smartobject, this.manager.module),
             market: new Market(this.manager.smartobject, this.manager.module),
-            process: new Process(this.manager.smartobject, this.manager.module),
             profile: new Profile(),
             storage: new Storage(),
             client: new Client(),
@@ -55,6 +55,9 @@ class Core {
         }
 
         this.controller.localisation = new Localisation(this.controller.smartobject)
+        this.controller.essential = new Essential(this.controller)
+        this.controller.process = new Process(this.manager.smartobject, this.manager.module,this.controller.essential)
+
         setTimeout(() => {
             this.api = new API(this)
         },1000)

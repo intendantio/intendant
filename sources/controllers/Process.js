@@ -6,10 +6,11 @@ import StackTrace from "../utils/StackTrace"
 
 class Process extends Controller {
 
-    constructor(smartobjectManager, moduleManager) {
+    constructor(smartobjectManager, moduleManager, essentialController) {
         super()
         this.moduleManager = moduleManager
         this.smartobjectManager = smartobjectManager
+        this.essentialController = essentialController
     }
 
     async getOne(idProcess) {
@@ -207,6 +208,12 @@ class Process extends Controller {
                             data.push(resultAction.data)
                         } else if (action.type === "module") {
                             let resultAction = await this.moduleManager.executeAction(action.object, action.action, pArguments)
+                            if (resultAction.error) {
+                                return resultAction
+                            }
+                            data.push(resultAction.data)
+                        } else if (action.type === "essential") {
+                            let resultAction = await this.essentialController.executeAction(action.action, pArguments)
                             if (resultAction.error) {
                                 return resultAction
                             }

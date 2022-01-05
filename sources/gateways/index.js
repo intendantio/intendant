@@ -18,6 +18,7 @@ import Configuration from './Configuration'
 import Market from './Market'
 import Localisation from './Localisation'
 import Tracing from '../utils/Tracing'
+import Essential from './Essential'
 
 class API {
 
@@ -46,6 +47,7 @@ class API {
         Configuration(app,core)
         Market(app,core)
         Localisation(app,core)
+        Essential(app,core)
 
         app.use((request, res) => {
             res.redirect('/admin')

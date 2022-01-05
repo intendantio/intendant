@@ -6,12 +6,15 @@ class Source {
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects")
         let resultModule = await new Request().get().fetch("/api/configurations/module")
         let resultProcess = await new Request().get().fetch("/api/process")
+        let resultEssentials = await new Request().get().fetch("/api/essentials")
         if (resultProcess.error) {
             return resultProcess
         } else if (resultModule.error) {
             return resultModule
         } else if (resultSmartobject.error) {
             return resultSmartobject
+        } else if(resultEssentials.error) {
+            return resultEssentials
         } else {
             let sources = []
             if (query.includes("smartobject")) {
@@ -31,6 +34,15 @@ class Source {
                     })
                     sources.push({ id: pModule.name, name: "Module " + pModule.name, actions: actions, type: 'module' })
                 })
+            }
+            if (query.includes("essential")) {
+                let essentials = []
+                resultEssentials.data.forEach(pEssential => {
+                   essentials.push(
+                    { id: pEssential.id, name: pEssential.name, settings: pEssential.settings }
+                   )
+                })
+                sources.push({ id: "essential", name: "Core essential", actions: essentials, type: 'essential' })
             }
             if (query.includes("process")) {
                 resultProcess.data.forEach(process => {

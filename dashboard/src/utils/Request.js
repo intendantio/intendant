@@ -1,3 +1,4 @@
+import Package from '../../package.json'
 class Request {
 
     constructor() {
@@ -43,7 +44,8 @@ class Request {
         } catch (error) {
             return {
                 error: true,
-                message: "An error has occurred"
+                message: "An error has occurred", 
+                package: Package.name
             }
         }
     }

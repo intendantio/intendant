@@ -41,7 +41,7 @@ class New extends React.Component {
     }
 
     async componentDidMount() {
-        let resultSource = await Source.getSource(["smartobject", "module"])
+        let resultSource = await Source.getSource(["smartobject", "module", "essential"])
         let resultEspace = await new Request().get().fetch("/api/espaces")
         if (resultSource.error) {
             this.setState({ enabled: true, message: resultSource.package + " : " + resultSource.message })

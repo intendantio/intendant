@@ -35,7 +35,8 @@ class NewProcess extends React.Component {
 
 
     async componentDidMount() {
-        let resultSource = await Source.getSource(["smartobject", "module"])
+        let resultSource = await Source.getSource(["smartobject", "module", "essential"])
+        console.log(resultSource)
         let resultEspace = await new Request().get().fetch("/api/espaces")
         let resultProfile = await new Request().get().fetch("/api/profiles")
         let result = await new Request().get().fetch("/api/process/" + this.state.id)
@@ -48,6 +49,11 @@ class NewProcess extends React.Component {
             this.setState({
                 enabled: true,
                 message: result.package + " : " + result.message
+            })
+        } else if(resultSource.error) {
+            this.setState({
+                enabled: true,
+                message: resultSource.package + " : " + resultSource.message
             })
         } else {
             this.setState({

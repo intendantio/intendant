@@ -38,7 +38,7 @@ class NewRoutine extends React.Component {
     }
 
     async componentDidMount() {
-        let resultSource = await Source.getSource(["smartobject", "process", "module"])
+        let resultSource = await Source.getSource(["smartobject", "process", "module", "essential"])
         let result = await new Request().get().fetch("/api/routines/" + this.state.id)
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })

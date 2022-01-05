@@ -43,7 +43,7 @@ class NewRoutine extends React.Component {
     }
 
     async componentDidMount() {
-        let resultSource = await Source.getSource(["smartobject", "process", "module"])
+        let resultSource = await Source.getSource(["smartobject", "process", "module", "essential"])
         if (resultSource.error) {
             this.setState({ enabled: true, message: resultSource.package + " : " + resultSource.message })
         } else {

@@ -2,7 +2,7 @@ ALTER TABLE 'smartobject' ADD 'localisation' INTEGER DEFAULT 1;
 
 DELETE FROM "localisation";
 
-INSERT INTO "localisation" ("id", "name", "icon") VALUES ('1', 'chambre', 'Home');
+INSERT INTO "localisation" ("id", "name") VALUES ('1', 'chambre');
 
 CREATE TABLE 'localisation_profile' ( id INTEGER PRIMARY KEY, localisation TEXT, profile INTEGER);
 

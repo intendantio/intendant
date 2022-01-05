@@ -84,6 +84,19 @@ class Routine {
                                 }
                             }
                             break
+
+                        case "essential":
+                            let settingsTriggerEssential = {}
+                            trigger.arguments.map(argument => {
+                                settingsTriggerEssential[argument.reference] = argument.value
+                            })
+                            let executeTriggerEssentialResult = await this.core.controller.essential.executeAction(trigger.action, settingsTriggerEssential)
+                            if (executeTriggerEssentialResult.error) {
+                                Tracing.warning(Package.name, executeTriggerEssentialResult.package + " " + executeTriggerEssentialResult.message)
+                                this.close()
+                                return
+                            }
+                            break
                         case "process":
                             let sqlProcess = new Connector("process")
                             let resultProcess = await sqlProcess.getOne(trigger.source)
@@ -157,6 +170,18 @@ class Routine {
                                 let executeEffectModuleResult = await this.core.manager.module.executeAction(effect.source, effect.action, settingsEffectModule)
                                 if (executeEffectModuleResult.error) {
                                     Tracing.warning(Package.name, executeEffectModuleResult.package + " " + executeEffectModuleResult.message)
+                                    this.close()
+                                    return
+                                }
+                                break
+                            case "essential":
+                                let settingsEffectEssential = {}
+                                effect.arguments.map(argument => {
+                                    settingsEffectEssential[argument.reference] = argument.value
+                                })
+                                let executeEffectEssentialResult = await this.core.controller.essential.executeAction(effect.action, settingsEffectEssential)
+                                if (executeEffectEssentialResult.error) {
+                                    Tracing.warning(Package.name, executeEffectEssentialResult.package + " " + executeEffectEssentialResult.message)
                                     this.close()
                                     return
                                 }
@@ -241,6 +266,18 @@ class Routine {
                                 }
                             }
                             break
+                        case "essential":
+                            let settingsTriggerEssential = {}
+                            trigger.arguments.map(argument => {
+                                settingsTriggerEssential[argument.reference] = argument.value
+                            })
+                            let executeTriggerEssentialResult = await this.core.controller.essential.executeAction(trigger.action, settingsTriggerEssential)
+                            if (executeTriggerEssentialResult.error) {
+                                Tracing.warning(Package.name, executeTriggerEssentialResult.package + " " + executeTriggerEssentialResult.message)
+                                this.close()
+                                return
+                            }
+                            break
                         case "module":
                             let settingsEffectModule = {}
                             effect.arguments.map(argument => {
@@ -319,6 +356,18 @@ class Routine {
                                 )
                                 if (executeEffectSmartobjectResult.error) {
                                     Tracing.warning(Package.name, executeEffectSmartobjectResult.package + " " + executeEffectSmartobjectResult.error)
+                                    this.close()
+                                    return
+                                }
+                                break
+                            case "essential":
+                                let settingsEffectEssential = {}
+                                effect.arguments.map(argument => {
+                                    settingsEffectEssential[argument.reference] = argument.value
+                                })
+                                let executeEffectEssentialResult = await this.core.controller.essential.executeAction(effect.action, settingsEffectEssential)
+                                if (executeEffectEssentialResult.error) {
+                                    Tracing.warning(Package.name, executeEffectEssentialResult.package + " " + executeEffectEssentialResult.message)
                                     this.close()
                                     return
                                 }
