@@ -1,6 +1,6 @@
 import Authentification from './screens/Authentification'
 import Theme from './Theme'
-import { ThemeProvider, CssBaseline, Box } from '@material-ui/core'
+import { ThemeProvider, CssBaseline, Box } from '@mui/material'
 
 function App() {
   return (

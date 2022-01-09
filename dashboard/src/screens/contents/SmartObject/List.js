@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from "react-router-dom"
 import Moment from 'moment'
 import { Add } from '@mui/icons-material'
-import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton  } from '@material-ui/core'
+import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box } from '@mui/material'
 import Icon from '../../../utils/Icon'
 import Request from '../../../utils/Request'
 import Alert from '../../../components/Alert'
@@ -20,19 +20,19 @@ class Smartobject extends React.Component {
     }
 
     async componentDidMount() {
-            let result = await new Request().get().fetch("/api/smartobjects")
-            if (result.error) {
-                this.setState({
-                    enabled: true,
-                    message: result.package + " : " + result.message
-                })
-            } else {
-                this.setState({
-                    enabled: false,
-                    message: "",
-                    smartobjects: result.data
-                })
-            }
+        let result = await new Request().get().fetch("/api/smartobjects")
+        if (result.error) {
+            this.setState({
+                enabled: true,
+                message: result.package + " : " + result.message
+            })
+        } else {
+            this.setState({
+                enabled: false,
+                message: "",
+                smartobjects: result.data
+            })
+        }
     }
 
     render() {
@@ -46,66 +46,65 @@ class Smartobject extends React.Component {
                             </Typography>
                         </Paper>
                         :
-                        <div>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="left">
-                                                <Typography variant='body1'>
-                                                    Reference
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography variant='body1'>
-                                                    Status
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography variant='body1'>
-                                                    Localisation
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography variant='body1'>
-                                                    Last use
-                                                </Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {this.state.smartobjects.slice(this.state.page * 10, (this.state.page + 1) * 10).map((smartobject) => (
-                                            <Link to={"/smartobject/" + smartobject.id} style={{ textDecoration: 'none', color: 'white', display:'contents' }}>
-                                                <TableRow hover key={smartobject.name} style={{ cursor: 'pointer' }}>
-                                                    <TableCell align="left">
+                        <Box>
+                            <Paper variant="outlined" >
+                                <TableContainer style={{overflowX: 'hidden'}}>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="left">
+                                                    <Typography variant='body1'>
+                                                        Reference
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="center">
+                                                    <Typography variant='body1'>
+                                                        Status
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="center">
+                                                    <Typography variant='body1'>
+                                                        Localisation
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="center">
+                                                    <Typography variant='body1'>
+                                                        Last use
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {this.state.smartobjects.slice(this.state.page * 10, (this.state.page + 1) * 10).map((smartobject, index) => (
+                                                <TableRow onClick={() => { this.props.history.push("/smartobject/" + smartobject.id) }} hover key={index} style={{ cursor: 'pointer' }}>
+                                                    <TableCell align="left" style={{ borderBottom: 0 }} >
                                                         <Typography variant='body1'>
                                                             {smartobject.reference}
                                                         </Typography>
                                                     </TableCell>
-                                                    <TableCell align="center">
+                                                    <TableCell align="center" style={{ borderBottom: 0 }} >
                                                         <Typography variant='body1'>
                                                             <img style={{ height: 25, width: 25, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + smartobject.status.icon + ".svg"} />
                                                         </Typography>
                                                     </TableCell>
-                                                    <TableCell align="center">
+                                                    <TableCell align="center" style={{ borderBottom: 0 }} >
                                                         <Typography variant='body1'>
                                                             {capitalizeFirstLetter(smartobject.localisation.name)}
                                                         </Typography>
                                                     </TableCell>
-                                                    <TableCell align="center">
+                                                    <TableCell align="center" style={{ borderBottom: 0 }} >
                                                         <Typography variant='body1'>
-                                                            {Moment(smartobject.lastUse).format("hh:mm DD/MM") }
+                                                            {Moment(smartobject.lastUse).format("hh:mm DD/MM")}
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
-                                            </Link>
-
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                                <Paper style={{ width: 50, height: 50, marginTop: 10, padding: 5, marginBottom: 10, textAlign: 'center', justifyContent: 'space-around', alignContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Paper>
+                            <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
+                                <Paper variant='outlined' style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                                     <Link to="/smartobject/new" style={{ textDecoration: 'none', color: 'white' }}>
                                         <IconButton style={{ borderRadius: 0 }}>
                                             <Add />
@@ -118,13 +117,13 @@ class Smartobject extends React.Component {
                                     rowsPerPage={10}
                                     page={this.state.page}
                                     rowsPerPageOptions={[]}
-                                    onChangePage={(event, page) => { this.setState({ page: page }) }}
+                                    onPageChange={(event, page) => { this.setState({ page: page }) }}
                                 />
-                            </div>
-                        </div>
+                            </Box>
+                        </Box>
                 }
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    { this.state.message }
+                    {this.state.message}
                 </Alert>
             </>
         )

@@ -1,6 +1,5 @@
 import React from 'react'
-import Paper from '@material-ui/core/Paper'
-import Grid from '@material-ui/core/Grid'
+import { Paper, Grid } from '@mui/material'
 
 class IconList extends React.Component {
 
@@ -24,14 +23,14 @@ class IconList extends React.Component {
 
     render() {
         return (
-            <Grid container spacing={1} style={{ width: '32vw', height: '32vw',  padding: 10, marginRight: 10 }}>
+            <Grid container spacing={1} style={{ width: '32vw', height: '32vw', padding: 10, marginRight: 10 }}>
                 <Grid item xs={6} >
-                    <Paper onClick={() => { this.setState({ mode: 'normal' }) }} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
+                    <Paper variant="outlined" onClick={() => { this.setState({ mode: 'normal' }) }} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
                         <img style={{ height: 30, width: 30, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/star.svg"} />
                     </Paper>
                 </Grid>
                 <Grid item xs={6} >
-                    <Paper onClick={() => { this.setState({ mode: 'outline' }) }} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
+                    <Paper variant="outlined" onClick={() => { this.setState({ mode: 'outline' }) }} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
                         <img style={{ height: 30, width: 30, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/star-outline.svg"} />
                     </Paper>
                 </Grid>
@@ -48,7 +47,7 @@ class IconList extends React.Component {
                     }).map(icon => {
                         return (
                             <Grid item xs >
-                                <Paper onClick={() => {this.props.onSelect && this.props.onSelect(icon)}} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
+                                <Paper variant="outlined" onClick={() => { this.props.onSelect && this.props.onSelect(icon) }} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
                                     <img style={{ height: 30, width: 30, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + icon + ".svg"} />
                                 </Paper>
                             </Grid>

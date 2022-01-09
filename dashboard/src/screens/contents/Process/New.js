@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { Popover, InputAdornment, Checkbox, Typography, Paper, Grid, InputLabel, MenuItem, FormControl, Select, TableBody, TableContainer, TextField, TableCell, Table, TableRow, Switch, Button, IconButton } from '@material-ui/core'
+import { Popover, InputAdornment, Checkbox, Typography, Paper, Grid, InputLabel, MenuItem, FormControl, Select, TableBody, TableContainer, TextField, TableCell, Table, TableRow, Switch, Button, IconButton, TableHead } from '@mui/material'
 
-import { Delete, List } from '@mui/icons-material'
+import { Delete, List, Add, Save } from '@mui/icons-material'
 
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
@@ -62,7 +62,7 @@ class New extends React.Component {
         this.state.sources.forEach(source => {
             if (source.id === id) { fSource = source }
         })
-        this.setState({ source: fSource })
+        this.setState({ source: fSource, action: null })
     }
 
     setAction(id) {
@@ -135,7 +135,7 @@ class New extends React.Component {
 
     updateAction(action, value) {
         let tmp = {}
-        tmp["argument-" + action.id] = value
+        tmp["settings-" + action.id] = value
         this.setState(tmp)
     }
 
@@ -159,7 +159,7 @@ class New extends React.Component {
         let settings = []
         for (let index = 0; index < this.state.action.settings.length; index++) {
             let setting = this.state.action.settings[index]
-            let value = this.state["argument-" + setting.id]
+            let value = this.state["settings-" + setting.id]
             if (value == undefined) {
                 value = setting.default
             }
@@ -189,7 +189,7 @@ class New extends React.Component {
     render() {
         return (
             <div>
-                <Paper elevation={2} style={{ padding: 10, justifyContent: 'left' }}>
+                <Paper variant="outlined" style={{ padding: 10, justifyContent: 'left' }}>
                     <div style={{ justifyContent: 'start', alignSelf: 'start', alignContent: 'start', alignItems: 'start', padding: 10 }}>
                         <TextField
                             onChange={(event) => { this.setState({ reference: event.nativeEvent.target.value }) }}
@@ -217,8 +217,8 @@ class New extends React.Component {
                         <Popover
                             open={this.state.popup}
                             onClose={() => { this.setState({ popup: false }) }}
-                            anchorOrigin={{ vertical: 'top',  horizontal: 'center', }}
-                            transformOrigin={{  vertical: 'top', horizontal: 'center', }}
+                            anchorOrigin={{ vertical: 'top', horizontal: 'center', }}
+                            transformOrigin={{ vertical: 'top', horizontal: 'center', }}
                         >
                             <IconList onSelect={(icon) => { this.setState({ icon: icon, popup: false }) }} />
                         </Popover>
@@ -230,10 +230,10 @@ class New extends React.Component {
                         />
                         <FormControl variant="outlined" style={{ margin: 10, width: '150px' }} >
                             <InputLabel>Espace</InputLabel>
-                            <Select onChange={(event) => { this.setState({ espace: event.target.value }) }} label="Espace" >
+                            <Select value={this.state.espace ? this.state.espace.id : ''} onChange={(event) => { this.setState({ espace: event.target.value }) }} label="Espace" >
                                 {
-                                    this.state.espaces.map(espace => {
-                                        return <MenuItem value={espace.id} >{espace.name}</MenuItem>
+                                    this.state.espaces.map((espace, index) => {
+                                        return <MenuItem key={index} value={espace.id} >{espace.name}</MenuItem>
                                     })
                                 }
                             </Select>
@@ -252,207 +252,235 @@ class New extends React.Component {
                                 <Typography variant='subtitle1'>Switch</Typography>
                             </Grid>
                         </Grid>
-                        <TableContainer style={{ padding: 10, margin: 10 }} component={Paper}>
-                            {
-                                this.state.mode === 'switch' ?
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <TextField
-                                            onChange={(event) => { this.setState({ name_enable: event.nativeEvent.target.value }) }}
-                                            style={{ width: '45%', margin: 10 }}
-                                            label="Texte actif"
-                                            variant="outlined"
-                                        />
-                                        <TextField
-                                            onChange={(event) => { this.setState({ name_disable: event.nativeEvent.target.value }) }}
-                                            style={{ width: '45%', margin: 10 }}
-                                            label="Texte passif"
-                                            variant="outlined"
-                                        />
-                                    </div> :
-                                    <div >
-                                        <TextField
-                                            onChange={(event) => { this.setState({ name: event.nativeEvent.target.value }) }}
-                                            style={{ margin: 10, width: '45%' }}
-                                            label="Texte"
-                                            variant="outlined"
-                                        />
-                                    </div>
-                            }
-                        </TableContainer>
+                        <Paper variant="outlined">
+                            <TableContainer>
+                                {
+                                    this.state.mode === 'switch' ?
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            <TextField
+                                                onChange={(event) => { this.setState({ name_enable: event.nativeEvent.target.value }) }}
+                                                style={{ width: '45%', margin: 10 }}
+                                                label="Texte actif"
+                                                variant="outlined"
+                                            />
+                                            <TextField
+                                                onChange={(event) => { this.setState({ name_disable: event.nativeEvent.target.value }) }}
+                                                style={{ width: '45%', margin: 10 }}
+                                                label="Texte passif"
+                                                variant="outlined"
+                                            />
+                                        </div> :
+                                        <div >
+                                            <TextField
+                                                onChange={(event) => { this.setState({ name: event.nativeEvent.target.value }) }}
+                                                style={{ margin: 10, width: '45%' }}
+                                                label="Texte"
+                                                variant="outlined"
+                                            />
+                                        </div>
+                                }
+                            </TableContainer>
+                        </Paper>
                         <Typography variant='h5' style={{ margin: 10 }}>
                             Argument
                         </Typography>
-                        <TableContainer style={{ padding: 10, margin: 10 }} component={Paper}>
-                            <TextField
-                                value={this.state.inputReference}
-                                onChange={(event) => { this.setState({ inputReference: event.nativeEvent.target.value }) }}
-                                style={{ width: '30%', margin: 10 }}
-                                label="Reference"
-                                variant="outlined"
-                            />
-                            <TextField
-                                value={this.state.inputName}
-                                onChange={(event) => { this.setState({ inputName: event.nativeEvent.target.value }) }}
-                                style={{ width: '30%', margin: 10 }}
-                                label="Name"
-                                variant="outlined"
-                            />
-                            <FormControl variant="outlined" style={{ margin: 10, width: '25%' }} >
-                                <InputLabel>Type</InputLabel>
-                                <Select value={this.state.inputType} onChange={(event) => { this.setState({ inputType: event.target.value }) }} label="Type" >
-                                    <MenuItem value={"text"} >{"Text"}</MenuItem>
-                                    <MenuItem value={"colorpicker"} >{"Color picker"}</MenuItem>
-                                    <MenuItem value={"number"} >{"Number"}</MenuItem>
-                                    <MenuItem value={"slider"} >{"Slider"}</MenuItem>
-                                </Select>
-                            </FormControl>
-                            {
-                                this.state.mode === 'switch' ?
-                                    <Checkbox onChange={(event, checked) => { this.setState({ inputMode: checked }) }} /> : null
-                            }
-                            <Button style={{ margin: 10 }} onClick={() => { this.setInput() }} variant='outlined'>
-                                Ajouter
-                            </Button>
-                            <Table>
-                                <TableBody>
-                                    {
-                                        this.state.inputs.map((modeArgument, index) => {
-                                            return (
-                                                <TableRow onClick={() => { }} hover style={{ cursor: 'pointer' }}>
-                                                    <TableCell align="left">
-                                                        <Typography variant='body1'>
-                                                            {modeArgument.reference}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <Typography variant='body1'>
-                                                            {modeArgument.name}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <Typography variant='body1'>
-                                                            {modeArgument.type}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    {
-                                                        this.state.mode === 'switch' ?
-                                                            <TableCell align="center">
-                                                                <Checkbox disabled defaultChecked={modeArgument.mode} />
-                                                            </TableCell> : null
-                                                    }
-                                                    <TableCell align="right">
-                                                        <IconButton onClick={() => { this.removeModeArgument(index) }}>
-                                                            <Delete />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        })
-                                    }
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <Typography variant='h5' style={{ margin: 10 }}>Action </Typography>
-                        <TableContainer style={{ padding: 10, margin: 10 }} component={Paper}>
-                            <Table>
-                                <TableBody>
-                                    {
-                                        this.state.arrSources.map((action, index) => {
-                                            return (
-                                                <TableRow onClick={() => { }} hover style={{ cursor: 'pointer' }}>
-                                                    <TableCell align="left">
-                                                        <Typography variant='body1'>
-                                                            {action.source.name}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <Typography variant='body1'>
-                                                            {action.action.name}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <Typography variant='body1'>
+                        <Paper variant="outlined">
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow key={0} onClick={() => { }}  >
+                                            <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                <TextField
+                                                    value={this.state.inputReference}
+                                                    onChange={(event) => { this.setState({ inputReference: event.nativeEvent.target.value }) }}
+
+                                                    label="Reference"
+                                                    variant="outlined"
+                                                />
+                                            </TableCell>
+                                            <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                <TextField
+                                                    value={this.state.inputName}
+                                                    onChange={(event) => { this.setState({ inputName: event.nativeEvent.target.value }) }}
+
+                                                    label="Name"
+                                                    variant="outlined"
+                                                />
+                                            </TableCell>
+                                            <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                <FormControl variant="outlined" style={{ width: 150 }} >
+                                                    <InputLabel>Type</InputLabel>
+                                                    <Select value={this.state.inputType ? this.state.inputType : ""} onChange={(event) => { this.setState({ inputType: event.target.value }) }} label="Type" >
+                                                        <MenuItem key={1} value={"text"} >{"Text"}</MenuItem>
+                                                        <MenuItem key={2} value={"colorpicker"} >{"Color picker"}</MenuItem>
+                                                        <MenuItem key={3} value={"number"} >{"Number"}</MenuItem>
+                                                        <MenuItem key={4} value={"slider"} >{"Slider"}</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </TableCell>
+                                            <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                {
+                                                    this.state.mode === 'switch' ?
+                                                        <Checkbox onChange={(event, checked) => { this.setState({ inputMode: checked }) }} /> : null
+                                                }
+                                            </TableCell>
+                                            <TableCell align="right" style={{borderBottomWidth: 0}}>
+                                                <IconButton onClick={() => { this.setInput() }} style={{ borderRadius: 5, margin: 0 }}>
+                                                    <Add />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {
+                                            this.state.inputs.map((modeArgument, index) => {
+                                                return (
+                                                    <TableRow key={index} onClick={() => { }} hover style={{ cursor: 'pointer' }}>
+                                                        <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                            <Typography variant='body1'>
+                                                                {modeArgument.reference}
+                                                            </Typography>
+                                                        </TableCell>
+                                                        <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                            <Typography variant='body1'>
+                                                                {modeArgument.name}
+                                                            </Typography>
+                                                        </TableCell>
+                                                        <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                            <Typography variant='body1'>
+                                                                {modeArgument.type}
+                                                            </Typography>
+                                                        </TableCell>
+                                                        <TableCell align="center" style={{borderBottomWidth: 0}}>
                                                             {
-                                                                action.arguments.map(argument => {
+                                                                this.state.mode === 'switch' ?
+                                                                    <Checkbox disabled defaultChecked={modeArgument.mode} />
+                                                                    : null
+                                                            }
+                                                        </TableCell>
+                                                        <TableCell align="right" style={{borderBottomWidth: 0}}>
+                                                            <IconButton onClick={() => { this.removeModeArgument(index) }}>
+                                                                <Delete />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Paper>
+
+                        <Typography variant='h5' style={{ margin: 10 }}>Action</Typography>
+                        <Paper variant="outlined">
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow >
+                                            <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                <FormControl fullWidth >
+                                                    <InputLabel>Source</InputLabel>
+                                                    <Select value={this.state.source ? this.state.source.id : ''} onChange={(event) => { this.setSource(event.target.value) }} label="Connexion" >
+                                                        {
+                                                            this.state.sources.map((source, pIndex) => {
+                                                                return <MenuItem key={pIndex} value={source.id} >{source.name}</MenuItem>
+                                                            })
+                                                        }
+                                                    </Select>
+                                                </FormControl>
+                                            </TableCell>
+                                            <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                {
+                                                    this.state.source ?
+                                                        <FormControl fullWidth style={{ minWidth: 150 }} >
+                                                            <InputLabel>Action</InputLabel>
+                                                            <Select value={this.state.action ? this.state.action.id : ''} onChange={(event) => { this.setAction(event.target.value) }} label="Connexion" >
+                                                                {
+                                                                    this.state.source.actions.map((action, index) => {
+                                                                        return <MenuItem key={index} value={action.id} >{action.name}</MenuItem>
+                                                                    })
+                                                                }
+                                                            </Select>
+                                                        </FormControl>
+                                                        : null
+                                                }
+                                            </TableCell>
+                                            <TableCell align="left" style={{borderBottomWidth: 0}}>
+                                                {
+                                                    this.state.action ?
+                                                        this.state.action.settings.map((argument, index) => {
+                                                            return (
+                                                                <div key={index} style={{ marginTop: 5, marginBottom: 2 }} >
+                                                                    <TextField variant="outlined" placeholder={argument.id} onChange={(event) => { this.updateAction(argument, event.currentTarget.value, this.state.action) }} />
+                                                                </div>
+                                                            )
+                                                        }) : null
+                                                }
+                                            </TableCell>
+                                            <TableCell align="center" style={{borderBottomWidth: 0}}>
+                                                {this.state.mode === 'simple' ? null :
+                                                    <Checkbox onChange={(event, checked) => { this.setState({ isChecked: checked }) }} />
+                                                }
+                                            </TableCell>
+                                            <TableCell align="right" style={{borderBottomWidth: 0}}>
+                                                <IconButton onClick={() => { this.confirmationModule() }} style={{ borderRadius: 5, margin: 0 }}>
+                                                    <Add />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {
+                                            this.state.arrSources.map((action, index) => {
+                                                return (
+                                                    <TableRow key={index} onClick={() => { }} hover style={{ cursor: 'pointer' }}>
+                                                        <TableCell style={{borderBottomWidth: 0}} align="left">
+                                                            <Typography variant='body1'>
+                                                                {action.source.name}
+                                                            </Typography>
+                                                        </TableCell>
+                                                        <TableCell style={{borderBottomWidth: 0}} align="left">
+                                                            <Typography variant='body1'>
+                                                                {action.action.name}
+                                                            </Typography>
+                                                        </TableCell>
+                                                        <TableCell style={{borderBottomWidth: 0}} align="left">
+                                                            {
+                                                                action.arguments.map((argument, pIndex) => {
                                                                     return (
-                                                                        <Typography variant='body1'>
+                                                                        <Typography key={pIndex} variant='body1'>
                                                                             {argument.reference + " : " + argument.value}
                                                                         </Typography>
                                                                     )
                                                                 })
                                                             }
-                                                        </Typography>
-                                                    </TableCell>
-                                                    {this.state.mode === 'simple' ? null : <TableCell align="center">
-                                                        <Checkbox disabled defaultChecked={action.enable} />
-                                                    </TableCell>}
-                                                    <TableCell align="center">
-                                                        <IconButton onClick={() => { this.removeSource(index) }}>
-                                                            <Delete />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        })
-                                    }
-                                    <TableRow >
-                                        <TableCell align="left" style={{ minWidth: '30%' }}>
-                                            <FormControl fullWidth>
-                                                <InputLabel>Source</InputLabel>
-                                                <Select value={this.state.source ? this.state.source.id : null} onChange={(event) => { this.setSource(event.target.value) }} label="Connexion" >
-                                                    {
-                                                        this.state.sources.map(source => {
-                                                            return <MenuItem value={source.id} >{source.name}</MenuItem>
-                                                        })
-                                                    }
-                                                </Select>
-                                            </FormControl>
-                                        </TableCell>
-                                        <TableCell align="left" style={{ width: '30%' }}>
-                                            {
-                                                this.state.source ?
-                                                    <FormControl fullWidth >
-                                                        <InputLabel>Action</InputLabel>
-                                                        <Select value={this.state.action ? this.state.action.id : null} onChange={(event) => { this.setAction(event.target.value) }} label="Connexion" >
-                                                            {
-                                                                this.state.source.actions.map(action => {
-                                                                    return <MenuItem value={action.id} >{action.name}</MenuItem>
-                                                                })
+                                                        </TableCell>
+                                                        <TableCell style={{borderBottomWidth: 0}} align="center">
+                                                            {this.state.mode === 'simple' ? null :
+                                                                <Checkbox disabled defaultChecked={action.enable} />
                                                             }
-                                                        </Select>
-                                                    </FormControl>
-                                                    : null
-                                            }
-                                        </TableCell>
-                                        <TableCell align="left" style={{ width: '30%' }}>
-                                            <div>
-                                            </div>
-                                            {
-                                                this.state.action ?
-                                                    this.state.action.settings.map(argument => {
-                                                        return (
-                                                            <div style={{ marginLeft: 10, marginRight: 10, marginTop: 5, marginBottom: 2 }} >
-                                                                <TextField variant="outlined" placeholder={argument.id} onChange={(event) => { this.updateAction(argument, event.currentTarget.value, this.state.action) }} />
-                                                            </div>
-                                                        )
-                                                    }) : null
-                                            }
-                                        </TableCell>
-                                        {this.state.mode === 'simple' ? null :
-                                            <TableCell align="center">
-                                                <Checkbox onChange={(event, checked) => { this.setState({ isChecked: checked }) }} />
-                                            </TableCell>
+                                                        </TableCell>
+                                                        <TableCell style={{borderBottomWidth: 0}} align="right">
+                                                            <IconButton onClick={() => { this.removeSource(index) }}>
+                                                                <Delete />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })
                                         }
-                                    </TableRow>
-                                    <Button style={{ margin: 10 }} onClick={() => { this.confirmationModule() }} variant='outlined'>
-                                        Ajouter
-                                    </Button>
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Paper>
                     </div>
-                    <Button style={{ margin: 10 }} onClick={() => { this.set() }} variant='outlined'>Save</Button>
                 </Paper>
+                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
+                        <IconButton onClick={() => { this.set()  }} style={{ borderRadius: 5 }}>
+                            <Save />
+                        </IconButton>
+                    </Paper>
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}> {this.state.message} </Alert>
             </div>
         )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Popover, InputAdornment, FormControlLabel, Modal, Fade, Select, MenuItem, Checkbox, Slider, FormControl, InputLabel, Card, Typography, Button, TextField, IconButton, Paper } from '@material-ui/core'
+import { Popover, InputAdornment, FormControlLabel, Modal, Fade, Select, MenuItem, Checkbox, Slider, FormControl, InputLabel, Card, Typography, Button, TextField, IconButton, Paper } from '@mui/material'
 import { Save, Add, List, Cached } from '@mui/icons-material'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
@@ -92,7 +92,7 @@ class NewRoutine extends React.Component {
             let settings = []
             for (let index = 0; index < this.state.action.settings.length; index++) {
                 let setting = this.state.action.settings[index];
-                let value = this.state["argument-" + setting.id]
+                let value = this.state["settings-" + setting.id]
                 if (value == undefined) {
                     value = setting.default
                 }
@@ -129,7 +129,7 @@ class NewRoutine extends React.Component {
             let settings = []
             for (let index = 0; index < this.state.action.settings.length; index++) {
                 let setting = this.state.action.settings[index];
-                let value = this.state["argument-" + setting.id]
+                let value = this.state["settings-" + setting.id]
                 if (value == undefined) {
                     value = setting.default
                 }
@@ -193,7 +193,7 @@ class NewRoutine extends React.Component {
         if (this.state.routine) {
             return (
                 <div>
-                    <Paper elevation={2} style={{ padding: 10, justifyContent: 'left' }}>
+                    <Paper variant="outlined" style={{ padding: 10, justifyContent: 'left' }}>
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <TextField onChange={(event) => { this.updateName(event.nativeEvent.target.value) }} style={{ width: '49%' }} value={this.state.routine.name} label="Name" variant='outlined'></TextField>
@@ -251,10 +251,10 @@ class NewRoutine extends React.Component {
                             <div style={{ flex: 1, padding: 5 }} >
                                 <Typography variant="subtitle1"  >Trigger</Typography>
 
-                                <Card style={{ textTransform: 'none', padding: 15, marginTop: 5, marginRight: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)', height: 'min-content' }}>   {
+                                <Paper variant="outlined"  style={{ textTransform: 'none', padding: 15, marginTop: 5, marginRight: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25,  height: 'min-content' }}>   {
                                     this.state.routine.triggers.map((trigger, index) => {
                                         return (
-                                            <div onClick={() => this.removeTrigger(index)} style={{ textTransform: 'none', padding: 15, marginTop: 5, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)', height: 'min-content', marginBottom: 10 }}>
+                                            <Paper variant="outlined" onClick={() => this.removeTrigger(index)} style={{ textTransform: 'none', padding: 15, marginTop: 5, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)', height: 'min-content', marginBottom: 10 }}>
                                                 <div  >
                                                     <Typography variant="body2"  >{"Type : " + trigger.type} </Typography>
                                                     <Typography variant="body2"  >{"Reference : " + trigger.source}</Typography>
@@ -284,18 +284,18 @@ class NewRoutine extends React.Component {
                                                         </div>
                                                         : null
                                                 }
-                                            </div>
+                                            </Paper>
                                         )
                                     })
                                 }
-                                    <Button onClick={() => { this.reset(); this.setState({ modalTrigger: true }) }} style={{ width: '100%', borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                    <Button color='inherit' onClick={() => { this.reset(); this.setState({ modalTrigger: true }) }} style={{ width: '100%', borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
                                         <Add />
                                     </Button>
-                                </Card>
+                                </Paper>
                             </div>
                             <div style={{ flex: 1, padding: 5 }} >
                                 <Typography variant="subtitle1" >Effect</Typography>
-                                <Card style={{ textTransform: 'none', padding: 15, marginTop: 5, marginRight: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)', height: 'min-content' }}>
+                                <Paper variant="outlined"  style={{ textTransform: 'none', padding: 15, marginTop: 5, marginRight: 10, borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)', height: 'min-content' }}>
                                     {
                                         this.state.routine.effects.map((effect, index) => {
                                             return (
@@ -319,14 +319,14 @@ class NewRoutine extends React.Component {
                                             )
                                         })
                                     }
-                                    <Button onClick={() => { this.reset(); this.setState({ modalEffect: true }) }} style={{ width: '100%', borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
+                                    <Button color='inherit' onClick={() => { this.reset(); this.setState({ modalEffect: true }) }} style={{ width: '100%', borderStyle: 'solid', borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)' }}>
                                         <Add />
                                     </Button>
-                                </Card>
+                                </Paper>
                             </div>
                         </div>
                     </Paper>
-                    <Paper style={{ width: 'min-content', height: 'min-content', padding: 2, alignContent: 'center', alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginTop: 5 }}>
+                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                         <IconButton onClick={() => { this.save() }} style={{ borderRadius: 0 }} variant='outlined'>
                             <Save />
                         </IconButton>
@@ -336,7 +336,7 @@ class NewRoutine extends React.Component {
                     </Alert>
                     <Modal open={this.state.modalTrigger} onClose={() => { this.reset(); this.setState({ modalTrigger: false }) }} >
                         <Fade in={this.state.modalTrigger} >
-                            <Paper style={style}>
+                            <Paper style={style} variant="outlined">
                                 <div style={{ display: 'flex', flexDirection: 'column' }} >
                                     <Typography variant='h5' >
                                         New Trigger
@@ -395,7 +395,7 @@ class NewRoutine extends React.Component {
                                             <TextField variant="outlined" placeholder={"Expected"} value={this.state.expected} onChange={(event) => { this.setState({ expected: event.currentTarget.value }) }} style={{ width: '100%' }} />
                                         </div>
                                     </div>
-                                    <Button onClick={() => { this.addTrigger() }} variant='outlined' style={{ width: 'minContent', marginTop: 5 }}>
+                                    <Button color='inherit' onClick={() => { this.addTrigger() }} variant='outlined' style={{ width: 'minContent', marginTop: 5 }}>
                                         Save
                                     </Button>
                                 </div>
@@ -404,7 +404,7 @@ class NewRoutine extends React.Component {
                     </Modal>
                     <Modal open={this.state.modalEffect} onClose={() => { this.reset(); this.setState({ modalEffect: false }) }} >
                         <Fade in={this.state.modalEffect} >
-                            <Paper style={style}>
+                            <Paper style={style} variant="outlined">
                                 <div style={{ display: 'flex', flexDirection: 'column' }} >
                                     <Typography variant='h5' >
                                         New effect
@@ -446,7 +446,7 @@ class NewRoutine extends React.Component {
                                             </div>
                                             : null
                                     }
-                                    <Button onClick={() => { this.addEffect() }} variant='outlined' style={{ width: 'minContent', marginTop: 5 }}>
+                                    <Button color='inherit' onClick={() => { this.addEffect() }} variant='outlined' style={{ width: 'minContent', marginTop: 5 }}>
                                         Save
                                     </Button>
                                 </div>

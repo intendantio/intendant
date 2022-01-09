@@ -1,5 +1,5 @@
 import React from 'react'
-import { IconButton, Typography, TablePagination, TableRow, Table, TableCell, TableContainer, TableBody, Paper, TableHead, Button } from '@material-ui/core'
+import { IconButton, Typography, TablePagination, TableRow, Table, TableCell, TableContainer, TableBody, Paper, TableHead, Button } from '@mui/material'
 
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
@@ -60,10 +60,10 @@ class Configuration extends React.Component {
         let result = await fetch("https://market.intendant.io")
         let resultMarket = await result.json()
 
-        if(resultPing.error || resultSmartobject.error || resultModule.error) {
-            this.setState({ loading: false, severity: "error", enabled: true, message:  resultPing.package + " : " + resultPing.message })
-            return 
-        } 
+        if (resultPing.error || resultSmartobject.error || resultModule.error) {
+            this.setState({ loading: false, severity: "error", enabled: true, message: resultPing.package + " : " + resultPing.message })
+            return
+        }
 
         resultMarket = resultMarket.map(market => {
             market.mode = "install"
@@ -123,86 +123,91 @@ class Configuration extends React.Component {
     render() {
         return (
             <div>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align='left'>
-                                    <Typography variant='body1'>
-                                        Name
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align='left'>
-                                    <Typography variant='body1'>
-                                        Type
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <Typography variant='body1'>
-                                        Version
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <Typography variant='body1'>
-                                        Action
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {this.state.markets.slice(this.state.pageMarket * 20, (this.state.pageMarket + 1) * 20).map((pmodule) => (
-                                <TableRow hover key={pmodule.reference} style={{ cursor: 'pointer' }}>
-                                    <TableCell align="left">
+                <Paper variant="outlined">
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align='left' style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
                                         <Typography variant='body1'>
-                                            {pmodule.name}
+                                            Name
                                         </Typography>
-                                    </TableCell><TableCell align="left">
+                                    </TableCell>
+                                    <TableCell align='left' style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
                                         <Typography variant='body1'>
-                                            {pmodule.type}
+                                            Type
                                         </Typography>
-                                    </TableCell><TableCell align="center">
+                                    </TableCell>
+                                    <TableCell align='center' style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
                                         <Typography variant='body1'>
-                                            {pmodule.version}
+                                            Version
                                         </Typography>
-                                    </TableCell><TableCell align="center">
+                                    </TableCell>
+                                    <TableCell align='center' style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
                                         <Typography variant='body1'>
-                                            {
-                                                    pmodule.mode == "none" ? 
-                                                    <Typography variant='body1'>
-                                                        Updated
-                                                    </Typography>
-                                                        :
-                                                    pmodule.mode == "remove" ?
-                                                        <Button disabled={this.state.loading} size='small' startIcon={<Close />} onClick={() => { this.uninstall(pmodule.name) }} variant="outlined" >
-                                                            Remove
-                                                        </Button>
-                                                        :
-                                                        pmodule.mode == "upgrade" ?
-                                                            <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.upgrade(pmodule.name) }} variant="outlined" >
-                                                                Upgrade
-                                                            </Button>
-                                                            :
-                                                            pmodule.mode == "install" ?
-                                                                <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
-                                                                    Install
-                                                                </Button>
-                                                                :
-                                                                pmodule.mode == "update" ?
-                                                                    <Button disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
-                                                                        Update
-                                                                    </Button>
-                                                                    :
-                                                                    <Button disabled={true} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
-                                                                        Unknown
-                                                                    </Button>
-                                            }
+                                            Action
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {this.state.markets.slice(this.state.pageMarket * 20, (this.state.pageMarket + 1) * 20).map((pmodule) => (
+                                    <TableRow hover key={pmodule.reference} style={{ cursor: 'pointer' }}>
+                                        <TableCell style={{ borderBottom: 0 }}  align="left">
+                                            <Typography variant='body1'>
+                                                {pmodule.name}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell style={{ borderBottom: 0 }}  align="left">
+                                            <Typography variant='body1'>
+                                                {pmodule.type}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell style={{ borderBottom: 0 }}  align="center">
+                                            <Typography variant='body1'>
+                                                {pmodule.version}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell style={{ borderBottom: 0 }}  align="center">
+                                            <Typography variant='body1'>
+                                                {
+                                                    pmodule.mode == "none" ?
+                                                        <Typography variant='body1'>
+                                                            Updated
+                                                        </Typography>
+                                                        :
+                                                        pmodule.mode == "remove" ?
+                                                            <Button color='inherit' style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading} size='small' startIcon={<Close />} onClick={() => { this.uninstall(pmodule.name) }} variant="outlined" >
+                                                                Remove
+                                                            </Button>
+                                                            :
+                                                            pmodule.mode == "upgrade" ?
+                                                                <Button color='inherit' style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.upgrade(pmodule.name) }} variant="outlined" >
+                                                                    Upgrade
+                                                                </Button>
+                                                                :
+                                                                pmodule.mode == "install" ?
+                                                                    <Button color='inherit' style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                        Install
+                                                                    </Button>
+                                                                    :
+                                                                    pmodule.mode == "update" ?
+                                                                        <Button color='inherit' style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                            Update
+                                                                        </Button>
+                                                                        :
+                                                                        <Button color='inherit' style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={true} size='small' startIcon={<GetApp />} onClick={() => { this.install(pmodule.name) }} variant="outlined" disableElevation  >
+                                                                            Unknown
+                                                                        </Button>
+                                                }
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
                     <TablePagination
                         component="div"
@@ -210,7 +215,7 @@ class Configuration extends React.Component {
                         rowsPerPage={20}
                         page={this.state.pageMarket}
                         rowsPerPageOptions={[]}
-                        onChangePage={(event, page) => { this.setState({ pageMarket: page }) }}
+                        onPageChange={(event, page) => { this.setState({ pageMarket: page }) }}
                     />
                 </div>
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={this.state.severity}>

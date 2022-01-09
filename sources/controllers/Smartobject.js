@@ -223,6 +223,20 @@ class Smartobject extends Controller {
         }
     }
 
+    async updateStatus(idSmartobject,status) {
+        try {
+            let updateRequest = await this.sqlSmartobject.updateAll({ status: status }, { id: idSmartobject })
+            if (updateRequest.error) {
+                return updateRequest
+            }
+            return new Result(Package.name, false, "")
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update smartobject status")
+            return new Result(Package.name, true, "Error occurred when update smartobject status")
+        }
+    }
+
     async updateLocalisation(idSmartobject,idLocalisation) {
         try {
             let updateRequest = await this.sqlSmartobject.updateAll({ localisation: idLocalisation }, { id: idSmartobject })
@@ -278,7 +292,7 @@ class Smartobject extends Controller {
                                         }
                                     }
                                     this.smartobjectManager.update(smartObjectId)
-                                    return new Result(Package.name, false, "")
+                                    return this.getOne(smartObjectId)
                                 }
                             }
                         } else {

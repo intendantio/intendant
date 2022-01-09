@@ -13,6 +13,7 @@ declare class Smartobject extends Controller {
     public getOne(idSmartobject: Number): Promise<Result>
     public insertSmartobjectProfile(idSmartobject: Number, idProfile: Number): Promise<Result>
     public deleteSmartobjectProfile(idSmartobject: Number, idProfile: Number): Promise<Result>
+    public updateStatus(idSmartobject: Number, status: Number): Promise<Result>
     public updateLastUse(idSmartobject: Number): Promise<Result>
     public insert(pModule: String, reference: String, pArguments: Array<Object>): Promise<Result>
     public insert(pModule: String, reference: String, pArguments: Array<Object>): Promise<Result>

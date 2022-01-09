@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom"
 
-import { IconButton, Paper, TableBody, TableContainer, TableHead, TableCell, Table, TableRow, TablePagination, Typography } from '@material-ui/core'
+import { IconButton, Paper, TableBody, TableContainer, TableHead, TableCell, Table, TableRow, TablePagination, Typography } from '@mui/material'
 import { Add, Delete, FileCopy, PlayArrow, Edit, Pause } from '@mui/icons-material'
 
 import Alert from '../../../components/Alert'
@@ -68,20 +68,21 @@ class Routine extends React.Component {
     render() {
         return (
             <div>
-                <TableContainer component={Paper}>
+                <Paper variant="outlined">
+                <TableContainer>
                     <Table>
                         <TableBody>
                             {this.state.routines.slice(this.state.page * 10, (this.state.page + 1) * 10).map((routine) => (
                                 <TableRow key={routine.id} >
-                                    <TableCell align="left">
+                                    <TableCell align="left" style={{ borderBottom: 0 }}>
                                         <img style={{ width: 30, height: 30, filter: 'invert(100%)'  }} src={process.env.PUBLIC_URL + "/ressource/icon/" + routine.icon + ".svg"} />
                                     </TableCell>
-                                    <TableCell align="left">
+                                    <TableCell align="left" style={{ borderBottom: 0 }}>
                                         <Typography variant='body1'>
                                             {routine.name}
                                         </Typography>
                                     </TableCell>
-                                    <TableCell align="left">
+                                    <TableCell align="left" style={{ borderBottom: 0 }}>
                                         <div style={{ flex: 1, flexDirection: 'row', display: 'flex', alignContent: 'center', alignItems: 'center', justifyContent: 'end' }}>
                                             <IconButton onClick={() => { this.updateStatus(routine.id, routine.status === 0 ? 1 : 0) }} style={{ borderRadius: 3, padding: 8, marginLeft: 2, marginRight: 2, backgroundColor: routine.status === 1 ? Theme.palette.success.main : null }}>
                                                 {routine.status === 0 ? <PlayArrow /> : <Pause />}
@@ -102,15 +103,17 @@ class Routine extends React.Component {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                </Paper>
+           
                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                    <Paper style={{ width: 50, height: 50, marginTop: 10, padding: 5, marginBottom: 10, textAlign: 'center', justifyContent: 'space-around', alignContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                         <Link to="/routine/new" style={{ textDecoration: 'none', color: 'white' }}>
                             <IconButton style={{ borderRadius: 0 }}>
                                 <Add />
                             </IconButton>
                         </Link>
                     </Paper>
-                    <TablePagination component="div" count={this.state.routines.length} rowsPerPage={10} page={this.state.page} rowsPerPageOptions={[]} onChangePage={(event, page) => { this.setState({ page: page }) }} />
+                    <TablePagination component="div" count={this.state.routines.length} rowsPerPage={10} page={this.state.page} rowsPerPageOptions={[]} onPageChange={(event, page) => { this.setState({ page: page }) }} />
                 </div>
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                     {this.state.message}

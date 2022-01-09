@@ -115,7 +115,7 @@ class Authentification extends Controller {
                 let userRequest = await this.sqlUser.getOneByField({
                     login: jwt[1]
                 })
-                if(jwt[0] == "anonymous") {
+                if (jwt[0] == "anonymous") {
                     let result = new Result(Package.name, false, "")
                     result.profile = 1
                     result.user = 1

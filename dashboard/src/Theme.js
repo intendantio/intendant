@@ -1,23 +1,39 @@
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
-import * as Colors from '@material-ui/core/colors'
-
-export default responsiveFontSizes(createMuiTheme({
+import { createTheme, responsiveFontSizes } from '@mui/material/styles'
+import * as Colors from '@mui/material/colors'
+export default responsiveFontSizes(createTheme({
   palette: {
-    type: 'dark',
+    mode: 'dark',
     primary: {
-      main: Colors.pink[600],
+      main: 'rgba(255, 255, 255, 0.9)',
     },
     secondary: {
-      main: Colors.lightBlue[500],
+      main: Colors.indigo[500],
+    },
+    background: {
+      default: "#0A1929",
+      paper: "rgb(0, 30, 60)"
     },
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",
-    "fontWeightLight": 400,
-    "fontWeightRegular": 500,
-    "fontWeightMedium": 600
+    "fontWeightLight": 200,
+    "fontWeightRegular": 400,
+    "fontWeightMedium": 500,
+    "fontWeightBold": 600
   },
   shape: {
-    borderRadius: 4
+    borderRadius: 5
+  },
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          "&:-webkit-autofill": {
+            "-webkit-box-shadow": "0 0 0 100px var(--primary-weak) inset",
+            "-webkit-text-fill-color": "var(--text-primary)",
+          }
+        }
+      }
+    }
   }
 }))

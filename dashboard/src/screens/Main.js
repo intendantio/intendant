@@ -1,6 +1,7 @@
 import React from 'react'
 import SmartObject from './contents/SmartObject/List'
 import DetailSmartObject from './contents/SmartObject/Detail'
+import RedirectSmartObject from './contents/SmartObject/Redirect'
 import NewSmartObject from './contents/SmartObject/New'
 import ListProcess from './contents/Process/List'
 import NewProcess from './contents/Process/New'
@@ -10,7 +11,6 @@ import NewRoutine from './contents/Routine/New'
 import DetailRoutine from './contents/Routine/Detail'
 import Module from './contents/Module/List'
 import DetailModule from './contents/Module/Detail'
-import Configuration from './contents/Configuration/List'
 import Market from './contents/Market/List'
 import Widget from './contents/Widget/List'
 import NewWidget from './contents/Widget/New'
@@ -37,7 +37,7 @@ class Main extends React.Component {
     }
 
     componentDidMount() {
-        this.mediaQueries('(max-width: 900px)')
+        this.mediaQueries('(max-width: 900px),(max-height: 560px)')
     }
 
     mediaQueries(query) {
@@ -51,11 +51,12 @@ class Main extends React.Component {
         return (
             <Router basename='/admin'>
                 <Sidebar isMobile={this.state.isMobile} onDisconnect={() => { this.props.onDisconnect() }} />
-                <main style={{ padding: 20, width: this.state.isMobile ? '95vw' :  '80vw', height: '100vh' }} >
-                    <div style={{ marginLeft: this.state.isMobile ? 0 : 240, marginTop: this.state.isMobile ? 0 : 32 }}>
+                <main style={{  width:  '100vw', paddingLeft:'10vw', paddingRight: '10vw', overflowX:  'hidden', overflowY: 'visible' }} >
+                    <div style={{paddingTop: '5vh', marginLeft: this.state.isMobile ? 0 : 240, marginTop: this.state.isMobile ? 16 : 0, height:'100vh' }}>
                         <Switch>
                             <Route exact path="/smartobject" component={SmartObject} />
                             <Route exact path="/smartobject/new" component={NewSmartObject} />
+                            <Route exact path="/smartobject/redirect/:object" component={RedirectSmartObject} />
                             <Route exact path="/smartobject/:id" component={DetailSmartObject} />
                             <Route exact path="/module" component={Module} />
                             <Route exact path="/module/:id" component={DetailModule} />
@@ -74,7 +75,6 @@ class Main extends React.Component {
                             <Route exact path="/user" component={User} />
                             <Route exact path="/user/new" component={NewUser} />
                             <Route exact path="/user/:id/password" component={NewPassword} />
-                            <Route exact path="/configuration" component={Configuration} />
                             <Route exact path="/market" component={Market} />
                             <Route exact path="/localisation" component={Localisation} />
                             <Route exact path="/localisation/new" component={NewLocalisation} />

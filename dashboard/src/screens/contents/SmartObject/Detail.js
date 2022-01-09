@@ -1,8 +1,7 @@
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
-import { Paper, Typography, TableContainer,FormControl,InputLabel,Select,MenuItem, TableBody, Divider, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
-import { FileCopy, Delete, Close, Add } from '@mui/icons-material'
+import { Paper, Alert, Typography, TableContainer, Table, FormControl, Box, Select, MenuItem, TableBody, Divider, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch } from '@mui/material'
+import { FileCopy, Delete, Close, Add, Send } from '@mui/icons-material'
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
@@ -47,11 +46,11 @@ class DetailSmartObject extends React.Component {
     }
 
     async executeAction(action, settings) {
-        this.setState({loading: action})
+        this.setState({ loading: action })
         let tmp = {}
         for (let index = 0; index < settings.length; index++) {
             let argument = settings[index];
-            let value = this.state["argument-" + argument.id]
+            let value = this.state["settings-" + argument.id]
             if (value == undefined) {
                 value = argument.default
             }
@@ -88,7 +87,7 @@ class DetailSmartObject extends React.Component {
     }
 
     async insertProfile(smartobject, profile) {
-        let result = await new Request().post({idProfile: profile.id, }).fetch("/api/smartobjects/" + smartobject.id + "/profiles")
+        let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/smartobjects/" + smartobject.id + "/profiles")
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -105,8 +104,8 @@ class DetailSmartObject extends React.Component {
         }
     }
 
-    async updateLocalisation(smartobject,localisation) {
-        let result = await new Request().post({idLocalisation: localisation.id, }).fetch("/api/smartobjects/" + smartobject.id + "/localisation")
+    async updateLocalisation(smartobject, localisation) {
+        let result = await new Request().post({ idLocalisation: localisation.id, }).fetch("/api/smartobjects/" + smartobject.id + "/localisation")
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -114,12 +113,12 @@ class DetailSmartObject extends React.Component {
         }
     }
 
-    
+
     setLocalisation(id) {
         this.state.localisations.forEach(pLocalisation => {
             if (pLocalisation.id === id) {
                 this.state.smartobject.localisation = pLocalisation
-                this.updateLocalisation(this.state.smartobject,pLocalisation)
+                this.updateLocalisation(this.state.smartobject, pLocalisation)
             }
         })
     }
@@ -128,8 +127,8 @@ class DetailSmartObject extends React.Component {
         if (this.state.smartobject) {
             return (
                 <div>
-                    <Paper elevation={2} style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
-                        <div style={{ padding: 10 }}>
+                    <Paper variant="outlined" style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
+                        <div style={{ padding: 10, }}>
                             <Typography variant='h4' >
                                 {this.state.smartobject.reference}
                             </Typography>
@@ -142,70 +141,77 @@ class DetailSmartObject extends React.Component {
                             <Typography variant='h5' >
                                 Configuration
                             </Typography>
-                            <div style={{ marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'row' }}>
-                                <TableContainer component={Paper} >
-                                    <TableBody>
-                                        {this.state.smartobject.arguments.map((pArgument) => (
-                                            <TableRow key={pArgument.id} >
-                                                <TableCell align="left">
-                                                    <Typography variant='subtitle1'>
-                                                        {pArgument.reference}
-                                                    </Typography>
+                            <Paper variant="outlined" style={{ marginTop: 10 }}>
+                                <TableContainer>
+                                    <Table >
+                                        <TableBody >
+                                            {this.state.smartobject.arguments.map((pArgument, index) => (
+                                                <TableRow key={index} >
+                                                    <TableCell style={{ borderBottom: 0 }} align="left">
+                                                        <Typography variant='subtitle1'>
+                                                            {pArgument.reference}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="left" style={{ width: '70%', borderBottom: 0 }}>
+                                                        <Typography variant='subtitle1'>
+                                                            {pArgument.value.slice(0, 50) + (pArgument.value.length > 50 ? " (...)" : "")}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell align="right" style={{ padding: 4, borderBottom: 0 }}>
+                                                        <IconButton onClick={() => { navigator.clipboard.writeText(pArgument.value) }} style={{ borderRadius: 5, margin: 0 }}>
+                                                            <FileCopy />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                    <TableCell align="right" style={{ padding: 4, borderBottom: 0 }}>
+                                                        <IconButton onClick={() => { this.deleteSmartobjectArguments(pArgument) }} style={{ borderRadius: 5, margin: 0 }}>
+                                                            <Delete />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                            <TableRow key={-1} >
+                                                <TableCell style={{ borderBottom: 0 }} align="left">
+                                                    <TextField value={this.state.referenceArguments} onChange={(event) => { this.setState({ referenceArguments: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
+                                                    </TextField>
                                                 </TableCell>
-                                                <TableCell align="left" style={{ width: '70%' }}>
-                                                    <Typography variant='subtitle1'>
-                                                        {pArgument.value.slice(0, 50) + (pArgument.value.length > 50 ? " (...)" : "")}
-                                                    </Typography>
+                                                <TableCell style={{ borderBottom: 0 }} align="left">
+                                                    <TextField value={this.state.valueArguments} onChange={(event) => { this.setState({ valueArguments: event.nativeEvent.target.value }) }} placeholder='Value' style={{ width: '100%' }}>
+                                                    </TextField>
                                                 </TableCell>
-                                                <TableCell align="right" style={{ padding: 4 }}>
-                                                    <IconButton onClick={() => { navigator.clipboard.writeText(pArgument.value) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                        <FileCopy />
-                                                    </IconButton>
+                                                <TableCell style={{ borderBottom: 0 }} align="left">
                                                 </TableCell>
-                                                <TableCell align="right" style={{ padding: 4 }}>
-                                                    <IconButton onClick={() => { this.deleteSmartobjectArguments(pArgument) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                        <Delete />
+                                                <TableCell align="right" style={{ padding: 4, borderBottom: 0 }}>
+                                                    <IconButton onClick={() => { this.insertSmartobjectArguments(this.state.smartobject.id, this.state.referenceArguments, this.state.valueArguments) }} style={{ borderRadius: 5, margin: 0 }}>
+                                                        <Add />
                                                     </IconButton>
                                                 </TableCell>
                                             </TableRow>
-                                        ))}
-                                        <TableRow key={"-1"} >
-                                            <TableCell align="left">
-                                                <TextField value={this.state.referenceArguments} onChange={(event) => { this.setState({ referenceArguments: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
-                                                </TextField>
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                <TextField value={this.state.valueArguments} onChange={(event) => { this.setState({ valueArguments: event.nativeEvent.target.value }) }} placeholder='Value' style={{ width: '100%' }}>
-                                                </TextField>
-                                            </TableCell>
-                                            <TableCell align="right" style={{ padding: 4 }}>
-                                                <IconButton onClick={() => { this.insertSmartobjectArguments(this.state.smartobject.id, this.state.referenceArguments, this.state.valueArguments) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                    <Add />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
+                                        </TableBody>
+                                    </Table>
                                 </TableContainer>
-                            </div>
+                            </Paper>
                         </div>
                         <div style={{ padding: 10, paddingBottom: 0 }}>
                             <Typography variant='h5' >
                                 {"Action"}
                             </Typography>
                             {
-                                this.state.smartobject.actions.map(action => {
+                                this.state.smartobject.actions.map((action, index) => {
                                     return (
-                                        <Paper style={{ padding: 10, marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '100%' }}>
-                                            <Button disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={this.state.loading == action.id ? 'contained' : 'outlined'} style={{ width: '250px', height: '100%' }} >
-                                                {action.name}
-                                            </Button>
-                                            
+                                        <Paper variant="outlined" key={index} style={{ padding: 10, marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '100%' }}>
+                                            <Box >
+                                                <Button style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={'outlined'}  >
+                                                    <Typography variant='body2'  >
+                                                        {action.name}
+                                                    </Typography>
+                                                </Button>
+                                            </Box>
                                             {
                                                 action.settings.length > 0 ?
-                                                    <div style={{ display: 'grid', gridRowGap:'10px', gridTemplateColumns: 'repeat(5,min-content)' , marginTop: 10, marginBottom: 10 }}>
+                                                    <div style={{ display: 'grid', gridRowGap: '10px', gridTemplateColumns: 'repeat(4,min-content)', marginTop: 10, marginBottom: 10 }}>
                                                         {
-                                                            action.settings.map(setting => {
-                                                                return <Action flexDirection='column' orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
+                                                            action.settings.map((setting, pIndex) => {
+                                                                return <Action key={pIndex} flexDirection='column' orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
                                                             })
                                                         }
                                                     </div> : null
@@ -233,25 +239,21 @@ class DetailSmartObject extends React.Component {
                             <Typography variant='h5' >
                                 Localisation
                             </Typography>
-                            <div style={{ marginTop: 20, marginBottom: 10, display: 'flex', flexDirection: 'row' }}>
-                                <FormControl variant="outlined" style={{ marginRight: 10, width: '300px' }} >
-                                    <InputLabel>Localisation</InputLabel>
-                                    <Select value={this.state.smartobject.localisation.id} onChange={(event) => { this.setLocalisation(event.target.value) }} label="Connexion" >
-                                        {
-                                            this.state.localisations.map(pLocalisation => {
-                                                return <MenuItem value={pLocalisation.id} >{pLocalisation.name}</MenuItem>
-                                            })
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </div>
-                        </div>
-                        <div style={{ padding: 10, paddingBottom: 0 }}>
+                            <FormControl variant="outlined" style={{ marginRight: 10, width: '300px', marginTop: 10 }} >
+                                <Select value={this.state.smartobject.localisation.id} onChange={(event) => { this.setLocalisation(event.target.value) }} >
+                                    {
+                                        this.state.localisations.map((pLocalisation, index) => {
+                                            return <MenuItem key={index} value={pLocalisation.id} >{pLocalisation.name}</MenuItem>
+                                        })
+                                    }
+                                </Select>
+                            </FormControl>
+                            <div style={{marginTop: 10}}>
                             <Typography variant='h5' >
                                 Authorization
                             </Typography>
                             {
-                                this.state.profiles.map(profile => {
+                                this.state.profiles.map((profile, index) => {
                                     let state = false
                                     this.state.smartobject.profiles.forEach(pprofile => {
                                         if (pprofile.profile == profile.id) {
@@ -259,12 +261,12 @@ class DetailSmartObject extends React.Component {
                                         }
                                     })
                                     return (
-                                        <ListItem style={{ padding: 1 }}  >
+                                        <ListItem key={index} style={{ padding: 1 }}  >
                                             <FormControlLabel control={
                                                 <Switch
                                                     checked={state}
-                                                    onChange={() => { 
-                                                        state ? this.deleteProfile(this.state.smartobject,profile) : this.insertProfile(this.state.smartobject,profile)
+                                                    onChange={() => {
+                                                        state ? this.deleteProfile(this.state.smartobject, profile) : this.insertProfile(this.state.smartobject, profile)
                                                     }}
                                                     color="primary"
                                                 />
@@ -273,15 +275,16 @@ class DetailSmartObject extends React.Component {
                                     )
                                 })
                             }
+                            </div>
                         </div>
                     </Paper>
-                    <Paper style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
+                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
                         <IconButton onClick={() => { this.delete(this.state.id) }} style={{ borderRadius: 5 }}>
                             <Delete />
                         </IconButton>
                     </Paper>
                     <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        { this.state.message }
+                        {this.state.message}
                     </AlertComponent>
                 </div>
             )

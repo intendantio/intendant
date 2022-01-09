@@ -87,7 +87,8 @@ class SmartobjectManager {
                 }
                 let settings = settingsRequest.data
                 let pSettings = {
-                    _id: smartobject.id.toString()
+                    _id: smartobject.id.toString(),
+                    _reference: smartobject.reference
                 }
                 for (let index = 0; index < settings.length; index++) {
                     let setting = settings[index]

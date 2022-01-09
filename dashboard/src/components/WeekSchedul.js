@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Button, IconButton } from '@material-ui/core'
+import { TextField, Button, IconButton } from '@mui/material'
 import { Save, Cached } from '@mui/icons-material'
 
 class Week extends React.Component {
@@ -46,25 +46,25 @@ class Week extends React.Component {
                     </div>
                 }
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
-                    <Button fullWidth size='small' variant={this.state.sunday ? 'contained' : 'outlined'} onClick={() => {this.setState({sunday: !this.state.sunday},() => {this.calculate()})}}  >{"Sunday"}</Button>
+                    <Button color='inherit' fullWidth size='small' variant={this.state.sunday ? 'contained' : 'outlined'} onClick={() => {this.setState({sunday: !this.state.sunday},() => {this.calculate()})}}  >{"Sunday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
-                    <Button fullWidth size='small' variant={this.state.monday ? 'contained' : 'outlined'} onClick={() => {this.setState({monday: !this.state.monday},() => {this.calculate()})}} >{"Monday"}</Button>
+                    <Button color='inherit' fullWidth size='small' variant={this.state.monday ? 'contained' : 'outlined'} onClick={() => {this.setState({monday: !this.state.monday},() => {this.calculate()})}} >{"Monday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
-                    <Button fullWidth size='small' variant={this.state.tuesday ? 'contained' : 'outlined'} onClick={() => {this.setState({tuesday: !this.state.tuesday},() => {this.calculate()})}} >{"Tuesday"}</Button>
+                    <Button color='inherit' fullWidth size='small' variant={this.state.tuesday ? 'contained' : 'outlined'} onClick={() => {this.setState({tuesday: !this.state.tuesday},() => {this.calculate()})}} >{"Tuesday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
-                    <Button fullWidth size='small' variant={this.state.wednesday ? 'contained' : 'outlined'} onClick={() => {this.setState({wednesday: !this.state.wednesday},() => {this.calculate()})}} >{"Wednesday"}</Button>
+                    <Button color='inherit' fullWidth size='small' variant={this.state.wednesday ? 'contained' : 'outlined'} onClick={() => {this.setState({wednesday: !this.state.wednesday},() => {this.calculate()})}} >{"Wednesday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
-                    <Button fullWidth size='small' variant={this.state.thursday ? 'contained' : 'outlined'} onClick={() => {this.setState({thursday: !this.state.thursday},() => {this.calculate()})}} >{"Thursday"}</Button>
+                    <Button color='inherit' fullWidth size='small' variant={this.state.thursday ? 'contained' : 'outlined'} onClick={() => {this.setState({thursday: !this.state.thursday},() => {this.calculate()})}} >{"Thursday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
-                    <Button fullWidth size='small' variant={this.state.friday ? 'contained' : 'outlined'} onClick={() => {this.setState({friday: !this.state.friday},() => {this.calculate()})}} >{"Friday"}</Button>
+                    <Button color='inherit' fullWidth size='small' variant={this.state.friday ? 'contained' : 'outlined'} onClick={() => {this.setState({friday: !this.state.friday},() => {this.calculate()})}} >{"Friday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }}>
-                    <Button fullWidth size='small' variant={this.state.saturday ? 'contained' : 'outlined'} onClick={() => {this.setState({saturday: !this.state.saturday},() => {this.calculate()})}} >{"Saturday"}</Button>
+                    <Button color='inherit' fullWidth size='small' variant={this.state.saturday ? 'contained' : 'outlined'} onClick={() => {this.setState({saturday: !this.state.saturday},() => {this.calculate()})}} >{"Saturday"}</Button>
                 </div>
                 <div style={{ flex: 3, textAlign: 'center', marginRight: 2, marginLeft: 2 }} >
                     <TextField  defaultValue='00:00'  size='small' value={this.state.time}  onChange={(event) => { this.setState({ time: event.currentTarget.value },() => {this.calculate()}) }}  placeholder='hh:mm' variant='outlined' />

@@ -4,8 +4,8 @@ import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
 import Source from '../../../utils/Source'
 
-import { Popover, InputAdornment, TableRow, Table, MenuItem, FormControl, TableCell, IconButton, Typography, InputLabel, Button, TextField, Paper, TableBody, TableContainer, TableHead, Divider, Select } from '@material-ui/core'
-import { Close, Add, List } from '@mui/icons-material'
+import { Popover, InputAdornment, TableRow, Table, MenuItem, FormControl, TableCell, IconButton, Typography, InputLabel, Button, TextField, Paper, TableBody, TableContainer, TableHead, Divider, Select } from '@mui/material'
+import { Close, Add, List, Save } from '@mui/icons-material'
 import IconList from '../../../components/IconList'
 
 class NewWidget extends React.Component {
@@ -35,7 +35,7 @@ class NewWidget extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/smartobjects")
         let resultConfiguration = await new Request().get().fetch("/api/configurations/widget")
-        let resultSource = await Source.getSource(["smartobject","module"])
+        let resultSource = await Source.getSource(["smartobject", "module"])
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else if (resultConfiguration.error) {
@@ -126,7 +126,7 @@ class NewWidget extends React.Component {
         let action = this.state.action
         for (let index = 0; index < action.settings.length; index++) {
             let argument = action.settings[index];
-            let value = this.state["argument-" + argument.id]
+            let value = this.state["settings-" + argument.id]
             if (value == undefined) {
                 value = argument.default
             }
@@ -165,7 +165,7 @@ class NewWidget extends React.Component {
     render() {
         return (
             <div>
-                <Paper elevation={2} style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
+                <Paper variant="outlined" style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
                     <div style={{ padding: 10 }}>
                         <Typography variant='h4' > Widget </Typography>
                     </div>
@@ -202,23 +202,22 @@ class NewWidget extends React.Component {
                             transformOrigin={{ vertical: 'top', horizontal: 'center', }}
                         >
                             <IconList onSelect={(icon) => { this.setState({ popup: false, icon: icon }) }} />
-
                         </Popover>
                     </div>
                     <div style={{ padding: 10, paddingBottom: 0 }}>
                         <Typography variant='h5' > Source </Typography>
-                        <div style={{ display: 'flex', flexDirection: 'row', paddingTop: 10 }} >
-                            <TableContainer component={Paper}>
+                        <Paper variant="outlined" style={{marginTop: 10}}>
+                            <TableContainer>
                                 <Table>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell align='left'>
+                                            <TableCell align='left' style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
                                                 <Typography variant='subtitle1'> Source </Typography>
                                             </TableCell>
-                                            <TableCell align="left">
+                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
                                                 <Typography variant='subtitle1'> Argument </Typography>
                                             </TableCell>
-                                            <TableCell align="left">
+                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -227,17 +226,17 @@ class NewWidget extends React.Component {
                                             this.state.contentSources.map((contentSource, index) => {
                                                 return (
                                                     <TableRow >
-                                                        <TableCell align="left" style={{ width: '30%' }}>
+                                                        <TableCell align="left" style={{ width: '30%', borderBottom: 0 }}>
                                                             <Typography variant='subtitle1'> {contentSource.reference} </Typography>
                                                             <Typography variant='subtitle1'> {contentSource.source.name} </Typography>
                                                             <Typography variant='subtitle1'> {contentSource.action.name} </Typography>
                                                         </TableCell>
-                                                        <TableCell align="left">
+                                                        <TableCell align="left" style={{ borderBottom: 0 }} >
                                                             <Typography variant='subtitle1'>
                                                                 {JSON.stringify(contentSource.arguments)}
                                                             </Typography>
                                                         </TableCell>
-                                                        <TableCell align="right">
+                                                        <TableCell align="right" style={{ borderBottom: 0 }} >
                                                             <IconButton onClick={() => { this.deleteContent(index) }} style={{ borderRadius: 2 }}>
                                                                 <Close />
                                                             </IconButton>
@@ -247,7 +246,7 @@ class NewWidget extends React.Component {
                                             })
                                         }
                                         <TableRow  >
-                                            <TableCell align="left" style={{ width: '30%' }}>
+                                            <TableCell align="left" style={{ width: '30%', borderBottom: 0 }}>
                                                 <TextField
                                                     onChange={(event) => { this.setState({ reference: event.target.value }) }}
                                                     style={{ width: '100%' }}
@@ -281,14 +280,14 @@ class NewWidget extends React.Component {
                                                         : null
                                                 }
                                             </TableCell>
-                                            <TableCell align="right" style={{ width: '40%' }}>
+                                            <TableCell align="right" style={{ width: '40%', borderBottom: 0 }}>
                                                 {
                                                     this.state.action && this.state.action.settings.length > 0 ?
                                                         <div style={{ marginLeft: 5, marginBottom: 5, marginTop: 5, borderStyle: 'solid', paddingLeft: 10, paddingRight: 10, borderRadius: 3, borderWidth: 0.25, borderColor: 'rgba(255, 255, 255, 0.23)', width: '100%' }}>
                                                             <div style={{ display: 'flex', paddingTop: 10, paddingBottom: 10, flexDirection: 'column' }}>
                                                                 {
                                                                     this.state.action.settings.map(setting => {
-                                                                        return <Action flexDirection='column' orientation='horizontal'  setState={this.setState.bind(this)} action={setting} />
+                                                                        return <Action flexDirection='column' orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
                                                                     })
                                                                 }
                                                             </div>
@@ -296,7 +295,7 @@ class NewWidget extends React.Component {
                                                         : null
                                                 }
                                             </TableCell>
-                                            <TableCell align="right">
+                                            <TableCell align="right" style={{ borderBottom: 0 }} >
                                                 <IconButton onClick={() => { this.insertSource() }} style={{ borderRadius: 2 }}>
                                                     <Add />
                                                 </IconButton>
@@ -305,35 +304,35 @@ class NewWidget extends React.Component {
                                     </TableBody>
                                 </Table>
                             </TableContainer>
-                        </div>
+                        </Paper>
                     </div>
                     <div style={{ padding: 10, paddingBottom: 0 }}>
                         <Typography variant='h5' > Content </Typography>
-                        <div style={{ marginTop: 10, marginBottom: 10 }}>
-                            <TableContainer component={Paper}>
+                        <Paper variant="outlined" style={{marginTop: 10}}>
+                            <TableContainer>
                                 <Table>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell align='left'>
+                                            <TableCell align='left' style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
                                                 <Typography variant='subtitle1'> Type </Typography>
                                             </TableCell>
-                                            <TableCell align="left">
+                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
                                                 <Typography variant='subtitle1'> Affichage </Typography>
                                             </TableCell>
-                                            <TableCell align="left">
+                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {this.state.contents.sort((a, b) => { return a.type.rank > b.type.rank }).map((content, index) => (
                                             <TableRow >
-                                                <TableCell align="left">
+                                                <TableCell align="left" style={{ borderBottom: 0 }} >
                                                     <Typography variant='subtitle1'> {content.type.name} </Typography>
                                                 </TableCell>
-                                                <TableCell align="left">
+                                                <TableCell align="left" style={{ borderBottom: 0 }} >
                                                     <Typography variant='subtitle1'> {content.content} </Typography>
                                                 </TableCell>
-                                                <TableCell align="right">
+                                                <TableCell align="right" style={{ borderBottom: 0 }} >
                                                     <IconButton onClick={() => { this.delete(index) }} style={{ borderRadius: 2 }}>
                                                         <Close />
                                                     </IconButton>
@@ -341,10 +340,10 @@ class NewWidget extends React.Component {
                                             </TableRow>
                                         ))}
                                         <TableRow  >
-                                            <TableCell align="left">
+                                            <TableCell align="left" style={{ borderBottom: 0 }} >
                                                 <FormControl variant="outlined" style={{ marginRight: 10, width: '100%' }} >
                                                     <InputLabel>Type</InputLabel>
-                                                    <Select value={this.state.type.id} onChange={(event) => { this.setType( event.target.value ) }} label="Type" >
+                                                    <Select value={this.state.type.id} onChange={(event) => { this.setType(event.target.value) }} label="Type" >
                                                         {
                                                             this.state.types.map(type => {
                                                                 return <MenuItem value={type.id} >{type.name}</MenuItem>
@@ -353,7 +352,7 @@ class NewWidget extends React.Component {
                                                     </Select>
                                                 </FormControl>
                                             </TableCell>
-                                            <TableCell align="left">
+                                            <TableCell align="left" style={{ borderBottom: 0 }} >
                                                 <TextField
                                                     onChange={(event) => { this.setState({ content: event.target.value }) }}
                                                     style={{ width: '100%' }}
@@ -363,7 +362,7 @@ class NewWidget extends React.Component {
                                                     variant="outlined"
                                                 />
                                             </TableCell>
-                                            <TableCell align="right">
+                                            <TableCell align="right" style={{ borderBottom: 0 }} >
                                                 <IconButton onClick={() => { this.insertContent() }} style={{ borderRadius: 2 }}>
                                                     <Add />
                                                 </IconButton>
@@ -372,12 +371,15 @@ class NewWidget extends React.Component {
                                     </TableBody>
                                 </Table>
                             </TableContainer>
-                        </div>
+                        </Paper>
                     </div>
-                    <Button style={{ marginTop: 5, marginBottom: 5 }} onClick={() => { this.save() }} variant='outlined'>
-                        Save
-                    </Button>
                 </Paper>
+                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
+                        <IconButton onClick={() => { this.save() }} style={{ borderRadius: 5 }}>
+                            <Save />
+                        </IconButton>
+                    </Paper>
+
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                     {this.state.message}
                 </Alert>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { IconButton, TextField, Select, MenuItem, FormControl, InputLabel, Typography, Paper } from '@material-ui/core'
+import { IconButton, TextField, Select, MenuItem, FormControl, InputLabel, Typography, Paper } from '@mui/material'
 import { Save } from '@mui/icons-material'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
@@ -37,7 +37,7 @@ class NewPassword extends React.Component {
     render() {
         return (
             <div>
-                <Paper elevation={2} style={{ padding: 10, justifyContent: 'left' }}>
+                <Paper variant="outlined" style={{ padding: 10, justifyContent: 'left' }}>
                     <div style={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', justifyContent: 'start', flexDirection: 'column', alignSelf: 'start', alignContent: 'start', alignItems: 'start', padding: 10 }}>
                             <TextField placeholder='password' type='password' variant="outlined" value={this.state.password} onChange={(event) => { this.setState({ password: event.currentTarget.value }) }} />
@@ -45,7 +45,7 @@ class NewPassword extends React.Component {
                         </div>
                     </div>
                 </Paper>
-                <Paper style={{ width: 'min-content', height: 'min-content', padding: 2, alignContent: 'center', alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginTop: 5 }}>
+                <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                     <IconButton onClick={() => { this.changePassword() }} style={{ borderRadius: 0 }} variant='outlined'>
                         <Save />
                     </IconButton>

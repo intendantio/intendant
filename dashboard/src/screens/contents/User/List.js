@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from "react-router-dom"
 import Moment from 'moment'
 import { Add, Delete, Settings, QrCode } from '@mui/icons-material'
-import { FormControl, Button, MenuItem, Select, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@material-ui/core'
+import { FormControl, Button, MenuItem, Select, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@mui/material'
 import Request from '../../../utils/Request'
 import Alert from '../../../components/Alert'
 
@@ -68,41 +68,42 @@ class Smartobject extends React.Component {
             <>
                 {
                     this.state.loading ?
-                        <Paper style={{ display: 'flex', padding: 10, alignContent: 'center', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Paper variant="outlined" style={{ display: 'flex', padding: 10, alignContent: 'center', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <Typography variant='subtitle1' style={{ fontSize: 18 }} >
                                 Chargement des smartobject
                             </Typography>
                         </Paper>
                         :
                         <div>
-                            <TableContainer component={Paper}>
+                            <Paper variant="outlined">
+                            <TableContainer>
                                 <Table>
                                     <TableBody>
                                         {this.state.users.sort((a, b) => {
                                             return a.profile > b.profile
-                                        }).slice(this.state.page * 10, (this.state.page + 1) * 10).map((user) => (
-                                            <TableRow hover key={user.id} style={{ cursor: 'pointer' }}>
-                                                <TableCell align="left">
+                                        }).slice(this.state.page * 10, (this.state.page + 1) * 10).map((user,index) => (
+                                            <TableRow hover key={index} style={{ cursor: 'pointer' }}>
+                                                <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
                                                     <Typography variant='body1'>
                                                         {
                                                             user.login
                                                         }
                                                     </Typography>
                                                 </TableCell>
-                                                <TableCell align="left">
+                                                <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
                                                     <FormControl variant="outlined"  >
                                                         <Select disabled={user.login == 'admin'} value={user.profile} onChange={(event) => { this.updateProfile(user, event.target.value) }} >
                                                             {
-                                                                this.state.profiles.map(profile => {
+                                                                this.state.profiles.map((profile,pIndex) => {
                                                                     return (
-                                                                        <MenuItem value={profile.id} >{profile.name}</MenuItem>
+                                                                        <MenuItem key={pIndex} value={profile.id} >{profile.name}</MenuItem>
                                                                     )
                                                                 })
                                                             }
                                                         </Select>
                                                     </FormControl>
                                                 </TableCell>
-                                                <TableCell align="right">
+                                                <TableCell align="right" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
                                                     <IconButton onClick={() => { this.props.history.push('/qrcode/' + btoa(window.location.origin + "|" + user.login + "|") ) }} style={{ borderRadius: 3 }}>
                                                         <QrCode />
                                                     </IconButton>
@@ -118,8 +119,9 @@ class Smartobject extends React.Component {
                                     </TableBody>
                                 </Table>
                             </TableContainer>
+                            </Paper>
                             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                                <Paper style={{ width: 50, height: 50, marginTop: 10, padding: 5, marginBottom: 10, textAlign: 'center', justifyContent: 'space-around', alignContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+                                <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                                     <Link to="/user/new" style={{ textDecoration: 'none', color: 'white' }}>
                                         <IconButton style={{ borderRadius: 0 }}>
                                             <Add />
@@ -132,7 +134,7 @@ class Smartobject extends React.Component {
                                     rowsPerPage={10}
                                     page={this.state.page}
                                     rowsPerPageOptions={[]}
-                                    onChangePage={(event, page) => { this.setState({ page: page }) }}
+                                    onPageChange={(event, page) => { this.setState({ page: page }) }}
                                 />
                             </div>
                         </div>

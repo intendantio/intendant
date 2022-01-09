@@ -1,9 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom"
-import Moment from 'moment'
 import { Add } from '@mui/icons-material'
-import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@material-ui/core'
-import Icon from '../../../utils/Icon'
+import { Typography, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@mui/material'
 import Request from '../../../utils/Request'
 import Alert from '../../../components/Alert'
 
@@ -46,36 +44,35 @@ class Localisation extends React.Component {
                             </Typography>
                         </Paper>
                         :
-                        <div>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="left">
-                                                <Typography variant='body1'>
-                                                    Reference
-                                                </Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {this.state.localisations.slice(this.state.page * 10, (this.state.page + 1) * 10).map((localisation) => (
-                                            <Link to={"/localisation/" + localisation.id} style={{ textDecoration: 'none', color: 'white', display: 'contents' }}>
-                                                <TableRow hover key={localisation.name} style={{ cursor: 'pointer' }}>
-                                                    <TableCell align="left">
+                        <Box>
+                            <Paper variant="outlined">
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}}  align="left">
+                                                    <Typography variant='body1'>
+                                                        Reference
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {this.state.localisations.slice(this.state.page * 10, (this.state.page + 1) * 10).map((localisation, index) => (
+                                                <TableRow onClick={() => { this.props.history.push("/localisation/" + localisation.id) }} hover key={index} style={{ cursor: 'pointer' }}>
+                                                    <TableCell style={{ borderBottom: 0 }}  align="left">
                                                         <Typography variant='body1'>
                                                             {capitalizeFirstLetter(localisation.name)}
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
-                                            </Link>
-
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                                <Paper style={{ width: 50, height: 50, marginTop: 10, padding: 5, marginBottom: 10, textAlign: 'center', justifyContent: 'space-around', alignContent: 'center', alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Paper>
+                            <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
+                                <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                                     <Link to="/localisation/new" style={{ textDecoration: 'none', color: 'white' }}>
                                         <IconButton style={{ borderRadius: 0 }}>
                                             <Add />
@@ -88,10 +85,10 @@ class Localisation extends React.Component {
                                     rowsPerPage={10}
                                     page={this.state.page}
                                     rowsPerPageOptions={[]}
-                                    onChangePage={(event, page) => { this.setState({ page: page }) }}
+                                    onPageChange={(event, page) => { this.setState({ page: page }) }}
                                 />
-                            </div>
-                        </div>
+                            </Box>
+                        </Box>
                 }
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                     {this.state.message}

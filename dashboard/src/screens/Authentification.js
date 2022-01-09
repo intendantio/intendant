@@ -1,6 +1,6 @@
 import React from 'react'
 import Package from '../../package.json'
-import { Paper, TextField, Button, Typography, Switch, IconButton } from '@material-ui/core'
+import { Paper, TextField, Button, Typography, Switch, IconButton } from '@mui/material'
 import Alert from '../components/Alert'
 import Main from './Main'
 import GetStarted from './GetStarted'
@@ -20,7 +20,8 @@ class Authentification extends React.Component {
             customAddress: false,
             address: window.location.origin,
             login: "admin",
-            isMobile: false
+            isMobile: false,
+            loading: true
         }
     }
 
@@ -28,16 +29,25 @@ class Authentification extends React.Component {
     mediaQueries(query) {
         let mediaMatch = window.matchMedia(query);
         this.setState({ isMobile: mediaMatch.matches })
-        const handler = e => this.setState({ isMobile: e.matches })
+        const handler = e => { 
+            this.setState({ isMobile: e.matches })
+        }
         mediaMatch.addListener(handler)
     }
 
-    componentDidMount() {
-        let service = localStorage.getItem("server")
-        if (service) {
-            this.setState({ address: service.replace("http://", "") })
+    async componentDidMount() {
+        let server = localStorage.getItem("server")
+        let authorization = localStorage.getItem("authorization")
+        if(server && authorization) {
+            let result = await new Request().get().fetch("/api/smartobjects")
+            if(result.error == false) {
+                this.setState({ enabled: false, message: "", authentification: false })
+            }
+        } else if (server) {
+            this.setState({ address: server.replace("http://", "") })
         }
-        this.mediaQueries('(max-width: 900px)')
+        this.mediaQueries('(max-width: 900px),(max-height: 560px)')
+        this.setState({loading: false})
     }
 
     async login() {
@@ -84,6 +94,9 @@ class Authentification extends React.Component {
     }
 
     render() {
+        if(this.state.loading ) {
+            return <div/>
+        }
         if (this.state.getStarted) {
             return (
                 <GetStarted onFinish={() => { this.setState({ getStarted: false }) }} />
@@ -91,7 +104,7 @@ class Authentification extends React.Component {
         } else {
             if (this.state.authentification) {
                 return (
-                    <Paper elevation={3} style={{ padding: 30, width: this.state.isMobile ? '400px' : '25vw', textAlign: 'center' }}>
+                    <Paper variant='outlined' style={{ padding: 30, width: this.state.isMobile ? '380px' : '25vw', textAlign: 'center' }}>
                         <div>
                             <div style={{ marginBottom: 50 }}>
                                 <img  onClick={() => {this.setState({customAddress: !this.state.customAddress}) }}  src={process.env.PUBLIC_URL + "/logo.svg"} style={{ height: '15vh', width: '15vh', borderRadius: 7, cursor: 'pointer' }} />
@@ -119,7 +132,7 @@ class Authentification extends React.Component {
                                     <TextField value={this.state.password} fullWidth label="Password" type='password' autoComplete="current-login" inputProps={{ maxLength: 12 }} onChange={(event) => { this.setState({ password: event.nativeEvent.target.value }) }} />
                                 </div>
                                 <div style={{ padding: 5, marginTop: 5, textAlign: 'end' }}>
-                                    <Button type='submit' variant='plain' on onSubmit={() => { this.login() }} onClick={() => { this.login() }}  >
+                                    <Button color='inherit' type='submit' variant='plain' on onSubmit={() => { this.login() }} onClick={() => { this.login() }}  >
                                         Connection
                                     </Button>
                                 </div>

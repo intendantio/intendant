@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Button, ListItemText, ListItem, Divider, List, Paper } from '@material-ui/core'
+import { Typography, Button, ListItemText, ListItem, Divider, List, Paper } from '@mui/material'
 import Theme from '../../../Theme'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
@@ -88,7 +88,7 @@ class Security extends React.Component {
                     {
                         this.state.profiles.map(profile => {
                             return (
-                                <Button style={{ marginLeft: 5, marginRight: 5 }} onClick={() => { this.onSelectProfile(profile.id) }} variant={this.state.selectProfile === profile.id ? 'contained' : 'outlined'} >
+                                <Button color='inherit' style={{ marginLeft: 5, marginRight: 5 }} onClick={() => { this.onSelectProfile(profile.id) }} variant={this.state.selectProfile === profile.id ? 'contained' : 'outlined'} >
                                     {
                                         profile.name
                                     }

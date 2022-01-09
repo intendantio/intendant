@@ -1,7 +1,6 @@
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
-import { Paper, Typography, TableContainer, TableBody, Divider, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
+import { Paper, Typography, TableContainer, TableBody, Divider, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch } from '@mui/material'
 import { FileCopy, Delete, Close, Add } from '@mui/icons-material'
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'
@@ -39,7 +38,7 @@ class DetailLocalisation extends React.Component {
     }
 
     async insertProfile(localisation, profile) {
-        let result = await new Request().post({idProfile: profile.id, }).fetch("/api/localisations/" + localisation.id + "/profiles")
+        let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/localisations/" + localisation.id + "/profiles")
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -61,7 +60,7 @@ class DetailLocalisation extends React.Component {
         if (this.state.localisation) {
             return (
                 <div>
-                    <Paper elevation={2} style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
+                    <Paper variant="outlined" style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
                         <div style={{ padding: 10 }}>
                             <Typography variant='h4' >
                                 {capitalizeFirstLetter(this.state.localisation.name)}
@@ -70,9 +69,9 @@ class DetailLocalisation extends React.Component {
                         <Divider />
                         <div style={{ padding: 10 }}>
                             {
-                                this.state.localisation.smartobjects.map(smartobject => {
+                                this.state.localisation.smartobjects.map((smartobject, index) => {
                                     return (
-                                        <div style={{ paddingTop: 10 }}>
+                                        <div key={index} style={{ paddingTop: 10 }}>
                                             <Typography variant='body1' >
                                                 {capitalizeFirstLetter(smartobject.reference)}
                                             </Typography>
@@ -86,7 +85,7 @@ class DetailLocalisation extends React.Component {
                                 Authorization
                             </Typography>
                             {
-                                this.state.profiles.map(profile => {
+                                this.state.profiles.map((profile, index) => {
                                     let state = false
                                     this.state.localisation.profiles.forEach(pprofile => {
                                         if (pprofile.profile == profile.id) {
@@ -94,12 +93,12 @@ class DetailLocalisation extends React.Component {
                                         }
                                     })
                                     return (
-                                        <ListItem style={{ padding: 1 }}  >
+                                        <ListItem key={index} style={{ padding: 1 }}  >
                                             <FormControlLabel control={
                                                 <Switch
                                                     checked={state}
-                                                    onChange={() => { 
-                                                        state ? this.deleteProfile(this.state.localisation,profile) : this.insertProfile(this.state.localisation,profile)
+                                                    onChange={() => {
+                                                        state ? this.deleteProfile(this.state.localisation, profile) : this.insertProfile(this.state.localisation, profile)
                                                     }}
                                                     color="primary"
                                                 />
@@ -110,13 +109,13 @@ class DetailLocalisation extends React.Component {
                             }
                         </div>
                     </Paper>
-                    <Paper style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
+                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
                         <IconButton onClick={() => { this.delete(this.state.id) }} style={{ borderRadius: 5 }}>
                             <Delete />
                         </IconButton>
                     </Paper>
                     <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        { this.state.message }
+                        {this.state.message}
                     </AlertComponent>
                 </div>
             )

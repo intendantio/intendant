@@ -1,7 +1,7 @@
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
 
-import { MenuItem, Switch, ListItem, FormControlLabel, Checkbox, InputLabel, IconButton, TableHead, TextField, Typography, Paper, Divider, TableBody, TableContainer, TableCell, Table, TableRow, FormControl, Select, Button } from '@material-ui/core'
+import { MenuItem, Switch, ListItem, FormControlLabel, Checkbox, InputLabel, IconButton, TableHead, TextField, Typography, Paper, Divider, TableBody, TableContainer, TableCell, Table, TableRow, FormControl, Select, Button } from '@mui/material'
 
 import { Check, Close, Delete, Autorenew, Add } from '@mui/icons-material'
 
@@ -10,7 +10,7 @@ import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
 import Source from '../../../utils/Source'
 
-class NewProcess extends React.Component {
+class DetailProcess extends React.Component {
 
     constructor(props) {
         super(props)
@@ -23,10 +23,10 @@ class NewProcess extends React.Component {
             executeInformation: "",
             referenceInput: "",
             nameInput: "",
-            typeInput: null,
+            typeInput: "",
             modeInput: 0,
-            action: null,
-            source: null,
+            action: "",
+            source: "",
             loading: false,
             isChecked: false,
             sources: []
@@ -36,7 +36,6 @@ class NewProcess extends React.Component {
 
     async componentDidMount() {
         let resultSource = await Source.getSource(["smartobject", "module", "essential"])
-        console.log(resultSource)
         let resultEspace = await new Request().get().fetch("/api/espaces")
         let resultProfile = await new Request().get().fetch("/api/profiles")
         let result = await new Request().get().fetch("/api/process/" + this.state.id)
@@ -50,7 +49,7 @@ class NewProcess extends React.Component {
                 enabled: true,
                 message: result.package + " : " + result.message
             })
-        } else if(resultSource.error) {
+        } else if (resultSource.error) {
             this.setState({
                 enabled: true,
                 message: resultSource.package + " : " + resultSource.message
@@ -94,7 +93,7 @@ class NewProcess extends React.Component {
         let settings = []
         for (let index = 0; index < this.state.action.settings.length; index++) {
             let setting = this.state.action.settings[index]
-            let value = this.state["argument-" + setting.id]
+            let value = this.state["settings-" + setting.id]
             if (value == undefined) {
                 value = setting.default
             }
@@ -137,7 +136,7 @@ class NewProcess extends React.Component {
         let tmp = {}
         for (let index = 0; index < this.state.process.inputs.length; index++) {
             let input = this.state.process.inputs[index];
-            let value = this.state["argument-" + input.id]
+            let value = this.state["settings-" + input.id]
             if (value == undefined) {
                 value = input.default
             }
@@ -208,7 +207,7 @@ class NewProcess extends React.Component {
 
     updateAction(action, value) {
         let tmp = {}
-        tmp["argument-" + action.id] = value
+        tmp["settings-" + action.id] = value
         this.setState(tmp)
     }
 
@@ -216,7 +215,7 @@ class NewProcess extends React.Component {
         if (this.state.process) {
             return (
                 <div>
-                    <Paper elevation={2} style={{ padding: 25 }}>
+                    <Paper variant='outlined' style={{ padding: 25 }}>
                         <Typography variant='h4'>
                             {this.state.process.reference}
                         </Typography>
@@ -232,17 +231,17 @@ class NewProcess extends React.Component {
                             {
                                 this.state.process.mode == "simple" ?
                                     this.state.process.mode === "simple" ?
-                                        <Button disabled={this.state.loading} style={{ alignSelf: 'center', marginTop: 10 }} variant={this.state.process.enable === 2 ? "contained" : "outlined"} onClick={() => { this.executeAction() }} color="default" startIcon={<Autorenew />}>
+                                        <Button color='inherit' disabled={this.state.loading} style={{borderColor: 'rgba(255, 255, 255, 0.15)', alignSelf: 'center', marginTop: 10 }} variant={this.state.process.enable === 2 ? "contained" : "outlined"} onClick={() => { this.executeAction() }} startIcon={<Autorenew />}>
                                             {this.state.process.name}
                                         </Button> : null
                                     :
-                                    <div style={{ flexDirection: 'column', display: 'flex', width: '20%' }}>
+                                    <div style={{ flexDirection: 'column', display: 'flex', width: 'fit-content' }}>
                                         {
                                             this.state.process.enable == 1 ?
-                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"contained"} onClick={() => { this.executeAction() }} color="default" >
+                                                <Button disabled={this.state.loading} style={{borderColor: 'rgba(255, 255, 255, 0.15)', marginTop: 10 }} variant={"contained"} onClick={() => { this.executeAction() }} >
                                                     {this.state.process.name_enable}
                                                 </Button> :
-                                                <Button disabled={this.state.loading} style={{ marginTop: 10 }} variant={"outlined"} onClick={() => { this.executeAction() }} color="default" >
+                                                <Button color='inherit' disabled={this.state.loading} style={{borderColor: 'rgba(255, 255, 255, 0.15)', marginTop: 10 }} variant={"outlined"} onClick={() => { this.executeAction() }} >
                                                     {this.state.process.name_disable}
                                                 </Button>
                                         }
@@ -263,59 +262,61 @@ class NewProcess extends React.Component {
                                 Input
                             </Typography>
                             <div style={{ flexDirection: 'column', display: 'flex', width: '100%', marginTop: 10 }}>
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                        <TableBody>
-                                            {
-                                                this.state.process.inputs.map(input =>
-                                                    <TableRow key={input.id}>
-                                                        <TableCell align="left"><Typography variant='body1'>{input.reference}</Typography></TableCell>
-                                                        <TableCell align="left"><Typography variant='body1'>{input.name}</Typography> </TableCell>
-                                                        <TableCell align="left"><Typography variant='body1'>{input.type}</Typography></TableCell>
-                                                        <TableCell align="center"><Typography variant='body1'>{input.enable}</Typography></TableCell>
-                                                        <TableCell align="left">
-                                                            <IconButton onClick={() => { this.deleteProcessInput(input) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                                <Delete />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            }
-                                            <TableRow key={-1}>
-                                                <TableCell align="left" style={{ width: '35%' }}>
-                                                    <TextField value={this.state.referenceInput} onChange={(event) => { this.setState({ referenceInput: event.nativeEvent.target.value }) }} placeholder='Reference' style={{ width: '100%' }}>
-                                                    </TextField>
-                                                </TableCell>
-                                                <TableCell align="left" style={{ width: '35%' }}>
-                                                    <TextField value={this.state.nameInput} onChange={(event) => { this.setState({ nameInput: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
-                                                    </TextField>
-                                                </TableCell>
-                                                <TableCell align="left" style={{ width: '20%' }}>
-                                                    <FormControl variant="outlined" style={{ width: '100%' }} >
-                                                        <InputLabel>Type</InputLabel>
-                                                        <Select value={this.state.typeInput} onChange={(event) => { this.setState({ typeInput: event.target.value }) }} label="Type" >
-                                                            <MenuItem value={"text"} >{"Text"}</MenuItem>
-                                                            <MenuItem value={"colorpicker"} >{"Color picker"}</MenuItem>
-                                                            <MenuItem value={"number"} >{"Number"}</MenuItem>
-                                                            <MenuItem value={"slider"} >{"Slider"}</MenuItem>
-                                                        </Select>
-                                                    </FormControl>
-                                                </TableCell>
-                                                <TableCell align="center" style={{ width: '10%' }}>
-                                                    {
-                                                        this.state.process.mode === 'switch' ?
-                                                            <Checkbox value={this.state.modeInput == 0} onChange={(event, checked) => { this.setState({ modeInput: checked ? 1 : 0 }) }} /> : null
-                                                    }
-                                                </TableCell>
-                                                <TableCell align="left" >
-                                                    <IconButton onClick={() => { this.insertProcessInput() }} style={{ borderRadius: 5, margin: 0 }}>
-                                                        <Add />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <Paper variant='outlined' >
+                                    <TableContainer>
+                                        <Table>
+                                            <TableBody>
+                                                {
+                                                    this.state.process.inputs.map((input, index) =>
+                                                        <TableRow key={index}>
+                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.reference}</Typography></TableCell>
+                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.name}</Typography> </TableCell>
+                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.type}</Typography></TableCell>
+                                                            <TableCell align="center" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.enable}</Typography></TableCell>
+                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
+                                                                <IconButton onClick={() => { this.deleteProcessInput(input) }} style={{ borderRadius: 5, margin: 0 }}>
+                                                                    <Delete />
+                                                                </IconButton>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                }
+                                                <TableRow key={-1}>
+                                                    <TableCell align="left" style={{ width: '35%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
+                                                        <TextField value={this.state.referenceInput} onChange={(event) => { this.setState({ referenceInput: event.nativeEvent.target.value }) }} placeholder='Reference' style={{ width: '100%' }}>
+                                                        </TextField>
+                                                    </TableCell>
+                                                    <TableCell align="left" style={{ width: '35%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
+                                                        <TextField value={this.state.nameInput} onChange={(event) => { this.setState({ nameInput: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
+                                                        </TextField>
+                                                    </TableCell>
+                                                    <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
+                                                        <FormControl variant="outlined" style={{ width: '100%' }} >
+                                                            <InputLabel>Type</InputLabel>
+                                                            <Select value={this.state.typeInput} onChange={(event) => { this.setState({ typeInput: event.target.value }) }} label="Type" >
+                                                                <MenuItem value={"text"} >{"Text"}</MenuItem>
+                                                                <MenuItem value={"colorpicker"} >{"Color picker"}</MenuItem>
+                                                                <MenuItem value={"number"} >{"Number"}</MenuItem>
+                                                                <MenuItem value={"slider"} >{"Slider"}</MenuItem>
+                                                            </Select>
+                                                        </FormControl>
+                                                    </TableCell>
+                                                    <TableCell align="center" style={{ width: '10%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
+                                                        {
+                                                            this.state.process.mode === 'switch' ?
+                                                                <Checkbox value={this.state.modeInput == 0} onChange={(event, checked) => { this.setState({ modeInput: checked ? 1 : 0 }) }} /> : null
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} >
+                                                        <IconButton onClick={() => { this.insertProcessInput() }} style={{ borderRadius: 5, margin: 0 }}>
+                                                            <Add />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Paper>
                             </div>
                         </div>
                         <div style={{ marginTop: 15 }} >
@@ -323,98 +324,98 @@ class NewProcess extends React.Component {
                                 Module
                             </Typography>
                             <div style={{ flexDirection: 'column', display: 'flex', width: '100%', marginTop: 10 }}>
-                                <TableContainer component={Paper}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell align="left"><Typography variant='body1'>Module</Typography></TableCell>
-                                                <TableCell align="left"><Typography variant='body1'>Type</Typography></TableCell>
-                                                <TableCell align="left"><Typography variant='body1'>Action</Typography></TableCell>
-                                                <TableCell align="left"><Typography variant='body1'>Arguments</Typography></TableCell>
-                                                <TableCell align="center"><Typography variant='body1'>Mode</Typography></TableCell>
-                                                <TableCell align="left"></TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {
-                                                this.state.process.actions.map(action =>
-                                                    <TableRow key={action.id}>
-                                                        <TableCell align="left" style={{ width: '15%' }}><Typography variant='body1'>{action.object}</Typography></TableCell>
-                                                        <TableCell align="left" style={{ width: '20%' }}><Typography variant='body1'>{action.type}</Typography> </TableCell>
-                                                        <TableCell align="left" style={{ width: '20%' }}><Typography variant='body1'>{action.action}</Typography></TableCell>
-                                                        <TableCell align="left" style={{ width: '20%' }}>{action.arguments.map(argument => {
-                                                            return <Typography variant='body1'>{argument.reference + " : " + argument.value}</Typography>
-                                                        })}</TableCell>
-                                                        <TableCell align="center" style={{ width: '15%' }}>{action.enable === 0 ? <Close /> : action.enable === 1 ? <Check /> : <Autorenew />}</TableCell>
-                                                        <TableCell align="left">
-                                                            <IconButton onClick={() => { this.deleteSource(action.id) }}>
-                                                                <Delete />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )
-                                            }
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                                <TableContainer style={{ marginTop: 15 }} component={Paper}>
-                                    <Table>
-                                        <TableRow>
-                                            <TableCell align="left" style={{ width: '25%' }}>
-                                                <FormControl fullWidth>
-                                                    <InputLabel>Source</InputLabel>
-                                                    <Select value={this.state.source ? this.state.source.id : null} onChange={(event) => { this.setSource(event.target.value) }} label="Connexion" >
-                                                        {
-                                                            this.state.sources.map(source => {
-                                                                return <MenuItem value={source.id} >{source.name}</MenuItem>
-                                                            })
-                                                        }
-                                                    </Select>
-                                                </FormControl>
-                                            </TableCell>
-                                            <TableCell align="left" style={{ width: '25%' }}>
+                                <Paper variant='outlined' >
+                                    <TableContainer>
+                                        <Table>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Module</Typography></TableCell>
+                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Type</Typography></TableCell>
+                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Action</Typography></TableCell>
+                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Arguments</Typography></TableCell>
+                                                    <TableCell align="center" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Mode</Typography></TableCell>
+                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}></TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
                                                 {
-                                                    this.state.source ?
-                                                        <FormControl fullWidth >
-                                                            <InputLabel>Action</InputLabel>
-                                                            <Select value={this.state.action ? this.state.action.id : null} onChange={(event) => { this.setAction(event.target.value) }} label="Connexion" >
+                                                    this.state.process.actions.map((action, index) =>
+                                                        <TableRow key={index}>
+                                                            <TableCell align="left" style={{ width: '15%', borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{action.object}</Typography></TableCell>
+                                                            <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{action.type}</Typography> </TableCell>
+                                                            <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{action.action}</Typography></TableCell>
+                                                            <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>{action.arguments.map((argument, pIndex) => {
+                                                                return <Typography key={pIndex} variant='body1'>{argument.reference + " : " + argument.value}</Typography>
+                                                            })}</TableCell>
+                                                            <TableCell align="center" style={{ width: '15%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>{action.enable === 0 ? <Close /> : action.enable === 1 ? <Check /> : <Autorenew />}</TableCell>
+                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
+                                                                <IconButton onClick={() => { this.deleteSource(action.id) }}>
+                                                                    <Delete />
+                                                                </IconButton>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )
+                                                }
+                                                <TableRow>
+                                                    <TableCell align="left" style={{ width: '25%', borderWidth: 0 }}>
+                                                        <FormControl fullWidth>
+                                                            <InputLabel>Source</InputLabel>
+                                                            <Select value={this.state.source ? this.state.source.id : ''} onChange={(event) => { this.setSource(event.target.value) }} label="Connexion" >
                                                                 {
-                                                                    this.state.source.actions.map(action => {
-                                                                        return <MenuItem value={action.id} >{action.name}</MenuItem>
+                                                                    this.state.sources.map((source, index) => {
+                                                                        return <MenuItem key={index} value={source.id} >{source.name}</MenuItem>
                                                                     })
                                                                 }
                                                             </Select>
                                                         </FormControl>
-                                                        : null
-                                                }
-                                            </TableCell>
-
-                                            <TableCell align="left" style={{ width: '20%' }}>
-                                                {
-                                                    this.state.action ?
-                                                        this.state.action.settings.map(argument => {
-                                                            return (
-                                                                <div style={{ marginLeft: 10, marginRight: 10, marginTop: 5, marginBottom: 2 }} >
-                                                                    <TextField variant="outlined" placeholder={argument.id} onChange={(event) => { this.updateAction(argument, event.currentTarget.value, this.state.action) }} />
-                                                                </div>
-                                                            )
-                                                        }) : null
-                                                }
-                                            </TableCell>
-                                            <TableCell align="center" style={{ width: '5%' }}>
-                                                {
-                                                    this.state.process.mode === 'switch' ?
-                                                        <Checkbox onChange={(event, isChecked) => { this.setState({ isChecked: isChecked }) }} /> : null
-                                                }
-                                            </TableCell>
-                                            <TableCell align="center" style={{ width: '5%' }}>
-                                                <IconButton onClick={() => { this.addSource() }}>
-                                                    <Add />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    </Table>
-                                </TableContainer>
+                                                    </TableCell>
+                                                    <TableCell align="left" style={{ width: '25%', borderWidth: 0 }}>
+                                                        {
+                                                            this.state.source ?
+                                                                <FormControl fullWidth >
+                                                                    <InputLabel>Action</InputLabel>
+                                                                    <Select value={this.state.action ? this.state.action.id : ''} onChange={(event) => { this.setAction(event.target.value) }} label="Connexion" >
+                                                                        {
+                                                                            this.state.source.actions.map(action => {
+                                                                                return <MenuItem value={action.id} >{action.name}</MenuItem>
+                                                                            })
+                                                                        }
+                                                                    </Select>
+                                                                </FormControl>
+                                                                : null
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell align="left" style={{ width: '20%', borderWidth: 0 }}>
+                                                        {
+                                                            this.state.action ?
+                                                                this.state.action.settings.map((argument, index) => {
+                                                                    return (
+                                                                        <div key={index} style={{ marginLeft: 10, marginRight: 10, marginTop: 5, marginBottom: 2 }} >
+                                                                            <TextField variant="outlined" placeholder={argument.id} onChange={(event) => { this.updateAction(argument, event.currentTarget.value, this.state.action) }} />
+                                                                        </div>
+                                                                    )
+                                                                }) : null
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell align="center" style={{ width: '5%', borderWidth: 0 }}>
+                                                        
+                                                    </TableCell>
+                                                    <TableCell align="center" style={{ width: '5%', borderWidth: 0 }}>
+                                                        {
+                                                            this.state.process.mode === 'switch' ?
+                                                                <Checkbox onChange={(event, isChecked) => { this.setState({ isChecked: isChecked }) }} /> : null
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell align="center" style={{ width: '5%', borderWidth: 0 }}>
+                                                        <IconButton onClick={() => { this.addSource() }}>
+                                                            <Add />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Paper>
                             </div>
                         </div>
                         {
@@ -436,7 +437,7 @@ class NewProcess extends React.Component {
                                 Authorization
                             </Typography>
                             {
-                                this.state.profiles.map(profile => {
+                                this.state.profiles.map((profile, pIndex) => {
                                     let state = false
                                     this.state.process.profiles.forEach(pprofile => {
                                         if (pprofile.profile == profile.id) {
@@ -444,7 +445,7 @@ class NewProcess extends React.Component {
                                         }
                                     })
                                     return (
-                                        <ListItem style={{ padding: 1 }}  >
+                                        <ListItem key={pIndex} style={{ padding: 1 }}  >
                                             <FormControlLabel control={<Switch
                                                 checked={state}
                                                 onChange={() => {
@@ -458,7 +459,7 @@ class NewProcess extends React.Component {
                             }
                         </div>
                     </Paper>
-                    <Paper style={{ width: 'min-content', marginTop: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
+                    <Paper style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
                         <IconButton onClick={() => { this.delete(this.state.process.id) }} style={{ borderRadius: 5 }}>
                             <Delete />
                         </IconButton>
@@ -478,4 +479,4 @@ class NewProcess extends React.Component {
     }
 }
 
-export default NewProcess
+export default DetailProcess

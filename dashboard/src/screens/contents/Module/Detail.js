@@ -2,9 +2,8 @@ import React from 'react'
 import md5 from 'md5'
 import JSONPretty from 'react-json-pretty'
 
-import { Alert } from '@material-ui/lab'
 import { Close } from '@mui/icons-material'
-import { Paper, Typography, Divider, Button, IconButton } from '@material-ui/core'
+import { Paper, Typography, Divider, Button, IconButton, Alert } from '@mui/material'
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
@@ -56,7 +55,7 @@ class Detail extends React.Component {
         let tmp = {}
         for (let index = 0; index < settings.length; index++) {
             let argument = settings[index];
-            let value = this.state["argument-" + argument.id]
+            let value = this.state["settings-" + argument.id]
             if (value == undefined) {
                 value = argument.default
             }
@@ -90,7 +89,7 @@ class Detail extends React.Component {
         if (this.state.module) {
             return (
                 <div>
-                    <Paper elevation={2} style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
+                    <Paper variant="outlined" style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
                         <div style={{ padding: 10 }}>
                             <Typography variant='h4' >
                                 {this.state.module.name.split("/")[1]}
@@ -102,10 +101,10 @@ class Detail extends React.Component {
                         <Divider />
                         <div style={{ padding: 10, paddingBottom: 0 }}>
                             {
-                                this.state.module.actions.map(action => {
+                                this.state.module.actions.map((action,index) => {
                                     return (
-                                        <Paper style={{ marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', padding: 10 }}>
-                                            <Button disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={this.state.loading == action.id ? 'contained' : 'outlined'} style={{ width: '250px', height: '100%' }} >
+                                        <Paper variant="outlined" key={index} style={{ marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', padding: 10 }}>
+                                            <Button color='inherit' disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={this.state.loading == action.id ? 'contained' : 'outlined'}  style={{ width: '250px', height: '100%', borderColor: 'rgba(255, 255, 255, 0.15)'  }} >
                                                 {action.name}
                                             </Button>
                                             {

@@ -1,12 +1,12 @@
-import MuiAlert from '@material-ui/lab/Alert'
-import { Snackbar } from '@material-ui/core'
 
-function Alert(props) {
+import { Snackbar, Alert } from '@mui/material'
+
+function MuiAlert(props) {
     return (
         <Snackbar open={props.open} autoHideDuration={6000} onClose={() => props.onClose()}>
-            <MuiAlert severity={props.severity} elevation={6} variant="filled" {...props} />
+            <Alert severity={props.severity} elevation={6}  {...props} />
         </Snackbar>
     )
 }
 
-export default Alert
+export default MuiAlert
