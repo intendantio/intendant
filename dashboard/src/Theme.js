@@ -4,10 +4,10 @@ export default responsiveFontSizes(createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: 'rgba(255, 255, 255, 0.9)',
+      main: "rgb(0, 127, 255)",
     },
     secondary: {
-      main: Colors.indigo[500],
+      main: "rgb(0, 127, 255)",
     },
     background: {
       default: "#0A1929",
@@ -27,13 +27,25 @@ export default responsiveFontSizes(createTheme({
   components: {
     MuiOutlinedInput: {
       styleOverrides: {
-        input: {
-          "&:-webkit-autofill": {
-            "-webkit-box-shadow": "0 0 0 100px var(--primary-weak) inset",
-            "-webkit-text-fill-color": "var(--text-primary)",
+
+        
+      }
+    },
+    MuiPaper: {
+      styleOverrides: {
+          outlined: {
+             borderColor: 'rgba(30, 73, 118,0.5)'
           }
+      }
+    },
+    MuiDivider: {
+      styleOverrides: {
+        fullWidth: {
+          borderColor: 'rgb(30, 73, 118,0.5)'
         }
       }
     }
   }
 }))
+
+// 'rgba(255, 255, 255, 0.9)'

@@ -105,6 +105,12 @@ class Authentification extends Controller {
                 if (resultGetOne.error) {
                     return resultGetOne
                 }
+                await this.sqlAuthorizationProfile.insert({
+                    id: null,
+                    authorization: resultInsert.data.insertId,
+                    profile: 1
+                })
+                return new Result(Package.name, false, "")
             }
             if (resultRequest.data.secure === 0) {
                 return new Result(Package.name, false, "")

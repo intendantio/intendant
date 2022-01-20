@@ -14,7 +14,8 @@ import DetailModule from './contents/Module/Detail'
 import Market from './contents/Market/List'
 import Widget from './contents/Widget/List'
 import NewWidget from './contents/Widget/New'
-import DetailWidget from './contents/Widget/Detail'
+import Rapport from './contents/Rapport/List'
+import NewRapport from './contents/Rapport/New'
 import User from './contents/User/List'
 import NewUser from './contents/User/New'
 import QrCode from './contents/QrCode/QrCode'
@@ -37,7 +38,7 @@ class Main extends React.Component {
     }
 
     componentDidMount() {
-        this.mediaQueries('(max-width: 900px),(max-height: 560px)')
+        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
     }
 
     mediaQueries(query) {
@@ -51,9 +52,10 @@ class Main extends React.Component {
         return (
             <Router basename='/admin'>
                 <Sidebar isMobile={this.state.isMobile} onDisconnect={() => { this.props.onDisconnect() }} />
-                <main style={{  width:  '100vw', paddingLeft:'10vw', paddingRight: '10vw', overflowX:  'hidden', overflowY: 'visible' }} >
-                    <div style={{paddingTop: '5vh', marginLeft: this.state.isMobile ? 0 : 240, marginTop: this.state.isMobile ? 16 : 0, height:'100vh' }}>
+                <main id='main' style={{ paddingTop:  this.state.isMobile ? 20 : '4vh', width:  '100vw', paddingLeft:'5vw', paddingRight: '5vw', overflowX:  'hidden', overflowY: 'visible' }} >
+                    <div style={{ marginLeft: this.state.isMobile ? 0 : 240, height: '100vh' }}>
                         <Switch>
+                            <Route exact path="/" component={SmartObject} />
                             <Route exact path="/smartobject" component={SmartObject} />
                             <Route exact path="/smartobject/new" component={NewSmartObject} />
                             <Route exact path="/smartobject/redirect/:object" component={RedirectSmartObject} />
@@ -63,11 +65,12 @@ class Main extends React.Component {
                             <Route exact path="/routine" component={Routine} />
                             <Route exact path="/routine/new" component={NewRoutine} />
                             <Route exact path="/routine/:id" component={DetailRoutine} />
+                            <Route exact path="/rapport" component={Rapport} />
+                            <Route exact path="/rapport/new" component={NewRapport} />
                             <Route exact path="/widget" component={Widget} />
                             <Route exact path="/widget/new" component={NewWidget} />
                             <Route exact path="/widget/authorization" component={Widget} />
                             <Route exact path="/widget/authorization" component={Widget} />
-                            <Route exact path="/widget/:id" component={DetailWidget} />
                             <Route exact path="/process" component={ListProcess} />
                             <Route exact path="/process/new" component={NewProcess} />
                             <Route exact path="/process/:id" component={DetailProcess} />

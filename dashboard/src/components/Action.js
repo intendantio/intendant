@@ -25,10 +25,21 @@ class Action extends React.Component {
             action: this.props.action,
             setState: this.props.setState,
             modal: false,
-            value: ""
+            value: "",
+            isMobile: false
         }
     }
 
+    componentDidMount() {
+        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
+    }
+
+    mediaQueries(query) {
+        let mediaMatch = window.matchMedia(query);
+        this.setState({ isMobile: mediaMatch.matches })
+        const handler = e => this.setState({ isMobile: e.matches })
+        mediaMatch.addListener(handler)
+    }
 
     updateAction(action, value) {
         let tmp = {}
@@ -109,12 +120,12 @@ class Action extends React.Component {
                     <Paper variant='outlined' elevation={1} style={{ minWidth: 150, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10, marginRight: 10 }} >
                         {
                             this.state.action.id == "default" ? null :
-                                <Typography variant='body2' style={{ textAlign: 'center', padding: 0 }} >
+                                <Typography variant='body1' style={{ textAlign: 'center', padding: 0, marginRight: this.state.isMobile ? 15 : 0 }} >
                                     {this.state.action.id}
                                 </Typography>
                         }
                         <Slider
-                            size='small'
+                            size={'small'}
                             defaultValue={0}
                             valueLabelDisplay="auto"
                             orientation={this.props.orientation ? this.props.orientation : 'horizontal'}

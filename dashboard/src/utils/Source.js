@@ -23,7 +23,7 @@ class Source {
                     smartobject.actions.forEach(action => {
                         actions.push({ id: action.id, name: action.name, settings: action.settings })
                     })
-                    sources.push({ id: smartobject.id, name: "Smartobject " + smartobject.reference, actions: actions, type: 'smartobject' })
+                    sources.push({ id: smartobject.id, name: "Smartobject " + smartobject.reference, actions: actions,widgets: [],  type: 'smartobject' })
                 })
             }
             if (query.includes("module")) {
@@ -32,7 +32,8 @@ class Source {
                     pModule.actions.forEach(action => {
                         actions.push({ id: action.id, name: action.name, settings: action.settings })
                     })
-                    sources.push({ id: pModule.name, name: "Module " + pModule.name, actions: actions, type: 'module' })
+                    console.log(pModule)
+                    sources.push({ id: pModule.name, name: "Module " + pModule.name, actions: actions, widgets: Array.isArray(pModule.widgets) ? pModule.widgets : [], type: 'module' })
                 })
             }
             if (query.includes("essential")) {
@@ -42,7 +43,7 @@ class Source {
                     { id: pEssential.id, name: pEssential.name, settings: pEssential.settings }
                    )
                 })
-                sources.push({ id: "essential", name: "Core essential", actions: essentials, type: 'essential' })
+                sources.push({ id: "essential", name: "Core essential", actions: essentials, widgets: [], type: 'essential' })
             }
             if (query.includes("process")) {
                 resultProcess.data.forEach(process => {

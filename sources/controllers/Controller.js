@@ -28,10 +28,7 @@ class Controller {
             this.sqlStorage = new Connector("storage")
             
             this.sqlWidget = new Connector("widget")
-            this.sqlWidgetContent = new Connector("widget_content")
-            this.sqlWidgetSource = new Connector("widget_source")
-            this.sqlWidgetContentType = new Connector("widget_content_type")
-            this.sqlWidgetSourceArgument = new Connector("widget_source_argument")
+            this.sqlWidgetArgument = new Connector("widget_argument")
 
             this.sqlEspace = new Connector("espace")
             this.sqlProcess = new Connector("process")
@@ -44,6 +41,10 @@ class Controller {
             this.sqlLocalisationProfile = new Connector("localisation_profile")
 
             this.sqlCache = new Connector("cache")
+
+            this.sqlRapport = new Connector("rapport")
+            this.sqlRapportData = new Connector("rapport_data")
+            this.sqlRapportArgument = new Connector("rapport_argument")
             
         } catch (error) {
             StackTrace.save(error)

@@ -136,6 +136,12 @@ class Smartobject extends Controller {
                 actions = this.smartobjectManager.instances.get(smartobject.id).getActions()
                 icon = this.smartobjectManager.instances.get(smartobject.id).moduleConfiguration.icon
             }
+
+            let configuration = null
+            try {
+                configuration = require(smartobject.module + "/package.json")
+            } catch (error) {}
+
             return new Result(Package.name, false, "", {
                 id: smartobject.id,
                 icon: icon,
@@ -146,12 +152,29 @@ class Smartobject extends Controller {
                 arguments: argumentsData,
                 actions: actions,
                 profiles: profiles,
-                localisation: localisation
+                localisation: localisation,
+                configuration: configuration
             }) 
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get one smartobject")
             return new Result(Package.name, true, "Error occurred when get one smartobject")
+        }
+    }
+
+    getAllConfiguration() {
+        try {
+            let modules = []
+            for (let indexPackage = 0; indexPackage < this.smartobjectManager.packages.length; indexPackage++) {
+                let pPackage = this.smartobjectManager.packages[indexPackage]
+                let configuration = require(pPackage + "/package.json")
+                modules.push(configuration)
+            }
+            return new Result(Package.name, false, "", modules)
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all configuration in module")
+            return new Result(Package.name, true, "Error occurred when get all configuration in module")
         }
     }
 
@@ -385,6 +408,8 @@ class Smartobject extends Controller {
             return new Result(Package.name, true, "Error occurred when execute smartobject action")
         }
     }
+
+ 
 
 }
 

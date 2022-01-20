@@ -15,11 +15,13 @@ class Smartobject extends React.Component {
             page: 0,
             enabled: false,
             message: "",
-            smartobjects: []
+            smartobjects: [],
+            isMobile: false
         }
     }
 
     async componentDidMount() {
+        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
         let result = await new Request().get().fetch("/api/smartobjects")
         if (result.error) {
             this.setState({
@@ -35,6 +37,13 @@ class Smartobject extends React.Component {
         }
     }
 
+    mediaQueries(query) {
+        let mediaMatch = window.matchMedia(query);
+        this.setState({ isMobile: mediaMatch.matches })
+        const handler = e => this.setState({ isMobile: e.matches })
+        mediaMatch.addListener(handler)
+    }
+
     render() {
         return (
             <>
@@ -48,30 +57,33 @@ class Smartobject extends React.Component {
                         :
                         <Box>
                             <Paper variant="outlined" >
-                                <TableContainer style={{overflowX: 'hidden'}}>
+                                <TableContainer style={{ overflowX: 'hidden' }}>
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="left">
+                                                <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="left">
                                                     <Typography variant='body1'>
                                                         Reference
                                                     </Typography>
                                                 </TableCell>
-                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="center">
+                                                <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="center">
                                                     <Typography variant='body1'>
                                                         Status
                                                     </Typography>
                                                 </TableCell>
-                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="center">
+                                                <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="center">
                                                     <Typography variant='body1'>
                                                         Localisation
                                                     </Typography>
                                                 </TableCell>
-                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}} align="center">
-                                                    <Typography variant='body1'>
-                                                        Last use
-                                                    </Typography>
-                                                </TableCell>
+                                                {
+                                                    this.state.isMobile == false &&
+                                                    <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="center">
+                                                        <Typography variant='body1'>
+                                                            Last use
+                                                        </Typography>
+                                                    </TableCell>
+                                                }
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -83,20 +95,22 @@ class Smartobject extends React.Component {
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell align="center" style={{ borderBottom: 0 }} >
-                                                        <Typography variant='body1'>
-                                                            <img style={{ height: 25, width: 25, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + smartobject.status.icon + ".svg"} />
-                                                        </Typography>
+                                                        <img style={{ height: 25, width: 25, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + smartobject.status.icon + ".svg"} />
+
                                                     </TableCell>
                                                     <TableCell align="center" style={{ borderBottom: 0 }} >
                                                         <Typography variant='body1'>
                                                             {capitalizeFirstLetter(smartobject.localisation.name)}
                                                         </Typography>
                                                     </TableCell>
-                                                    <TableCell align="center" style={{ borderBottom: 0 }} >
-                                                        <Typography variant='body1'>
-                                                            {Moment(smartobject.lastUse).format("hh:mm DD/MM")}
-                                                        </Typography>
-                                                    </TableCell>
+                                                    {
+                                                        this.state.isMobile == false &&
+                                                        <TableCell align="center" style={{ borderBottom: 0 }} >
+                                                            <Typography variant='body1'>
+                                                                {Moment(smartobject.lastUse).format("hh:mm DD/MM")}
+                                                            </Typography>
+                                                        </TableCell>
+                                                    }
                                                 </TableRow>
                                             ))}
                                         </TableBody>

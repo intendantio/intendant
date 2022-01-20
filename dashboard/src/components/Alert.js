@@ -1,12 +1,17 @@
+import React from 'react'
 
 import { Snackbar, Alert } from '@mui/material'
 
-function MuiAlert(props) {
-    return (
-        <Snackbar open={props.open} autoHideDuration={6000} onClose={() => props.onClose()}>
-            <Alert severity={props.severity} elevation={6}  {...props} />
-        </Snackbar>
-    )
+class MuiAlert extends React.Component {
+
+    render() {
+        return (
+            <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} open={this.props.open} autoHideDuration={6000} onClose={() => this.props.onClose()}>
+                <Alert  severity={this.props.severity} elevation={0}  {...this.props} />
+            </Snackbar>
+        )
+    }
+    
 }
 
 export default MuiAlert

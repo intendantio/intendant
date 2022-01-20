@@ -64,34 +64,6 @@ class ModulesManager {
         }
     }
 
-    getByHash(hash) {
-        let data = false
-        this._packages.forEach(pModule => {
-            if (md5(pModule) == hash) {
-                data = pModule
-            }
-        })
-        return new Result(Package.name, false, "", data)
-    }
-
-    async executeAction(name, action, settings) {
-        try {
-            if (this._instances.has(name)) {
-                let pModule = this._instances.get(name)
-                if (typeof pModule["__" + action] === "function") {
-                    return await pModule["__" + action](settings)
-                } else {
-                    return new Result(Package.name, true, "Action not found")
-                }
-            } else {
-                return new Result(Package.name, true, "Module not found")
-            }
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when executing an action in module manager")
-            return new Result(Package.name, true, "Error occurred when executing an action in module manager")
-        }
-    }
 
     getAll() {
         try {

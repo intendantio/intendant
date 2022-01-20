@@ -46,7 +46,7 @@ class Authentification extends React.Component {
         } else if (server) {
             this.setState({ address: server.replace("http://", "") })
         }
-        this.mediaQueries('(max-width: 900px),(max-height: 560px)')
+        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
         this.setState({loading: false})
     }
 

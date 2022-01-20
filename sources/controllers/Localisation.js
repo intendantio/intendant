@@ -35,7 +35,13 @@ class Localisation extends Controller {
             if(smartobjectsRequest.error) {
                 return smartobjectsRequest
             }
-            localisationsRequest.data.smartobjects = smartobjectsRequest.data
+            localisationsRequest.data.smartobjects = []
+
+            for (let index = 0; index < smartobjectsRequest.data.length; index++) {
+                let smartobject = smartobjectsRequest.data[index]
+                let resultSmartobjectGetOne = await this.smartobjectController.getOne(smartobject.id)
+                localisationsRequest.data.smartobjects.push(resultSmartobjectGetOne.data) 
+            }
             let localisationProfileRequest = await this.sqlLocalisationProfile.getAllByField({ localisation: idLocalisation })
             if (localisationProfileRequest.error) {
                 return localisationProfileRequest

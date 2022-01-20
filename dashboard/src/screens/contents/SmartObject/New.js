@@ -175,7 +175,6 @@ class NewSmartobject extends React.Component {
                                                         return smartobject.module == settings.reference
                                                     })
                                             }
-
                                             return (
                                                 <div key={index} style={{ marginTop: 5, marginBottom: 5 }}>
                                                     <Action

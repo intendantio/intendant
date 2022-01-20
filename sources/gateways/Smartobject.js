@@ -11,6 +11,17 @@ export default (app, core) => {
         }
     })
 
+    //Get all smartobject
+    app.get('/api/smartobjects/configuration', async (request, res) => {
+        request.url = '/smartobjects/configuration'
+        let authorization = await core.controller.authentification.checkAuthorization(request)
+        if (authorization.error) {
+            res.send(authorization)
+        } else {
+            res.send(await core.controller.smartobject.getAllConfiguration())
+        }
+    })
+
     //Get one smartobject
     app.get('/api/smartobjects/:idSmartobject', async (request, res) => {
         request.url = '/smartobjects/:idSmartobject'

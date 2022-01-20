@@ -14,14 +14,17 @@ import Espace from './controllers/Espace'
 import Market from './controllers/Market'
 import Notification from './controllers/Notification'
 import Localisation from './controllers/Localisation'
+import Essential from './controllers/Essential'
+import Module from './controllers/Module'
+import Rapport from './controllers/Rapport'
 
 import API from './gateways'
 
 import SmartobjectManager from './managers/Smartobject'
 import ModulesManager from './managers/Modules'
 import RoutineManager from './managers/Routine'
+import RapportManager from './managers/Rapports'
 import Tracing from './utils/Tracing'
-import Essential from './controllers/Essential'
 
 class Core {
     constructor(configuration) {
@@ -37,13 +40,14 @@ class Core {
         this.manager.smartobject = new SmartobjectManager(this)
         this.manager.module = new ModulesManager(this)
         this.manager.routine = new RoutineManager(this)
+        this.manager.rapport = new RapportManager(this)
 
         /* Controller */
         this.controller = {
             authentification: new Authentification(this.configuration.token, this.salt),
             smartobject: new Smartobject(this.manager.smartobject),
             routine: new Routine(this.manager.routine),
-            widget: new Widget(this.manager.smartobject, this.manager.module),
+            module: new Module(this.manager.module),
             market: new Market(this.manager.smartobject, this.manager.module),
             profile: new Profile(),
             storage: new Storage(),
@@ -51,12 +55,16 @@ class Core {
             user: new User(),
             cache: new Cache(),
             espace: new Espace(),
-            notification: new Notification()
+            notification: new Notification(),
+            rapport: new Rapport(this.manager.rapport)
         }
 
+        this.controller.widget = new Widget(this.manager.smartobject, this.manager.module, this.controller.module, this.controller.smartobject),
         this.controller.localisation = new Localisation(this.controller.smartobject)
         this.controller.essential = new Essential(this.controller)
         this.controller.process = new Process(this.manager.smartobject, this.manager.module,this.controller.essential)
+
+        this.manager.rapport.initialisation()
 
         setTimeout(() => {
             this.api = new API(this)

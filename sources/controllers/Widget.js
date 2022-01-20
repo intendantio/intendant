@@ -7,38 +7,31 @@ import Result from '../utils/Result'
 
 class Widget extends Controller {
 
-    constructor(smartobjectManager, moduleManager) {
+    constructor(smartobjectManager, moduleManager, moduleController, smartobjectController) {
         super()
         this.moduleManager = moduleManager
+        this.moduleController = moduleController
+        this.smartobjectController = smartobjectController
         this.smartobjectManager = smartobjectManager
     }
 
-    extract(str) {
-        let newTmp = ""
-        let arrTmp = []
-        let tmp = ""
-        let key = 0
-        let state = false
-        for (let index = 0; index < str.length; index++) {
-            const it = str[index]
-            if (it === "{" && state === false) {
-                state = true
-            } else if (it !== "}" && state) {
-                tmp = tmp + it
-            } else if (it === "}" && state) {
-                state = false
-                arrTmp.push({ key: "{key-" + key + "}", value: tmp })
-                newTmp = newTmp + "{key-" + key + "}"
-                key++
-                tmp = ""
-            } else {
-                newTmp = newTmp + it
+    async getPackageName(type,object) {
+        let packageName = "n/a"
+        if(type == "smartobject") {
+            let resultSmartobject = await this.smartobjectController.getOne(object)
+            if(resultSmartobject.error) {
+                return resultSmartobject
             }
+            let smartobject = resultSmartobject.data
+            if(smartobject.configuration != null) {
+                packageName = smartobject.configuration.name
+            } else {
+                return new Result(Package.name, true, "Missing configuration with smartobject n°" + object) 
+            }
+        } else {
+            packageName= object
         }
-        return {
-            content: newTmp,
-            extracts: arrTmp
-        }
+        return new Result(Package.name, false, "", packageName) 
     }
 
     async getOne(idWidget) {
@@ -51,152 +44,81 @@ class Widget extends Controller {
                 return new Result(Package.name, true, "Widget not found")
             }
             let widget = requestWidget.data
-            let requestWidgetContent = await this.sqlWidgetContent.getAllByField({
+            let requestWidgetSettings = await this.sqlWidgetArgument.getAllByField({
                 widget: widget.id
             })
-            if (requestWidgetContent.error) {
-                return requestWidgetContent
+            if (requestWidgetSettings.error) {
+                return requestWidgetSettings
             }
-            let _contents = []
-            let contents = requestWidgetContent.data
-            for (let indexSource = 0; indexSource < contents.length; indexSource++) {
-                let content = contents[indexSource]
-                let requestWidgetContentType = await this.sqlWidgetContentType.getOne(content.type)
-                if (requestWidgetContentType.error) {
-                    return requestWidgetContentType
+
+            let packageNameResult = await this.getPackageName(widget.type,widget.object)
+            if(packageNameResult.error) {
+                return packageNameResult
+            }
+            let packageName = packageNameResult.data
+            let widgetConfiguration = false 
+            let resultWidget = this.getWidget(packageName,widget.reference)
+            if(resultWidget.error) {
+                return resultWidget
+            }
+            widgetConfiguration = resultWidget.data
+            let settings = {}
+            widget.contents = JSON.parse(JSON.stringify(widgetConfiguration.contents)) 
+            widget.values = JSON.parse(JSON.stringify(widgetConfiguration.contents))
+            widget.dataSources = {}
+            requestWidgetSettings.data.forEach(setting => {
+                switch (setting.type) {
+                    case "string":
+                        settings[setting.reference] = setting.value
+                    break
+                    case "integer":
+                        settings[setting.reference] = parseInt(setting.value)
+                    break
+                    case "boolean":
+                        settings[setting.reference] = setting.value == "true" ? true : false
+                    break
                 }
-                content.type = requestWidgetContentType.data
-                _contents.push(content)
-            }
-            contents = _contents
-            let requestWidgetSource = await this.sqlWidgetSource.getAllByField({
-                widget: widget.id
-            })
-            if (requestWidgetSource.error) {
-                return requestWidgetSource
-            }
-            let sources = []
-            for (let indexSource = 0; indexSource < requestWidgetSource.data.length; indexSource++) {
-                let source = requestWidgetSource.data[indexSource]
-                let requestWidgetSourceArgument = await this.sqlWidgetSourceArgument.getAllByField({
-                    widget_source: source.id
+                widget.values = widget.values.map(value => {
+                    value.value = value.value.replace("{settings." + setting.reference + "}",settings[setting.reference])
+                    return value
                 })
-                if (requestWidgetSourceArgument.error) {
-                    return requestWidgetSourceArgument
+            })
+            for (let indexWidgetDataSource = 0; indexWidgetDataSource < widgetConfiguration.dataSources.length; indexWidgetDataSource++) {
+                let dataSource = widgetConfiguration.dataSources[indexWidgetDataSource]
+                let resultDataSource = await this.getDataSourceValue(packageName,dataSource,settings, widget.object)
+                if(resultDataSource.error) {
+                    return resultDataSource
                 }
-                source.arguments = requestWidgetSourceArgument.data
-                sources.push(source)
-            }
-            let data = await this.getSource(sources)
-            widget.sources = sources
-            let addonsContents = []
-            widget.contents = contents.map(content => {
-                content.native = content.content
-                let extracts = this.extract(content.content)
-                extracts.extracts.forEach(extract => {
-                    let value = ""
-                    if (content.type.reference == 'list') {
-                        let depth = extract.value.split("[x]").length
-                        if (depth == 2) {
-                            let setData = extract.value.split("[x]")[0]
-                            let subData = extract.value.split("[x]")[1]
-                            if (subData.length > 0) {
-                                subData = subData.substring(1)
-                            }
-                            let setValue = _.get(data.data, setData)
-                            if (Array.isArray(setValue)) {
-                                setValue.forEach(sValue => {
-                                    addonsContents.push({
-                                        id: content.id,
-                                        widget: 1,
-                                        type: content.type,
-                                        native: content.native,
-                                        content: extracts.content.replace(extract.key, subData == "" ? sValue : _.get(sValue, subData))
-                                    })
-                                })
-                                extracts.content = ""
-                            } else {
-                                extracts.content = extracts.content.replace(extract.key, 'NotArray')
-                            }
-                        } else if (depth > 2) {
-                            extracts.content = extracts.content.replace(extract.key, 'MultipleArray')
-                        } else if (depth == 1) {
-                            extracts.content = extracts.content.replace(extract.key, "UnknownArray")
-                        }
-                    } else {
-                        value = data.error ? data.package : _.get(data.data, extract.value)
-                        if (typeof value == 'object') {
-                            value = JSON.stringify(value)
-                        } else if (typeof value == 'boolean') {
-                            value = 'Boolean'
-                        } else if (Array.isArray(value)) {
-                            value = 'Array'
-                        }
-                        extracts.content = extracts.content.replace(extract.key, value)
-                    }
+                widget.dataSources[dataSource] = resultDataSource.data.value
+                widget.values = widget.values.map(value => {
+                    value.value = value.value.replace("{" + dataSource + "}", resultDataSource.data.value)
+                    return value
                 })
-                if (content.type.reference == 'list' && extracts.content == "") {
-                    return undefined
+            }
+
+            if(widget.type == "smartobject") {
+                let smartobjectResult = await this.smartobjectController.getOne(widget.object)
+                if(smartobjectResult.error) {
+                    return smartobjectResult
                 }
-                content.content = extracts.content
-                return content
+                widget.values = widget.values.map(value => {
+                    value.value = value.value.replace("{smartobject.reference}",smartobjectResult.data.reference)
+                    return value
+                })
+            }
+
+
+            widget.values = widget.values.map(value => {
+                value.value = capitalizeFirstLetter(value.value) 
+                return value
             })
-            widget.contents = widget.contents.filter(content => {
-                return content != undefined
-            })
-            addonsContents.forEach(addonsContent => {
-                widget.contents.push(addonsContent)
-            })
+            widget.settings = requestWidgetSettings.data
             return new Result(Package.name, false, "", widget)
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get one widget")
             return new Result(Package.name, true, "Error occurred when get one widget")
         }
-
-    }
-
-    async getSource(actions) {
-        try {
-            let data = {}
-            for (let index = 0; index < actions.length; index++) {
-                let action = actions[index]
-                let pArguments = {}
-                action.arguments.forEach(argument => {
-                    pArguments[argument.reference] = argument.value
-                })
-                if (action.type === "smartobject") {
-                    let smartobjectRequest = await this.sqlSmartobject.getOne(action.object)
-                    if (smartobjectRequest.error) {
-                        return smartobjectRequest
-                    }
-                    if (this.smartobjectManager.instances.has(smartobjectRequest.data.id)) {
-                        let resultAction = await this.smartobjectManager.instances.get(smartobjectRequest.data.id).action(action.action, pArguments)
-                        if (resultAction.error) {
-                            return resultAction
-                        }
-                        data[action.reference] = resultAction.data
-                    } else {
-                        return new Result(Package.name, true, "Smartobject not found")
-                    }
-                } else if (action.type === "module") {
-                    let resultAction = await this.moduleManager.executeAction(action.object, action.action, pArguments)
-                    if (resultAction.error) {
-                        return resultAction
-                    }
-                    data[action.reference] = resultAction.data
-                } else {
-                    Tracing.error(Package.name, "Invalid type")
-                    return new Result(Package.name, true, "Invalid type")
-                }
-            }
-            return new Result(Package.name, false, "", data)
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when get source widget")
-            return new Result(Package.name, true, "Error occurred when get source widget")
-        }
-
     }
 
     async getAll() {
@@ -221,71 +143,56 @@ class Widget extends Controller {
             Tracing.error(Package.name, "Error occurred when get all widget")
             return new Result(Package.name, true, "Error occurred when get all widget")
         }
-
     }
 
-    async insert(reference, icon, contents, sources) {
+    async insert(reference, type, object,settings) {
         try {
             if (reference) {
-                if (icon) {
-                    if (contents) {
-                        if (sources) {
-                            let resultInsertWidgetRequest = await this.sqlWidget.insert({
-                                reference: reference,
-                                icon: icon
-                            })
-                            if (resultInsertWidgetRequest.error) {
-                                return resultInsertWidgetRequest
-                            }
-                            let widgetId = resultInsertWidgetRequest.data.insertId
-                            for (let indexContent = 0; indexContent < contents.length; indexContent++) {
-                                let content = contents[indexContent]
-                                let resultInsertWidgetContentRequest = await this.sqlWidgetContent.insert({
-                                    type: content.type.id,
-                                    content: content.content,
-                                    widget: widgetId
+                if (type) {
+                    if(type == "smartobject" || type == "module") {
+                        if (object) {
+                            if (settings) {
+                                let resultInsertWidget = await this.sqlWidget.insert({
+                                    type: type,
+                                    object: object,
+                                    reference: reference
                                 })
-                                if (resultInsertWidgetContentRequest.error) {
-                                    return resultInsertWidgetContentRequest
+                                if(resultInsertWidget.error) {
+                                    return resultInsertWidget
                                 }
-                            }
-                            for (let indexSource = 0; indexSource < sources.length; indexSource++) {
-                                let source = sources[indexSource]
-                                let resultInsertWidgetSourceRequest = await this.sqlWidgetSource.insert({
-                                    reference: source.reference,
-                                    widget: widgetId,
-                                    object: source.source.id,
-                                    action: source.action.id,
-                                    type: source.source.type,
-                                })
-                                if (resultInsertWidgetSourceRequest.error) {
-                                    return resultInsertWidgetSourceRequest
-                                }
-                                let sourceId = resultInsertWidgetSourceRequest.data.insertId
-                                for (let indexSourceArgument = 0; indexSourceArgument < source.arguments.length; indexSourceArgument++) {
-                                    let argument = source.arguments[indexSourceArgument]
-                                    let resultInsertWidgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.insert({
-                                        reference: argument.reference,
-                                        value: argument.value,
-                                        widget_source: sourceId
+                                let idWidget = resultInsertWidget.data.insertId
+                                for (let indexSettings = 0; indexSettings < settings.length; indexSettings++) {
+                                    let setting = settings[indexSettings]
+                                    let resultInsertWidgetArgument = await this.sqlWidgetArgument.insert({
+                                        reference: setting.reference,
+                                        value: setting.value,
+                                        type:  setting.type,
+                                        widget: idWidget
                                     })
-                                    if (resultInsertWidgetSourceArgumentRequest.error) {
-                                        return resultInsertWidgetSourceArgumentRequest
+                                    if(resultInsertWidgetArgument.error) {
+                                        return resultInsertWidgetArgument
                                     }
                                 }
+                                let resultGetOne = await this.getOne(idWidget)
+                                if(resultGetOne.error) {
+                                    await this.delete(idWidget)
+                                }
+                                return resultGetOne
+                            } else {
+                                Tracing.warning(Package.name, "Missing settings")
+                                return new Result(Package.name, true, "Missing settings")
                             }
-                            return new Result(Package.name, false, "")
                         } else {
-                            Tracing.warning(Package.name, "Missing source")
-                            return new Result(Package.name, true, "Missing source")
+                            Tracing.warning(Package.name, "Missing object")
+                            return new Result(Package.name, true, "Missing object")
                         }
                     } else {
-                        Tracing.warning(Package.name, "Missing content")
-                        return new Result(Package.name, true, "Missing content")
+                        Tracing.warning(Package.name, "Invalid type")
+                        return new Result(Package.name, true, "Invalid type")
                     }
                 } else {
-                    Tracing.warning(Package.name, "Missing icon")
-                    return new Result(Package.name, true, "Missing icon")
+                    Tracing.warning(Package.name, "Missing type")
+                    return new Result(Package.name, true, "Missing type")
                 }
             } else {
                 Tracing.warning(Package.name, "Missing reference")
@@ -300,52 +207,13 @@ class Widget extends Controller {
 
     }
 
-    async update(idWidget, content) {
-        try {
-            if (content) {
-                let requestGetOne = await this.sqlWidget.getOne(idWidget)
-                if (requestGetOne.error) {
-                    return requestGetOne
-                }
-                let requestUpdate = await this.sqlWidgetContent.updateAll({ content: content.native }, { id: content.id })
-                if (requestUpdate.error) {
-                    return requestUpdate
-                }
-                return new Result(Package.name, false, "")
-            } else {
-                Tracing.warning(Package.name, "Missing content")
-                return new Result(Package.name, false, "Missing content")
-            }
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when update widget")
-            return new Result(Package.name, true, "Error occurred when update widget")
-        }
-
-    }
 
     async delete(idWidget) {
         try {
             Tracing.verbose(Package.name, "Delete widget " + idWidget)
-            let widgetSourceRequest = await this.sqlWidgetSource.getAllByField({ widget: idWidget })
-            if (widgetSourceRequest.error) {
-                return widgetSourceRequest
-            }
-            let widgetSources = widgetSourceRequest.data
-            for (let index = 0; index < widgetSources.length; index++) {
-                let widgetSource = widgetSources[index]
-                let widgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.deleteAllByField({ widget_source: widgetSource.id })
-                if (widgetSourceArgumentRequest.error) {
-                    return widgetSourceArgumentRequest
-                }
-            }
-            let widgetSourceDeleteRequest = await this.sqlWidgetSource.deleteAllByField({ widget: idWidget })
-            if (widgetSourceDeleteRequest.error) {
-                return widgetSourceDeleteRequest
-            }
-            let widgetContentDeleteRequest = await this.sqlWidgetContent.deleteAllByField({ widget: idWidget })
-            if (widgetContentDeleteRequest.error) {
-                return widgetContentDeleteRequest
+            let widgetArgumentRequest = await this.sqlWidgetArgument.deleteAllByField({ widget: idWidget })
+            if (widgetArgumentRequest.error) {
+                return widgetArgumentRequest
             }
             let widgetDeleteRequest = await this.sqlWidget.deleteOne(idWidget)
             if (widgetDeleteRequest.error) {
@@ -357,157 +225,143 @@ class Widget extends Controller {
             Tracing.error(Package.name, "Error occurred when delete widget")
             return new Result(Package.name, true, "Error occurred when delete widget")
         }
-
     }
 
-    async insertSource(idWidget, reference, source, action, pArguments) {
+
+    getConfiguration(pModule) {
         try {
-            if (reference) {
-                if (source) {
-                    if (action) {
-                        if (pArguments) {
-                            let widgetRequest = await this.sqlWidget.getOne(idWidget)
-                            if (widgetRequest.error) {
-                                return widgetRequest
-                            }
-                            if (widgetRequest.data == false) {
-                                return new Result(Package.name, true, "Widget not found")
-                            }
-                            let widgetSourceRequest = await this.sqlWidgetSource.insert({
-                                reference: reference,
-                                widget: idWidget,
-                                object: source.id,
-                                action: action.id,
-                                type: source.type,
-                            })
-                            if (widgetSourceRequest.error) {
-                                return widgetSourceRequest
-                            }
-                            let sourceId = widgetSourceRequest.data.insertId
-                            for (let indexSourceArgument = 0; indexSourceArgument < pArguments.length; indexSourceArgument++) {
-                                let argument = pArguments[indexSourceArgument]
-                                let resultInsertWidgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.insert({
-                                    reference: argument.reference,
-                                    value: argument.value,
-                                    widget_source: sourceId
-                                })
-                                if (resultInsertWidgetSourceArgumentRequest.error) {
-                                    return resultInsertWidgetSourceArgumentRequest
-                                }
-                            }
-                            return new Result(Package.name, false, "")
-                        } else {
-                            Tracing.warning(Package.name, "Missing arguments")
-                            return new Result(Package.name, true, "Missing arguments")
-                        }
-                    } else {
-                        Tracing.warning(Package.name, "Missing action")
-                        return new Result(Package.name, true, "Missing action")
-                    }
-                } else {
-                    Tracing.warning(Package.name, "Missing source")
-                    return new Result(Package.name, true, "Missing source")
-                }
-            } else {
-                Tracing.warning(Package.name, "Missing reference")
-                return new Result(Package.name, true, "Missing reference")
-            }
+            let configuration = require(pModule + "/package.json")
+            return new Result(Package.name, false, "", configuration)
         } catch (error) {
             StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when insert source widget")
-            return new Result(Package.name, true, "Error occurred when insert source widget")
+            Tracing.error(Package.name, "Error occurred when get configuration in module")
+            return new Result(Package.name, true, "Error occurred when get configuration in module")
         }
-
     }
 
-    async insertContent(idWidget, idType, content) {
+    async getDataSourceValue(pModule, idDataSource, settings = {}, id = -1) {
         try {
-            if (idType) {
-                if (content) {
-                    let widgetRequest = await this.sqlWidget.getOne(idWidget)
-                    if (widgetRequest.error) {
-                        return widgetRequest
-                    }
-                    if (widgetRequest.data == false) {
-                        return new Result(Package.name, true, "Widget not found")
-                    }
-                    let widgetSourceRequest = await this.sqlWidgetContent.insert({
-                        type: idType,
-                        content: content,
-                        widget: idWidget,
-                    })
-                    if (widgetSourceRequest.error) {
-                        return widgetSourceRequest
-                    }
-                    return new Result(Package.name, false, "")
-                } else {
-                    Tracing.warning(Package.name, "Missing content")
-                    return new Result(Package.name, true, "Missing content")
-                }
-            } else {
-                Tracing.warning(Package.name, "Missing type")
-                return new Result(Package.name, true, "Missing type")
+            let resultGetDataSource = this.getDataSource(pModule, idDataSource)
+            if (resultGetDataSource.error) {
+                return resultGetDataSource
             }
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when insert content widget")
-            return new Result(Package.name, true, "Error occurred when insert content widget")
-        }
-
-    }
-
-    async deleteSource(idWidget, idSource) {
-        try {
-            let widgetSourceArgumentRequest = await this.sqlWidgetSourceArgument.deleteAllByField({ widget_source: idSource })
-            if (widgetSourceArgumentRequest.error) {
-                return widgetSourceArgumentRequest
+            let resultConfiguration = this.getConfiguration(pModule)
+            if (resultConfiguration.error) {
+                return resultConfiguration
             }
-            let widgetSourceRequest = await this.sqlWidgetSource.deleteAllByField({ widget: idWidget, id: idSource })
-            if (widgetSourceRequest.error) {
-                return widgetSourceRequest
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete source widget")
-            return new Result(Package.name, true, "Error occurred when delete source widget")
-        }
-
-    }
-
-    async deleteContent(idWidget, idContent) {
-        try {
-            let widgetContentRequest = await this.sqlWidgetContent.deleteAllByField({ widget: idWidget, id: idContent })
-            if (widgetContentRequest.error) {
-                return widgetContentRequest
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete content widget")
-            return new Result(Package.name, true, "Error occurred when delete content widget")
-        }
-
-    }
-
-    async getConfiguration() {
-        try {
-            let contentTypes = await this.sqlWidgetContentType.getAll()
-            if (contentTypes.error) {
-                return contentTypes
-            }
-            return new Result(Package.name, false, "", {
-                contents: {
-                    types: contentTypes.data
+            let configuration = resultConfiguration.data
+            let dataSource = resultGetDataSource.data
+            let action = false
+            configuration.actions.forEach(pAction => {
+                if (pAction.id == dataSource.action) {
+                    action = pAction
                 }
             })
+            if (action) {
+                let missingSettings = []
+                action.settings.forEach(setting => {
+                    if (settings[setting.id] == undefined) {
+                        missingSettings.push(setting)
+                    }
+                })
+                if (missingSettings.length == 0) {
+                    let resultAction = {
+                        error: true,
+                        message: "n/a"
+                    }
+                    if(configuration.module == "module") {
+                        resultAction = await this.moduleController.executeAction(pModule, action.id, settings)
+                    } else if(configuration.module == "smartobject") {
+                        resultAction =  await this.smartobjectController.executeAction(id, action.id, 1, settings, true)
+                    }
+                    if (resultAction.error) {
+                        return resultAction
+                    } else {
+                        return new Result(Package.name, false, "", {
+                            value: _.get(resultAction.data, dataSource.path)
+                        })
+                    }
+                } else {
+                    return new Result(Package.name, true, "Missing settings", missingSettings)
+                }
+            } else {
+                Tracing.warning(Package.name, "Malformed datasource (missing action)")
+                return new Result(Package.name, true, "Malformed datasource (missing action)")
+            }
         } catch (error) {
             StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when get configuration widget")
-            return new Result(Package.name, true, "Error occurred when get configuration widget")
+            Tracing.error(Package.name, "Error occurred when get data source value in widget")
+            return new Result(Package.name, true, "Error occurred when get data source value in widget")
         }
     }
 
+    getDataSource(pModule, idDataSource) {
+        try {
+            let resultConfiguration = this.getConfiguration(pModule)
+            if (resultConfiguration.error) {
+                return resultConfiguration
+            }
+            let configuration = resultConfiguration.data
+            if (Array.isArray(configuration.dataSources)) {
+                let dataSource = false
+                configuration.dataSources.forEach(pDataSource => {
+                    if (pDataSource.id == idDataSource) {
+                        dataSource = pDataSource
+                    }
+                })
+                if (dataSource) {
+                    return new Result(Package.name, false, "", dataSource)
+                } else {
+                    Tracing.warning(Package.name, "Datasource not found")
+                    return new Result(Package.name, true, "Datasource not found")
+                }
+            } else {
+                Tracing.error(Package.name, "Datasources was not implemented")
+                return new Result(Package.name, true, "Datasources was not implemented")
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get data source value in module")
+            return new Result(Package.name, true, "Error occurred when get data source value in module")
+        }
+    }
+
+    getWidget(pModule, idWidget) {
+        try {
+            let resultConfiguration = this.getConfiguration(pModule)
+            if (resultConfiguration.error) {
+                return resultConfiguration
+            }
+            let configuration = resultConfiguration.data
+            if (Array.isArray(configuration.widgets)) {
+                let widget = false
+                configuration.widgets.forEach(pWidget => {
+                    if (pWidget.id == idWidget) {
+                        widget = pWidget
+                    }
+                })
+                if (widget) {
+                    return new Result(Package.name, false, "", widget)
+                } else {
+                    Tracing.warning(Package.name, "Widget not found")
+                    return new Result(Package.name, true, "Widget not found")
+                }
+            } else {
+                Tracing.error(Package.name, "Widgets was not implemented")
+                return new Result(Package.name, true, "Widgets was not implemented")
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get widget in module")
+            return new Result(Package.name, true, "Error occurred when get widget in module")
+        }
+    }
+
+
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default Widget

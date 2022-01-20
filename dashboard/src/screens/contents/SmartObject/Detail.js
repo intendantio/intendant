@@ -20,11 +20,13 @@ class DetailSmartObject extends React.Component {
             message: "",
             referenceArguments: "",
             valueArguments: "",
-            executeInformation: ""
+            executeInformation: "",
+            isMobile: false
         }
     }
 
     async componentDidMount() {
+        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
         let resultProfile = await new Request().get().fetch("/api/profiles")
         let resultLocalisation = await new Request().get().fetch("/api/localisations")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects/" + this.state.id)
@@ -113,6 +115,12 @@ class DetailSmartObject extends React.Component {
         }
     }
 
+    mediaQueries(query) {
+        let mediaMatch = window.matchMedia(query);
+        this.setState({ isMobile: mediaMatch.matches })
+        const handler = e => this.setState({ isMobile: e.matches })
+        mediaMatch.addListener(handler)
+    }
 
     setLocalisation(id) {
         this.state.localisations.forEach(pLocalisation => {
@@ -129,7 +137,7 @@ class DetailSmartObject extends React.Component {
                 <div>
                     <Paper variant="outlined" style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
                         <div style={{ padding: 10, }}>
-                            <Typography variant='h4' >
+                            <Typography variant='h5' >
                                 {this.state.smartobject.reference}
                             </Typography>
                             <Typography variant='subtitle1' >
@@ -208,13 +216,13 @@ class DetailSmartObject extends React.Component {
                                             </Box>
                                             {
                                                 action.settings.length > 0 ?
-                                                    <div style={{ display: 'grid', gridRowGap: '10px', gridTemplateColumns: 'repeat(4,min-content)', marginTop: 10, marginBottom: 10 }}>
+                                                    <Box style={{ display: 'grid', gridRowGap: '10px', gridTemplateColumns: this.state.isMobile ? 'repeat(1,min-content)' : 'repeat(4,min-content)', marginTop: 10, marginBottom: 10 }}>
                                                         {
                                                             action.settings.map((setting, pIndex) => {
-                                                                return <Action key={pIndex} flexDirection='column' orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
+                                                                return <Action key={pIndex} flexDirection={this.state.isMobile ? 'row' : 'column'} orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
                                                             })
                                                         }
-                                                    </div> : null
+                                                    </Box> : null
                                             }
                                         </Paper>
                                     )
@@ -223,15 +231,13 @@ class DetailSmartObject extends React.Component {
                         </div>
                         {
                             this.state.executeInformation.length > 0 ?
-                                <div style={{ padding: 10 }}>
-                                    <Alert severity="success" action={
-                                        <IconButton onClick={() => { this.setState({ executeInformation: "" }) }} style={{ alignSelf: 'start' }} color="inherit" size="small">
-                                            <Close />
-                                        </IconButton>
-                                    }>
-                                        <JSONPretty id="json-pretty" data={JSON.parse(this.state.executeInformation)}></JSONPretty>
-                                    </Alert>
-                                </div>
+                                <Alert style={{ overflow: 'auto', margin: 10 }} severity="success" action={
+                                    <IconButton onClick={() => { this.setState({ executeInformation: "" }) }} style={{ alignSelf: 'start' }} color="inherit" size="small">
+                                        <Close />
+                                    </IconButton>
+                                }>
+                                    <JSONPretty id="json-pretty" data={JSON.parse(this.state.executeInformation)}></JSONPretty>
+                                </Alert>
                                 :
                                 null
                         }
@@ -248,33 +254,33 @@ class DetailSmartObject extends React.Component {
                                     }
                                 </Select>
                             </FormControl>
-                            <div style={{marginTop: 10}}>
-                            <Typography variant='h5' >
-                                Authorization
-                            </Typography>
-                            {
-                                this.state.profiles.map((profile, index) => {
-                                    let state = false
-                                    this.state.smartobject.profiles.forEach(pprofile => {
-                                        if (pprofile.profile == profile.id) {
-                                            state = true
-                                        }
+                            <div style={{ marginTop: 10 }}>
+                                <Typography variant='h5' >
+                                    Authorization
+                                </Typography>
+                                {
+                                    this.state.profiles.map((profile, index) => {
+                                        let state = false
+                                        this.state.smartobject.profiles.forEach(pprofile => {
+                                            if (pprofile.profile == profile.id) {
+                                                state = true
+                                            }
+                                        })
+                                        return (
+                                            <ListItem key={index} style={{ padding: 1 }}  >
+                                                <FormControlLabel control={
+                                                    <Switch
+                                                        checked={state}
+                                                        onChange={() => {
+                                                            state ? this.deleteProfile(this.state.smartobject, profile) : this.insertProfile(this.state.smartobject, profile)
+                                                        }}
+                                                        color="primary"
+                                                    />
+                                                } label={profile.name} />
+                                            </ListItem>
+                                        )
                                     })
-                                    return (
-                                        <ListItem key={index} style={{ padding: 1 }}  >
-                                            <FormControlLabel control={
-                                                <Switch
-                                                    checked={state}
-                                                    onChange={() => {
-                                                        state ? this.deleteProfile(this.state.smartobject, profile) : this.insertProfile(this.state.smartobject, profile)
-                                                    }}
-                                                    color="primary"
-                                                />
-                                            } label={profile.name} />
-                                        </ListItem>
-                                    )
-                                })
-                            }
+                                }
                             </div>
                         </div>
                     </Paper>

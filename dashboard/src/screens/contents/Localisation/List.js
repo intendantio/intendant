@@ -52,7 +52,12 @@ class Localisation extends React.Component {
                                             <TableRow>
                                                 <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}}  align="left">
                                                     <Typography variant='body1'>
-                                                        Reference
+                                                        Room
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell style={{borderColor:'rgba(255, 255, 255, 0.12)'}}  align="left">
+                                                    <Typography variant='body1'>
+                                                        Room
                                                     </Typography>
                                                 </TableCell>
                                             </TableRow>
@@ -60,6 +65,11 @@ class Localisation extends React.Component {
                                         <TableBody>
                                             {this.state.localisations.slice(this.state.page * 10, (this.state.page + 1) * 10).map((localisation, index) => (
                                                 <TableRow onClick={() => { this.props.history.push("/localisation/" + localisation.id) }} hover key={index} style={{ cursor: 'pointer' }}>
+                                                    <TableCell style={{ borderBottom: 0 }}  align="left">
+                                                        <Typography variant='body1'>
+                                                            {capitalizeFirstLetter(localisation.name)}
+                                                        </Typography>
+                                                    </TableCell>
                                                     <TableCell style={{ borderBottom: 0 }}  align="left">
                                                         <Typography variant='body1'>
                                                             {capitalizeFirstLetter(localisation.name)}

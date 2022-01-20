@@ -292,12 +292,17 @@ class Connector {
         }
     }
 
-    async execute(request) {
+    async execute(request, options = {}) {
         this.check("execute")
         if (typeof request == 'string') {
             try {
                 request = request.replace("DATE:NOW", "date('now')")
-                let result = await this._connector.prepare(request).run()
+                let result = false
+                if(options.run) {
+                    result = await this._connector.prepare(request).run()
+                } else {
+                    result = await this._connector.prepare(request).all()
+                }
                 return {
                     package: Package.name,
                     error: false,

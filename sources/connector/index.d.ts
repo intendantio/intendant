@@ -17,6 +17,7 @@ declare class Connector {
     public deleteAllByField(fields: Object): Promise<Result>
     public truncate(): Promise<Result>
     public insert(fields: Object): Promise<Result>
+    public execute(request: String, options: Object): Promise<Result>
 
 }
 

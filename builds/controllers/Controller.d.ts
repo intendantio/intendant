@@ -24,10 +24,7 @@ declare class Controller {
 
     sqlStorage: Connector;
     sqlWidget: Connector;
-    sqlWidgetContent: Connector;
-    sqlWidgetSource: Connector;
-    sqlWidgetContentType: Connector;
-    sqlWidgetSourceArgument: Connector;
+    sqlWidgetArgument: Connector;
 
     sqlEspace: Connector;
     sqlProcess: Connector;
@@ -37,6 +34,11 @@ declare class Controller {
     sqlCache: Connector;
     sqlLocalisation: Connector;
     sqlLocalisationProfile: Connector;
+
+    
+    sqlRapport: Connector;
+    sqlRapportData: Connector;
+    sqlRapportArgument: Connector;
 }
 
 export default Controller
