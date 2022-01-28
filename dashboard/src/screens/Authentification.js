@@ -20,20 +20,11 @@ class Authentification extends React.Component {
             customAddress: false,
             address: window.location.origin,
             login: "admin",
-            isMobile: false,
             loading: true
         }
     }
 
 
-    mediaQueries(query) {
-        let mediaMatch = window.matchMedia(query);
-        this.setState({ isMobile: mediaMatch.matches })
-        const handler = e => { 
-            this.setState({ isMobile: e.matches })
-        }
-        mediaMatch.addListener(handler)
-    }
 
     async componentDidMount() {
         let server = localStorage.getItem("server")
@@ -46,7 +37,6 @@ class Authentification extends React.Component {
         } else if (server) {
             this.setState({ address: server.replace("http://", "") })
         }
-        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
         this.setState({loading: false})
     }
 
@@ -99,12 +89,12 @@ class Authentification extends React.Component {
         }
         if (this.state.getStarted) {
             return (
-                <GetStarted onFinish={() => { this.setState({ getStarted: false }) }} />
+                <GetStarted isMobile={this.props.isMobile} onFinish={() => { this.setState({ getStarted: false }) }} />
             )
         } else {
             if (this.state.authentification) {
                 return (
-                    <Paper variant='outlined' style={{ padding: 30, width: this.state.isMobile ? '380px' : '25vw', textAlign: 'center' }}>
+                    <Paper variant='outlined' style={{ padding: 30, width: this.props.isMobile ? '380px' : '25vw', textAlign: 'center' }}>
                         <div>
                             <div style={{ marginBottom: 50 }}>
                                 <img  onClick={() => {this.setState({customAddress: !this.state.customAddress}) }}  src={process.env.PUBLIC_URL + "/logo.svg"} style={{ height: '15vh', width: '15vh', borderRadius: 7, cursor: 'pointer' }} />
@@ -145,7 +135,7 @@ class Authentification extends React.Component {
                 )
             } else {
                 return (
-                    <Main onDisconnect={() => { this.disconnect() }} />
+                    <Main isMobile={this.props.isMobile} onDisconnect={() => { this.disconnect() }} />
                 )
             }
         }

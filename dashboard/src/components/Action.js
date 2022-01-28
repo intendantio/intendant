@@ -30,16 +30,7 @@ class Action extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
-    }
 
-    mediaQueries(query) {
-        let mediaMatch = window.matchMedia(query);
-        this.setState({ isMobile: mediaMatch.matches })
-        const handler = e => this.setState({ isMobile: e.matches })
-        mediaMatch.addListener(handler)
-    }
 
     updateAction(action, value) {
         let tmp = {}

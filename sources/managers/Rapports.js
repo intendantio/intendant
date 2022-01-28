@@ -29,42 +29,9 @@ class RapportManager {
                 Tracing.verbose(Package.name, "Rapport manager : instanciate rapport n°" + rapport.id)
                 
                 let task = new ToadScheduler.Task(rapport.id.toString(), async () => {
-                    let getOneRapport = await this.core.controller.rapport.getOne(rapport.id)
-                    if(getOneRapport.error) {
-                        console.log(getOneRapport)
-                        return getOneRapport
-                    }
-                    let currentRapport = getOneRapport.data
-                    let packageNameResult = await this.core.controller.widget.getPackageName(currentRapport.type,currentRapport.object)
-                    if(packageNameResult.error) {
-                        console.log(packageNameResult)
-                        return packageNameResult
-                    }
-                    let packageName = packageNameResult.data
-                    let settings = {}
-                    currentRapport.settings.forEach(setting => {
-                        switch (setting.type) {
-                            case "string":
-                                settings[setting.reference] = setting.value
-                            break
-                            case "integer":
-                                settings[setting.reference] = parseInt(setting.value)
-                            break
-                            case "boolean":
-                                settings[setting.reference] = setting.value == "true" ? true : false
-                            break
-                        }
-                    })
-                    let dataSourceResult = await this.core.controller.widget.getDataSourceValue(packageName,currentRapport.reference,settings, currentRapport.object)
-                    if(dataSourceResult.error) {
-                        console.log(dataSourceResult)
-                        return dataSourceResult
-                    }
-                    let resultInsertData = await this.core.controller.rapport.insertData(currentRapport.id, dataSourceResult.data.value)
-                    if(resultInsertData.error) {
-                        return resultInsertData
-                    }
+                    this.executeAction(rapport)
                 })
+                    this.executeAction(rapport)
 
                 this.scheduler.addSimpleIntervalJob(
                     new ToadScheduler.SimpleIntervalJob({ seconds: rapport.interval },task, "intendant_rapport_" + rapport.id)
@@ -83,6 +50,42 @@ class RapportManager {
             return new Result(Package.name, false, "")
         } else {
             return new Result(Package.name, true, "Rapport instance not found")
+        }
+    }
+
+    async executeAction(rapport) {
+        Tracing.verbose(Package.name, "Rapport manager : execute rapport n°" + rapport.id)
+        let getOneRapport = await this.core.controller.rapport.getOne(rapport.id)
+        if(getOneRapport.error) {
+            return getOneRapport
+        }
+        let currentRapport = getOneRapport.data
+        let packageNameResult = await this.core.controller.widget.getPackageName(currentRapport.type,currentRapport.object)
+        if(packageNameResult.error) {
+            return packageNameResult
+        }
+        let packageName = packageNameResult.data
+        let settings = {}
+        currentRapport.settings.forEach(setting => {
+            switch (setting.type) {
+                case "string":
+                    settings[setting.reference] = setting.value
+                break
+                case "integer":
+                    settings[setting.reference] = parseInt(setting.value)
+                break
+                case "boolean":
+                    settings[setting.reference] = setting.value == "true" ? true : false
+                break
+            }
+        })
+        let dataSourceResult = await this.core.controller.widget.getDataSourceValue(packageName,currentRapport.reference,settings, currentRapport.object)
+        if(dataSourceResult.error) {
+            return dataSourceResult
+        }
+        let resultInsertData = await this.core.controller.rapport.insertData(currentRapport.id, dataSourceResult.data.value)
+        if(resultInsertData.error) {
+            return resultInsertData
         }
     }
 

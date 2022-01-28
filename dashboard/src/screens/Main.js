@@ -16,6 +16,7 @@ import Widget from './contents/Widget/List'
 import NewWidget from './contents/Widget/New'
 import Rapport from './contents/Rapport/List'
 import NewRapport from './contents/Rapport/New'
+import DetailRapport from './contents/Rapport/Detail'
 import User from './contents/User/List'
 import NewUser from './contents/User/New'
 import QrCode from './contents/QrCode/QrCode'
@@ -28,67 +29,47 @@ import Authorisation from './contents/Authorisation/List'
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
-class Main extends React.Component {
+function Main(mainProps) {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            isMobile: false
-        }
-    }
-
-    componentDidMount() {
-        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
-    }
-
-    mediaQueries(query) {
-        let mediaMatch = window.matchMedia(query);
-        this.setState({ isMobile: mediaMatch.matches })
-        const handler = e => this.setState({ isMobile: e.matches })
-        mediaMatch.addListener(handler)
-    }
-
-    render() {
-        return (
-            <Router basename='/admin'>
-                <Sidebar isMobile={this.state.isMobile} onDisconnect={() => { this.props.onDisconnect() }} />
-                <main id='main' style={{ paddingTop:  this.state.isMobile ? 20 : '4vh', width:  '100vw', paddingLeft:'5vw', paddingRight: '5vw', overflowX:  'hidden', overflowY: 'visible' }} >
-                    <div style={{ marginLeft: this.state.isMobile ? 0 : 240, height: '100vh' }}>
-                        <Switch>
-                            <Route exact path="/" component={SmartObject} />
-                            <Route exact path="/smartobject" component={SmartObject} />
-                            <Route exact path="/smartobject/new" component={NewSmartObject} />
-                            <Route exact path="/smartobject/redirect/:object" component={RedirectSmartObject} />
-                            <Route exact path="/smartobject/:id" component={DetailSmartObject} />
-                            <Route exact path="/module" component={Module} />
-                            <Route exact path="/module/:id" component={DetailModule} />
-                            <Route exact path="/routine" component={Routine} />
-                            <Route exact path="/routine/new" component={NewRoutine} />
-                            <Route exact path="/routine/:id" component={DetailRoutine} />
-                            <Route exact path="/rapport" component={Rapport} />
-                            <Route exact path="/rapport/new" component={NewRapport} />
-                            <Route exact path="/widget" component={Widget} />
-                            <Route exact path="/widget/new" component={NewWidget} />
-                            <Route exact path="/widget/authorization" component={Widget} />
-                            <Route exact path="/widget/authorization" component={Widget} />
-                            <Route exact path="/process" component={ListProcess} />
-                            <Route exact path="/process/new" component={NewProcess} />
-                            <Route exact path="/process/:id" component={DetailProcess} />
-                            <Route exact path="/qrcode/:id" component={QrCode} />
-                            <Route exact path="/user" component={User} />
-                            <Route exact path="/user/new" component={NewUser} />
-                            <Route exact path="/user/:id/password" component={NewPassword} />
-                            <Route exact path="/market" component={Market} />
-                            <Route exact path="/localisation" component={Localisation} />
-                            <Route exact path="/localisation/new" component={NewLocalisation} />
-                            <Route exact path="/localisation/:id" component={DetailLocalisation} />
-                            <Route exect path="/authorisation" component={Authorisation} />
-                        </Switch>
-                    </div>
-                </main>
-            </Router>
-        )
-    }
+    console.log(mainProps)
+    return (
+        <Router basename='/admin'>
+            <Sidebar isMobile={mainProps.isMobile} onDisconnect={() => { props.onDisconnect() }} />
+            <main id='main' style={{ paddingTop: mainProps.isMobile ? 20 : '4vh', width: '100vw', paddingLeft: '5vw', paddingRight: '5vw', overflowX: 'hidden', overflowY: 'visible' }} >
+                <div style={{ marginLeft: mainProps.isMobile ? 0 : 240, height: '100vh' }}>
+                    <Switch>
+                        <Route exact path="/" render={(props) => <SmartObject isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/smartobject" render={(props) => <SmartObject isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/smartobject/new" render={(props) => <NewSmartObject isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/smartobject/redirect/:object" render={(props) => <RedirectSmartObject isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/smartobject/:id" render={(props) => <DetailSmartObject isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/module" render={(props) => <Module isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/module/:id" render={(props) => <DetailModule isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/routine" render={(props) => <Routine isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/routine/new" render={(props) => <NewRoutine isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/routine/:id" render={(props) => <DetailRoutine isMobile={true} {...props} />} />
+                        <Route exact path="/rapport" render={(props) => <Rapport isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/rapport/new" render={(props) => <NewRapport isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/rapport/:id" render={(props) => <DetailRapport isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/widget" render={(props) => <Widget isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/widget/new" render={(props) => <NewWidget isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/process" render={(props) => <ListProcess isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/process/new" render={(props) => <NewProcess isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/process/:id" render={(props) => <DetailProcess isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/qrcode/:id" render={(props) => <QrCode isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/user" render={(props) => <User isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/user/new" render={(props) => <NewUser isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/user/:id/password" render={(props) => <NewPassword isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/market" render={(props) => <Market isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/localisation" render={(props) => <Localisation isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/localisation/new" render={(props) => <NewLocalisation isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exact path="/localisation/:id" render={(props) => <DetailLocalisation isMobile={mainProps.isMobile} {...props} />} />
+                        <Route exect path="/authorisation" render={(props) => <Authorisation isMobile={mainProps.isMobile} {...props} />} />
+                    </Switch>
+                </div>
+            </main>
+        </Router>
+    )
 }
 
 export default Main

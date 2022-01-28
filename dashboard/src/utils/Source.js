@@ -32,7 +32,6 @@ class Source {
                     pModule.actions.forEach(action => {
                         actions.push({ id: action.id, name: action.name, settings: action.settings })
                     })
-                    console.log(pModule)
                     sources.push({ id: pModule.name, name: "Module " + pModule.name, actions: actions, widgets: Array.isArray(pModule.widgets) ? pModule.widgets : [], type: 'module' })
                 })
             }

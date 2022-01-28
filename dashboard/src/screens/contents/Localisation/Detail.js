@@ -72,7 +72,6 @@ class DetailLocalisation extends React.Component {
 
     render() {
         if (this.state.localisation) {
-            console.log(this.state.localisation.smartobjects)
             return (
                 <div>
                     <Paper variant="outlined" style={{ padding: 15, marginBottom: 10, justifyContent: 'left' }}>

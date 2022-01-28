@@ -1,5 +1,5 @@
 import React from 'react'
-import { Drawer, IconButton, Button, List, AppBar, Typography, Toolbar, Box, Divider, ListItem, ListItemIcon, ListItemText } from '@mui/material'
+import { Drawer, IconButton, Button, List, AppBar, Typography, Toolbar, Box, Divider, ListItem, ListItemIcon, ListItemText, Skeleton } from '@mui/material'
 import { ShoppingCart, House, Menu, DevicesOther, ExitToApp, AccountTree, Category, DeviceHub, BarChart, Extension, Settings, Person, ArrowBack, ArrowBackIos } from '@mui/icons-material'
 import { Link } from "react-router-dom"
 
@@ -11,8 +11,14 @@ class Sidebar extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            open: false
+            open: false,
+            information: {
+                status: "",
+                version: ""
+            },
+            loading: true
         }
+        this.getStatus()
     }
 
     navigate() {
@@ -21,6 +27,18 @@ class Sidebar extends React.Component {
             top: 0,
             left: 0
         })
+    }
+
+    getStatus() {
+        setTimeout(() => {
+            this.setState({
+                loading: false,
+                information: {
+                    status: "",
+                    version: "1.0.0"
+                }
+            })
+        }, 1000)
     }
 
     render() {
@@ -47,7 +65,7 @@ class Sidebar extends React.Component {
                         </Toolbar>
                     </AppBar>
                     <Drawer elevation={0} onClose={() => this.setState({ open: false })} anchor="left" open={this.state.open} style={{ width: 240 }} >
-                        <Box style={{ width: 240, display: 'flex', justifyContent: 'space-between', overflowX: 'hidden' }}>
+                        <Box style={{ width: 240, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', overflowX: 'hidden' }}>
                             <List style={{ width: '100%' }}>
                                 <Box style={{ display: 'flex', justifyContent: 'flex-start', padding: 5, alignContent: 'center', alignSelf: 'center', alignItems: 'center' }}>
                                     <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ minHeight: 40, minWidth: 40, height: '7vh', width: '7vh', borderRadius: 7, marginLeft: 15 }} />
@@ -56,7 +74,7 @@ class Sidebar extends React.Component {
                                             Intendant
                                         </Typography>
                                         <Typography variant='subtitle1' style={{ paddingTop: 0, paddingBottom: 15, paddingLeft: 10 }}>
-                                            Administration
+                                            Smart home
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -141,6 +159,28 @@ class Sidebar extends React.Component {
                                     <ListItemText primary={"Disconnect"} />
                                 </ListItem>
                             </List>
+                            <Box style={{ padding: 16 }}>
+                                {
+                                    this.state.loading ?
+                                        <>
+                                            <Typography variant='h6' >
+                                                <Skeleton animation="wave" variant="text" />
+                                            </Typography>
+                                            <Typography variant='body2' >
+                                                <Skeleton animation="wave" variant="text" />
+                                            </Typography>
+                                        </>
+                                        :
+                                        <>
+                                            <Typography variant='body2'>
+                                                {"Subscription free"}
+                                            </Typography>
+                                            <Typography variant='caption'>
+                                                {"Version " + this.state.information.version + " - License GPL-3.0+"}
+                                            </Typography>
+                                        </>
+                                }
+                            </Box>
                         </Box>
                     </Drawer >
                 </>
@@ -149,7 +189,7 @@ class Sidebar extends React.Component {
         }
         return (
             <Drawer variant="persistent" anchor="left" open={true} style={{ width: 240 }} >
-                <Box style={{ width: 240, display: 'flex', justifyContent: 'space-between', overflowX: 'hidden' }}>
+                <Box style={{ width: 240, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', overflowX: 'hidden' }}>
                     <List style={{ width: '100%' }}>
                         <Box style={{ display: 'flex', justifyContent: 'flex-start', padding: 5, alignContent: 'center', alignSelf: 'center', alignItems: 'center' }}>
                             <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ minHeight: 40, minWidth: 40, height: '7vh', width: '7vh', borderRadius: 7, marginLeft: 15 }} />
@@ -158,7 +198,7 @@ class Sidebar extends React.Component {
                                     Intendant
                                 </Typography>
                                 <Typography variant='subtitle1' style={{ paddingTop: 0, paddingBottom: 15, paddingLeft: 10 }}>
-                                    Administration
+                                    Smart home
                                 </Typography>
                             </Box>
                         </Box>
@@ -171,7 +211,7 @@ class Sidebar extends React.Component {
                                 <ListItemText primary={"Room"} />
                             </ListItem>
                         </Link>
-                        <Link to="/smartobject"  onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
+                        <Link to="/smartobject" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
                             <ListItem button key={"smartobject"}>
                                 <ListItemIcon>
                                     <DevicesOther />
@@ -243,6 +283,28 @@ class Sidebar extends React.Component {
                             <ListItemText primary={"Disconnect"} />
                         </ListItem>
                     </List>
+                    <Box style={{ padding: 16 }}>
+                        {
+                            this.state.loading ?
+                                <>
+                                    <Typography variant='h6' >
+                                        <Skeleton animation="wave" variant="text" />
+                                    </Typography>
+                                    <Typography variant='body2' >
+                                        <Skeleton animation="wave" variant="text" />
+                                    </Typography>
+                                </>
+                                :
+                                <>
+                                    <Typography variant='body2'>
+                                        {"Subscription free"}
+                                    </Typography>
+                                    <Typography variant='caption'>
+                                        {"Version " + this.state.information.version + " - License GPL-3.0+"}
+                                    </Typography>
+                                </>
+                        }
+                    </Box>
                 </Box>
             </Drawer>
         )

@@ -3,6 +3,7 @@ import StackTrace from "../utils/StackTrace"
 import Tracing from "../utils/Tracing"
 import Result from "../utils/Result"
 import Package from '../package.json'
+import Moment from 'moment'
 
 const TYPES = [
     "lineChart",
@@ -11,9 +12,11 @@ const TYPES = [
 
 class Rapport extends Controller {
 
-    constructor(rapportManager) {
+    constructor(rapportManager, widgetController, smartobjectController) {
         super()
         this.rapportManager = rapportManager
+        this.widgetController = widgetController
+        this.smartobjectController = smartobjectController
     }
 
     async getOne(idRapport) {
@@ -22,18 +25,60 @@ class Rapport extends Controller {
             if(resultRapport.error) {
                 return resultRapport
             }
-
             if(resultRapport.data == false) {
                 return new Result(Package.name, true, "Missing rapport n°" + idRapport)
             }
             
             let resultRapportArgument = await this.sqlRapportArgument.getAllByField({rapport: idRapport})
-
             if(resultRapportArgument.error) {
                 return resultRapportArgument
             }
 
             resultRapport.data.settings = resultRapportArgument.data
+            
+            let resultLastData = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport = " + idRapport + " ORDER BY date DESC LIMIT 1")
+            
+            if(resultLastData.error) {
+                return resultLastData
+            }
+
+            resultRapport.data.lastData = resultLastData.data.length == 0 ? false : resultLastData.data[0]
+
+
+            let resultCounter = await this.sqlRapportData.execute("SELECT count(*) as total FROM rapport_data WHERE rapport = " + idRapport + " ")
+           
+            if(resultCounter.error) {
+                return resultCounter
+            }
+
+            resultRapport.data.total = resultCounter.data.length == 0 ? 0 : resultCounter.data[0].total
+            
+            let packageName = ""
+
+            if(resultRapport.data.type == "smartobject") {
+                let resultGetPackage = await this.widgetController.getPackageName("smartobject",resultRapport.data.object)
+                if(resultGetPackage.error) {
+                    return resultGetPackage
+                }
+                packageName = resultGetPackage.data
+
+                let smartobjectResult = await this.smartobjectController.getOne(resultRapport.data.object)
+                if(smartobjectResult.error) {
+                    return smartobjectResult
+                }
+                resultRapport.data.smartobject = smartobjectResult.data
+                
+            } else {
+                packageName = resultRapport.data.object
+            }
+            let resultConfiguration = await this.widgetController.getConfiguration(packageName)
+            if(resultConfiguration.error) {
+                return resultConfiguration
+            }
+            
+            resultRapport.data.configuration = resultConfiguration.data
+
+
 
             return resultRapport
         } catch (error) {
@@ -55,12 +100,11 @@ class Rapport extends Controller {
 
             for (let indexRapport = 0; indexRapport < resultRapports.data.length; indexRapport++) {
                 let rapport = resultRapports.data[indexRapport]
-                let resultRapportArgument = await this.sqlRapportArgument.getAllByField({rapport: rapport.id})
-                if(resultRapportArgument.error) {
-                    return resultRapportArgument
+                let resultGetOne = await this.getOne(rapport.id)
+                if(resultGetOne.error) {
+                    return resultGetOne
                 }
-                rapport.settings = resultRapportArgument.data
-                rapports.push(rapport)
+                rapports.push(resultGetOne.data)
             }
             
             return new Result(Package.name, false, "", rapports)
@@ -75,10 +119,10 @@ class Rapport extends Controller {
         try {
             if (TYPES.includes(chart)) {
 
-                if(interval < 120 ) {
+                /*if(interval < 120 ) {
                     Tracing.warning(Package.name, "Interval is too small, minimum 120 seconds")
                     return new Result(Package.name, false, "Interval is too small, minimum 120 seconds")
-                }
+                }*/
                 let result = await this.sqlRapport.insert({
                     type: type,
                     chart: chart,
@@ -89,6 +133,7 @@ class Rapport extends Controller {
                 if (result.error) {
                     return result
                 }
+
 
                 for (let indexSettings = 0; indexSettings < settings.length; indexSettings++) {
                     let setting = settings[indexSettings]
@@ -163,7 +208,7 @@ class Rapport extends Controller {
             if (resultRapport.error) {
                 return resultRapport
             }
-            let timestamp = (new Date()).getTime()
+            let timestamp = Moment().valueOf()
 
             let pValue = ""
 
@@ -203,7 +248,7 @@ class Rapport extends Controller {
             if (resultRapport.error) {
                 return resultRapport
             }
-            let resultRequest = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport=" + idRapport + " AND date >=" + start + " AND date <=" + end)
+            let resultRequest = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport=" + idRapport + " AND date >=" + start + " AND date <=" + end + " ORDER BY date ASC")
             if(resultRequest.error) {
                 return resultRequest
             }

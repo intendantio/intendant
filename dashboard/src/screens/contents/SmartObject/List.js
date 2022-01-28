@@ -15,13 +15,11 @@ class Smartobject extends React.Component {
             page: 0,
             enabled: false,
             message: "",
-            smartobjects: [],
-            isMobile: false
+            smartobjects: []
         }
     }
 
     async componentDidMount() {
-        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
         let result = await new Request().get().fetch("/api/smartobjects")
         if (result.error) {
             this.setState({
@@ -35,13 +33,6 @@ class Smartobject extends React.Component {
                 smartobjects: result.data
             })
         }
-    }
-
-    mediaQueries(query) {
-        let mediaMatch = window.matchMedia(query);
-        this.setState({ isMobile: mediaMatch.matches })
-        const handler = e => this.setState({ isMobile: e.matches })
-        mediaMatch.addListener(handler)
     }
 
     render() {
@@ -77,7 +68,7 @@ class Smartobject extends React.Component {
                                                     </Typography>
                                                 </TableCell>
                                                 {
-                                                    this.state.isMobile == false &&
+                                                    this.props.isMobile == false &&
                                                     <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="center">
                                                         <Typography variant='body1'>
                                                             Last use
@@ -104,7 +95,7 @@ class Smartobject extends React.Component {
                                                         </Typography>
                                                     </TableCell>
                                                     {
-                                                        this.state.isMobile == false &&
+                                                        this.props.isMobile == false &&
                                                         <TableCell align="center" style={{ borderBottom: 0 }} >
                                                             <Typography variant='body1'>
                                                                 {Moment(smartobject.lastUse).format("hh:mm DD/MM")}

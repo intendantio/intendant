@@ -55,19 +55,19 @@ class Core {
             user: new User(),
             cache: new Cache(),
             espace: new Espace(),
-            notification: new Notification(),
-            rapport: new Rapport(this.manager.rapport)
+            notification: new Notification()
         }
 
         this.controller.widget = new Widget(this.manager.smartobject, this.manager.module, this.controller.module, this.controller.smartobject),
+        this.controller.rapport =  new Rapport(this.manager.rapport,this.controller.widget, this.controller.smartobject)
         this.controller.localisation = new Localisation(this.controller.smartobject)
         this.controller.essential = new Essential(this.controller)
         this.controller.process = new Process(this.manager.smartobject, this.manager.module,this.controller.essential)
 
-        this.manager.rapport.initialisation()
 
         setTimeout(() => {
             this.api = new API(this)
+            this.manager.rapport.initialisation()
         },1000)
     }
 

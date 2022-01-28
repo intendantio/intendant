@@ -1,14 +1,16 @@
 import React from 'react'
-import { Add } from '@mui/icons-material'
-import { Typography, Paper, Grid, IconButton, Card } from '@mui/material'
+import { Add, ShowChart, PieChart, Timelapse, Event, Numbers } from '@mui/icons-material'
+import { Typography, Paper, Grid, IconButton, Card, Box, CardActionArea } from '@mui/material'
 import { Link } from "react-router-dom"
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
+import Moment from 'moment'
+import Desktop from '../../../components/Desktop'
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 import WidgetSkeleton from '../../../components/WidgetSkeleton'
-import WidgetItem from '../../../components/WidgetItem'
+import RapportItem from '../../../components/RapportItem'
 
 const data = [
     {
@@ -64,66 +66,56 @@ class Rapport extends React.Component {
             loading: true,
             enabled: false,
             message: "",
-            widgets: [],
+            rapports: [],
             open: false,
             widget: {
                 id: -1
             }
         }
-        setInterval(() => {
-            this.componentDidMount()
-        }, 10000)
     }
 
     async componentDidMount() {
-        let result = await new Request().get().fetch("/api/widgets")
+        let result = await new Request().get().fetch("/api/rapports")
         if (result.error) {
             this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
         } else {
-            this.setState({ enabled: false, loading: false, message: "", widgets: result.data })
-        }
-    }
-
-    async delete(id) {
-        let result = await new Request().delete({}).fetch("/api/widgets/" + this.state.widget.id)
-        if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
-        } else {
-            this.setState({ loading: true, anchorEl: null, popover: false }, () => { this.componentDidMount() })
+            this.setState({ enabled: false, loading: false, message: "", rapports: result.data })
         }
     }
 
     render() {
         return (
             <div>
+            <Desktop {... this.props}>
                 <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
                     <Typography variant='h5' >Rapport</Typography>
-                    <Typography variant='subtitle2' color="text.secondary" >Show what you need</Typography>
+                    <Typography variant='subtitle2' color="text.secondary" >Capture your data</Typography>
                 </Paper>
-                <Paper variant="outlined">
-                    <Grid container spacing={2} padding={2}>
-                        <Grid item xs={12} md={6} lg={4} >
-                            <Card variant='outlined' elevation={1} style={{padding: 10}}  >
-                                <LineChart
-                                    width={400}
-                                    height={250}
-                                    data={data}
-                                    margin={{
-                                        top: 5,
-                                        right: 30,
-                                        left: 20,
-                                        bottom: 5,
-                                    }}
-                                >
-                                    <XAxis />
-                                    <YAxis />
-                                    <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                    <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                                </LineChart>
-                            </Card>
-                        </Grid>
-                    </Grid>
-                </Paper>
+            </Desktop>
+                <Grid container spacing={1}>
+                    {
+                        this.state.rapports.map(rapport => {
+                            return (
+                                <Grid item xs={12} md={12} lg={12} >
+                                    <Card variant='outlined'   >
+                                        <CardActionArea onClick={() => { this.props.history.push('/rapport/' + rapport.id) }} style={{ padding: 16, display: 'flex', justifyContent: 'flex-start' }} >
+                                            <Box style={{ display: 'flex', flex: 1 }} >
+                                                <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
+                                                        <Typography variant='h6' color="text.secondary"  >
+                                                            {capitalizeFirstLetter(rapport.configuration.module == "smartobject" ? (rapport.reference + " - " + rapport.smartobject.reference ) : rapport.reference)}
+                                                        </Typography>
+                                                        <Typography variant='body2' color="text.secondary"  >
+                                                            {capitalizeFirstLetter(rapport.configuration.name)}
+                                                        </Typography>
+                                                </Box>
+                                            </Box>
+                                        </CardActionArea>
+                                    </Card>
+                                </Grid>
+                            )
+                        })
+                    }
+                </Grid>
                 <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                     <Link to="/rapport/new" style={{ textDecoration: 'none', color: 'white' }}>
                         <IconButton style={{ borderRadius: 0 }}>
@@ -138,5 +130,10 @@ class Rapport extends React.Component {
         )
     }
 }
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 
 export default Rapport

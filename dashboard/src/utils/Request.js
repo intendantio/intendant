@@ -21,6 +21,11 @@ class Request {
         return this
     }
 
+    patch() {
+        this.method = 'PATCH'
+        return this
+    }
+
     put(data) {
         this.method = 'PUT'
         this.data = data

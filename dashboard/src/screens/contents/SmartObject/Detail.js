@@ -20,13 +20,11 @@ class DetailSmartObject extends React.Component {
             message: "",
             referenceArguments: "",
             valueArguments: "",
-            executeInformation: "",
-            isMobile: false
+            executeInformation: ""
         }
     }
 
     async componentDidMount() {
-        this.mediaQueries('(max-width: 900px),(max-height: 600px)')
         let resultProfile = await new Request().get().fetch("/api/profiles")
         let resultLocalisation = await new Request().get().fetch("/api/localisations")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects/" + this.state.id)
@@ -115,12 +113,6 @@ class DetailSmartObject extends React.Component {
         }
     }
 
-    mediaQueries(query) {
-        let mediaMatch = window.matchMedia(query);
-        this.setState({ isMobile: mediaMatch.matches })
-        const handler = e => this.setState({ isMobile: e.matches })
-        mediaMatch.addListener(handler)
-    }
 
     setLocalisation(id) {
         this.state.localisations.forEach(pLocalisation => {
@@ -216,10 +208,10 @@ class DetailSmartObject extends React.Component {
                                             </Box>
                                             {
                                                 action.settings.length > 0 ?
-                                                    <Box style={{ display: 'grid', gridRowGap: '10px', gridTemplateColumns: this.state.isMobile ? 'repeat(1,min-content)' : 'repeat(4,min-content)', marginTop: 10, marginBottom: 10 }}>
+                                                    <Box style={{ display: 'grid', gridRowGap: '10px', gridTemplateColumns: this.props.isMobile ? 'repeat(1,min-content)' : 'repeat(4,min-content)', marginTop: 10, marginBottom: 10 }}>
                                                         {
                                                             action.settings.map((setting, pIndex) => {
-                                                                return <Action key={pIndex} flexDirection={this.state.isMobile ? 'row' : 'column'} orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
+                                                                return <Action key={pIndex} flexDirection={this.props.isMobile ? 'row' : 'column'} orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
                                                             })
                                                         }
                                                     </Box> : null

@@ -15,20 +15,8 @@ class GetStarted extends React.Component {
             message: "",
             password: "",
             confirmePassword: "",
-            login: "admin",
-            isMobile: false
+            login: "admin"
         }
-    }
-
-    componentDidMount() {
-        this.mediaQueries('(max-width: 900px)')
-    }
-    
-    mediaQueries(query) {
-        let mediaMatch = window.matchMedia(query);
-        this.setState({ isMobile: mediaMatch.matches })
-        const handler = e => this.setState({ isMobile: e.matches })
-        mediaMatch.addListener(handler)
     }
 
 
@@ -48,7 +36,7 @@ class GetStarted extends React.Component {
 
     render() {
         return (
-            <Paper variant='outlined' style={{ padding: 30, width: this.state.isMobile ? '400px' : '30vw', textAlign: 'center' }}>
+            <Paper variant='outlined' style={{ padding: 30, width: this.props.isMobile ? '400px' : '30vw', textAlign: 'center' }}>
                 <div >
                     <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ height: '15vh', width: '15vh', borderRadius: 7 }} />
                     <div style={{ fontSize: 70, fontWeight: 'bold', marginTop: 0, lineHeight: 0.5 }}>

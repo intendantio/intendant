@@ -50,7 +50,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }
@@ -79,7 +79,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }
@@ -108,7 +108,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }
@@ -157,7 +157,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }
@@ -185,7 +185,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }
@@ -213,7 +213,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }
@@ -286,7 +286,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }
@@ -321,7 +321,7 @@ class Connector {
         } else {
             return {
                 package: Package.name,
-                message: "Invalid parameter",
+                message: "Invalid parameter " + this._name,
                 error: true
             }
         }

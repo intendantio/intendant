@@ -19,12 +19,6 @@ class WidgetNewItem extends React.Component {
 
 
     onSelect() {
-        if(this.props.settings.length == 0) {
-            this.setState({ loading: true })
-            setTimeout(() => {
-                this.props.onSubmit(() => { this.setState({ loading: false }) })
-            },1000)
-        }
         this.props.onSelect()
         
     }
