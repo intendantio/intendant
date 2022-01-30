@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Grid } from '@mui/material'
+import { Paper, Grid, Card } from '@mui/material'
 
 class IconList extends React.Component {
 
@@ -23,7 +23,9 @@ class IconList extends React.Component {
 
     render() {
         return (
-            <Grid container spacing={1} style={{ width: '32vw', height: '32vw', padding: 10, marginRight: 10 }}>
+            <Card variant="outlined" style={{overflowY: 'inherit'}}>
+            <Grid container variant="outlined" spacing={1} style={{ width: '400px', height: '400px', padding: 10, marginRight: 10 }}>
+                
                 <Grid item xs={6} >
                     <Paper variant="outlined" elevation={0} onClick={() => { this.setState({ mode: 'normal' }) }} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
                         <img style={{ height: 30, width: 30, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/star.svg"} />
@@ -54,7 +56,9 @@ class IconList extends React.Component {
                         )
                     })
                 }
+                
             </Grid>
+                </Card>
         )
     }
 

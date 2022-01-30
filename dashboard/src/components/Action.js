@@ -34,7 +34,7 @@ class Action extends React.Component {
 
     updateAction(action, value) {
         let tmp = {}
-        tmp["settings-" + action.id] = value
+        tmp[this.props.id] = value
         this.state.setState(tmp)
         this.setState({
             value: value
@@ -77,7 +77,7 @@ class Action extends React.Component {
                     <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10 }} >
                         <FormControl variant="outlined" style={{ minWidth: '200px' }} >
                             {
-                                this.state.action.id == "default" ? null :
+                                this.state.action.id == "default" || this.props.noLabel ? null :
                                     <InputLabel>{this.state.action.id}</InputLabel>
                             }
                             <Select value={this.state.value} onChange={(event) => { this.setState({ value: event.target.value }); this.updateAction(this.state.action, event.target.value) }} label={this.state.action.id == "default" ? null : this.state.action.id} >
@@ -110,7 +110,7 @@ class Action extends React.Component {
                 return (
                     <Paper variant='outlined' elevation={1} style={{ minWidth: 150, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10, marginRight: 10 }} >
                         {
-                            this.state.action.id == "default" ? null :
+                            this.state.action.id == "default" || this.props.noLabel ? null :
                                 <Typography variant='body1' style={{ textAlign: 'center', padding: 0, marginRight: this.state.isMobile ? 15 : 0 }} >
                                     {this.state.action.id}
                                 </Typography>

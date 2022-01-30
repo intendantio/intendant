@@ -16,7 +16,7 @@ class IconSelect extends React.Component {
     render() {
         return (
             <>
-            <Paper variant="outlined" onClick={() => { this.setState({ popup: true }) }} style={{height: 56,width:56, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 5, alignItems: 'center', alignSelf: 'center' }}>
+            <Paper variant="outlined" onClick={() => { this.setState({ popup: true }) }} style={{height: 56,width:56, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignContent: 'center', padding: 12, alignItems: 'center', alignSelf: 'center' }}>
                 <img style={{  alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + this.state.icon + ".svg"} />
             </Paper>
             <Popover

@@ -101,7 +101,7 @@ class Rapport extends React.Component {
                                         <CardActionArea onClick={() => { this.props.history.push('/rapport/' + rapport.id) }} style={{ padding: 16, display: 'flex', justifyContent: 'flex-start' }} >
                                             <Box style={{ display: 'flex', flex: 1 }} >
                                                 <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
-                                                        <Typography variant='h6' color="text.secondary"  >
+                                                        <Typography variant='subtitle1'  >
                                                             {capitalizeFirstLetter(rapport.configuration.module == "smartobject" ? (rapport.reference + " - " + rapport.smartobject.reference ) : rapport.reference)}
                                                         </Typography>
                                                         <Typography variant='body2' color="text.secondary"  >

@@ -233,7 +233,7 @@ class NewRapport extends React.Component {
             <>
                 <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
                     <Typography variant='h5' >New rapport</Typography>
-                    <Typography variant='subtitle2' color="text.secondary" >Select type of chart</Typography>
+                    <Typography variant='subtitle2' color="text.secondary" >TODO</Typography>
                 </Paper>
                 <Card variant='outlined' style={{ padding: 10, marginBottom: 10 }}>
                     <Stepper activeStep={this.state.step} >

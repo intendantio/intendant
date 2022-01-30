@@ -170,7 +170,7 @@ class NewWidget extends React.Component {
                                     {
                                         configuration.module == "smartobject" ?
                                             <Box>
-                                                <Typography variant='h6' color="text.secondary"  >
+                                                <Typography variant='subtitle1'  >
                                                     {configuration.smartobject.reference}
                                                 </Typography>
                                                 <Typography variant='body2' color="text.secondary"  >

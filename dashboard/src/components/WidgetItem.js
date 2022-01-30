@@ -37,7 +37,7 @@ class WidgetItem extends React.Component {
                             {
                                 this.state.widget.values.filter(value => value.type == "title").map((value, ppIndex) => {
                                     return (
-                                        <Typography key={ppIndex} variant='h6' component='div'>
+                                        <Typography key={ppIndex} variant='subtitle1' component='div'>
                                             {value.value}
                                         </Typography>
                                     )
