@@ -34,6 +34,7 @@ class NewRapport extends React.Component {
             product: "light",
             actionsOn: [],
             actionsOff: [],
+            description: "",
             descriptionOn: "",
             descriptionOff: "",
             settings: [],
@@ -43,6 +44,8 @@ class NewRapport extends React.Component {
             canMerge: false,
             useMerge: false
         }
+        props.setTitle("New process")
+        props.setActionType("return")
     }
 
     async componentDidMount() {
@@ -50,8 +53,10 @@ class NewRapport extends React.Component {
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects")
         if (resultModule.error) {
             this.setState({ enabled: true, message: resultModule.package + " : " + resultModule.message })
+            this.props.history.push('/process')
         } else if (resultSmartobject.error) {
             this.setState({ enabled: true, message: resultSmartobject.package + " : " + resultSmartobject.message })
+            this.props.history.push('/process')
         } else {
             let smartobjects = resultSmartobject.data.filter(smartobject => smartobject.configuration != null)
             this.setState({ enabled: false, message: "", loading: false, configurations: [], smartobjects: smartobjects, modules: resultModule.data })
@@ -93,7 +98,7 @@ class NewRapport extends React.Component {
             let keys = new Map()
             this.state.actionsOn.forEach(action => {
                 action.settings.forEach(setting => {
-                    if(keys.has(setting.id)) { canMerge = true } 
+                    if (keys.has(setting.id)) { canMerge = true }
                     setting.parent = action
                     settings.push({ state: "on", setting: setting })
                     settingsMode.push("default")
@@ -103,7 +108,7 @@ class NewRapport extends React.Component {
             keys = new Map()
             this.state.actionsOff.forEach(action => {
                 action.settings.forEach(setting => {
-                    if(keys.has(setting.id)) { canMerge = true } 
+                    if (keys.has(setting.id)) { canMerge = true }
                     setting.parent = action
                     settings.push({ state: "off", setting: setting })
                     settingsMode.push("default")
@@ -118,7 +123,6 @@ class NewRapport extends React.Component {
                 canMerge: canMerge
             })
         }
-        console.log(this.state)
     }
 
     async submitSettings() {
@@ -134,7 +138,7 @@ class NewRapport extends React.Component {
 
 
         let process = {
-            id: 0,
+            description: this.state.description,
             description_on: this.state.descriptionOn,
             description_off: this.state.descriptionOff,
             mode: this.state.mode,
@@ -145,13 +149,44 @@ class NewRapport extends React.Component {
         }
 
         //Create input
+        let used = new Map()
         this.state.settingsMode.forEach((settingMode, index) => {
+            
             if (settingMode == "dynamic") {
-                process.inputs.push({
-                    reference: this.state.settings[index].setting.id + "_" + index,
-                    type: this.state.settings[index].setting.type,
-                    state: this.state.settings[index].state
-                })
+                let options = []
+
+                if (this.state.settings[index].setting.options) {
+                    for (let key in this.state.settings[index].setting.options) {
+                        let value = this.state.settings[index].setting.options[key]
+                        options.push({
+                            reference: key,
+                            value: value
+                        })
+                    }
+                }
+                if(this.state.useMerge) {
+                    if(used.has(this.state.settings[index].setting.id + "_" + this.state.settings[index].state)) {
+                        return
+                    }
+                    used.set(this.state.settings[index].setting.id + "_" + this.state.settings[index].state,true)
+                }
+
+                if(this.state.useMerge) {
+                    process.inputs.push({
+                        reference: this.state.settings[index].setting.id,
+                        type: this.state.settings[index].setting.type,
+                        options: options,
+                        state: this.state.settings[index].state
+                    })
+                } else {
+                    process.inputs.push({
+                        reference: this.state.settings[index].setting.id + "_" + index,
+                        type: this.state.settings[index].setting.type,
+                        options: options,
+                        state: this.state.settings[index].state
+                    })
+                }
+                
             }
         })
 
@@ -176,17 +211,22 @@ class NewRapport extends React.Component {
                     let value = setting.setting.default
                     switch (this.state.settingsMode[setting.index]) {
                         case "custom":
-                            if(this.state["setting" + setting.index] != undefined) {
+                            if (this.state["setting" + setting.index] != undefined) {
                                 value = this.state["setting" + setting.index]
                             }
                             break
                         case "dynamic":
-                            value = "{" + setting.setting.id + "_" + setting.index + "}"
+                            if(this.state.useMerge) {
+                                value = "{" + setting.setting.id + "}"
+                            } else {
+                                value = "{" + setting.setting.id + "_" + setting.index + "}"
+                            }
                             break
                     }
                     return {
                         reference: setting.setting.id,
-                        value: value
+                        value: value,
+                        default: setting.setting.default
                     }
                 })
             })
@@ -220,26 +260,13 @@ class NewRapport extends React.Component {
                     }
                     return {
                         reference: setting.setting.id,
-                        value: value
+                        value: value,
+                        default: setting.setting.default
                     }
                 })
             })
         })
-
-        console.log(process)
-
-
-        /*
-        let settings = []
-
-        let result = await new Request().post({
-            reference: this.state.reference,
-            chart: this.state.type,
-            interval: this.state.interval,
-            type: this.state.configuration.module,
-            object: this.state.configuration.module == "smartobject" ? this.state.configuration.smartobject.id : this.state.configuration.name,
-            settings: settings
-        }).fetch("/api/process")
+        let result = await new Request().post(process).fetch("/api/processes")
 
         if (result.error) {
             this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
@@ -248,18 +275,17 @@ class NewRapport extends React.Component {
                 top: 0,
                 left: 0
             })
-            this.props.history.push('/rapport')
+            this.props.history.push('/process')
         }
-        */
+
     }
 
 
     render() {
-        console.log(this.state)
         return (
             <>
                 <Desktop isMobile={this.props.isMobile}>
-                    <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
+                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
                         <Typography variant='h5' >New process</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >TODO</Typography>
                     </Paper>
@@ -290,7 +316,7 @@ class NewRapport extends React.Component {
                             this.state.mode == "button" ? null :
                                 <SwitchState actionsOff={this.state.actionsOff} actionsOn={this.state.actionsOn} state={this.state.currentState} onChange={(state) => { this.setState({ currentState: state, index: -1 }) }} />
                         }
-                        <NextButton onClick={() => { this.submitAction() }} />
+                        <NextButton xs={4} md={this.state.mode == "button" ? 8 : 5} lg={this.state.mode == "button" ? 8 : 5} onClick={() => { this.submitAction() }} />
                         <ExecuteActions mode={this.state.mode} state={this.state.currentState} actions={this.state.currentState == "on" ? this.state.actionsOn : this.state.actionsOff} onChange={(action) => { this.updateAction(action) }} />
                         {
                             this.state.product == "cloud" ?
@@ -309,7 +335,7 @@ class NewRapport extends React.Component {
                     </StepperProxy>
                     <StepperProxy index={"settings"} value={this.state.step} >
                         <MergeActions value={this.state.useMerge} onChange={(value) => { this.setState({ useMerge: value }) }} disabled={this.state.canMerge == false} />
-                        <NextButton onClick={() => { this.submitSettings() }} />
+                        <NextButton xs={12} md={2} lg={2} onClick={() => { this.submitSettings() }} />
                         <ListSettings settings={this.state.settings} mode={this.state.mode} isMobile={this.props.isMobile}
                             settingsMode={this.state.settingsMode} setState={this.setState.bind(this)}
                             onChange={(settingsMode) => { this.setState({ settingsMode: settingsMode }) }}
@@ -317,7 +343,7 @@ class NewRapport extends React.Component {
                     </StepperProxy>
                     <StepperProxy index={"description"} value={this.state.step} >
                         <Descriptions mode={this.state.mode} onClick={() => { this.submitDescription() }} onChange={(mode, value) => {
-                            this.setState(mode == "on" ? { descriptionOn: value } : { descriptionOff: value })
+                            this.setState(mode == "" ? { description: value } : mode == "on" ? { descriptionOn: value } : { descriptionOff: value })
                         }} />
                     </StepperProxy>
                 </Grid>

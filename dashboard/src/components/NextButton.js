@@ -8,7 +8,7 @@ import { ToggleOff, RadioButtonChecked, ToggleOn, ExpandMore, Lightbulb, Thermos
 function NextButton(props) {
 
     return (
-        <Grid item xs={4} md={5} lg={5} style={{ display: 'flex', justifyContent: 'end' }}>
+        <Grid item xs={props.xs ? props.xs : 4} md={props.md ? props.md : 5} lg={props.lg ? props.lg : 5} style={{ display: 'flex', justifyContent: 'end' }}>
             <Card variant='outlined' style={{ height: '100%', width: 'min-content' }} >
                 <CardActionArea onClick={() => { props.onClick() }} style={{ padding: 8, paddingLeft: 16, display: 'flex', height: '100%' }}>
                     <Typography variant='body1' >Next</Typography>

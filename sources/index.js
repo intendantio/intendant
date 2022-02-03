@@ -13,7 +13,7 @@ import User from './controllers/User'
 import Espace from './controllers/Espace'
 import Market from './controllers/Market'
 import Notification from './controllers/Notification'
-import Localisation from './controllers/Localisation'
+import Room from './controllers/Room'
 import Essential from './controllers/Essential'
 import Module from './controllers/Module'
 import Rapport from './controllers/Rapport'
@@ -54,13 +54,12 @@ class Core {
             client: new Client(),
             user: new User(),
             cache: new Cache(),
-            espace: new Espace(),
             notification: new Notification()
         }
 
         this.controller.widget = new Widget(this.manager.smartobject, this.manager.module, this.controller.module, this.controller.smartobject),
         this.controller.rapport =  new Rapport(this.manager.rapport,this.controller.widget, this.controller.smartobject)
-        this.controller.localisation = new Localisation(this.controller.smartobject)
+        this.controller.room = new Room(this.controller.smartobject)
         this.controller.essential = new Essential(this.controller)
         this.controller.process = new Process(this.manager.smartobject, this.manager.module,this.controller.essential)
 

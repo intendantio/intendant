@@ -3,7 +3,7 @@ import Action from './Action'
 
 
 import { Grid, Card, CardActionArea, CardContent, Box, Collapse, IconButton, Typography, Button, Paper, Divider, CardHeader, CardActions } from '@mui/material'
-import { ExpandLess, FamilyRestroomTwoTone } from '@mui/icons-material'
+import { ExpandLess, Add } from '@mui/icons-material'
 import WidgetSkeleton from './WidgetSkeleton'
 
 class WidgetNewItem extends React.Component {
@@ -85,11 +85,9 @@ class WidgetNewItem extends React.Component {
                             </CardContent>
                         }
                         <CardActions>
-                            <Button size='small' onClick={() => { this.props.onSubmit(() => { this.setState({ loading: false }) }); this.setState({ loading: true }) }}>
-                                <Typography variant='subtitle1' color="text.secondary"  >
-                                    Add
-                                </Typography>
-                            </Button>
+                            <IconButton onClick={() => { this.props.onSubmit(() => { this.setState({ loading: false }) }); this.setState({ loading: true }) }} >
+                                <Add />
+                            </IconButton>
                         </CardActions>
                     </Collapse>
                 </Card>

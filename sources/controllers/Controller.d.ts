@@ -26,14 +26,15 @@ declare class Controller {
     sqlWidget: Connector;
     sqlWidgetArgument: Connector;
 
-    sqlEspace: Connector;
     sqlProcess: Connector;
     sqlProcessActionArgument: Connector;
     sqlProcessProfile: Connector;
     sqlProcessInput: Connector;
+    sqlProcessInputOption: Connector;
+    
     sqlCache: Connector;
-    sqlLocalisation: Connector;
-    sqlLocalisationProfile: Connector;
+    sqlRoom: Connector;
+    sqlRoomProfile: Connector;
 
     
     sqlRapport: Connector;

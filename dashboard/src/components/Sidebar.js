@@ -1,10 +1,11 @@
 import React from 'react'
 import { Drawer, IconButton, Button, List, AppBar, Typography, Toolbar, Box, Divider, ListItem, ListItemIcon, ListItemText, Skeleton } from '@mui/material'
 import { ShoppingCart, House, Menu, DevicesOther, ExitToApp, AccountTree, Category, DeviceHub, BarChart, Extension, Settings, Person, ArrowBack, ArrowBackIos } from '@mui/icons-material'
-import { Link } from "react-router-dom"
+import { Link, withRouter } from "react-router-dom"
 
 import BottomNavigation from '@mui/material/BottomNavigation'
 import BottomNavigationAction from '@mui/material/BottomNavigationAction'
+
 
 class Sidebar extends React.Component {
 
@@ -14,7 +15,8 @@ class Sidebar extends React.Component {
             open: false,
             information: {
                 status: "",
-                version: ""
+                version: "",
+                mobileTitle: "Intendant"
             },
             loading: true
         }
@@ -23,10 +25,7 @@ class Sidebar extends React.Component {
 
     navigate() {
         this.setState({ open: false })
-        document.getElementById('main').scroll({
-            top: 0,
-            left: 0
-        })
+        document.getElementById('main').scroll({ top: 0, left: 0 })
     }
 
     getStatus() {
@@ -40,6 +39,15 @@ class Sidebar extends React.Component {
             })
         }, 1000)
     }
+    
+    onClick() {
+        if(this.props.actionType == "list") {
+            this.setState({ open: true })
+        } else {
+            this.props.history.goBack()
+            document.getElementById('main').scroll({ top: 0, left: 0 })
+        }
+    }
 
     render() {
         if (this.props.isMobile) {
@@ -49,18 +57,27 @@ class Sidebar extends React.Component {
                     <AppBar elevation={0} variant='outlined' position="static" >
                         <Toolbar >
                             <IconButton
-                                onClick={() => { this.setState({ open: true }) }}
+                                onClick={() => { this.onClick() }}
                                 size="large"
                                 color="inherit"
                                 edge='start'
                             >
-                                <Menu />
-                            </IconButton>
+                                {
+                                    this.props.actionType == "list" ?
+                                    <Menu /> : <ArrowBackIos/>
+
+                                }
+                                </IconButton> 
                             <Link to="/smartobject" onClick={() => { this.navigate() }} style={{ paddingTop: 10, paddingBottom: 10, display: 'flex', textDecoration: 'none', color: 'white', flexDirection: 'row', alignItems: 'center' }}>
                                 <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ minHeight: 30, minWidth: 30, height: '3vh', width: '3vh', borderRadius: 7, marginRight: 10 }} />
-                                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                                    {capitalizeFirstLetter(pathname.length > 2 ? pathname[2] : "Intendant")}
-                                </Typography>
+                                {
+                                    this.props.title.length == 0 ?
+                                    <Skeleton height={30} variant="text" style={{width: 100}} />
+                                    :
+                                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                                        {this.props.title}
+                                    </Typography>
+                                }
                             </Link>
                         </Toolbar>
                     </AppBar>
@@ -79,8 +96,8 @@ class Sidebar extends React.Component {
                                     </Box>
                                 </Box>
                                 <Divider />
-                                <Link to="/localisation" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                                    <ListItem button key={"localisation"}>
+                                <Link to="/room" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
+                                    <ListItem button key={"room"}>
                                         <ListItemIcon>
                                             <House />
                                         </ListItemIcon>
@@ -203,8 +220,8 @@ class Sidebar extends React.Component {
                             </Box>
                         </Box>
                         <Divider />
-                        <Link to="/localisation" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                            <ListItem button key={"localisation"}>
+                        <Link to="/room" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
+                            <ListItem button key={"room"}>
                                 <ListItemIcon>
                                     <House />
                                 </ListItemIcon>
@@ -316,4 +333,4 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export default Sidebar
+export default withRouter(Sidebar) 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Add, ShowChart, PieChart, Timelapse, Event, Numbers } from '@mui/icons-material'
+import { Add, ShowChart, PieChart, Timelapse, Event, BarChart } from '@mui/icons-material'
 import { Typography, Paper, Grid, IconButton, Card, Box, CardActionArea } from '@mui/material'
 import { Link } from "react-router-dom"
 import Alert from '../../../components/Alert'
@@ -11,6 +11,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 import WidgetSkeleton from '../../../components/WidgetSkeleton'
 import RapportItem from '../../../components/RapportItem'
+import AddButton from '../../../components/views/AddButton'
 
 const data = [
     {
@@ -72,6 +73,8 @@ class Rapport extends React.Component {
                 id: -1
             }
         }
+        props.setTitle("Rapport")
+        props.setActionType("list")
     }
 
     async componentDidMount() {
@@ -86,27 +89,30 @@ class Rapport extends React.Component {
     render() {
         return (
             <div>
-            <Desktop {... this.props}>
-                <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
-                    <Typography variant='h5' >Rapport</Typography>
-                    <Typography variant='subtitle2' color="text.secondary" >Capture your data</Typography>
-                </Paper>
-            </Desktop>
+                <Desktop {... this.props}>
+                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
+                        <Typography variant='h5' >Rapport</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >Capture your data</Typography>
+                    </Paper>
+                </Desktop>
                 <Grid container spacing={1}>
                     {
                         this.state.rapports.map(rapport => {
                             return (
                                 <Grid item xs={12} md={12} lg={12} >
                                     <Card variant='outlined'   >
-                                        <CardActionArea onClick={() => { this.props.history.push('/rapport/' + rapport.id) }} style={{ padding: 16, display: 'flex', justifyContent: 'flex-start' }} >
+                                        <CardActionArea onClick={() => { this.props.history.push('/rapport/' + rapport.id) }} style={{ padding: 12, display: 'flex', justifyContent: 'flex-start' }} >
+                                            <Box style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center', marginRight: 16 }}>
+                                                <BarChart fontSize='large' />
+                                            </Box>
                                             <Box style={{ display: 'flex', flex: 1 }} >
                                                 <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
-                                                        <Typography variant='subtitle1'  >
-                                                            {capitalizeFirstLetter(rapport.configuration.module == "smartobject" ? (rapport.reference + " - " + rapport.smartobject.reference ) : rapport.reference)}
-                                                        </Typography>
-                                                        <Typography variant='body2' color="text.secondary"  >
-                                                            {capitalizeFirstLetter(rapport.configuration.name)}
-                                                        </Typography>
+                                                    <Typography variant='subtitle1'  >
+                                                        {capitalizeFirstLetter(rapport.configuration.module == "smartobject" ? (rapport.reference + " - " + rapport.smartobject.reference) : rapport.reference)}
+                                                    </Typography>
+                                                    <Typography variant='body2' color="text.secondary"  >
+                                                        {capitalizeFirstLetter(rapport.configuration.name)}
+                                                    </Typography>
                                                 </Box>
                                             </Box>
                                         </CardActionArea>
@@ -116,13 +122,7 @@ class Rapport extends React.Component {
                         })
                     }
                 </Grid>
-                <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
-                    <Link to="/rapport/new" style={{ textDecoration: 'none', color: 'white' }}>
-                        <IconButton style={{ borderRadius: 0 }}>
-                            <Add />
-                        </IconButton>
-                    </Link>
-                </Paper>
+                <AddButton to="/rapport/new" />
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                     {this.state.message}
                 </Alert>

@@ -14,7 +14,7 @@ class DetailSmartObject extends React.Component {
             id: props.match.params.id,
             smartobject: null,
             profiles: [],
-            localisations: [],
+            rooms: [],
             enabled: false,
             loading: null,
             message: "",
@@ -26,12 +26,12 @@ class DetailSmartObject extends React.Component {
 
     async componentDidMount() {
         let resultProfile = await new Request().get().fetch("/api/profiles")
-        let resultLocalisation = await new Request().get().fetch("/api/localisations")
+        let resultRoom = await new Request().get().fetch("/api/rooms")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects/" + this.state.id)
-        if (resultProfile.error || resultSmartobject.error || resultLocalisation.error) {
+        if (resultProfile.error || resultSmartobject.error || resultRoom.error) {
             this.props.history.push('/smartobject')
         } else {
-            this.setState({ smartobject: resultSmartobject.data, profiles: resultProfile.data, localisations: resultLocalisation.data })
+            this.setState({ smartobject: resultSmartobject.data, profiles: resultProfile.data, rooms: resultRoom.data })
         }
         this.setState({ loading: null })
     }
@@ -104,8 +104,8 @@ class DetailSmartObject extends React.Component {
         }
     }
 
-    async updateLocalisation(smartobject, localisation) {
-        let result = await new Request().post({ idLocalisation: localisation.id, }).fetch("/api/smartobjects/" + smartobject.id + "/localisation")
+    async updateRoom(smartobject, room) {
+        let result = await new Request().post({ idRoom: room.id, }).fetch("/api/smartobjects/" + smartobject.id + "/room")
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -114,11 +114,11 @@ class DetailSmartObject extends React.Component {
     }
 
 
-    setLocalisation(id) {
-        this.state.localisations.forEach(pLocalisation => {
-            if (pLocalisation.id === id) {
-                this.state.smartobject.localisation = pLocalisation
-                this.updateLocalisation(this.state.smartobject, pLocalisation)
+    setRoom(id) {
+        this.state.rooms.forEach(pRoom => {
+            if (pRoom.id === id) {
+                this.state.smartobject.room = pRoom
+                this.updateRoom(this.state.smartobject, pRoom)
             }
         })
     }
@@ -200,7 +200,7 @@ class DetailSmartObject extends React.Component {
                                     return (
                                         <Paper variant="outlined" key={index} style={{ padding: 10, marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '100%' }}>
                                             <Box >
-                                                <Button style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={'outlined'}  >
+                                                <Button style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={'contained'}  >
                                                     <Typography variant='body2'  >
                                                         {action.name}
                                                     </Typography>
@@ -211,7 +211,7 @@ class DetailSmartObject extends React.Component {
                                                     <Box style={{ display: 'grid', gridRowGap: '10px', gridTemplateColumns: this.props.isMobile ? 'repeat(1,min-content)' : 'repeat(4,min-content)', marginTop: 10, marginBottom: 10 }}>
                                                         {
                                                             action.settings.map((setting, pIndex) => {
-                                                                return <Action key={pIndex} flexDirection={this.props.isMobile ? 'row' : 'column'} orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
+                                                                return <Action  key={pIndex} options={setting.options} setState={this.setState.bind(this)} action={setting} />
                                                             })
                                                         }
                                                     </Box> : null
@@ -238,42 +238,14 @@ class DetailSmartObject extends React.Component {
                                 Localisation
                             </Typography>
                             <FormControl variant="outlined" style={{ marginRight: 10, width: '300px', marginTop: 10 }} >
-                                <Select value={this.state.smartobject.localisation.id} onChange={(event) => { this.setLocalisation(event.target.value) }} >
+                                <Select value={this.state.smartobject.room.id} onChange={(event) => { this.setRoom(event.target.value) }} >
                                     {
-                                        this.state.localisations.map((pLocalisation, index) => {
-                                            return <MenuItem key={index} value={pLocalisation.id} >{pLocalisation.name}</MenuItem>
+                                        this.state.rooms.map((pRoom, index) => {
+                                            return <MenuItem key={index} value={pRoom.id} >{pRoom.name}</MenuItem>
                                         })
                                     }
                                 </Select>
                             </FormControl>
-                            <div style={{ marginTop: 10 }}>
-                                <Typography variant='h5' >
-                                    Authorization
-                                </Typography>
-                                {
-                                    this.state.profiles.map((profile, index) => {
-                                        let state = false
-                                        this.state.smartobject.profiles.forEach(pprofile => {
-                                            if (pprofile.profile == profile.id) {
-                                                state = true
-                                            }
-                                        })
-                                        return (
-                                            <ListItem key={index} style={{ padding: 1 }}  >
-                                                <FormControlLabel control={
-                                                    <Switch
-                                                        checked={state}
-                                                        onChange={() => {
-                                                            state ? this.deleteProfile(this.state.smartobject, profile) : this.insertProfile(this.state.smartobject, profile)
-                                                        }}
-                                                        color="primary"
-                                                    />
-                                                } label={profile.name} />
-                                            </ListItem>
-                                        )
-                                    })
-                                }
-                            </div>
                         </div>
                     </Paper>
                     <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >

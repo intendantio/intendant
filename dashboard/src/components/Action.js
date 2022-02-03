@@ -1,5 +1,5 @@
 import React from 'react'
-import { InputAdornment, IconButton, TextField, Button, Popover, Checkbox, Fade, Paper, Typography, Modal, Slider, FormControl, Select, MenuItem, InputLabel } from '@mui/material'
+import { InputAdornment, IconButton, TextField, Button, Popover, Checkbox, Fade, Paper, Typography, Modal, Slider, FormControl, Select, MenuItem, InputLabel, Card, CardActionArea, Grid } from '@mui/material'
 import { TwitterPicker } from 'react-color'
 import WeekSchedul from './WeekSchedul'
 import { Delete, List } from '@mui/icons-material'
@@ -24,6 +24,7 @@ class Action extends React.Component {
         this.state = {
             action: this.props.action,
             setState: this.props.setState,
+            options: this.props.options ? this.props.options : {},
             modal: false,
             value: "",
             isMobile: false
@@ -96,33 +97,64 @@ class Action extends React.Component {
                 )
             case 'colorpicker':
                 return (
-                    <div elevation={3} style={{ alignItems: 'flex-start', display: 'flex', marginRight: 5, flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row' }} >
-                        <TwitterPicker
-                            styles={{ padding: 0 }}
-                            colors={['#d00a0a', '#FF6900', '#FCB900', '#F9DE79', '#F78DA7', '#9900EF', '#0e60f4', '#8ED1FC', '#11f4b8', '#53b909']}
-                            triangle='hide'
-                            color={this.state.value}
-                            onChangeComplete={(color) => { this.updateAction(this.state.action, color.hex) }}
-                        />
-                    </div>
+                   <Card variant='outlined' style={{padding: 10, borderColor: this.state.value, width: 250}}>
+                       {
+                            this.props.label && this.props.label.length == 0 ? null :
+                                <Typography variant='body1' style={{ padding: 0, marginBottom: 5  }} >
+                                    {this.props.label}
+                                </Typography>
+                        }
+                            <Grid container spacing={1}>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#d00a0a')}} style={{height: 32, width: 32, backgroundColor: '#d00a0a', borderRadius: 4}}/>
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#FF6900')}} style={{height: 32, width: 32, backgroundColor: '#FF6900', borderRadius: 4}}/>
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#FCB900')}} style={{height: 32, width: 32, backgroundColor: '#FCB900', borderRadius: 4}}/>
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#F9DE79')}} style={{height: 32, width: 32, backgroundColor: '#F9DE79', borderRadius: 4}}/>
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#F78DA7')}} style={{height: 32, width: 32, backgroundColor: '#F78DA7', borderRadius: 4}}/>
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#9900EF')}} style={{height: 32, width: 32, backgroundColor: '#9900EF', borderRadius: 4}}/>
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#0e60f4')}} style={{height: 32, width: 32, backgroundColor: '#0e60f4', borderRadius: 4}}/>
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#8ED1FC')}} style={{height: 32, width: 32, backgroundColor: '#8ED1FC', borderRadius: 4}} />
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#11f4b8')}} style={{height: 32, width: 32, backgroundColor: '#11f4b8', borderRadius: 4}} />
+                                </Grid>
+                                <Grid item xs={2} md={2} lg={2}> 
+                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#53b909')}} style={{height: 32, width: 32, backgroundColor: '#53b909', borderRadius: 4}} />
+                                </Grid>
+                            </Grid>
+                        </Card>
                 )
             case 'slider':
                 return (
-                    <Paper variant='outlined' elevation={1} style={{ minWidth: 150, alignSelf: 'flex-start', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10, marginRight: 10 }} >
+                    <Paper variant='outlined' elevation={1} style={{ minWidth: 150, alignSelf: 'flex-start', display: 'flex', flexDirection: 'column', paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10, marginRight: 10 }} >
                         {
-                            this.state.action.id == "default" || this.props.noLabel ? null :
-                                <Typography variant='body1' style={{ textAlign: 'center', padding: 0, marginRight: this.state.isMobile ? 15 : 0 }} >
-                                    {this.state.action.id}
+                            this.props.label && this.props.label.length == 0 ? null :
+                                <Typography variant='body1' style={{ padding: 0, marginRight: 15  }} >
+                                    {this.props.label}
                                 </Typography>
                         }
                         <Slider
                             size={'small'}
                             defaultValue={0}
                             valueLabelDisplay="auto"
-                            orientation={this.props.orientation ? this.props.orientation : 'horizontal'}
-                            min={this.state.action.min}
-                            max={this.state.action.max}
-                            step={this.state.action.step}
+                            orientation={'horizontal'}
+                            min={parseInt(this.state.options.min)}
+                            max={parseInt(this.state.options.max)}
+                            step={parseInt(this.state.options.step)}
                             onChange={(event, value) => { this.updateAction(this.state.action, value) }}
                         />
                     </Paper>

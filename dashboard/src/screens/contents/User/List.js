@@ -2,9 +2,10 @@ import React from 'react'
 import { Link } from "react-router-dom"
 import Moment from 'moment'
 import { Add, Delete, Settings, QrCode } from '@mui/icons-material'
-import { FormControl, Button, MenuItem, Select, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@mui/material'
+import { FormControl, Card, CardActionArea, Grid, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@mui/material'
 import Request from '../../../utils/Request'
 import Alert from '../../../components/Alert'
+import Desktop from '../../../components/Desktop'
 
 class Smartobject extends React.Component {
 
@@ -66,79 +67,41 @@ class Smartobject extends React.Component {
     render() {
         return (
             <>
-                {
-                    this.state.loading ?
-                        <Paper variant="outlined" style={{ display: 'flex', padding: 10, alignContent: 'center', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Typography variant='subtitle1' style={{ fontSize: 18 }} >
-                                Chargement des smartobject
-                            </Typography>
-                        </Paper>
-                        :
-                        <div>
-                            <Paper variant="outlined">
-                            <TableContainer>
-                                <Table>
-                                    <TableBody>
-                                        {this.state.users.sort((a, b) => {
-                                            return a.profile > b.profile
-                                        }).slice(this.state.page * 10, (this.state.page + 1) * 10).map((user,index) => (
-                                            <TableRow hover key={index} style={{ cursor: 'pointer' }}>
-                                                <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
-                                                    <Typography variant='body1'>
-                                                        {
-                                                            user.login
-                                                        }
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
-                                                    <FormControl variant="outlined"  >
-                                                        <Select disabled={user.login == 'admin'} value={user.profile} onChange={(event) => { this.updateProfile(user, event.target.value) }} >
-                                                            {
-                                                                this.state.profiles.map((profile,pIndex) => {
-                                                                    return (
-                                                                        <MenuItem key={pIndex} value={profile.id} >{profile.name}</MenuItem>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </Select>
-                                                    </FormControl>
-                                                </TableCell>
-                                                <TableCell align="right" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
-                                                    <IconButton onClick={() => { this.props.history.push('/qrcode/' + btoa(window.location.origin + "|" + user.login + "|") ) }} style={{ borderRadius: 3 }}>
-                                                        <QrCode />
-                                                    </IconButton>
-                                                    <IconButton onClick={() => { this.props.history.push('/user/' + user.id +  "/password") }} style={{ borderRadius: 3 }}>
-                                                        <Settings />
-                                                    </IconButton>
-                                                    <IconButton onClick={() => { this.delete(user.id) }} style={{ borderRadius: 3 }}>
-                                                        <Delete />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            </Paper>
-                            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                                <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
-                                    <Link to="/user/new" style={{ textDecoration: 'none', color: 'white' }}>
-                                        <IconButton style={{ borderRadius: 0 }}>
-                                            <Add />
-                                        </IconButton>
-                                    </Link>
-                                </Paper>
-                                <TablePagination
-                                    component="div"
-                                    count={this.state.users.length}
-                                    rowsPerPage={10}
-                                    page={this.state.page}
-                                    rowsPerPageOptions={[]}
-                                    onPageChange={(event, page) => { this.setState({ page: page }) }}
-                                />
-                            </div>
-                        </div>
-                }
+                
+                <Desktop isMobile={this.props.isMobile}>
+                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
+                        <Typography variant='h5' >User</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >User list</Typography>
+                    </Paper>
+                </Desktop>
+                <Grid container spacing={2}>
+                    {
+                        this.state.loading ?
+                            <>
+                            </>
+                            :
+                                this.state.users.map(user => {
+                                    return (
+                                        <Grid item xs={12} md={12} lg={12} >
+                                            <Card variant={'outlined'}   >
+                                                <CardActionArea style={{ padding: 12, display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }} onClick={() => { this.props.history.push('/user/' + user.id) }}  >
+                                                    <Grid container spacing={2}>
+                                                        <Grid item xs={12} md={12} lg={12} >
+                                                            <Typography variant='subtitle1'  >
+                                                                {user.login}
+                                                            </Typography>
+                                                            <Typography variant='body2' color="text.secondary"  >
+                                                                {user.profile}
+                                                            </Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                </CardActionArea>
+                                            </Card>
+                                        </Grid>
+                                    )
+                                })
+                    }
+                </Grid>
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                     {this.state.message}
                 </Alert>

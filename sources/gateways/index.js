@@ -16,7 +16,7 @@ import Client from './Client'
 import Widget from './Widget'
 import Configuration from './Configuration'
 import Market from './Market'
-import Localisation from './Localisation'
+import Room from './Room'
 import Tracing from '../utils/Tracing'
 import Essential from './Essential'
 import Rapport from './Rapport'
@@ -47,7 +47,7 @@ class API {
         Widget(app,core)
         Configuration(app,core)
         Market(app,core)
-        Localisation(app,core)
+        Room(app,core)
         Essential(app,core)
         Rapport(app,core)
 

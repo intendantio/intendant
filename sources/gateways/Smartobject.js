@@ -137,15 +137,15 @@ export default (app, core) => {
             }
     })
     
-    //Update localisations
+    //Update rooms
     
-    app.post("/api/smartobjects/:idSmartobject/localisation", async (request, res) => {
-        request.url = "/smartobjects/:idSmartobject/localisation"
+    app.post("/api/smartobjects/:idSmartobject/room", async (request, res) => {
+        request.url = "/smartobjects/:idSmartobject/room"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
         } else {
-            res.send(await core.controller.smartobject.updateLocalisation(request.params.idSmartobject,request.body.idLocalisation))
+            res.send(await core.controller.smartobject.updateRoom(request.params.idSmartobject,request.body.idRoom))
         }
     })
 

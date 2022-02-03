@@ -1,9 +1,16 @@
 import React from 'react'
+import { Add, ToggleOff, ToggleOn, RadioButtonChecked } from '@mui/icons-material'
+import { Typography, Paper, Grid, IconButton, Card, CardActionArea, Box } from '@mui/material'
 import { Link } from "react-router-dom"
-import { Add } from '@mui/icons-material'
-import { Typography, TablePagination, TableRow, Table, TableCell, TableHead, TableContainer, TableBody, Paper, IconButton } from '@mui/material'
 import Alert from '../../../components/Alert'
+import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
+
+import WidgetSkeleton from '../../../components/WidgetSkeleton'
+import WidgetItem from '../../../components/WidgetItem'
+import ProcessSkeleton from '../../../components/ProcessSkeleton'
+import AddButton from '../../../components/views/AddButton'
+
 
 class Process extends React.Component {
 
@@ -11,77 +18,95 @@ class Process extends React.Component {
         super(props)
         this.state = {
             page: 0,
+            loading: true,
             enabled: false,
             message: "",
-            processs: []
+            processes: [],
+            open: false,
+            widget: {
+                id: -1
+            }
         }
+        props.setTitle("Process")
+        props.setActionType("list")
     }
 
     async componentDidMount() {
-        let result = await new Request().get().fetch("/api/process")
+        let result = await new Request().get().fetch("/api/processes")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
         } else {
-            this.setState({ processs: result.data })
+            this.setState({ enabled: false, loading: false, message: "", processes: result.data })
         }
     }
 
     render() {
         return (
             <div>
-                <Paper variant="outlined">
-                <TableContainer>
-                    <Table>
-                        <TableBody>
-                            {this.state.processs.slice(this.state.page * 10, (this.state.page + 1) * 10).map((_process, index) => (
-                                <TableRow onClick={() => { this.props.history.push("/process/" + _process.id) }} hover key={index} style={{ cursor: 'pointer' }}>
-                                    <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
-                                        <img style={{ width: 30, height: 30, filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + _process.icon + ".svg"} />
-                                    </TableCell>
-                                    <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
-                                        <Typography variant='body1'>
-                                            {_process.reference}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
-                                        <Typography variant='body1'>
-                                            {_process.description}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell align="left" style={{borderColor:'rgba(255, 255, 255, 0.12)'}}>
-                                        <Typography variant='body1'>
-                                            {_process.espace.reference}
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                </Paper>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                    <div style={{ flexDirection: 'row', display: 'flex' }}>
-                        <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
-                            <Link to="/process/new" style={{ textDecoration: 'none', color: 'white' }}>
-                                <IconButton style={{ borderRadius: 0 }}>
-                                    <Add />
-                                </IconButton>
-                            </Link>
-                        </Paper>
-                    </div>
-                    <TablePagination
-                        component="div"
-                        count={this.state.processs.length}
-                        rowsPerPage={10}
-                        page={this.state.page}
-                        rowsPerPageOptions={[]}
-                        onPageChange={(event, page) => { this.setState({ page: page }) }}
-                    />
-                </div>
+                <Desktop isMobile={this.props.isMobile}>
+                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
+                        <Typography variant='h5' >Process</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >Execute action</Typography>
+                    </Paper>
+                </Desktop>
+                <Grid container spacing={2}>
+                    {
+                        this.state.loading ?
+                            <>
+                                <ProcessSkeleton />
+                                <ProcessSkeleton />
+                                <ProcessSkeleton />
+                                <ProcessSkeleton />
+                            </>
+                            :
+                            this.state.processes.length == 0 ?
+                                    <Grid item xs={12} md={12} lg={12}>
+                                        <Card variant='outlined' style={{ padding: 12 }}  >
+                                            <Typography variant='subtitle1' color="text.secondary" >You have not added a process</Typography>
+                                        </Card>
+                                    </Grid>
+                                :
+                                this.state.processes.map(process => {
+                                    return (
+                                        <Grid item xs={12} md={12} lg={12} >
+                                            <Card variant='outlined'   >
+                                                <CardActionArea style={{ padding: 12, display:'flex', flexDirection:'row', justifyContent:'flex-start' }} onClick={() => { this.props.history.push('/process/' + process.id) }}  >
+                                                            <Box style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center', marginRight: 16 }}>
+                                                                {
+                                                                    process.mode == "button" ?
+                                                                        <RadioButtonChecked fontSize='large' /> :
+
+                                                                        process.state == "on" ?
+                                                                        <ToggleOn fontSize='large' />
+                                                                        :
+                                                                        <ToggleOff fontSize='large' />
+                                                                }
+                                                            </Box>
+                                                            <Box>
+                                                                <Typography variant='subtitle1'  >
+                                                                    {process.description.length == 0 ? "No name" :  process.description}
+                                                                </Typography>
+                                                                <Typography variant='body2' color="text.secondary"  >
+                                                                    {
+                                                                        process.mode == "button" ?
+                                                                            process.description_on
+                                                                            :
+                                                                            process.description_on + " / " + process.description_off
+                                                                    }
+                                                                </Typography>
+                                                            </Box>
+                                                </CardActionArea>
+                                            </Card>
+                                        </Grid>
+                                    )
+                                })
+                    }
+                </Grid>
+                <AddButton to="/process/new" />  
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                     {this.state.message}
                 </Alert>
-            </div>
+            </div >
         )
     }
 }

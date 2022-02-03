@@ -62,6 +62,8 @@ class NewRapport extends React.Component {
             configuration: {},
             settings: []
         }
+        props.setTitle("New rapport")
+        props.setActionType("return")
     }
 
     async componentDidMount() {
@@ -231,7 +233,7 @@ class NewRapport extends React.Component {
     render() {
         return (
             <>
-                <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
+                <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
                     <Typography variant='h5' >New rapport</Typography>
                     <Typography variant='subtitle2' color="text.secondary" >TODO</Typography>
                 </Paper>

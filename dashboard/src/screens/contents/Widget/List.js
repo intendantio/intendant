@@ -24,6 +24,9 @@ class Widget extends React.Component {
                 id: -1
             }
         }
+        props.setTitle("Widget")
+        props.setActionType("list")
+
         setInterval(() => {
             this.componentDidMount()
         }, 10000)
@@ -50,7 +53,7 @@ class Widget extends React.Component {
     render() {
         return (
             <div>
-                <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
+                <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
                     <Typography variant='h5' >Widget</Typography>
                     <Typography variant='subtitle2' color="text.secondary" >Show what you need</Typography>
                 </Paper>

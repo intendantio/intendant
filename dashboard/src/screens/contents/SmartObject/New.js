@@ -12,13 +12,13 @@ class NewSmartobject extends React.Component {
         super(props)
         this.state = {
             module: false,
-            localisation: false,
+            room: false,
             reference: "",
             enabled: false,
             message: "",
             types: [],
             smartobjects: [],
-            localisations: []
+            rooms: []
         }
 
 
@@ -27,7 +27,7 @@ class NewSmartobject extends React.Component {
 
     async componentDidMount() {
         let resultType = await new Request().get().fetch("/api/configurations/smartobject")
-        let resultLocalisation = await new Request().get().fetch("/api/localisations")
+        let resultLocalisation = await new Request().get().fetch("/api/rooms")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects")
         if (resultType.error || resultSmartobject.error || resultLocalisation.error) {
             this.setState({ enabled: true, message: resultSmartobject.message + " : " + resultType.message + " : " + resultLocalisation.message })
@@ -37,7 +37,7 @@ class NewSmartobject extends React.Component {
                 message: "",
                 types: resultType.data,
                 smartobjects: resultSmartobject.data,
-                localisations: resultLocalisation.data
+                rooms: resultLocalisation.data
             })
         }
 
@@ -69,10 +69,10 @@ class NewSmartobject extends React.Component {
     }
 
     setLocalisation(id) {
-        this.state.localisations.forEach(pLocalisation => {
+        this.state.rooms.forEach(pLocalisation => {
             if (pLocalisation.id === id) {
                 this.setState({
-                    localisation: pLocalisation
+                    room: pLocalisation
                 })
             }
         })
@@ -87,8 +87,8 @@ class NewSmartobject extends React.Component {
     async add() {
         if (this.state.reference === "") {
             this.setState({ enabled: true, message: "Missing-parameter : reference is empty" })
-        } else if (this.state.localisation === false) {
-            this.setState({ enabled: true, message: "Missing-parameter : localisation not selected" })
+        } else if (this.state.room === false) {
+            this.setState({ enabled: true, message: "Missing-parameter : room not selected" })
         } else if (this.state.module.name === "") {
             this.setState({ enabled: true, message: "Missing-parameter : type not selected" })
         } else {
@@ -100,7 +100,7 @@ class NewSmartobject extends React.Component {
                     value: this.state["settings-" + setting.id] ? this.state["settings-" + setting.id] : ""
                 })
             }
-            let result = await new Request().post({ localisation: this.state.localisation.id, module: this.state.module.name, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
+            let result = await new Request().post({ room: this.state.room.id, module: this.state.module.name, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
             if (result.error) {
                 this.setState({
                     enabled: true,
@@ -150,9 +150,9 @@ class NewSmartobject extends React.Component {
                             </FormControl>
                             <FormControl variant="outlined" style={{ marginRight: 10, width: '300px' }} >
                                 <InputLabel>Localisation</InputLabel>
-                                <Select value={this.state.localisation ? this.state.localisation.id : ""} onChange={(event) => { this.setLocalisation(event.target.value) }} label="Connexion" >
+                                <Select value={this.state.room ? this.state.room.id : ""} onChange={(event) => { this.setLocalisation(event.target.value) }} label="Connexion" >
                                     {
-                                        this.state.localisations.map((pLocalisation,index) => {
+                                        this.state.rooms.map((pLocalisation,index) => {
                                             return <MenuItem key={index} value={pLocalisation.id} >{pLocalisation.name}</MenuItem>
                                         })
                                     }
@@ -180,10 +180,10 @@ class NewSmartobject extends React.Component {
                                                     <Action
                                                         setState={this.setState.bind(this)} action={settings}
                                                         action={settings}
-                                                        isDisabled={settings.type == "oauth2" && (this.state.localisation == false || this.state.reference.length == 0)}
+                                                        isDisabled={settings.type == "oauth2" && (this.state.room == false || this.state.reference.length == 0)}
                                                         object={{
                                                             reference: this.state.reference,
-                                                            localisation: this.state.localisation.id,
+                                                            room: this.state.room.id,
                                                             module: this.state.module.name,
                                                             settings: this.getSettings()
                                                             }}

@@ -30,15 +30,15 @@ class Controller {
             this.sqlWidget = new Connector("widget")
             this.sqlWidgetArgument = new Connector("widget_argument")
 
-            this.sqlEspace = new Connector("espace")
             this.sqlProcess = new Connector("process")
             this.sqlProcessAction = new Connector("process_action")
             this.sqlProcessActionArgument = new Connector("process_action_argument")
             this.sqlProcessProfile = new Connector("process_profile")
             this.sqlProcessInput = new Connector("process_input")
+            this.sqlProcessInputOption = new Connector("process_input_option")
 
-            this.sqlLocalisation = new Connector("localisation")
-            this.sqlLocalisationProfile = new Connector("localisation_profile")
+            this.sqlRoom = new Connector("room")
+            this.sqlRoomProfile = new Connector("room_profile")
 
             this.sqlCache = new Connector("cache")
 

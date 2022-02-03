@@ -115,25 +115,34 @@ class Smartobject extends Controller {
                 return argumentsRequest
             }
             let argumentsData = argumentsRequest.data
-            let statusRequest = await this.sqlSmartobjectStatus.getOne(smartobject["status"])
-            if (statusRequest.error) {
-                return statusRequest
+            let roomRequest = await this.sqlRoom.getOne(smartobject["room"])
+        
+            if (roomRequest.error) {
+                return roomRequest
             }
-            let status = statusRequest.data
-            let localisationRequest = await this.sqlLocalisation.getOne(smartobject["localisation"])
-            if (localisationRequest.error) {
-                return localisationRequest
-            }
-            let localisation = localisationRequest.data
+            let room = roomRequest.data
             let smartobjectProfileRequest = await this.sqlSmartobjectProfile.getAllByField({ smartobject: smartobject["id"] })
             if (smartobjectProfileRequest.error) {
                 return smartobjectProfileRequest
             }
             let profiles = smartobjectProfileRequest.data
             let actions = []
+            let state = {
+                status: "unknown",
+                reason: "Unknown"
+            }
             let icon = null
             if (this.smartobjectManager.instances.has(smartobject.id)) {
                 actions = this.smartobjectManager.instances.get(smartobject.id).getActions()
+
+                let resultState = await this.smartobjectManager.instances.get(smartobject.id).getState()
+                if(resultState.error) {
+                    return resultState
+                }
+
+                state = resultState.data
+                
+                
                 icon = this.smartobjectManager.instances.get(smartobject.id).moduleConfiguration.icon
             }
 
@@ -148,11 +157,11 @@ class Smartobject extends Controller {
                 module: smartobject.module,
                 reference: smartobject.reference,
                 lastUse: smartobject.last_use,
-                status: status,
                 arguments: argumentsData,
                 actions: actions,
                 profiles: profiles,
-                localisation: localisation,
+                state: state,
+                room: room,
                 configuration: configuration
             }) 
         } catch (error) {
@@ -177,6 +186,7 @@ class Smartobject extends Controller {
             return new Result(Package.name, true, "Error occurred when get all configuration in module")
         }
     }
+
 
     async insertSmartobjectProfile(idSmartobject, idProfile) {
         try {
@@ -260,26 +270,26 @@ class Smartobject extends Controller {
         }
     }
 
-    async updateLocalisation(idSmartobject,idLocalisation) {
+    async updateRoom(idSmartobject,idRoom) {
         try {
-            let updateRequest = await this.sqlSmartobject.updateAll({ localisation: idLocalisation }, { id: idSmartobject })
+            let updateRequest = await this.sqlSmartobject.updateAll({ room: idRoom }, { id: idSmartobject })
             if (updateRequest.error) {
                 return updateRequest
             }
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when update localisation smartobject")
-            return new Result(Package.name, true, "Error occurred when update localisation smartobject")
+            Tracing.error(Package.name, "Error occurred when update room smartobject")
+            return new Result(Package.name, true, "Error occurred when update room smartobject")
         }
     }
 
-    async insert(pModule, reference, pArguments, pLocalisation) {
+    async insert(pModule, reference, pArguments, pRoom) {
         try {
             if (pModule) {
                 if (reference) {
                     if (pArguments) {
-                        if(pLocalisation) {
+                        if(pRoom) {
                             let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: reference })
                             if (smartobjectRequest.error) {
                                 return smartobjectRequest
@@ -295,7 +305,7 @@ class Smartobject extends Controller {
                                     status: '2',
                                     reference: reference,
                                     last_use: "DATE:NOW",
-                                    localisation: pLocalisation
+                                    room: pRoom
                                 }
                                 let insertRequest = await this.sqlSmartobject.insert(data)
                                 if (insertRequest.error) {
@@ -319,8 +329,8 @@ class Smartobject extends Controller {
                                 }
                             }
                         } else {
-                            Tracing.warning(Package.name, "Missing localisation")
-                            return new Result(Package.name,true,"Missing localisation")
+                            Tracing.warning(Package.name, "Missing room")
+                            return new Result(Package.name,true,"Missing room")
                         }
                     } else {
                         Tracing.warning(Package.name, "Missing arguments")

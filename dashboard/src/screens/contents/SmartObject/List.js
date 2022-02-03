@@ -1,11 +1,16 @@
 import React from 'react'
 import { Link } from "react-router-dom"
 import Moment from 'moment'
-import { Add } from '@mui/icons-material'
-import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box } from '@mui/material'
+import { Add, FlashOff, FlashOn, Light } from '@mui/icons-material'
+import { Typography, Paper, Grid, Card, CardActionArea, TableContainer, TableHead, TableRow, TablePagination, IconButton, Box } from '@mui/material'
 import Icon from '../../../utils/Icon'
 import Request from '../../../utils/Request'
 import Alert from '../../../components/Alert'
+import Desktop from '../../../components/Desktop'
+import AddButton from '../../../components/views/AddButton'
+import Status from '../../../components/views/Status'
+import TypeProduct from '../../../components/TypeProduct'
+
 
 class Smartobject extends React.Component {
 
@@ -15,8 +20,11 @@ class Smartobject extends React.Component {
             page: 0,
             enabled: false,
             message: "",
+            product: "light",
             smartobjects: []
         }
+        props.setTitle("Smartobject")
+        props.setActionType("list")
     }
 
     async componentDidMount() {
@@ -38,95 +46,64 @@ class Smartobject extends React.Component {
     render() {
         return (
             <>
-                {
-                    this.state.loading ?
-                        <Paper style={{ display: 'flex', padding: 10, alignContent: 'center', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Typography variant='subtitle1' style={{ fontSize: 18 }} >
-                                Chargement des smartobject
-                            </Typography>
-                        </Paper>
-                        :
-                        <Box>
-                            <Paper variant="outlined" >
-                                <TableContainer style={{ overflowX: 'hidden' }}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="left">
-                                                    <Typography variant='body1'>
-                                                        Reference
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="center">
-                                                    <Typography variant='body1'>
-                                                        Status
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="center">
-                                                    <Typography variant='body1'>
-                                                        Localisation
-                                                    </Typography>
-                                                </TableCell>
-                                                {
-                                                    this.props.isMobile == false &&
-                                                    <TableCell style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} align="center">
-                                                        <Typography variant='body1'>
-                                                            Last use
-                                                        </Typography>
-                                                    </TableCell>
-                                                }
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {this.state.smartobjects.slice(this.state.page * 10, (this.state.page + 1) * 10).map((smartobject, index) => (
-                                                <TableRow onClick={() => { this.props.history.push("/smartobject/" + smartobject.id) }} hover key={index} style={{ cursor: 'pointer' }}>
-                                                    <TableCell align="left" style={{ borderBottom: 0 }} >
-                                                        <Typography variant='body1'>
-                                                            {smartobject.reference}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="center" style={{ borderBottom: 0 }} >
-                                                        <img style={{ height: 25, width: 25, alignSelf: 'center', filter: 'invert(100%)' }} src={process.env.PUBLIC_URL + "/ressource/icon/" + smartobject.status.icon + ".svg"} />
+                <Desktop isMobile={this.props.isMobile}>
+                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
+                        <Typography variant='h5' >Smartobject</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >Automate your home</Typography>
+                    </Paper>
+                </Desktop>
+                <Grid container spacing={2} style={{marginBottom: 10}}>
+                    <TypeProduct product={this.state.product} onChange={(product) => { this.setState({ product: product }) }} />
+                </Grid>
+                <Grid container spacing={2}>
+                    {
+                        this.state.loading ?
+                            <>
+                                <ProcessSkeleton />
+                                <ProcessSkeleton />
+                                <ProcessSkeleton />
+                                <ProcessSkeleton />
+                            </>
+                            :
+                            this.state.smartobjects.length == 0 ?
+                                <Grid item xs={12} md={12} lg={12}>
+                                    <Card variant='outlined' style={{ padding: 12 }}  >
+                                        <Typography variant='subtitle1' color="text.secondary" >You have not added a process</Typography>
+                                    </Card>
+                                </Grid>
+                                :
+                                this.state.smartobjects.filter(smartobject => {
+                                    if (smartobject.configuration) {
+                                        return smartobject.configuration.product == this.state.product
+                                    }
+                                    return false
+                                }).map(smartobject => {
+                                    return (
+                                        <Grid item xs={12} md={6} lg={6} >
+                                            <Card variant={'outlined'}   >
+                                                <CardActionArea style={{ padding: 12, display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }} onClick={() => { this.props.history.push('/smartobject/' + smartobject.id) }}  >
 
-                                                    </TableCell>
-                                                    <TableCell align="center" style={{ borderBottom: 0 }} >
-                                                        <Typography variant='body1'>
-                                                            {capitalizeFirstLetter(smartobject.localisation.name)}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    {
-                                                        this.props.isMobile == false &&
-                                                        <TableCell align="center" style={{ borderBottom: 0 }} >
-                                                            <Typography variant='body1'>
-                                                                {Moment(smartobject.lastUse).format("hh:mm DD/MM")}
+                                                    <Box style={{ display: 'flex', flex: 1 }} >
+                                                        <Box style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center', marginRight: 16 }}>
+                                                            {smartobject.state.status == "online" ? <FlashOn fontSize='large' /> : <FlashOff color='disabled' fontSize='large' />}
+                                                        </Box>
+                                                        <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
+                                                            <Typography variant='subtitle1' color={smartobject.state.status == "online" ? "text.primary" : "text.secondary"} >
+                                                                {smartobject.reference}
                                                             </Typography>
-                                                        </TableCell>
-                                                    }
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </Paper>
-                            <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center', alignItems: 'center' }}>
-                                <Paper variant='outlined' style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }}>
-                                    <Link to="/smartobject/new" style={{ textDecoration: 'none', color: 'white' }}>
-                                        <IconButton style={{ borderRadius: 0 }}>
-                                            <Add />
-                                        </IconButton>
-                                    </Link>
-                                </Paper>
-                                <TablePagination
-                                    component="div"
-                                    count={this.state.smartobjects.length}
-                                    rowsPerPage={10}
-                                    page={this.state.page}
-                                    rowsPerPageOptions={[]}
-                                    onPageChange={(event, page) => { this.setState({ page: page }) }}
-                                />
-                            </Box>
-                        </Box>
-                }
+                                                            <Typography variant='body2' color={smartobject.state.status == "online" ? "text.secondary" : "text.secondary"}  >
+                                                                {smartobject.module}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                </CardActionArea>
+                                            </Card>
+                                        </Grid>
+                                    )
+                                })
+                    }
+                </Grid>
+                <AddButton to="/smartobject/new" />
                 <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                     {this.state.message}
                 </Alert>

@@ -77,6 +77,8 @@ class Detail extends React.Component {
             availableFilters: []
         }
 
+        props.setTitle("Rapport")
+        props.setActionType("return")
 
 
     }
@@ -280,7 +282,7 @@ class Detail extends React.Component {
         return (
             <>
                 <Desktop {... this.props}>
-                    <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
+                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
                         <Typography variant='h5' >Rapport</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >Show what you need</Typography>
                     </Paper>

@@ -30,6 +30,8 @@ class NewWidget extends React.Component {
             configurations: [],
             settings: []
         }
+        props.setTitle("New widget")
+        props.setActionType("return")
     }
 
     async componentDidMount() {

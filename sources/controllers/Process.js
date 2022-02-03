@@ -3,6 +3,7 @@ import Package from '../package.json'
 import Tracing from "../utils/Tracing"
 import Result from '../utils/Result'
 import StackTrace from "../utils/StackTrace"
+import { lutimes } from "fs-extra"
 
 class Process extends Controller {
 
@@ -20,7 +21,7 @@ class Process extends Controller {
                 return processRequest
             }
             if (processRequest.data === false) {
-                return new Result(Package.name, false, "Process not found")
+                return new Result(Package.name, true, "Process not found")
             }
             let actionRequest = await this.sqlProcessAction.getAllByField({ process: idProcess })
             if (actionRequest.error) {
@@ -40,22 +41,39 @@ class Process extends Controller {
             if (inputRequest.error) {
                 return inputRequest
             }
+            
+            let inputs = []
+            for (let indexInput = 0; indexInput < inputRequest.data.length; indexInput++) {
+                let input = inputRequest.data[indexInput]
+                let processInputOptionRequest = await this.sqlProcessInputOption.getAllByField({ process_input: input.id })
+                if (processInputOptionRequest.error) {
+                    return processInputOptionRequest
+                }
+                input.options = {}
+
+                for (let indexInputOption = 0; indexInputOption < processInputOptionRequest.data.length; indexInputOption++) {
+                    let inputOption = processInputOptionRequest.data[indexInputOption]
+                    input.options[inputOption.reference] = inputOption.value
+                }
+
+                inputs.push(input)
+            }
+            
+
             let processProfileRequest = await this.sqlProcessProfile.getAllByField({ process: idProcess })
             if (processProfileRequest.error) {
                 return processProfileRequest
             }
-            let espaceRequest = await this.sqlEspace.getOne(processRequest.data.espace)
-            if (espaceRequest.error) {
-                return espaceRequest
-            }
             let process = processRequest.data
+            process.inputs = inputs
             process.actions = actions
-            process.inputs = inputRequest.data.map(input => {
-                input.id = input.reference
-                return input
-            })
+            /*
+                process.inputs = inputRequest.data.map(input => {
+                    input.id = input.reference
+                    return input
+                })
+            */
             process.profiles = processProfileRequest.data
-            process.espace = espaceRequest.data
             return new Result(Package.name, false, "", process)
         } catch (error) {
             StackTrace.save(error)
@@ -191,11 +209,15 @@ class Process extends Controller {
                     action.arguments.forEach(argument => {
                         for (let inputKey in inputs) {
                             let input = inputs[inputKey]
-                            argument.value = argument.value.replace("{" + inputKey + "}", input)
+                            if(input == null) {
+                                argument.value = argument.value.replace("{" + inputKey + "}", argument.default_value) 
+                            } else {
+                                argument.value = argument.value.replace("{" + inputKey + "}", input)
+                            }
                         }
                         pArguments[argument.reference] = argument.value
                     })
-                    if (action.enable === process.enable || process.mode === "simple") {
+                    if (action.state === process.state) {
                         if (action.type === "smartobject") {
                             let getOneSmartobject = await this.sqlSmartobject.getOne(action.object)
                             if (getOneSmartobject.error) {
@@ -225,10 +247,7 @@ class Process extends Controller {
                     }
                 }
                 if (process.mode === "switch") {
-                    let updateAll = await this.sqlProcess.updateAll({ enable: process.enable == 0 ? 1 : 0 }, { id: process.id })
-                    if (updateAll.error) {
-                        return updateAll
-                    }
+                    await this.sqlProcess.updateAll({ state: process.state == "on" ? "off" : "on" }, { id: process.id })
                 }
                 return new Result(Package.name, false, "", data)
             } else {
@@ -241,210 +260,81 @@ class Process extends Controller {
         }
     }
 
-    async insert(reference, name, nameEnable, nameDisable, description, espace, icon, mode, sources, inputs) {
+    async insert(pProcess) {
         try {
             let insertProcessRequest = await this.sqlProcess.insert({
                 id: null,
-                reference: reference,
-                name: name,
-                name_enable: nameEnable,
-                name_disable: nameDisable,
-                description: description,
-                espace: espace,
-                icon: icon,
-                enable: '0',
-                mode: mode
+                description: pProcess.description,
+                description_on: pProcess.description_on,
+                description_off: pProcess.description_off,
+                mode: pProcess.mode,
+                room: pProcess.room,
+                state: pProcess.state
             })
             if (insertProcessRequest.error) {
                 return insertProcessRequest
             }
-            let processId = insertProcessRequest.data.insertId
-            for (let indexAction = 0; indexAction < sources.length; indexAction++) {
-                let action = sources[indexAction]
+            let idProcess = insertProcessRequest.data.insertId
+            for (let indexAction = 0; indexAction < pProcess.actions.length; indexAction++) {
+                let action = pProcess.actions[indexAction]
                 let insertProcessActionRequest = await this.sqlProcessAction.insert({
                     id: null,
-                    process: processId,
-                    object: action.source.id,
-                    action: action.action.id,
-                    enable: (action.enable ? 1 : 0),
-                    type: action.source.type
+                    process: idProcess,
+                    type: action.type,
+                    object: action.object,
+                    action: action.action,
+                    state: action.state
                 })
                 if (insertProcessActionRequest.error) {
                     return insertProcessActionRequest
                 }
-                let processActionId = insertProcessActionRequest.data.insertId
-                for (let indexArgument = 0; indexArgument < action.arguments.length; indexArgument++) {
-                    let argument = action.arguments[indexArgument]
-                    let insertProcessActionArgumentRequest = await this.sqlProcessActionArgument.insert({
+                let idProcessAction = insertProcessActionRequest.data.insertId
+                for (let indexArgument = 0; indexArgument < action.settings.length; indexArgument++) {
+                    let setting = action.settings[indexArgument]
+                    let insertSettingsRequest = await this.sqlProcessActionArgument.insert({
                         id: null,
-                        reference: argument.reference,
-                        value: argument.value,
-                        process_action: processActionId
+                        reference: setting.reference,
+                        value: setting.value,
+                        default_value: setting.default,
+                        process_action: idProcessAction
                     })
-                    if (insertProcessActionArgumentRequest.error) {
-                        return insertProcessActionArgumentRequest
+                    if (insertSettingsRequest.error) {
+                        return insertSettingsRequest
                     }
                 }
             }
-            for (let indexInput = 0; indexInput < inputs.length; indexInput++) {
-                let input = inputs[indexInput]
-                let insertProcessInputRequest = await this.sqlProcessInput.insert({
+            for (let indexInput = 0; indexInput < pProcess.inputs.length; indexInput++) {
+                let input = pProcess.inputs[indexInput]
+                let insertInputRequest = await this.sqlProcessInput.insert({
                     id: null,
+                    process: idProcess,
                     reference: input.reference,
-                    name: input.name,
                     type: input.type,
-                    enable: input.enable,
-                    process: processId
+                    state: input.state
                 })
-                if (insertProcessInputRequest.error) {
-                    return insertProcessInputRequest
+                if (insertInputRequest.error) {
+                    return insertInputRequest
+                }
+                let idInputOption = insertInputRequest.data.insertId
+
+                for (let indexInputOption = 0; indexInputOption < input.options.length; indexInputOption++) {
+                    let option = input.options[indexInputOption];
+                    let insertInputOptionRequest = await this.sqlProcessInputOption.insert({
+                        id: null,
+                        reference: option.reference,
+                        value: option.value,
+                        process_input: idInputOption
+                    })
+                    if (insertInputOptionRequest.error) {
+                        return insertInputOptionRequest
+                    }
                 }
             }
-            return new Result(Package.name, false, "")
+            return await this.getOne(idProcess)
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when insert process")
             return new Result(Package.name, true, "Error occurred when insert process")
-        }
-    }
-
-    async insertAction(idProcess, source, action, enable, pArguments) {
-        try {
-            let processRequest = await this.sqlProcess.getOne(idProcess)
-            if (processRequest.error) {
-                return processRequest
-            }
-            let process = processRequest.data
-            let insertProcessActionRequest = await this.sqlProcessAction.insert({
-                id: null,
-                process: process.id,
-                object: source.id,
-                action: action.id,
-                enable: (enable ? 1 : 0),
-                type: source.type
-            })
-            if (insertProcessActionRequest.error) {
-                return insertProcessActionRequest
-            }
-            let processActionId = insertProcessActionRequest.data.insertId
-            for (let indexArgument = 0; indexArgument < pArguments.length; indexArgument++) {
-                let argument = pArguments[indexArgument]
-                let insertProcessActionArgumentRequest = await this.sqlProcessActionArgument.insert({
-                    id: null,
-                    reference: argument.reference,
-                    value: argument.value,
-                    process_action: processActionId
-                })
-                if (insertProcessActionArgumentRequest.error) {
-                    return insertProcessActionArgumentRequest
-                }
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when insert action process")
-            return new Result(Package.name, true, "Error occurred when insert action process")
-        }
-    }
-
-    async deleteAction(idProcess, idAction) {
-        try {
-            let processActionArgumentRequest = await this.sqlProcessActionArgument.deleteAllByField({
-                process_action: idAction
-            })
-            if (processActionArgumentRequest.error) {
-                return processActionArgumentRequest
-            }
-            let processActionRequest = await this.sqlProcessAction.deleteAllByField({
-                id: idAction
-            })
-            if (processActionRequest.error) {
-                return processActionRequest
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete action process")
-            return new Result(Package.name, true, "Error occurred when delete action process")
-        }
-    }
-
-    async insertInput(idProcess, reference, name, type, enable) {
-        try {
-            if (idProcess) {
-                if (reference) {
-                    if (name) {
-                        if (type) {
-                            if (enable != undefined) {
-                                let processRequest = await this.sqlProcess.getOne(idProcess)
-                                if (processRequest.error) {
-                                    return processRequest
-                                }
-                                let processInputRequest = await this.sqlProcessInput.getOneByField({
-                                    process: idProcess,
-                                    reference: reference
-                                })
-                                if (processInputRequest.error) {
-                                    return processInputRequest
-                                }
-                                if (processInputRequest.data == false) {
-                                    let insertRequest = await this.sqlProcessInput.insert({
-                                        id: null,
-                                        reference: reference,
-                                        name: name,
-                                        type: type,
-                                        enable: enable,
-                                        process: idProcess
-                                    })
-                                    if (insertRequest.error) {
-                                        return insertRequest
-                                    }
-                                    return new Result(Package.name, false, "")
-                                } else {
-                                    Tracing.warning(Package.name, "Reference already exist")
-                                    return new Result(Package.name, true, "Reference already exist")
-                                }
-                            } else {
-                                Tracing.warning(Package.name, "Missing enable")
-                                return new Result(Package.name, true, "Missing enable")
-                            }
-                        } else {
-                            Tracing.warning(Package.name, "Missing type")
-                            return new Result(Package.name, true, "Missing type")
-                        }
-                    } else {
-                        Tracing.warning(Package.name, "Missing name")
-                        return new Result(Package.name, true, "Missing name")
-                    }
-                } else {
-                    Tracing.warning(Package.name, "Missing reference")
-                    return new Result(Package.name, true, "Missing reference")
-                }
-            } else {
-                Tracing.warning(Package.name, "Missing process id")
-                return new Result(Package.name, true, "Missing process id")
-            }
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when insert input process")
-            return new Result(Package.name, true, "Error occurred when insert input process")
-        }
-    }
-
-    async deleteInput(idProcess, idInput) {
-        try {
-            let deleteInputRequest = await this.sqlProcessInput.deleteAllByField({
-                reference: idInput,
-                process: idProcess
-            })
-            if (deleteInputRequest.error) {
-                return deleteInputRequest
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete input process")
-            return new Result(Package.name, true, "Error occurred when delete input process")
         }
     }
 

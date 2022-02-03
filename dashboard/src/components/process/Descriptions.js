@@ -11,7 +11,12 @@ function Descriptions(props) {
             <Grid item xs={12} md={12} lg={12}>
                 <Card variant='outlined' style={{ padding: 10, display: 'flex', alignItems: 'center' }}>
                     <Grid container spacing={1}>
-                        <Grid item xs={12} md={10} lg={10}>
+                        <Grid item xs={12} md={5} lg={5}>
+                            <TextField  onChange={(event) => { props.onChange("",event.nativeEvent.target.value) }} placeholder='Description' style={{ width: '100%' }} >
+
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12} md={5} lg={5}>
                             <TextField  onChange={(event) => { props.onChange("on",event.nativeEvent.target.value) }} placeholder='Action name' style={{ width: '100%' }} >
 
                             </TextField>
@@ -32,6 +37,11 @@ function Descriptions(props) {
                 <Grid item xs={12} md={12} lg={12}>
                     <Card variant='outlined' style={{ padding: 10, display: 'flex', alignItems: 'center' }}>
                         <Grid container spacing={1}>
+                        <Grid item xs={12} md={10} lg={10}>
+                                <TextField onChange={(event) => { props.onChange("",event.nativeEvent.target.value) }} placeholder='Description' style={{ width: '100%' }} >
+
+                                </TextField>
+                            </Grid>
                             <Grid item xs={12} md={5} lg={5}>
                                 <TextField onChange={(event) => { props.onChange("on",event.nativeEvent.target.value) }} placeholder='Action name in ON mode' style={{ width: '100%' }} >
 

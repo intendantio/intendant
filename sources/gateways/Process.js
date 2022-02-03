@@ -1,19 +1,10 @@
 export default (app, core) => {
 
-    //Get all espace
-    app.get("/api/espaces", async (request, res) => {
-        request.url = '/espaces'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.espace.getAll())
-        }
-    })
+
 
     //Get all process
-    app.get("/api/process", async (request, res) => {
-        request.url = '/process'
+    app.get("/api/processes", async (request, res) => {
+        request.url = '/processes'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -23,30 +14,19 @@ export default (app, core) => {
     })
 
     //Insert new porcess
-    app.post("/api/process", async (request, res) => {
-        request.url = "/process"
+    app.post("/api/processes", async (request, res) => {
+        request.url = "/processes"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
         } else {
-            res.send(await core.controller.process.insert(
-                request.body.reference,
-                request.body.name,
-                request.body.nameEnable,
-                request.body.nameDisable,
-                request.body.description, 
-                request.body.espace, 
-                request.body.icon, 
-                request.body.mode, 
-                request.body.sources, 
-                request.body.inputs
-            ))
+            res.send(await core.controller.process.insert(request.body))
         }
     })
 
     //Get one process
-    app.get("/api/process/:idProcess", async (request, res) => {
-        request.url = '/espace/:id/process/:idProcess'
+    app.get("/api/processes/:idProcess", async (request, res) => {
+        request.url = '/espace/:id/processes/:idProcess'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -56,8 +36,8 @@ export default (app, core) => {
     })
 
     //Delete process
-    app.delete("/api/process/:idProcess", async (request, res) => {
-        request.url = "/process/:idProcess"
+    app.delete("/api/processes/:idProcess", async (request, res) => {
+        request.url = "/processes/:idProcess"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -66,53 +46,9 @@ export default (app, core) => {
         }
     })
 
-    //Insert new process action
-    app.post("/api/process/:idProcess/actions", async (request, res) => {
-        request.url = '/process/:idProcess/actions'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.process.insertAction(request.params.idProcess, request.body.source, request.body.action, request.body.enable, request.body.arguments))
-        }
-    })
-
-    //Delete process action
-    app.delete("/api/process/:idProcess/actions/:idAction", async (request, res) => {
-        request.url = '/process/:idProcess/actions/:idAction'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.process.deleteAction(request.params.idProcess, request.params.idAction))
-        }
-    })
-    
-    //Insert process inputs
-    app.post('/api/process/:idProcess/inputs', async (request, res) => {
-        request.url = '/process/:idProcess/inputs'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.process.insertInput(request.params.idProcess, request.body.reference, request.body.name, request.body.type, request.body.enable))
-        }
-    })
-
-    //Delete process inputs
-    app.delete('/api/process/:idProcess/inputs/:idInput', async (request, res) => {
-        request.url = '/process/:idProcess/inputs/:idInput'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.process.deleteInput(  request.params.idProcess, request.params.idInput ))
-        }
-    })
-
     // Execute action
-    app.post("/api/process/:id/execute", async (request, res) => {
-        request.url = '/process/:idprocess/execute'
+    app.post("/api/processes/:id/execute", async (request, res) => {
+        request.url = '/processes/:idprocess/execute'
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -122,8 +58,8 @@ export default (app, core) => {
     })
 
     // Insert process profiles
-    app.post("/api/process/:idProcess/profiles", async (request, res) => {
-        request.url = "/process/:idProcess/profiles"
+    app.post("/api/processes/:idProcess/profiles", async (request, res) => {
+        request.url = "/processes/:idProcess/profiles"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)
@@ -136,8 +72,8 @@ export default (app, core) => {
     })
 
     // Delete process profiles
-    app.delete("/api/process/:idProcess/profiles/:idProfile", async (request, res) => {
-        request.url = "/process/:idProcess/profiles/:idProfile"
+    app.delete("/api/processes/:idProcess/profiles/:idProfile", async (request, res) => {
+        request.url = "/processes/:idProcess/profiles/:idProfile"
         let authorization = await core.controller.authentification.checkAuthorization(request)
         if (authorization.error) {
             res.send(authorization)

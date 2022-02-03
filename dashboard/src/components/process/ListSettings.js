@@ -71,7 +71,7 @@ function ListSettings(props) {
                             {
                                 props.settingsMode[index] == "custom" &&
                                 <Box style={{ width: 'min-content', marginTop: 10 }}>
-                                    <Action noLabel setState={props.setState} id={"setting-" + index} action={setting.setting} flexDirection='column' orientation='horizontal' />
+                                    <Action options={setting.setting.options} noLabel setState={props.setState} id={"setting-" + index} action={setting.setting} flexDirection='column' orientation='horizontal' />
                                 </Box>
                             }
                         </Grid>

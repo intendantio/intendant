@@ -1,14 +1,16 @@
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
 
-import { MenuItem, Switch, ListItem, FormControlLabel, Checkbox, InputLabel, IconButton, TableHead, TextField, Typography, Paper, Divider, TableBody, TableContainer, TableCell, Table, TableRow, FormControl, Select, Button } from '@mui/material'
+import { Grid, Switch, ListItem, FormControlLabel, Card, CardActionArea, IconButton, TableHead, TextField, Typography, Paper, Divider, TableBody, TableContainer, TableCell, Table, TableRow, FormControl, Select, Button } from '@mui/material'
 
-import { Check, Close, Delete, Autorenew, Add } from '@mui/icons-material'
+import { ToggleOff, Close, Delete, Autorenew, ToggleOn, RadioButtonChecked } from '@mui/icons-material'
 
 import Alert from '../../../components/Alert'
 import Action from '../../../components/Action'
+import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
 import Source from '../../../utils/Source'
+import DeleteButton from '../../../components/views/DeleteButton'
 
 class DetailProcess extends React.Component {
 
@@ -27,42 +29,32 @@ class DetailProcess extends React.Component {
             modeInput: 0,
             action: "",
             source: "",
-            loading: false,
+            loading: true,
             isChecked: false,
             sources: []
         }
+        props.setTitle("Process")
+        props.setActionType("return")
     }
 
 
     async componentDidMount() {
-        let resultSource = await Source.getSource(["smartobject", "module", "essential"])
-        let resultEspace = await new Request().get().fetch("/api/espaces")
+        this.setState({ loading: true })
         let resultProfile = await new Request().get().fetch("/api/profiles")
-        let result = await new Request().get().fetch("/api/process/" + this.state.id)
-        if (resultEspace.error) {
-            this.setState({
-                enabled: true,
-                message: resultEspace.package + " : " + resultEspace.message
-            })
-        } else if (result.error) {
+        let result = await new Request().get().fetch("/api/processes/" + this.state.id)
+        if (result.error) {
             this.setState({
                 enabled: true,
                 message: result.package + " : " + result.message
             })
-        } else if (resultSource.error) {
-            this.setState({
-                enabled: true,
-                message: resultSource.package + " : " + resultSource.message
-            })
+            this.props.history.push('/process')
         } else {
             this.setState({
                 process: result.data,
                 profiles: resultProfile.data,
-                espaces: resultEspace.data,
-                sources: resultSource.data
+                loading: false
             })
         }
-        this.setState({ loading: null })
     }
 
     setSource(id) {
@@ -81,49 +73,9 @@ class DetailProcess extends React.Component {
         this.setState({ action: fAction })
     }
 
-    async addSource() {
-        if (this.state.action == null) {
-            this.setState({ enabled: true, message: "Action missing" })
-            return
-        }
-        if (this.state.source == null) {
-            this.setState({ enabled: true, message: "Source missing" })
-            return
-        }
-        let settings = []
-        for (let index = 0; index < this.state.action.settings.length; index++) {
-            let setting = this.state.action.settings[index]
-            let value = this.state["settings-" + setting.id]
-            if (value == undefined) {
-                value = setting.default
-            }
-            settings.push({ reference: setting.id, value: value })
-        }
-        let action = {
-            source: this.state.source,
-            action: this.state.action,
-            arguments: settings,
-            enable: this.state.isChecked
-        }
-        let result = await new Request().post(action).fetch("/api/process/" + this.state.id + "/actions")
-        if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
-        } else {
-            this.componentDidMount()
-        }
-    }
-
-    async deleteSource(idsource) {
-        let result = await new Request().delete().fetch("/api/process/" + this.state.id + "/actions/" + idsource)
-        if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
-        } else {
-            this.componentDidMount()
-        }
-    }
 
     async delete(id) {
-        let result = await new Request().delete().fetch("/api/process/" + id)
+        let result = await new Request().delete().fetch("/api/processes/" + id)
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -133,19 +85,23 @@ class DetailProcess extends React.Component {
 
     async executeAction() {
         this.setState({ loading: true })
+        let resetState = {}
         let tmp = {}
         for (let index = 0; index < this.state.process.inputs.length; index++) {
             let input = this.state.process.inputs[index];
-            let value = this.state["settings-" + input.id]
-            if (value == undefined) {
-                value = input.default
+            let value = this.state[input.id]
+            resetState[input.id] = null
+            if (value) {
+                tmp[input.reference] = value
+            } else {
+                tmp[input.reference] = null
             }
-            tmp[input.reference] = value
         }
-        let result = await new Request().post({ inputs: tmp }).fetch("/api/process/" + this.state.process.id + "/execute")
+        let result = await new Request().post({ inputs: tmp }).fetch("/api/processes/" + this.state.process.id + "/execute")
         if (result.error) {
             this.setState({ loading: null, enabled: true, message: result.package + " : " + result.message })
         } else {
+            this.setState(resetState)
             if (result.data) {
                 this.setState({ executeInformation: JSON.stringify(result.data) })
             }
@@ -154,7 +110,7 @@ class DetailProcess extends React.Component {
     }
 
     async insertProfile(process, profile) {
-        let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/process/" + process.id + "/profiles")
+        let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/processes/" + process.id + "/profiles")
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -163,7 +119,7 @@ class DetailProcess extends React.Component {
     }
 
     async deleteProfile(process, profile) {
-        let result = await new Request().delete().fetch("/api/process/" + process.id + "/profiles/" + profile.id)
+        let result = await new Request().delete().fetch("/api/processes/" + process.id + "/profiles/" + profile.id)
         if (result.error) {
             this.setState({ enabled: true, message: result.package + " : " + result.message })
         } else {
@@ -171,303 +127,112 @@ class DetailProcess extends React.Component {
         }
     }
 
-    async deleteProcessInput(input) {
-        let result = await new Request().delete({}).fetch("/api/process/" + this.state.process.id + "/inputs/" + input.id)
-        if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
-        } else {
-            this.componentDidMount()
-        }
-    }
-
-    async insertProcessInput() {
-        if (this.state.typeInput == null) {
-            this.setState({ enabled: true, message: "Missing-parameter : type is empty" })
-            return
-        }
-        let result = await new Request().post({
-            reference: this.state.referenceInput,
-            name: this.state.nameInput,
-            type: this.state.typeInput,
-            enable: this.state.modeInput
-        }).fetch("/api/process/" + this.state.process.id + "/inputs")
-        if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
-        } else {
-            this.setState({
-                referenceSettings: "",
-                valueSettings: "",
-                referenceInput: "",
-                nameInput: "",
-                modeInput: 0
-            })
-            this.componentDidMount()
-        }
-    }
 
     updateAction(action, value) {
         let tmp = {}
-        tmp["settings-" + action.id] = value
+        tmp[action.id] = value
         this.setState(tmp)
     }
 
     render() {
         if (this.state.process) {
             return (
-                <div>
-                    <Paper variant='outlined' style={{ padding: 25 }}>
-                        <Typography variant='h4'>
-                            {this.state.process.reference}
-                        </Typography>
-                        <Typography variant='subtitle1'>
-                            {this.state.process.espace.name}
-                        </Typography>
-                        <Typography variant='subtitle1'>
-                            {this.state.process.description}
-                        </Typography>
-                        <Divider style={{ marginTop: 10, marginBottom: 10 }} />
-                        <div  >
-                            <Typography variant='h5' style={{ marginBottom: 5 }}>Action</Typography>
+                <>
+                    <Desktop {... this.props}>
+                        <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
+                            <Typography variant='h5' >Process</Typography>
+                            <Typography variant='subtitle2' color="text.secondary" >Execute action</Typography>
+                        </Paper>
+                    </Desktop>
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} md={8} lg={9}>
+                            <Card variant='outlined' style={{ padding: 12 }}>
+                                <Typography variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description)}</Typography>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} md={4} lg={3}>
+                            <Card elevation={3} >
+                                <Button variant='contained'  onClick={() => { this.executeAction() }} style={{width:'100%', padding: 10, flexDirection: 'row', display: 'flex' }}>
+                                    {
+                                        this.state.process.mode == "button" ?
+                                            <RadioButtonChecked fontSize='large' style={{ marginRight: 16 }} /> :
+
+                                            this.state.process.state == "on" ?
+                                                <ToggleOn fontSize='large' style={{ marginRight: 16 }} />
+                                                :
+                                                <ToggleOff fontSize='large' style={{ marginRight: 16 }} />
+                                    }
+                                    {
+                                        this.state.process.mode == "button" ?
+                                            <Typography textAlign='center' variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description_on)}</Typography>
+                                            :
+                                            this.state.process.state == "on" ?
+                                                <Typography textAlign='center' variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description_on)}</Typography>
+                                                :
+                                                <Typography textAlign='center' variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description_off)}</Typography>
+                                    }
+                                </Button>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} md={9} lg={9}>
                             {
-                                this.state.process.mode == "simple" ?
-                                    this.state.process.mode === "simple" ?
-                                        <Button color='inherit' disabled={this.state.loading} style={{borderColor: 'rgba(255, 255, 255, 0.15)', alignSelf: 'center', marginTop: 10 }} variant={this.state.process.enable === 2 ? "contained" : "outlined"} onClick={() => { this.executeAction() }} startIcon={<Autorenew />}>
-                                            {this.state.process.name}
-                                        </Button> : null
+                                this.state.loading ?
+                                    null
                                     :
-                                    <div style={{ flexDirection: 'column', display: 'flex', width: 'fit-content' }}>
-                                        {
-                                            this.state.process.enable == 1 ?
-                                                <Button disabled={this.state.loading} style={{borderColor: 'rgba(255, 255, 255, 0.15)', marginTop: 10 }} variant={"contained"} onClick={() => { this.executeAction() }} >
-                                                    {this.state.process.name_enable}
-                                                </Button> :
-                                                <Button color='inherit' disabled={this.state.loading} style={{borderColor: 'rgba(255, 255, 255, 0.15)', marginTop: 10 }} variant={"outlined"} onClick={() => { this.executeAction() }} >
-                                                    {this.state.process.name_disable}
-                                                </Button>
-                                        }
-                                    </div>
+                                    <Card variant='outlined' style={{ padding: 12 }}>
+                                        <Grid container spacing={2}>
+                                            {
+                                                this.state.process.inputs.filter(input => input.state == this.state.process.state).length == 0 ?
+                                                    <Grid item xs={12} md={12} lg={12}>
+                                                        <Typography variant='subtitle1' color="text.secondary" >No input</Typography>
+                                                    </Grid>
+                                                    :
+                                                    this.state.process.inputs.filter(input => input.state == this.state.process.state).map((input, index) => {
+                                                        return (
+                                                            <Grid item xs={12} md={6} lg={4}>
+                                                                <Action options={input.options} label={capitalizeFirstLetter(input.reference.split("_")[0])} setState={this.setState.bind(this)} id={input.id} action={input} />
+                                                            </Grid>
+                                                        )
+                                                    })
+                                            }
+                                        </Grid>
+                                    </Card>
                             }
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'row', marginTop: 10, marginBottom: 10 }}>
-                            {
-                                this.state.process.inputs.filter(input => {
-                                    return input.enable == this.state.process.enable
-                                }).map(input => {
-                                    return <Action setState={this.setState.bind(this)} action={input} flexDirection='column' orientation='horizontal' />
-                                })
-                            }
-                        </div>
-                        <div style={{ marginTop: 15 }} >
-                            <Typography variant='h5'>
-                                Input
-                            </Typography>
-                            <div style={{ flexDirection: 'column', display: 'flex', width: '100%', marginTop: 10 }}>
-                                <Paper variant='outlined' >
-                                    <TableContainer>
-                                        <Table>
-                                            <TableBody>
-                                                {
-                                                    this.state.process.inputs.map((input, index) =>
-                                                        <TableRow key={index}>
-                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.reference}</Typography></TableCell>
-                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.name}</Typography> </TableCell>
-                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.type}</Typography></TableCell>
-                                                            <TableCell align="center" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{input.enable}</Typography></TableCell>
-                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
-                                                                <IconButton onClick={() => { this.deleteProcessInput(input) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                                    <Delete />
-                                                                </IconButton>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )
-                                                }
-                                                <TableRow key={-1}>
-                                                    <TableCell align="left" style={{ width: '35%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
-                                                        <TextField value={this.state.referenceInput} onChange={(event) => { this.setState({ referenceInput: event.nativeEvent.target.value }) }} placeholder='Reference' style={{ width: '100%' }}>
-                                                        </TextField>
-                                                    </TableCell>
-                                                    <TableCell align="left" style={{ width: '35%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
-                                                        <TextField value={this.state.nameInput} onChange={(event) => { this.setState({ nameInput: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
-                                                        </TextField>
-                                                    </TableCell>
-                                                    <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
-                                                        <FormControl variant="outlined" style={{ width: '100%' }} >
-                                                            <InputLabel>Type</InputLabel>
-                                                            <Select value={this.state.typeInput} onChange={(event) => { this.setState({ typeInput: event.target.value }) }} label="Type" >
-                                                                <MenuItem value={"text"} >{"Text"}</MenuItem>
-                                                                <MenuItem value={"colorpicker"} >{"Color picker"}</MenuItem>
-                                                                <MenuItem value={"number"} >{"Number"}</MenuItem>
-                                                                <MenuItem value={"slider"} >{"Slider"}</MenuItem>
-                                                            </Select>
-                                                        </FormControl>
-                                                    </TableCell>
-                                                    <TableCell align="center" style={{ width: '10%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>
-                                                        {
-                                                            this.state.process.mode === 'switch' ?
-                                                                <Checkbox value={this.state.modeInput == 0} onChange={(event, checked) => { this.setState({ modeInput: checked ? 1 : 0 }) }} /> : null
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }} >
-                                                        <IconButton onClick={() => { this.insertProcessInput() }} style={{ borderRadius: 5, margin: 0 }}>
-                                                            <Add />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </Paper>
-                            </div>
-                        </div>
-                        <div style={{ marginTop: 15 }} >
-                            <Typography variant='h5'>
-                                Module
-                            </Typography>
-                            <div style={{ flexDirection: 'column', display: 'flex', width: '100%', marginTop: 10 }}>
-                                <Paper variant='outlined' >
-                                    <TableContainer>
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Module</Typography></TableCell>
-                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Type</Typography></TableCell>
-                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Action</Typography></TableCell>
-                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Arguments</Typography></TableCell>
-                                                    <TableCell align="center" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>Mode</Typography></TableCell>
-                                                    <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}></TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {
-                                                    this.state.process.actions.map((action, index) =>
-                                                        <TableRow key={index}>
-                                                            <TableCell align="left" style={{ width: '15%', borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{action.object}</Typography></TableCell>
-                                                            <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{action.type}</Typography> </TableCell>
-                                                            <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}><Typography variant='body1'>{action.action}</Typography></TableCell>
-                                                            <TableCell align="left" style={{ width: '20%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>{action.arguments.map((argument, pIndex) => {
-                                                                return <Typography key={pIndex} variant='body1'>{argument.reference + " : " + argument.value}</Typography>
-                                                            })}</TableCell>
-                                                            <TableCell align="center" style={{ width: '15%', borderColor: 'rgba(255, 255, 255, 0.12)' }}>{action.enable === 0 ? <Close /> : action.enable === 1 ? <Check /> : <Autorenew />}</TableCell>
-                                                            <TableCell align="left" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}>
-                                                                <IconButton onClick={() => { this.deleteSource(action.id) }}>
-                                                                    <Delete />
-                                                                </IconButton>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )
-                                                }
-                                                <TableRow>
-                                                    <TableCell align="left" style={{ width: '25%', borderWidth: 0 }}>
-                                                        <FormControl fullWidth>
-                                                            <InputLabel>Source</InputLabel>
-                                                            <Select value={this.state.source ? this.state.source.id : ''} onChange={(event) => { this.setSource(event.target.value) }} label="Connexion" >
-                                                                {
-                                                                    this.state.sources.map((source, index) => {
-                                                                        return <MenuItem key={index} value={source.id} >{source.name}</MenuItem>
-                                                                    })
-                                                                }
-                                                            </Select>
-                                                        </FormControl>
-                                                    </TableCell>
-                                                    <TableCell align="left" style={{ width: '25%', borderWidth: 0 }}>
-                                                        {
-                                                            this.state.source ?
-                                                                <FormControl fullWidth >
-                                                                    <InputLabel>Action</InputLabel>
-                                                                    <Select value={this.state.action ? this.state.action.id : ''} onChange={(event) => { this.setAction(event.target.value) }} label="Connexion" >
-                                                                        {
-                                                                            this.state.source.actions.map(action => {
-                                                                                return <MenuItem value={action.id} >{action.name}</MenuItem>
-                                                                            })
-                                                                        }
-                                                                    </Select>
-                                                                </FormControl>
-                                                                : null
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell align="left" style={{ width: '20%', borderWidth: 0 }}>
-                                                        {
-                                                            this.state.action ?
-                                                                this.state.action.settings.map((argument, index) => {
-                                                                    return (
-                                                                        <div key={index} style={{ marginLeft: 10, marginRight: 10, marginTop: 5, marginBottom: 2 }} >
-                                                                            <TextField variant="outlined" placeholder={argument.id} onChange={(event) => { this.updateAction(argument, event.currentTarget.value, this.state.action) }} />
-                                                                        </div>
-                                                                    )
-                                                                }) : null
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell align="center" style={{ width: '5%', borderWidth: 0 }}>
-                                                        
-                                                    </TableCell>
-                                                    <TableCell align="center" style={{ width: '5%', borderWidth: 0 }}>
-                                                        {
-                                                            this.state.process.mode === 'switch' ?
-                                                                <Checkbox onChange={(event, isChecked) => { this.setState({ isChecked: isChecked }) }} /> : null
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell align="center" style={{ width: '5%', borderWidth: 0 }}>
-                                                        <IconButton onClick={() => { this.addSource() }}>
-                                                            <Add />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </Paper>
-                            </div>
-                        </div>
-                        {
-                            this.state.executeInformation.length > 0 ?
-                                <div style={{ padding: 10 }}>
-                                    <Alert severity="success" action={
-                                        <IconButton onClick={() => { this.setState({ executeInformation: "" }) }} style={{ alignSelf: 'start' }} color="inherit" size="small">
-                                            <Close />
-                                        </IconButton>
-                                    }>
-                                        <JSONPretty id="json-pretty" data={JSON.parse(this.state.executeInformation)}></JSONPretty>
-                                    </Alert>
-                                </div>
-                                :
-                                null
-                        }
-                        <div style={{ padding: 10, paddingBottom: 0 }}>
-                            <Typography variant='h5' >
-                                Authorization
-                            </Typography>
-                            {
-                                this.state.profiles.map((profile, pIndex) => {
-                                    let state = false
-                                    this.state.process.profiles.forEach(pprofile => {
-                                        if (pprofile.profile == profile.id) {
-                                            state = true
-                                        }
+
+                        </Grid>
+                        <Grid item xs={12} md={3} lg={3}>
+                            <Card variant='outlined' style={{ padding: 12 }}>
+                                {
+                                    this.state.profiles.map((profile, index) => {
+                                        let state = false
+                                        this.state.process.profiles.forEach(pprofile => {
+                                            if (pprofile.profile == profile.id) {
+                                                state = true
+                                            }
+                                        })
+                                        return (
+                                            <ListItem key={index} style={{ padding: 1 }}  >
+                                                <FormControlLabel control={
+                                                    <Switch
+                                                        checked={state}
+                                                        onChange={() => {
+                                                            state ? this.deleteProfile(this.state.process, profile) : this.insertProfile(this.state.process, profile)
+                                                        }}
+                                                        color="primary"
+                                                    />
+                                                } label={profile.name} />
+                                            </ListItem>
+                                        )
                                     })
-                                    return (
-                                        <ListItem key={pIndex} style={{ padding: 1 }}  >
-                                            <FormControlLabel control={<Switch
-                                                checked={state}
-                                                onChange={() => {
-                                                    state ? this.deleteProfile(this.state.process, profile) : this.insertProfile(this.state.process, profile)
-                                                }}
-                                                color="primary"
-                                            />} label={profile.name} />
-                                        </ListItem>
-                                    )
-                                })
-                            }
-                        </div>
-                    </Paper>
-                    <Paper style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
-                        <IconButton onClick={() => { this.delete(this.state.process.id) }} style={{ borderRadius: 5 }}>
-                            <Delete />
-                        </IconButton>
-                    </Paper>
+                                }
+                            </Card>
+                        </Grid>
+                    </Grid>
+                    <DeleteButton onClick={() => {this.delete(this.state.process.id) }} />
                     <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
                         {this.state.message}
                     </Alert>
-                </div>
+                </>
             )
         } else {
             return (
@@ -477,6 +242,10 @@ class DetailProcess extends React.Component {
             )
         }
     }
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default DetailProcess
