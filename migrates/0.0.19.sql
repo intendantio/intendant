@@ -33,7 +33,15 @@ DROP TABLE IF EXISTS room_profile;
 CREATE TABLE room(id INTEGER PRIMARY KEY, name TEXT, description TEXT, icon TEXT);
 CREATE TABLE room_profile(id INTEGER PRIMARY KEY, room INTEGER, profile INTEGER);
 
+/* Create user */
 
+DROP TABLE IF EXISTS client;
+
+DROP TABLE IF EXISTS user;
+CREATE TABLE user(id INTEGER PRIMARY KEY, login TEXT, imei TEXT, password TEXT, salt TEXT, profile INTEGER);
+
+DROP TABLE IF EXISTS user_history;
+CREATE TABLE user_history(id INTEGER PRIMARY KEY, type TEXT, action TEXT, user INTEGER, date TIMESTAMP);
 
 
 

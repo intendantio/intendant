@@ -9,9 +9,7 @@ class NewPassword extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            enabled: false,
             id: props.match.params.id,
-            message: "",
             confirmationPassword: "",
             password: ""
         }
@@ -19,15 +17,15 @@ class NewPassword extends React.Component {
 
     async changePassword() {
         if(this.state.password.length == 0) {
-            this.setState({ enabled: true, message: "Missing password" })
+            this.props.setMessage("Missing password")
         } else if(this.state.confirmationPassword.length == 0) {
-            this.setState({ enabled: true, message: "Missing confirmation password" })
+            this.props.setMessage("Missing confirmation password")
         } else if(this.state.password != this.state.confirmationPassword) {
-            this.setState({ enabled: true, message: "Passwords are not the same" })
+            this.props.setMessage("Passwords are not the same")
         } else {
             let result = await new Request().post({password: this.state.password}).fetch("/api/users/" + this.state.id + "/password")
             if (result.error) {
-                this.setState({ enabled: true, message: result.package + " : " + result.message })
+                this.props.setMessage(result.package + " : " + result.message)
             } else {
                 this.props.history.push('/user')
             }
@@ -50,9 +48,6 @@ class NewPassword extends React.Component {
                         <Save />
                     </IconButton>
                 </Paper>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </div>
         )
     }

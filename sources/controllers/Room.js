@@ -31,6 +31,10 @@ class Room extends Controller {
             if (roomsRequest.error) {
                 return roomsRequest
             }
+            if (roomsRequest.data == false) {
+                Tracing.warning(Package.name, "Room not found")
+                return new Result(Package.name, true, "Room not found")
+            }
             let smartobjectsRequest = await this.sqlSmartobject.getAllByField({ room: idRoom })
             if (smartobjectsRequest.error) {
                 return smartobjectsRequest
@@ -57,32 +61,23 @@ class Room extends Controller {
 
 
 
-    async insert(pWidget) {
-        pWidget.name = pWidget.name.toLowerCase()
+    async insert(pRoom) {
+        pRoom.name = pRoom.name.toLowerCase()
         try {
-            if (pWidget.name) {
-                let data = { id: null, name: pWidget.name, description: pWidget.description, icon: pWidget.icon }
-
-                let getAllRequest = await this.sqlRoom.getAllByField({ name: pWidget.icon })
-
-                if (getAllRequest.error) {
-                    return getAllRequest
-                }
-
-                if (getAllRequest.data.length > 0) {
-                    Tracing.warning(Package.name, "Room already exist")
-                    return new Result(Package.name, true, "Room already exist")
-                }
-
-                let insertRequest = await this.sqlRoom.insert(data)
-                if (insertRequest.error) {
-                    return insertRequest
-                } else {
-                    return new Result(Package.name, false, "")
-                }
+            let data = { id: null, name: pRoom.name, description: pRoom.description, icon: pRoom.icon }
+            let getAllRequest = await this.sqlRoom.getAllByField({ name: pRoom.icon })
+            if (getAllRequest.error) {
+                return getAllRequest
+            }
+            if (getAllRequest.data.length > 0) {
+                Tracing.warning(Package.name, "Room already exist")
+                return new Result(Package.name, true, "Room already exist")
+            }
+            let insertRequest = await this.sqlRoom.insert(data)
+            if (insertRequest.error) {
+                return insertRequest
             } else {
-                Tracing.warning(Package.name, "Missing name")
-                return new Result(Package.name, true, "Missing name")
+                return new Result(Package.name, false, "")
             }
         } catch (error) {
             StackTrace.save(error)
@@ -125,7 +120,6 @@ class Room extends Controller {
                 return profileRequest
             }
             let profile = profileRequest.data
-            console.log(profileRequest)
             if (profile === false) {
                 let insertProfile = await this.sqlRoomProfile.insert({ id: null, room: room.id, profile: idProfile })
                 if (insertProfile.error) {

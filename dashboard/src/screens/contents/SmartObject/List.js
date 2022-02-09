@@ -18,8 +18,6 @@ class Smartobject extends React.Component {
         super(props)
         this.state = {
             page: 0,
-            enabled: false,
-            message: "",
             product: "light",
             smartobjects: []
         }
@@ -30,14 +28,9 @@ class Smartobject extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/smartobjects")
         if (result.error) {
-            this.setState({
-                enabled: true,
-                message: result.package + " : " + result.message
-            })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.setState({
-                enabled: false,
-                message: "",
                 smartobjects: result.data
             })
         }
@@ -103,10 +96,7 @@ class Smartobject extends React.Component {
                                 })
                     }
                 </Grid>
-                <AddButton to="/smartobject/new" />
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
+                <AddButton to="/smartobject/gallery" />
             </>
         )
     }

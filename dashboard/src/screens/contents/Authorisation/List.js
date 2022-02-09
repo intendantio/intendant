@@ -10,8 +10,6 @@ class Security extends React.Component {
         super(props)
         this.state = {
             page: 0,
-            enabled: false,
-            message: "",
             profiles: [],
             selectProfile: '',
             authorizations: []
@@ -21,22 +19,16 @@ class Security extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             if (this.state.selectProfile === "") {
                 this.setState({
-                    enabled: false,
-                    message: "",
                     profiles: result.data,
                     selectProfile: result.data[0].id
                 })
                 this.onSelectProfile(result.data[0].id)
             } else {
-                this.setState({
-                    enabled: false,
-                    message: "",
-                    profiles: result.data
-                })
+                this.setState({ profiles: result.data })
                 this.onSelectProfile(this.state.selectProfile)
             }
         }
@@ -62,20 +54,16 @@ class Security extends React.Component {
         })
         let result = await new Request().get().fetch("/api/profiles/" + id + "/authorizations")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.setState({
-                enabled: false,
-                message: "",
-                authorizations: result.data
-            })
+            this.setState({ authorizations: result.data })
         }
     }
 
     async updateSecure(profile, pAuthorization, secure) {
         let result = await new Request().post({ authorization: pAuthorization, secure: secure }).fetch("/api/profiles/" + profile + "/authorizations")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -155,9 +143,6 @@ class Security extends React.Component {
                         }
                     </List>
                 </div>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    { this.state.message }
-                </Alert>
             </div>
         )
     }

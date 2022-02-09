@@ -206,17 +206,17 @@ class Authentification extends Controller {
         }
     }
 
-    async updateAuthorizationByProfile(id, authorization, secure) {
+    async updateAuthorizationByProfile(id, body) {
         try {
             let resultRequest = await this.sqlAuthorizationProfile.getOneByField({
-                authorization: authorization,
+                authorization: body.authorization,
                 profile: id
             })
             if (resultRequest.error) {
                 return resultRequest
             } else {
-                if (secure === 0) {
-                    let deleteRequest = await this.sqlAuthorizationProfile.deleteAllByField({ profile: id, authorization: authorization })
+                if (body.secure === 0) {
+                    let deleteRequest = await this.sqlAuthorizationProfile.deleteAllByField({ profile: id, authorization: body.authorization })
                     if (deleteRequest.error) {
                         return deleteRequest
                     } else {
@@ -228,7 +228,7 @@ class Authentification extends Controller {
                     } else {
                         let insertRequest = await this.sqlAuthorizationProfile.insert({
                             id: null,
-                            authorization: authorization,
+                            authorization: body.authorization,
                             profile: id
                         })
                         if (insertRequest.error) {

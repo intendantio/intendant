@@ -53,8 +53,6 @@ class NewRapport extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            enabled: false,
-            message: "",
             loading: true,
             step: 0,
             interval: 0,
@@ -70,9 +68,9 @@ class NewRapport extends React.Component {
         let resultConfigurationModule = await new Request().get().fetch("/api/modules/configuration")
         let resultConfigurationSmartobject = await new Request().get().fetch("/api/smartobjects")
         if (resultConfigurationModule.error) {
-            this.setState({ enabled: true, message: resultConfigurationModule.package + " : " + resultConfigurationModule.message })
+            this.props.setMessage(resultConfigurationModule.package + " : " + resultConfigurationModule.message)
         } else if (resultConfigurationSmartobject.error) {
-            this.setState({ enabled: true, message: resultConfigurationSmartobject.package + " : " + resultConfigurationSmartobject.message })
+            this.props.setMessage(resultConfigurationSmartobject.package + " : " + resultConfigurationSmartobject.message)
         } else {
             let configurations = resultConfigurationModule.data
             resultConfigurationSmartobject.data.forEach(smartobject => {
@@ -89,7 +87,7 @@ class NewRapport extends React.Component {
                 return Array.isArray(configuration.widgets) && configuration.widgets.length > 0
             })
 
-            this.setState({ enabled: false, message: "", loading: false, configurations: configurations })
+            this.setState({ loading: false, configurations: configurations })
         }
     }
 
@@ -195,20 +193,6 @@ class NewRapport extends React.Component {
     async submit() {
 
         let settings = []
-
-        /*for (let indexSettings = 0; indexSettings < this.state.settings.length; indexSettings++) {
-            let setting = this.state.settings[indexSettings];
-            if (this.state["settings-" + setting.id] == undefined) {
-                this.setState({ enabled: true, loading: false, message: "Missing " + setting.id })
-                return
-            }
-            settings.push({
-                reference: setting.id,
-                value: this.state["settings-" + setting.id] ? this.state["settings-" + setting.id] : "",
-                type: typeof this.state["settings-" + setting.id]
-            })
-        }*/
-
         let result = await new Request().post({
             reference: this.state.reference,
             chart: this.state.type,
@@ -219,7 +203,7 @@ class NewRapport extends React.Component {
         }).fetch("/api/rapports")
 
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             document.getElementById('main').scroll({
                 top: 0,
@@ -256,9 +240,6 @@ class NewRapport extends React.Component {
                 <Grid container spacing={2} >
                     {this.getStep()}
                 </Grid>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </>
         )
     }

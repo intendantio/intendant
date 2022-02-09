@@ -15,9 +15,7 @@ class DetailSmartObject extends React.Component {
             smartobject: null,
             profiles: [],
             rooms: [],
-            enabled: false,
             loading: null,
-            message: "",
             referenceArguments: "",
             valueArguments: "",
             executeInformation: ""
@@ -39,7 +37,7 @@ class DetailSmartObject extends React.Component {
     async delete(id) {
         let result = await new Request().delete().fetch("/api/smartobjects/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.props.history.push('/smartobject')
         }
@@ -70,7 +68,7 @@ class DetailSmartObject extends React.Component {
     async deleteSmartobjectArguments(pArguments) {
         let result = await new Request().delete().fetch("/api/smartobjects/" + pArguments.smartobject + "/arguments/" + pArguments.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -79,7 +77,7 @@ class DetailSmartObject extends React.Component {
     async insertSmartobjectArguments(id, reference, value) {
         let result = await new Request().post({ reference: reference, value: value }).fetch("/api/smartobjects/" + id + "/arguments")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.setState({ referenceArguments: "", valueArguments: "" })
             this.componentDidMount()
@@ -89,7 +87,7 @@ class DetailSmartObject extends React.Component {
     async insertProfile(smartobject, profile) {
         let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/smartobjects/" + smartobject.id + "/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -98,7 +96,7 @@ class DetailSmartObject extends React.Component {
     async deleteProfile(smartobject, profile) {
         let result = await new Request().delete().fetch("/api/smartobjects/" + smartobject.id + "/profiles/" + profile.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -107,7 +105,7 @@ class DetailSmartObject extends React.Component {
     async updateRoom(smartobject, room) {
         let result = await new Request().post({ idRoom: room.id, }).fetch("/api/smartobjects/" + smartobject.id + "/room")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -253,16 +251,11 @@ class DetailSmartObject extends React.Component {
                             <Delete />
                         </IconButton>
                     </Paper>
-                    <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        {this.state.message}
-                    </AlertComponent>
                 </div>
             )
         } else {
             return (
-                <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </AlertComponent>
+                null
             )
         }
     }

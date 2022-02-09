@@ -61,8 +61,6 @@ class Detail extends React.Component {
         this.state = {
             id: props.match.params.id,
             loading: true,
-            enabled: false,
-            message: "",
             rapport: {
                 configuration: {
                     module: "module",
@@ -88,7 +86,7 @@ class Detail extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/rapports/" + this.state.id)
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
             this.props.history.push('/rapport')
         } else {
             let availableFilters = this.getIntervals(result.data)
@@ -119,7 +117,7 @@ class Detail extends React.Component {
     async update() {
         let result = await new Request().get().fetch("/api/rapports/" + this.state.id + "/data/" + this.state.start + "/" + this.state.end)
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: resultData.package + " : " + resultData.message })
+            this.props.setMessage(result.package + " : " + result.message)
             this.props.history.push('/rapport')
         } else {
             this.setState({
@@ -134,7 +132,7 @@ class Detail extends React.Component {
     async delete() {
         let result = await new Request().delete({}).fetch("/api/rapports/" + this.state.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.props.history.push('/rapport')
         }
@@ -143,7 +141,7 @@ class Detail extends React.Component {
     async truncate() {
         let result = await new Request().patch({}).fetch("/api/rapports/" + this.state.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.update()
         }
@@ -374,9 +372,6 @@ class Detail extends React.Component {
                         </Grid>
                     </Mobile>
                 </Grid>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </>
         )
     }

@@ -65,8 +65,6 @@ class Rapport extends React.Component {
         this.state = {
             page: 0,
             loading: true,
-            enabled: false,
-            message: "",
             rapports: [],
             open: false,
             widget: {
@@ -80,9 +78,9 @@ class Rapport extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/rapports")
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.setState({ enabled: false, loading: false, message: "", rapports: result.data })
+            this.setState({ loading: false, rapports: result.data })
         }
     }
 
@@ -123,9 +121,6 @@ class Rapport extends React.Component {
                     }
                 </Grid>
                 <AddButton to="/rapport/new" />
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </div>
         )
     }

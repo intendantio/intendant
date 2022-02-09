@@ -35,14 +35,11 @@ class NewLocalisation extends React.Component {
 
     async add() {
         if (this.state.name === "") {
-            this.setState({ enabled: true, message: "Missing-parameter : name is empty" })
+            this.props.setMessage("Missing-parameter : name is empty")
         } else {
             let result = await new Request().post({ name: this.state.name, icon: this.state.icon, description: this.state.description }).fetch("/api/rooms")
             if (result.error) {
-                this.setState({
-                    enabled: true,
-                    message: result.package + " : " + result.message
-                })
+                this.props.setMessage(result.package + " : " + result.message)
             } else {
                 this.props.history.push('/room')
             }
@@ -120,9 +117,6 @@ class NewLocalisation extends React.Component {
                     </Grid>
                 </Grid>
                 <SaveButton onClick={() => { this.add() }} />
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </>
         )
     }

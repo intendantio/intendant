@@ -12,7 +12,6 @@ import Authorization from './Authorization'
 import Module from './Module'
 import Ping from './Ping'
 import GetStarted from './GetStarted'
-import Client from './Client'
 import Widget from './Widget'
 import Configuration from './Configuration'
 import Market from './Market'
@@ -43,7 +42,6 @@ class API {
         Module(app,core)
         Ping(app,core)
         GetStarted(app,core)
-        Client(app,core)
         Widget(app,core)
         Configuration(app,core)
         Market(app,core)

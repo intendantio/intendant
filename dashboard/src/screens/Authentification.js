@@ -1,6 +1,6 @@
 import React from 'react'
 import Package from '../../package.json'
-import { Paper, TextField, Button, Typography, Switch, IconButton } from '@mui/material'
+import { Paper, TextField, Button, Typography, Box, IconButton } from '@mui/material'
 import Alert from '../components/Alert'
 import Main from './Main'
 import GetStarted from './GetStarted'
@@ -13,11 +13,9 @@ class Authentification extends React.Component {
         super(props)
         this.state = {
             authentification: true,
-            enabled: false,
             getStarted: false,
-            message: "",
             password: "",
-            customAddress: false,
+            customAddress: true,
             address: window.location.origin,
             login: "admin",
             loading: true
@@ -29,22 +27,22 @@ class Authentification extends React.Component {
     async componentDidMount() {
         let server = localStorage.getItem("server")
         let authorization = localStorage.getItem("authorization")
-        if(server && authorization) {
+        if (server && authorization) {
             let result = await new Request().get().fetch("/api/smartobjects")
-            if(result.error == false) {
-                this.setState({ enabled: false, message: "", authentification: false })
+            if (result.error == false) {
+                this.setState({ enabled: false, authentification: false })
             }
         } else if (server) {
             this.setState({ address: server.replace("http://", "") })
         }
-        this.setState({loading: false})
+        this.setState({ loading: false })
     }
 
     async login() {
         if (await this.checkServer()) {
             let result = await new Request().post({ login: this.state.login, password: this.state.password }).fetch("/api/authentification")
             if (result.error) {
-                this.setState({ enabled: true, message: result.package + " : " + result.message })
+                this.props.setMessage(result.package + " : " + result.message)
             } else {
                 localStorage.setItem("authorization", result.token)
                 this.setState({ enabled: false, message: "", authentification: false })
@@ -53,6 +51,7 @@ class Authentification extends React.Component {
     }
 
     disconnect() {
+        console.log("disconnect")
         localStorage.removeItem("authorization")
         this.setState({ authentification: true, password: "" })
     }
@@ -60,7 +59,7 @@ class Authentification extends React.Component {
     async checkServer() {
         let ok = true
         let protocol = window.location.protocol + "//"
-        if(this.state.address.split("://").length > 1) {
+        if (this.state.address.split("://").length > 1) {
             protocol = ""
         }
         try {
@@ -70,7 +69,7 @@ class Authentification extends React.Component {
                 this.setState({ enabled: true, message: 'Connection to server failed' })
                 ok = false
             } else {
-                localStorage.setItem("server",protocol + this.state.address)
+                localStorage.setItem("server", protocol + this.state.address)
                 if (resultJSON.getStarted) {
                     this.setState({ getStarted: true })
                     return false
@@ -84,8 +83,8 @@ class Authentification extends React.Component {
     }
 
     render() {
-        if(this.state.loading ) {
-            return <div/>
+        if (this.state.loading) {
+            return <div />
         }
         if (this.state.getStarted) {
             return (
@@ -94,43 +93,33 @@ class Authentification extends React.Component {
         } else {
             if (this.state.authentification) {
                 return (
-                    <Paper variant='outlined' style={{ padding: 30, width: this.props.isMobile ? '380px' : '25vw', textAlign: 'center' }}>
-                        <div>
-                            <div style={{ marginBottom: 50 }}>
-                                <img  onClick={() => {this.setState({customAddress: !this.state.customAddress}) }}  src={process.env.PUBLIC_URL + "/logo.svg"} style={{ height: '15vh', width: '15vh', borderRadius: 7, cursor: 'pointer' }} />
-                                <div style={{ fontSize: 55, fontWeight: 'bold', marginTop: 0, lineHeight: 0.5 }}>
+                    <Paper variant='outlined' style={{ padding: 10, width: '25vw', minWidth: 330, textAlign: 'center' }}>
+                        <Box style={{ padding: 10 }}>
+                            <Box style={{ marginBottom: 20 }}>
+                                <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ height: '15vh', width: '15vh', minWidth: 125, minHeight: 125, borderRadius: 7 }} />
+                                <Typography variant='h3' fontWeight='bold'>
                                     Intendant
-                                </div>
-                                <div style={{ fontSize: 20, fontWeight: 'bold', marginTop: 0, lineHeight: 1, marginTop: 15 }}>
+                                </Typography>
+                                <Typography variant='h6' fontWeight='bold'>
                                     Administration
-                                </div>
-                            </div>
-                            <form noValidate onSubmit={(e) => { e.preventDefault(); this.login() }} autoComplete="off" style={{ marginBottom: 10 }}>
+                                </Typography>
+                            </Box>
+                            <form noValidate onSubmit={(e) => { e.preventDefault(); this.login() }} autoComplete="off" >
                                 {
                                     this.state.customAddress ?
-                                        <div style={{ padding: 5 }}>
-                                            <TextField value={this.state.address} fullWidth label="Server address" autoFocus onChange={(event) => { this.setState({ address: event.nativeEvent.target.value }) }} />
-                                        </div>
+                                            <TextField style={{ marginTop: 5, marginBottom: 5 }} value={this.state.address} fullWidth label="Server address" autoFocus onChange={(event) => { this.setState({ address: event.nativeEvent.target.value }) }} />
                                         :
                                         null
                                 }
-
-                                <div style={{ padding: 5 }}>
-                                    <TextField value={this.state.login} fullWidth label="Login" autoComplete="current-login" inputProps={{ maxLength: 12 }} onChange={(event) => { this.setState({ login: event.nativeEvent.target.value }) }} />
-                                </div>
-                                <div style={{ padding: 5 }}>
-                                    <TextField value={this.state.password} fullWidth label="Password" type='password' autoComplete="current-login" inputProps={{ maxLength: 12 }} onChange={(event) => { this.setState({ password: event.nativeEvent.target.value }) }} />
-                                </div>
-                                <div style={{ padding: 5, marginTop: 5, textAlign: 'end' }}>
+                                <TextField style={{ marginTop: 5, marginBottom: 5 }} value={this.state.login} fullWidth label="Login" autoComplete="current-login" inputProps={{ maxLength: 12 }} onChange={(event) => { this.setState({ login: event.nativeEvent.target.value }) }} />
+                                <TextField style={{ marginTop: 5, marginBottom: 5 }} value={this.state.password} fullWidth label="Password" type='password' autoComplete="current-login" inputProps={{ maxLength: 12 }} onChange={(event) => { this.setState({ password: event.nativeEvent.target.value }) }} />
+                                <Box style={{ display: 'flex', justifyContent: 'end', marginTop: 10 }}>
                                     <Button color='inherit' type='submit' variant='plain' on onSubmit={() => { this.login() }} onClick={() => { this.login() }}  >
                                         Connection
                                     </Button>
-                                </div>
+                                </Box>
                             </form>
-                        </div>
-                        <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                            {this.state.message}
-                        </Alert>
+                        </Box>
                     </Paper>
                 )
             } else {

@@ -15,8 +15,6 @@ class Routine extends React.Component {
         this.state = {
             page: 0,
             loading: true,
-            enabled: false,
-            message: "",
             routines: []
         }
     }
@@ -24,24 +22,16 @@ class Routine extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/routines")
         if (result.error) {
-            this.setState({
-                enabled: true,
-                message: result.package + " : " + result.message
-            })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.setState({
-                enabled: false,
-                message: "",
-                loading: false,
-                routines: result.data
-            })
+            this.setState({ loading: false, routines: result.data })
         }
     }
 
     async delete(id) {
         let result = await new Request().delete().fetch("/api/routines/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -50,7 +40,7 @@ class Routine extends React.Component {
     async duplicate(id) {
         let result = await new Request().put().fetch("/api/routines/" + id + "/duplicate")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -59,7 +49,7 @@ class Routine extends React.Component {
     async updateStatus(id, status) {
         let result = await new Request().put({ status: status }).fetch("/api/routines/" + id + "/status")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -115,9 +105,6 @@ class Routine extends React.Component {
                     </Paper>
                     <TablePagination component="div" count={this.state.routines.length} rowsPerPage={10} page={this.state.page} rowsPerPageOptions={[]} onPageChange={(event, page) => { this.setState({ page: page }) }} />
                 </div>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </div>
         )
     }

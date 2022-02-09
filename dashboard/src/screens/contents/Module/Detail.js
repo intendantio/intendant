@@ -16,21 +16,14 @@ class Detail extends React.Component {
             hashId: props.match.params.id,
             loading: null,
             module: null,
-            enabled: false,
-            message: "",
-            executeInformation: "",
-            severity: "error"
+            executeInformation: ""
         }
     }
 
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/configurations/module")
         if (result.error) {
-            this.setState({
-                enabled: true,
-                severity: "error",
-                message: result.package + " : " + result.message
-            })
+            this.props.setMessage(result.package + " : " + result.message)
             this.props.history.push('/module')
         } else {
             let _module = false
@@ -63,11 +56,7 @@ class Detail extends React.Component {
         }
         let result = await new Request().post({ settings: tmp, reference: this.state.module.reference }).fetch("/api/modules/" + md5(this.state.module.name) + "/actions/" + action)
         if (result.error) {
-            this.setState({
-                enabled: true,
-                severity: "error",
-                message: result.package + " : " + result.message
-            })
+            this.props.setMessage(result.package + " : " + result.message)
             this.setState({ loading: null })
         } else {
             if (result.data) {
@@ -75,11 +64,6 @@ class Detail extends React.Component {
                     executeInformation: JSON.stringify(result.data)
                 })
             } else {
-                this.setState({
-                    enabled: true,
-                    severity: "success",
-                    message: "Success"
-                })
             }
             this.componentDidMount()
         }
@@ -138,16 +122,11 @@ class Detail extends React.Component {
                                 null
                         }
                     </Paper>
-                    <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={this.state.severity}>
-                        {this.state.message}
-                    </AlertComponent>
                 </div>
             )
         } else {
             return (
-                <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={this.state.severity}>
-                    {this.state.message}
-                </AlertComponent>
+                null
             )
         }
     }

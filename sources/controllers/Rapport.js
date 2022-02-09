@@ -5,10 +5,7 @@ import Result from "../utils/Result"
 import Package from '../package.json'
 import Moment from 'moment'
 
-const TYPES = [
-    "lineChart",
-    "pieChart"
-]
+
 
 class Rapport extends Controller {
 
@@ -22,23 +19,23 @@ class Rapport extends Controller {
     async getOne(idRapport) {
         try {
             let resultRapport = await this.sqlRapport.getOne(idRapport)
-            if(resultRapport.error) {
+            if (resultRapport.error) {
                 return resultRapport
             }
-            if(resultRapport.data == false) {
+            if (resultRapport.data == false) {
                 return new Result(Package.name, true, "Missing rapport n°" + idRapport)
             }
-            
-            let resultRapportArgument = await this.sqlRapportArgument.getAllByField({rapport: idRapport})
-            if(resultRapportArgument.error) {
+
+            let resultRapportArgument = await this.sqlRapportArgument.getAllByField({ rapport: idRapport })
+            if (resultRapportArgument.error) {
                 return resultRapportArgument
             }
 
             resultRapport.data.settings = resultRapportArgument.data
-            
+
             let resultLastData = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport = " + idRapport + " ORDER BY date DESC LIMIT 1")
-            
-            if(resultLastData.error) {
+
+            if (resultLastData.error) {
                 return resultLastData
             }
 
@@ -46,36 +43,36 @@ class Rapport extends Controller {
 
 
             let resultCounter = await this.sqlRapportData.execute("SELECT count(*) as total FROM rapport_data WHERE rapport = " + idRapport + " ")
-           
-            if(resultCounter.error) {
+
+            if (resultCounter.error) {
                 return resultCounter
             }
 
             resultRapport.data.total = resultCounter.data.length == 0 ? 0 : resultCounter.data[0].total
-            
+
             let packageName = ""
 
-            if(resultRapport.data.type == "smartobject") {
-                let resultGetPackage = await this.widgetController.getPackageName("smartobject",resultRapport.data.object)
-                if(resultGetPackage.error) {
+            if (resultRapport.data.type == "smartobject") {
+                let resultGetPackage = await this.widgetController.getPackageName("smartobject", resultRapport.data.object)
+                if (resultGetPackage.error) {
                     return resultGetPackage
                 }
                 packageName = resultGetPackage.data
 
                 let smartobjectResult = await this.smartobjectController.getOne(resultRapport.data.object)
-                if(smartobjectResult.error) {
+                if (smartobjectResult.error) {
                     return smartobjectResult
                 }
                 resultRapport.data.smartobject = smartobjectResult.data
-                
+
             } else {
                 packageName = resultRapport.data.object
             }
             let resultConfiguration = await this.widgetController.getConfiguration(packageName)
-            if(resultConfiguration.error) {
+            if (resultConfiguration.error) {
                 return resultConfiguration
             }
-            
+
             resultRapport.data.configuration = resultConfiguration.data
 
 
@@ -90,23 +87,23 @@ class Rapport extends Controller {
 
     async getAll() {
         try {
-            let resultRapports =  await this.sqlRapport.getAll()
+            let resultRapports = await this.sqlRapport.getAll()
 
-            if(resultRapports.error) {
+            if (resultRapports.error) {
                 return resultRapports
             }
-            
+
             let rapports = []
 
             for (let indexRapport = 0; indexRapport < resultRapports.data.length; indexRapport++) {
                 let rapport = resultRapports.data[indexRapport]
                 let resultGetOne = await this.getOne(rapport.id)
-                if(resultGetOne.error) {
+                if (resultGetOne.error) {
                     return resultGetOne
                 }
                 rapports.push(resultGetOne.data)
             }
-            
+
             return new Result(Package.name, false, "", rapports)
         } catch (error) {
             StackTrace.save(error)
@@ -115,47 +112,33 @@ class Rapport extends Controller {
         }
     }
 
-    async insert(type, chart, object, reference, interval, settings) {
+    async insert(body) {
         try {
-            if (TYPES.includes(chart)) {
-
-                /*if(interval < 120 ) {
-                    Tracing.warning(Package.name, "Interval is too small, minimum 120 seconds")
-                    return new Result(Package.name, false, "Interval is too small, minimum 120 seconds")
-                }*/
-                let result = await this.sqlRapport.insert({
-                    type: type,
-                    chart: chart,
-                    object: object,
-                    reference: reference,
-                    interval: interval
-                })
-                if (result.error) {
-                    return result
-                }
-
-
-                for (let indexSettings = 0; indexSettings < settings.length; indexSettings++) {
-                    let setting = settings[indexSettings]
-                    let resultInserRapportArgument = await this.sqlRapportArgument.insert({
-                        reference: setting.reference,
-                        value: setting.value,
-                        type:  setting.type,
-                        rapport: result.data.insertId
-                    })
-                    if(resultInserRapportArgument.error) {
-                        return resultInserRapportArgument
-                    }
-                }
-
-
-                this.rapportManager.initialisation(result.data.insertId)
-                
-                return await this.getOne(result.data.insertId)
-            } else {
-                Tracing.error(Package.name, "Invalid rapport type")
-                return new Result(Package.name, false, "Invalid rapport type")
+            let result = await this.sqlRapport.insert({
+                type: body.type,
+                chart: body.chart,
+                object: body.object,
+                reference: body.reference,
+                interval: body.interval
+            })
+            
+            if (result.error) {
+                return result
             }
+            for (let indexSettings = 0; indexSettings < body.settings.length; indexSettings++) {
+                let setting = body.settings[indexSettings]
+                let resultInserRapportArgument = await this.sqlRapportArgument.insert({
+                    reference: setting.reference,
+                    value: setting.value,
+                    type: setting.type,
+                    rapport: result.data.insertId
+                })
+                if (resultInserRapportArgument.error) {
+                    return resultInserRapportArgument
+                }
+            }
+            this.rapportManager.initialisation(result.data.insertId)
+            return await this.getOne(result.data.insertId)
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when insert rapport")
@@ -165,13 +148,10 @@ class Rapport extends Controller {
 
     async delete(idRapport) {
         try {
-
             let resultDeleteInstance = await this.rapportManager.delete(idRapport)
-
-            if(resultDeleteInstance.error) {
+            if (resultDeleteInstance.error) {
                 return resultDeleteInstance
             }
-
             let rapportArgumentRequest = await this.truncate(idRapport)
             if (rapportArgumentRequest.error) {
                 return rapportArgumentRequest
@@ -249,7 +229,7 @@ class Rapport extends Controller {
                 return resultRapport
             }
             let resultRequest = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport=" + idRapport + " AND date >=" + start + " AND date <=" + end + " ORDER BY date ASC")
-            if(resultRequest.error) {
+            if (resultRequest.error) {
                 return resultRequest
             }
             resultRequest.data = resultRequest.data.map(data => {
@@ -258,7 +238,7 @@ class Rapport extends Controller {
                 return data
             })
 
-            return new Result(Package.name, false, "", resultRequest.data) 
+            return new Result(Package.name, false, "", resultRequest.data)
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get data rapport")

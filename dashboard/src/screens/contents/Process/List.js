@@ -19,8 +19,6 @@ class Process extends React.Component {
         this.state = {
             page: 0,
             loading: true,
-            enabled: false,
-            message: "",
             processes: [],
             open: false,
             widget: {
@@ -34,9 +32,9 @@ class Process extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/processes")
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.setState({ enabled: false, loading: false, message: "", processes: result.data })
+            this.setState({ loading: false, processes: result.data })
         }
     }
 
@@ -102,10 +100,7 @@ class Process extends React.Component {
                                 })
                     }
                 </Grid>
-                <AddButton to="/process/new" />  
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
+                <AddButton to="/process/new" />
             </div >
         )
     }

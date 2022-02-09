@@ -6,9 +6,10 @@ import StackTrace from '../utils/StackTrace'
 
 class Smartobject extends Controller {
 
-    constructor(smartobjectManager) {
+    constructor(smartobjectManager, userController) {
         super()
         this.smartobjectManager = smartobjectManager
+        this.userController = userController
     }
 
     async getAll() {
@@ -29,7 +30,7 @@ class Smartobject extends Controller {
                     }
                 }
             }
-            return new Result(Package.name, false, "",pSmartObjects)
+            return new Result(Package.name, false, "", pSmartObjects)
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get all smartobject")
@@ -62,36 +63,26 @@ class Smartobject extends Controller {
         }
     }
 
-    async insertArguments(idSmartobject, reference, value) {
+    async insertArguments(idSmartobject, body) {
         try {
-            if (reference) {
-                if (value) {
-                    let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
-                    if (smartobjectRequest.error) {
-                        return smartobjectRequest
-                    }
-                    let insertRequest = await this.sqlSmartobjectArgument.insert({
-                        id: null,
-                        smartobject: idSmartobject,
-                        reference: reference,
-                        value: value
-                    })
-                    if (insertRequest.error) {
-                        return insertRequest
-                    }
-                    let updateRequest = await this.smartobjectManager.update(smartobjectRequest.data.id)
-                    if (updateRequest.error) {
-                        return updateRequest
-                    }
-                    return new Result(Package.name, false, "")
-                } else {
-                    Tracing.warning(Package.name, "Missing value")
-                    return new Result(Package.name, true, "Missing value") 
-                }
-            } else {
-                Tracing.warning(Package.name, "Missing reference")
-                return new Result(Package.name, true, "Missing reference") 
+            let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
+            if (smartobjectRequest.error) {
+                return smartobjectRequest
             }
+            let insertRequest = await this.sqlSmartobjectArgument.insert({
+                id: null,
+                smartobject: idSmartobject,
+                reference: body.reference,
+                value: body.value
+            })
+            if (insertRequest.error) {
+                return insertRequest
+            }
+            let updateRequest = await this.smartobjectManager.update(smartobjectRequest.data.id)
+            if (updateRequest.error) {
+                return updateRequest
+            }
+            return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when insert smartobject argument")
@@ -107,7 +98,7 @@ class Smartobject extends Controller {
             }
             if (smartobjectRequest.data === false) {
                 Tracing.warning(Package.name, "Smartobject not found")
-                return new Result(Package.name, true, "Smartobject not found") 
+                return new Result(Package.name, true, "Smartobject not found")
             }
             let smartobject = smartobjectRequest.data
             let argumentsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: smartobject["id"] })
@@ -116,7 +107,7 @@ class Smartobject extends Controller {
             }
             let argumentsData = argumentsRequest.data
             let roomRequest = await this.sqlRoom.getOne(smartobject["room"])
-        
+
             if (roomRequest.error) {
                 return roomRequest
             }
@@ -136,20 +127,20 @@ class Smartobject extends Controller {
                 actions = this.smartobjectManager.instances.get(smartobject.id).getActions()
 
                 let resultState = await this.smartobjectManager.instances.get(smartobject.id).getState()
-                if(resultState.error) {
+                if (resultState.error) {
                     return resultState
                 }
 
                 state = resultState.data
-                
-                
+
+
                 icon = this.smartobjectManager.instances.get(smartobject.id).moduleConfiguration.icon
             }
 
             let configuration = null
             try {
                 configuration = require(smartobject.module + "/package.json")
-            } catch (error) {}
+            } catch (error) { }
 
             return new Result(Package.name, false, "", {
                 id: smartobject.id,
@@ -163,7 +154,7 @@ class Smartobject extends Controller {
                 state: state,
                 room: room,
                 configuration: configuration
-            }) 
+            })
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get one smartobject")
@@ -256,7 +247,7 @@ class Smartobject extends Controller {
         }
     }
 
-    async updateStatus(idSmartobject,status) {
+    async updateStatus(idSmartobject, status) {
         try {
             let updateRequest = await this.sqlSmartobject.updateAll({ status: status }, { id: idSmartobject })
             if (updateRequest.error) {
@@ -270,7 +261,7 @@ class Smartobject extends Controller {
         }
     }
 
-    async updateRoom(idSmartobject,idRoom) {
+    async updateRoom(idSmartobject, idRoom) {
         try {
             let updateRequest = await this.sqlSmartobject.updateAll({ room: idRoom }, { id: idSmartobject })
             if (updateRequest.error) {
@@ -284,65 +275,45 @@ class Smartobject extends Controller {
         }
     }
 
-    async insert(pModule, reference, pArguments, pRoom) {
+    async insert(body) {
         try {
-            if (pModule) {
-                if (reference) {
-                    if (pArguments) {
-                        if(pRoom) {
-                            let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: reference })
-                            if (smartobjectRequest.error) {
-                                return smartobjectRequest
-                            }
-                            let smartobject = smartobjectRequest.data
-                            if (smartobject) {
-                                Tracing.warning(Package.name, "Smartobject already exist")
-                                return new Result(Package.name,true,"Smartobject already exist") 
-                            } else {
-                                let data = {
-                                    id: null,
-                                    module: pModule,
-                                    status: '2',
-                                    reference: reference,
-                                    last_use: "DATE:NOW",
-                                    room: pRoom
-                                }
-                                let insertRequest = await this.sqlSmartobject.insert(data)
-                                if (insertRequest.error) {
-                                    return insertRequest
-                                } else {
-                                    let smartObjectId = insertRequest.data.insertId
-                                    for (let index = 0; index < pArguments.length; index++) {
-                                        let setting = pArguments[index]
-                                        let insertSettngsRequest = await this.sqlSmartobjectArgument.insert({
-                                            id: null,
-                                            smartobject: smartObjectId,
-                                            reference: setting.reference,
-                                            value: setting.value
-                                        })
-                                        if (insertSettngsRequest.error) {
-                                            return insertSettngsRequest
-                                        }
-                                    }
-                                    this.smartobjectManager.update(smartObjectId)
-                                    return this.getOne(smartObjectId)
-                                }
-                            }
-                        } else {
-                            Tracing.warning(Package.name, "Missing room")
-                            return new Result(Package.name,true,"Missing room")
-                        }
-                    } else {
-                        Tracing.warning(Package.name, "Missing arguments")
-                        return new Result(Package.name,true,"Missing arguments")
-                    }
-                } else {
-                    Tracing.warning(Package.name, "Missing reference")
-                    return new Result(Package.name,true,"Missing reference")
-                }
+            let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: body.reference })
+            if (smartobjectRequest.error) {
+                return smartobjectRequest
+            }
+            let smartobject = smartobjectRequest.data
+            if (smartobject) {
+                Tracing.warning(Package.name, "Smartobject already exist")
+                return new Result(Package.name, true, "Smartobject already exist")
             } else {
-                Tracing.warning(Package.name, "Missing module")
-                return new Result(Package.name,true,"Missing module")
+                let data = {
+                    id: null,
+                    module: body.module,
+                    status: '2',
+                    reference: body.reference,
+                    last_use: "DATE:NOW",
+                    room: body.room
+                }
+                let insertRequest = await this.sqlSmartobject.insert(data)
+                if (insertRequest.error) {
+                    return insertRequest
+                } else {
+                    let idSmartobject = insertRequest.data.insertId
+                    for (let index = 0; index < body.settings.length; index++) {
+                        let setting = body.settings[index]
+                        let insertSettngsRequest = await this.sqlSmartobjectArgument.insert({
+                            id: null,
+                            smartobject: idSmartobject,
+                            reference: setting.reference,
+                            value: setting.value
+                        })
+                        if (insertSettngsRequest.error) {
+                            return insertSettngsRequest
+                        }
+                    }
+                    this.smartobjectManager.update(idSmartobject)
+                    return this.getOne(idSmartobject)
+                }
             }
         } catch (error) {
             StackTrace.save(error)
@@ -380,7 +351,7 @@ class Smartobject extends Controller {
         return allow || force
     }
 
-    async executeAction(idSmartobject, idAction, idProfile, pArguments, force = false) {
+    async executeAction(idSmartobject, idAction, idProfile, pArguments, force = false, idUser = 0) {
         try {
             if (idAction) {
                 if (idProfile) {
@@ -389,28 +360,38 @@ class Smartobject extends Controller {
                         return smartobjectRequest
                     }
                     if (smartobjectRequest.data == false) {
-                        return new Result(Package.name,true,"Smartobject not found")
+                        return new Result(Package.name, true, "Smartobject not found")
                     }
                     if (this.smartobjectManager.instances.has(smartobjectRequest.data.id)) {
                         let instanceSmartobject = this.smartobjectManager.instances.get(smartobjectRequest.data.id)
                         let smartobject = await this.getOne(instanceSmartobject.id)
                         if (this.isAllow(smartobject.data, idProfile, force)) {
-                            return instanceSmartobject.action(idAction, pArguments)
+                            let resultAction = instanceSmartobject.action(idAction, pArguments)
+                            if (resultAction.error) {
+                                return resultAction
+                            }
+                            if (idUser != 0) {
+                                let resultHistory = await this.userController.insertHistory(idUser, "EXECUTE", smartobject.data.reference + " - " + idAction)
+                                if (resultHistory.error) {
+                                    return resultHistory
+                                }
+                            }
+                            return resultAction
                         } else {
                             Tracing.warning(Package.name, "Not allowed")
-                            return new Result(Package.name,true,"You are not allowed")
+                            return new Result(Package.name, true, "You are not allowed")
                         }
                     } else {
                         Tracing.warning(Package.name, "Smartobject missing")
-                        return new Result(Package.name,true,"Smartobject missing")
+                        return new Result(Package.name, true, "Smartobject missing")
                     }
                 } else {
                     Tracing.warning(Package.name, "Missing argument")
-                    return new Result(Package.name,true,"Missing arguments")
+                    return new Result(Package.name, true, "Missing arguments")
                 }
             } else {
                 Tracing.warning(Package.name, "Missing action")
-                return new Result(Package.name,true,"Missing action")
+                return new Result(Package.name, true, "Missing action")
             }
         } catch (error) {
             StackTrace.save(error)
@@ -419,7 +400,7 @@ class Smartobject extends Controller {
         }
     }
 
- 
+
 
 }
 

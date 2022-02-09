@@ -16,8 +16,6 @@ class NewWidget extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            enabled: false,
-            message: "",
             loading: true,
             index: -1,
             open: false,
@@ -39,11 +37,11 @@ class NewWidget extends React.Component {
         let resultConfigurationModule = await new Request().get().fetch("/api/modules/configuration")
         let resultConfigurationSmartobject = await new Request().get().fetch("/api/smartobjects")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else if (resultConfigurationModule.error) {
-            this.setState({ enabled: true, message: resultConfigurationModule.package + " : " + resultConfigurationModule.message })
+            this.props.setMessage(resultConfigurationModule.package + " : " + resultConfigurationModule.message)
         } else if (resultConfigurationSmartobject.error) {
-            this.setState({ enabled: true, message: resultConfigurationSmartobject.package + " : " + resultConfigurationSmartobject.message })
+            this.props.setMessage(resultConfigurationSmartobject.package + " : " + resultConfigurationSmartobject.message)
         } else {
             let configurations = resultConfigurationModule.data
             resultConfigurationSmartobject.data.forEach(smartobject => {
@@ -60,7 +58,7 @@ class NewWidget extends React.Component {
                 return Array.isArray(configuration.widgets) && configuration.widgets.length > 0
             })
 
-            this.setState({ enabled: false, message: "", loading: false, configurations: configurations })
+            this.setState({ loading: false, configurations: configurations })
         }
     }
 
@@ -71,7 +69,7 @@ class NewWidget extends React.Component {
         for (let indexSettings = 0; indexSettings < this.state.settings.length; indexSettings++) {
             let setting = this.state.settings[indexSettings];
             if (this.state["settings-" + setting.id] == undefined) {
-                this.setState({ enabled: true, loading: false, message: "Missing " + setting.id })
+                this.props.setMessage("Missing " + setting.id)
                 return
             }
             settings.push({
@@ -89,7 +87,7 @@ class NewWidget extends React.Component {
 
         if (result.error) {
             callback()
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             document.getElementById('main').scroll({
                 top: 0,
@@ -217,9 +215,6 @@ class NewWidget extends React.Component {
                             </Accordion>
                         ))
                 }
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </div >
         )
     }

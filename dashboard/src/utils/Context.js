@@ -4,6 +4,7 @@ const TitleContext = React.createContext({
     title: "Intendant", 
     setTitle: () => {},
     setActionType: () => {},
+    setMessage: () => {},
     actionType: "list"
 });
 

@@ -3,12 +3,16 @@ import Theme from './Theme'
 import { ThemeProvider, CssBaseline, Box } from '@mui/material'
 import React from 'react'
 import Context from './utils/Context'
+import Alert from './components/Alert'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       isMobile: false,
+      enabled: false,
+      severity: "error",
+      message: "",
       title: "Intendant",
       setTitle: (title) => {
         this.setState({
@@ -20,16 +24,20 @@ class App extends React.Component {
           actionType: actionType
         })
       },
+      setMessage: (message, severity = "error") => {
+        this.setState({
+          message: message,
+          severity: severity,
+          enabled: true
+        })
+      },
       actionType: "list"
     }
-
-
-
   }
 
   componentDidMount() {
     this.mediaQueries('(max-width: 1200px),(max-height: 675px)')
-    
+
   }
 
   mediaQueries(query) {
@@ -42,12 +50,15 @@ class App extends React.Component {
   render() {
     return (
       <Context.Provider value={this.state}>
-      <ThemeProvider theme={Theme} >
-        <CssBaseline />
-        <Box style={{ userSelect: 'none', outline: 'none', WebkitTapHighlightColor: 'rgba(41,108,71,0.33)', height: '100vh', width: '100wh', backgroundColor: Theme.palette.background.default, display: 'flex', flexDirection: 'column', alignSelf: 'center', justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
-          <Authentification isMobile={this.state.isMobile} />
-        </Box>
-      </ThemeProvider>
+        <ThemeProvider theme={Theme} >
+          <CssBaseline />
+          <Box style={{ userSelect: 'none', outline: 'none', WebkitTapHighlightColor: 'rgba(41,108,71,0.33)', height: '100vh', width: '100wh', backgroundColor: Theme.palette.background.default, display: 'flex', flexDirection: 'column', alignSelf: 'center', justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
+            <Authentification isMobile={this.state.isMobile} />
+          </Box>
+          <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={this.state.severity}>
+            {this.state.message}
+          </Alert>
+        </ThemeProvider>
       </Context.Provider>
     )
   }

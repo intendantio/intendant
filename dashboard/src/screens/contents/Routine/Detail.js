@@ -3,7 +3,6 @@ import { Popover, InputAdornment, FormControlLabel, Modal, Fade, Select, MenuIte
 import { Save, Add, List, Cached } from '@mui/icons-material'
 import Alert from '../../../components/Alert'
 import Request from '../../../utils/Request'
-import Source from '../../../utils/Source'
 import Action from '../../../components/Action'
 import Theme from '../../../Theme'
 import IconList from '../../../components/IconList'
@@ -27,8 +26,6 @@ class NewRoutine extends React.Component {
         this.state = {
             popup: false,
             id: props.match.params.id,
-            enabled: false,
-            message: "",
             routine: null,
             sources: [],
             modalTrigger: false,
@@ -38,12 +35,12 @@ class NewRoutine extends React.Component {
     }
 
     async componentDidMount() {
-        let resultSource = await Source.getSource(["smartobject", "process", "module", "essential"])
+        let resultSource = []
         let result = await new Request().get().fetch("/api/routines/" + this.state.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else if (resultSource.error) {
-            this.setState({ enabled: true, message: resultSource.package + " : " + resultSource.message })
+            this.props.setMessage(resultSource.package + " : " + resultSource.message)
         } else {
             this.setState({mode: result.data.mode, routine: result.data, sources: resultSource.data })
         }
@@ -85,9 +82,9 @@ class NewRoutine extends React.Component {
 
     addTrigger() {
         if (this.state.source == null) {
-            this.setState({ enabled: true, message: "Missing source" })
+            this.props.setMessage("Missing source")
         } else if (this.state.action == null) {
-            this.setState({ enabled: true, message: "Missing action" })
+            this.props.setMessage("Missing action")
         } else {
             let settings = []
             for (let index = 0; index < this.state.action.settings.length; index++) {
@@ -122,9 +119,9 @@ class NewRoutine extends React.Component {
 
     addEffect() {
         if (this.state.source == null) {
-            this.setState({ enabled: true, message: "Missing source" })
+            this.props.setMessage("Missing source")
         } else if (this.state.action == null) {
-            this.setState({ enabled: true, message: "Missing action" })
+            this.props.setMessage("Missing action")
         } else {
             let settings = []
             for (let index = 0; index < this.state.action.settings.length; index++) {
@@ -167,11 +164,8 @@ class NewRoutine extends React.Component {
 
     async save() {
         if (this.state.routine.name.length == 0) {
-            this.setState({ enabled: true, message: "Missing name" })
         } else if (this.state.routine.icon.length == 0) {
-            this.setState({ enabled: true, message: "Missing icon" })
         } else if (this.state.routine.effects.length == 0) {
-            this.setState({ enabled: true, message: "Missing effect" })
         } else {
             let result = await new Request().put({
                 name: this.state.routine.name,
@@ -182,7 +176,7 @@ class NewRoutine extends React.Component {
                 mode: this.state.mode
             }).fetch('/api/routines/' + this.state.id)
             if (result.error) {
-                this.setState({ enabled: true, message: result.package + " : " + result.message })
+                this.props.setMessage(result.package + " : " + result.message)
             } else {
                 this.props.history.push('/routine/')
             }
@@ -331,9 +325,6 @@ class NewRoutine extends React.Component {
                             <Save />
                         </IconButton>
                     </Paper>
-                    <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        {this.state.message}
-                    </Alert>
                     <Modal open={this.state.modalTrigger} onClose={() => { this.reset(); this.setState({ modalTrigger: false }) }} >
                         <Fade in={this.state.modalTrigger} >
                             <Paper style={style} variant="outlined">
@@ -457,9 +448,7 @@ class NewRoutine extends React.Component {
             )
         } else {
             return (
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
+                null
             )
         }
     }

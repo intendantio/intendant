@@ -12,6 +12,7 @@ declare class Controller {
     sqlRoutineTriggerArgument: Connector;
 
     sqlUser: Connector;
+    sqlUserHistory: Connector;
     sqlClient: Connector;
     sqlProfile: Connector;
     sqlAuthorization: Connector;

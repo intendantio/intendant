@@ -18,8 +18,6 @@ class DetailProcess extends React.Component {
         super(props)
         this.state = {
             id: props.match.params.id,
-            enabled: false,
-            message: "",
             process: null,
             profiles: [],
             executeInformation: "",
@@ -43,10 +41,7 @@ class DetailProcess extends React.Component {
         let resultProfile = await new Request().get().fetch("/api/profiles")
         let result = await new Request().get().fetch("/api/processes/" + this.state.id)
         if (result.error) {
-            this.setState({
-                enabled: true,
-                message: result.package + " : " + result.message
-            })
+            this.props.setMessage(result.package + " : " + result.message)
             this.props.history.push('/process')
         } else {
             this.setState({
@@ -77,7 +72,7 @@ class DetailProcess extends React.Component {
     async delete(id) {
         let result = await new Request().delete().fetch("/api/processes/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.props.history.push('/process')
         }
@@ -99,7 +94,7 @@ class DetailProcess extends React.Component {
         }
         let result = await new Request().post({ inputs: tmp }).fetch("/api/processes/" + this.state.process.id + "/execute")
         if (result.error) {
-            this.setState({ loading: null, enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.setState(resetState)
             if (result.data) {
@@ -112,7 +107,7 @@ class DetailProcess extends React.Component {
     async insertProfile(process, profile) {
         let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/processes/" + process.id + "/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -121,7 +116,7 @@ class DetailProcess extends React.Component {
     async deleteProfile(process, profile) {
         let result = await new Request().delete().fetch("/api/processes/" + process.id + "/profiles/" + profile.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -229,16 +224,11 @@ class DetailProcess extends React.Component {
                         </Grid>
                     </Grid>
                     <DeleteButton onClick={() => {this.delete(this.state.process.id) }} />
-                    <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        {this.state.message}
-                    </Alert>
                 </>
             )
         } else {
             return (
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
+                null
             )
         }
     }

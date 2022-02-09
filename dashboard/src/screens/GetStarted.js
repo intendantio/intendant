@@ -11,8 +11,6 @@ class GetStarted extends React.Component {
         super(props)
         this.state = {
             authentification: true,
-            enabled: false,
-            message: "",
             password: "",
             confirmePassword: "",
             login: "admin"
@@ -24,12 +22,12 @@ class GetStarted extends React.Component {
         if (this.state.password == this.state.confirmePassword) {
             let result = await new Request().put({ password: this.state.password }).fetch("/api/getstarted")
             if (result.error) {
-                this.setState({ enabled: true, message: result.package + " : " + result.message })
+                this.props.setMessage(result.package + " : " + result.message)
             } else {
                 this.props.onFinish()
             }
         } else {
-            this.setState({ enabled: true, message: 'Password and password confirmation is not the same' })
+            this.props.setMessage('Password and password confirmation is not the same')
         }
     }
 
@@ -59,9 +57,6 @@ class GetStarted extends React.Component {
                         </Button>
                     </div>
                 </div>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </Paper>
         )
     }

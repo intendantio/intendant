@@ -160,14 +160,6 @@ class Sidebar extends React.Component {
                                         <ListItemText primary={"User"} />
                                     </ListItem>
                                 </Link>
-                                <Link to="/market" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                                    <ListItem button key={"market"} >
-                                        <ListItemIcon>
-                                            <ShoppingCart />
-                                        </ListItemIcon>
-                                        <ListItemText primary={"Market"} />
-                                    </ListItem>
-                                </Link>
                                 <Divider />
                                 <ListItem button key={"disconnect"} onClick={() => { this.props.onDisconnect() }} >
                                     <ListItemIcon>
@@ -282,14 +274,6 @@ class Sidebar extends React.Component {
                                     <Person />
                                 </ListItemIcon>
                                 <ListItemText primary={"User"} />
-                            </ListItem>
-                        </Link>
-                        <Link to="/market" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                            <ListItem button key={"market"} >
-                                <ListItemIcon>
-                                    <ShoppingCart />
-                                </ListItemIcon>
-                                <ListItemText primary={"Market"} />
                             </ListItem>
                         </Link>
                         <Divider />

@@ -18,8 +18,6 @@ class Room extends React.Component {
         this.state = {
             page: 0,
             loading: true,
-            enabled: false,
-            message: "",
             rooms: [],
             open: false,
             widget: {
@@ -33,9 +31,9 @@ class Room extends React.Component {
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/rooms")
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.setState({ enabled: false, loading: false, message: "", rooms: result.data })
+            this.setState({ rooms: result.data })
         }
     }
 
@@ -77,9 +75,6 @@ class Room extends React.Component {
                     }
                 </Grid>
                 <AddButton to="/room/new" />
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </div>
         )
     }

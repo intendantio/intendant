@@ -1,43 +1,73 @@
+import { body, validationResult } from 'express-validator'
+import Result from '../utils/Result'
+import Package from '../package.json'
+
 export default (app, core) => {
 
-    app.get('/api/profiles/:idProfile', async (request, res) => {
-        request.url = '/profiles/:idProfile'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.profile.getOne(request.params.idProfile))
-        }
-    })
+    app.get('/api/profiles/:idProfile',
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/profiles/:idProfile'
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.profile.getOne(request.params.idProfile))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
 
-    app.get('/api/profiles', async (request, res) => {
-        request.url = '/profiles'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.profile.getAll())
-        }
-    })
+    app.get('/api/profiles',
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/profiles'
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.profile.getAll())
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
 
-    app.get('/api/profiles/:idProfile/authorizations', async (request, res) => {
-        request.url = '/profiles/:idProfile/authorizations'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.authentification.getAllAuthorizationByProfile(request.params.idProfile))
-        }
-    })
+    app.get('/api/profiles/:idProfile/authorizations',
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/profiles/:idProfile/authorizations'
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.authentification.getAllAuthorizationByProfile(request.params.idProfile))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
 
-    app.post('/api/profiles/:idProfile/authorizations', async (request, res) => {
-        request.url = '/profiles/:idProfile/authorizations'
-        let authorization = await core.controller.authentification.checkAuthorization(request)
-        if (authorization.error) {
-            res.send(authorization)
-        } else {
-            res.send(await core.controller.authentification.updateAuthorizationByProfile(request.params.idProfile, request.body.authorization, request.body.secure))
-        }
-    })
-    
+    app.post('/api/profiles/:idProfile/authorizations',
+        body('secure').isNumeric().withMessage("Invalid secure"),
+        body('authorization').isNumeric().withMessage("Invalid authorization"),
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/profiles/:idProfile/authorizations'
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.authentification.updateAuthorizationByProfile(request.params.idProfile, request.body))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
+
 }

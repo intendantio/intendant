@@ -45,17 +45,17 @@ class Core {
         /* Controller */
         this.controller = {
             authentification: new Authentification(this.configuration.token, this.salt),
-            smartobject: new Smartobject(this.manager.smartobject),
             routine: new Routine(this.manager.routine),
             module: new Module(this.manager.module),
             market: new Market(this.manager.smartobject, this.manager.module),
             profile: new Profile(),
             storage: new Storage(),
-            client: new Client(),
             user: new User(),
             cache: new Cache(),
             notification: new Notification()
         }
+
+        this.controller.smartobject = new Smartobject(this.manager.smartobject,this.controller.user),
 
         this.controller.widget = new Widget(this.manager.smartobject, this.manager.module, this.controller.module, this.controller.smartobject),
         this.controller.rapport =  new Rapport(this.manager.rapport,this.controller.widget, this.controller.smartobject)

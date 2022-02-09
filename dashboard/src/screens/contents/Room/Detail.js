@@ -37,7 +37,7 @@ class DetailRoom extends React.Component {
     async delete(id) {
         let result = await new Request().delete().fetch("/api/rooms/" + id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.props.history.push('/room')
         }
@@ -46,7 +46,7 @@ class DetailRoom extends React.Component {
     async insertProfile(profile) {
         let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/rooms/" + this.state.room.id + "/profiles")
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -55,7 +55,7 @@ class DetailRoom extends React.Component {
     async deleteProfile(profile) {
         let result = await new Request().delete().fetch("/api/rooms/" + this.state.room.id + "/profiles/" + profile.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.componentDidMount()
         }
@@ -157,16 +157,11 @@ class DetailRoom extends React.Component {
                             <Delete />
                         </IconButton>
                     </Paper>
-                    <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                        {this.state.message}
-                    </AlertComponent>
                 </div>
             )
         } else {
             return (
-                <AlertComponent onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </AlertComponent>
+                null
             )
         }
     }

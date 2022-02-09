@@ -27,9 +27,13 @@ export default responsiveFontSizes(createTheme({
   components: {
     MuiOutlinedInput: {
       styleOverrides: {
-
-        
-      }
+        input: {
+          "&:-webkit-autofill": {
+            "-webkit-box-shadow": "0 0 0 100px var(--primary-weak) inset",
+            "-webkit-text-fill-color": "var(--text-primary)",
+          },
+        },
+      },
     },
     MuiPaper: {
       styleOverrides: {

@@ -4,6 +4,7 @@ import md5 from "md5"
 import Controller from "./Controller"
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
+import Moment from 'moment'
 import StackTrace from '../utils/StackTrace'
 import Result from '../utils/Result'
 
@@ -11,7 +12,25 @@ class User extends Controller {
 
     async getOne(idUser) {
         try {
-            return await this.sqlUser.getOne(idUser)
+            let resultUser = await this.sqlUser.getOne(idUser)
+            if (resultUser.error) {
+                return resultUser
+            }
+            if (resultUser.data == false) {
+                Tracing.warning(Package.name, "User not found")
+                return new Result(Package.name, true, "User not found")
+            }
+            let user = resultUser.data
+            let resultHistory = await this.sqlUserHistory.getAllByField({
+                user: user.id
+            })
+            if (resultHistory.error) {
+                return resultHistory
+            }
+            user.password = "hidden"
+            user.histories = resultHistory.data
+            return new Result(Package.name, false, "", user)
+
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get one user")
@@ -21,15 +40,20 @@ class User extends Controller {
 
     async getAll() {
         try {
-            let result = await this.sqlUser.getAll()
-            if (result.error == false) {
-                let data = result.data.map(user => {
-                    user.password = ""
-                    return user
-                })
-                result.data = data
+            let resultUsers = await this.sqlUser.getAll()
+            if(resultUsers.error) {
+                return resultUsers
             }
-            return result
+            let users = []
+            for (let indexUser = 0; indexUser < resultUsers.data.length; indexUser++) {
+                let user =  resultUsers.data[indexUser]
+                let resultUser = await this.getOne(user.id)
+                if(resultUser.error) {
+                    return resultUser
+                }
+                users.push(user)
+            }
+            return new Result(Package.name,false,"",users)
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get all user")
@@ -51,9 +75,9 @@ class User extends Controller {
                 Tracing.warning(Package.name, "Cannot delete admin")
                 return new Result(Package.name, true, "Cannot delete admin")
             }
-            let resultClient = this.sqlClient.deleteAllByField({ user: idUser })
-            if (resultClient.error) {
-                return resultClient
+            let resultUserHistory = this.sqlUserHistory.deleteAllByField({ user: idUser })
+            if (resultUserHistory.error) {
+                return resultUserHistory
             }
             let resultUser = this.sqlUser.deleteAllByField({ id: idUser })
             if (resultUser.error) {
@@ -62,16 +86,16 @@ class User extends Controller {
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete one user")
-            return new Result(Package.name, true, "Error occurred when delete one user")
+            Tracing.error(Package.name, "Error occurred when delete user")
+            return new Result(Package.name, true, "Error occurred when delete user")
         }
     }
 
-    async insert(login, password, profile = '2') {
+    async insert(pUser) {
         try {
-            if (login && login !== "") {
-                if (password && password !== "") {
-                    let accountRequest = await this.sqlUser.getOneByField({ login: login })
+            if (pUser.login && pUser.login !== "") {
+                if (pUser.password && pUser.password !== "") {
+                    let accountRequest = await this.sqlUser.getOneByField({ login: pUser.login })
                     if (accountRequest.error) {
                         return accountRequest
                     } else {
@@ -80,19 +104,27 @@ class User extends Controller {
                             Tracing.warning(Package.name, "Login already exist")
                             return new Result(Package.name, true, "Login already exist")
                         } else {
-                            Tracing.verbose(Package.name, "Insert user " + login)
+                            Tracing.verbose(Package.name, "Insert user " + pUser.login)
                             let salt = Math.random(16)
-                            let saltPassword = md5(password + salt)
+                            let saltPassword = md5(pUser.password + salt)
                             let insertAccountRequest = await this.sqlUser.insert({
                                 id: null,
-                                login: login,
+                                login: pUser.login,
+                                imei: pUser.imei,
                                 password: saltPassword,
                                 salt: salt,
-                                profile: profile
+                                profile: pUser.profile
                             })
                             if (insertAccountRequest.error) {
                                 return insertAccountRequest
                             } else {
+                                let idUser = insertAccountRequest.data.insertId
+
+                                let resultHistory = this.insertHistory(idUser, "CREATE", "Initialisation")
+                                if (resultHistory.error) {
+                                    return resultHistory
+                                }
+
                                 return new Result(Package.name, false, "")
                             }
                         }
@@ -113,13 +145,47 @@ class User extends Controller {
 
     }
 
+    // Type : ["CREATE","UPDATE","GET","DELETE","EXECUTE"]
+    async insertHistory(idUser, type, action) {
+        try {
+            let resultUser = await this.getOne(idUser)
+            if (resultUser.error) {
+                return resultUser
+            } else if (resultUser.data == false) {
+                Tracing.warning(Package.name, "Missing user")
+                return new Result(Package.name, true, "Missing user")
+            } else {
+                let timestamp = Moment().valueOf()
+
+                let resultUserHistory = await this.sqlUserHistory.insert({
+                    id: null,
+                    type: type,
+                    action: action,
+                    user: idUser,
+                    date: timestamp
+                })
+                if (resultUserHistory.error) {
+                    return resultUserHistory
+                }
+                return new Result(Package.name, false, "")
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert user history")
+            return new Result(Package.name, true, "Error occurred when user history")
+        }
+    }
+
     async insertAdmin(password) {
         try {
-            let result = await this.getStarted()
-            if (result.getStarted) {
+            let resultUser = await this.sqlUser.getOneByField({ login: "admin" })
+            if (resultUser.error) {
+                return resultUser
+            }
+            if (resultUser.data == false) {
                 if (password && typeof password == 'string') {
-                    if(password.length >= 4) {
-                        return this.insert("admin", password, '1')
+                    if (password.length >= 4) {
+                        return this.insert({login:"admin", password: password, profile: '1', imei: ""})
                     } else {
                         Tracing.warning(Package.name, "Too small password")
                         return new Result(Package.name, true, "Too small password")
@@ -136,42 +202,6 @@ class User extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when insert admin")
             return new Result(Package.name, true, "Error occurred when insert admin")
-        }
-
-    }
-
-    async update(idUser, login, profile) {
-        try {
-            if (login) {
-                if (profile) {
-                    let result = await this.sqlUser.getOne(idUser)
-                    if (result.error) {
-                        return result
-                    }
-                    let user = result.data
-                    if (user.login != login) {
-                        let resultUser = this.sqlUser.updateAll({ login: login }, { id: idUser })
-                        if (resultUser.error) {
-                            return result
-                        }
-                    }
-                    if (user.profile != profile) {
-                        let resultProfile = this.sqlUser.updateAll({ profile: profile }, { id: idUser })
-                        if (resultProfile.error) {
-                            return result
-                        }
-                    }
-                    return new Result(Package.name, false, "")
-                } else {
-                    return new Result(Package.name, true, "Missing profile")
-                }
-            } else {
-                return new Result(Package.name, true, "Missing login")
-            }
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when update user")
-            return new Result(Package.name, true, "Error occurred when update user")
         }
 
     }
@@ -194,7 +224,30 @@ class User extends Controller {
             Tracing.error(Package.name, "Error occurred when update password")
             return new Result(Package.name, true, "Error occurred when update password")
         }
+    }
 
+    async updateProfile(idUser, profile) {
+        try {
+            let resultUser = await this.getOne(idUser)
+            if(resultUser.error) {
+                return resultUser
+            }
+            if(resultUser.data.login == "admin") {
+                Tracing.warning(Package.name, "Cannot update admin")
+                return new Result(Package.name, true, "Cannot update admin")
+            }
+
+            let userRequest = await this.sqlUser.updateAll({ profile: profile }, { id: idUser })
+            if (userRequest.error) {
+                return userRequest
+            } else {
+                return new Result(Package.name, false, "")
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update password")
+            return new Result(Package.name, true, "Error occurred when update password")
+        }
     }
 
     async getStarted() {
@@ -203,7 +256,7 @@ class User extends Controller {
             if (resultUser.error) {
                 return resultUser
             }
-            let result = new Result(Package.name,false,"")
+            let result = new Result(Package.name, false, "")
             if (resultUser.data == false) {
                 result.getStarted = true
             } else {

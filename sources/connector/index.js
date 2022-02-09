@@ -1,6 +1,7 @@
 import Connection from './lib/Connection'
 import Package from '../package.json'
 import Tracing from '../utils/Tracing'
+import Result from '../utils/Result'
 
 class Connector {
 
@@ -22,37 +23,20 @@ class Connector {
             process.exit(0)
         } else if (this._connector.inTransaction) {
             setTimeout(() => {
+                Tracing.pure("In transaction")
                 this.check(exec)
             }, 2000)
         }
     }
 
     async getOne(id) {
-        this.check()
-        if (typeof id == 'string' || typeof id == 'number') {
-            try {
-                let result = await this._connector.prepare("SELECT * FROM " + this._name + " WHERE id=" + id).all()
-                return {
-                    package: Package.name,
-                    error: false,
-                    data: result.length == 1 ? result[0] : false,
-                    message: ""
-                }
-            } catch (error) {
-                let message = this._name + " catch an error : " + error.toString()
-                Tracing.error(Package.name, message)
-                return {
-                    package: Package.name,
-                    error: true,
-                    message: message
-                }
-            }
-        } else {
-            return {
-                package: Package.name,
-                message: "Invalid parameter " + this._name,
-                error: true
-            }
+        this.check("getOne")
+        try {
+            let result = await this._connector.prepare("SELECT * FROM " + this._name + " WHERE id=@id").get({ id: id })
+            return new Result(Package.name, false, "", result ? result : false)
+        } catch (error) {
+            Tracing.error(Package.name, "Catch Sqlite error on " + this._name + " : " + error.toString())
+            return new Result(Package.name, true, "Error occurred when get one " + this._name)
         }
     }
 
@@ -60,57 +44,31 @@ class Connector {
         this.check("getOneByField")
         if (typeof wheres == 'object') {
             try {
-                let result = await this._connector.prepare("SELECT * FROM " + this._name + this.getWhere(wheres)).all()
-                return {
-                    package: Package.name,
-                    error: false,
-                    data: result.length == 1 ? result[0] : false,
-                    message: ""
-                }
+                let result = await this._connector.prepare("SELECT * FROM " + this._name + this.getWhere(wheres)).get(wheres)
+                return new Result(Package.name, false, "", result ? result : false)
             } catch (error) {
-                let message = this._name + " catch an error : " + error.toString()
-                Tracing.error(Package.name, message)
-                return {
-                    package: Package.name,
-                    error: true,
-                    message: message
-                }
+                Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":getOneByField : " + error.toString())
+                return new Result(Package.name, true, "Error occurred when get one by field " + this._name)
             }
         } else {
-            return {
-                package: Package.name,
-                message: "Invalid parameter " + this._name,
-                error: true
-            }
+            Tracing.warning("Wheres must be an object at " + this._name + ":getOneByField")
+            return new Result(Package.name, true, "Wheres must be an object at " + this._name + ":getOneByField")
         }
     }
 
-    async getAllByField(wheres) {
+    async getAllByField(wheres = {}) {
         this.check("getAllByField")
         if (typeof wheres == 'object') {
             try {
-                let result = await this._connector.prepare("SELECT * FROM " + this._name + this.getWhere(wheres)).all()
-                return {
-                    package: Package.name,
-                    data: result,
-                    error: false,
-                    message: ""
-                }
+                let result = await this._connector.prepare("SELECT * FROM " + this._name + this.getWhere(wheres)).all(wheres)
+                return new Result(Package.name, false, "", result)
             } catch (error) {
-                let message = this._name + " catch an error : " + error.toString()
-                Tracing.error(Package.name, message)
-                return {
-                    package: Package.name,
-                    error: true,
-                    message: message
-                }
+                Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":getAllByField : " + error.toString())
+                return new Result(Package.name, true, "Error occurred when get all by field " + this._name)
             }
         } else {
-            return {
-                package: Package.name,
-                message: "Invalid parameter " + this._name,
-                error: true
-            }
+            Tracing.warning("Wheres must be an object at " + this._name + ":getAllByField")
+            return new Result(Package.name, true, "Wheres must be an object at " + this._name + ":getAllByField")
         }
     }
 
@@ -118,104 +76,62 @@ class Connector {
         this.check("getAll")
         try {
             let result = await this._connector.prepare("SELECT * FROM " + this._name).all()
-            return {
-                package: Package.name,
-                data: result,
-                error: false,
-                message: ""
-            }
+            return new Result(Package.name, false, "", result)
         } catch (error) {
-            let message = this._name + " catch an error : " + error.toString()
-            Tracing.error(Package.name, message)
-            return {
-                package: Package.name,
-                error: true,
-                message: message
-            }
+            Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":getAll : " + error.toString())
+            return new Result(Package.name, true, "Error occurred when get all " + this._name + ":getAll")
         }
     }
 
     async deleteOne(id) {
         this.check("deleteOne")
-        if (typeof id == 'string' || typeof id == 'number') {
-            try {
-                await this._connector.prepare("DELETE FROM " + this._name + " WHERE id=" + id).run()
-                return {
-                    package: Package.name,
-                    error: false,
-                    message: ""
-                }
-            } catch (error) {
-                let message = this._name + " catch an error : " + error.toString()
-                Tracing.error(Package.name, message)
-                return {
-                    package: Package.name,
-                    error: true,
-                    message: message
-                }
-            }
-        } else {
-            return {
-                package: Package.name,
-                message: "Invalid parameter " + this._name,
-                error: true
-            }
+        try {
+            await this._connector.prepare("DELETE FROM " + this._name + " WHERE id=@id").run({ id: id })
+            return new Result(Package.name, false, "")
+        } catch (error) {
+            Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":deleteOne : " + error.toString())
+            return new Result(Package.name, true, "Error occurred when delete on " + this._name + ":deleteOne")
         }
     }
 
-    async deleteAllByField(fields) {
+    async deleteAllByField(wheres) {
         this.check("deleteAllByField")
-        if (typeof fields == 'object') {
+        if (typeof wheres == 'object') {
             try {
-                await this._connector.prepare("DELETE FROM " + this._name + this.getWhere(fields)).run()
-                return {
-                    package: Package.name,
-                    error: false,
-                    message: ""
-                }
+                await this._connector.prepare("DELETE FROM " + this._name + this.getWhere(wheres)).run(wheres)
+                return new Result(Package.name, false, "")
             } catch (error) {
-                let message = this._name + " catch an error : " + error.toString()
-                Tracing.error(Package.name, message)
-                return {
-                    package: Package.name,
-                    error: true,
-                    message: message
-                }
+                Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":deleteAllByField : " + error.toString())
+                return new Result(Package.name, true, "Error occurred when delete all by field " + this._name)
             }
         } else {
-            return {
-                package: Package.name,
-                message: "Invalid parameter " + this._name,
-                error: true
-            }
+            Tracing.warning("Wheres must be an object at " + this._name + ":deleteAllByField")
+            return new Result(Package.name, true, "Wheres must be an object at " + this._name + ":deleteAllByField")
         }
     }
 
-    async updateAll(sets, wheres = {}) {
+    async updateAll(sets = {}, wheres = {}) {
         this.check("updateAll")
         if (typeof wheres == 'object' && typeof sets == 'object') {
             try {
-                await this._connector.prepare("UPDATE " + this._name + this.getSet(sets) + this.getWhere(wheres)).run()
-                return {
-                    package: Package.name,
-                    error: false,
-                    message: ""
+                let mergeCondition = {}
+                for (let key in sets) {
+                    let set = sets[key]
+                    mergeCondition["set" + key] = set
                 }
+                for (let key in wheres) {
+                    let where = wheres[key]
+                    mergeCondition["where" + key] = where
+                }
+                await this._connector.prepare("UPDATE " + this._name + this.getSet(sets, "set") + this.getWhere(wheres, "where")).run(mergeCondition)
+                return new Result(Package.name, false, "")
             } catch (error) {
-                let message = this._name + " catch an error : " + error.toString()
-                Tracing.error(Package.name, message)
-                return {
-                    package: Package.name,
-                    error: true,
-                    message: message
-                }
+                Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":updateAll : " + error.toString())
+                return new Result(Package.name, true, "Error occurred when update all " + this._name)
             }
         } else {
-            return {
-                package: Package.name,
-                message: "Invalid parameter " + this._name,
-                error: true
-            }
+            Tracing.warning("Wheres or Sets must be an object at " + this._name + ":updateAll")
+            return new Result(Package.name, true, "Wheres or Sets must be an object at " + this._name + ":updateAll")
         }
     }
 
@@ -223,72 +139,27 @@ class Connector {
         this.check("truncate")
         try {
             await this._connector.prepare("DELETE FROM " + this._name).run()
-            return {
-                package: Package.name,
-                error: false,
-                message: ""
-            }
+            return new Result(Package.name, false, "")
         } catch (error) {
-            let message = this._name + " catch an error : " + error.toString()
-            Tracing.error(Package.name, message)
-            return {
-                package: Package.name,
-                error: true,
-                message: message
-            }
+            Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":truncate : " + error.toString())
+            return new Result(Package.name, true, "Error occurred when truncate " + this._name)
         }
     }
 
-    async insert(fields) {
+    async insert(sets) {
         this.check("insert")
-        if (typeof fields == 'object') {
+        if (typeof sets == 'object') {
             try {
-                let keys = "("
-                let values = "("
-                for (let keyField in fields) {
-                    let field = fields[keyField]
-                    keys = keys + "`" + keyField + "`,"
-                    if (field == null) {
-                        values = values + "NULL,"
-                    } else if (typeof field == 'number') {
-                        values = values + "" + field + ","
-                    } else if (typeof field == 'boolean') {
-                        values = values + "'" + field + "',"
-                    } else if (field.slice(0, 11) == "DATE:CUSTOM") {
-                        values = values + "datetime('now', '+" + field.slice(11) + " second'),"
-                    } else if (field == "DATE:NOW") {
-                        values = values + "datetime('now'),"
-                    } else if (typeof field == 'string') {
-                        values = values + "'" + field.replace(/'/g, "''") + "',"
-                    }
-                }
-                values = values.slice(0, -1)
-                values = values + ")"
-                keys = keys.slice(0, -1)
-                keys = keys + ")"
-                let result = await this._connector.prepare("INSERT INTO " + this._name + " " + keys + " VALUES " + values).run()
+                let result = await this._connector.prepare("INSERT INTO " + this._name + " " + this.getInsert(sets)).run(sets)
                 result = { insertId: result.lastInsertRowid }
-                return {
-                    package: Package.name,
-                    error: false,
-                    data: result,
-                    message: ""
-                }
+                return new Result(Package.name, false, "", result)
             } catch (error) {
-                let message = this._name + " catch an error : " + error.toString()
-                Tracing.error(Package.name, message)
-                return {
-                    package: Package.name,
-                    error: true,
-                    message: message
-                }
+                Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":insert : " + error.toString())
+                return new Result(Package.name, true, "Error occurred when insert " + this._name)
             }
         } else {
-            return {
-                package: Package.name,
-                message: "Invalid parameter " + this._name,
-                error: true
-            }
+            Tracing.warning("Sets must be an object at " + this._name + ":insert")
+            return new Result(Package.name, true, "Sets must be an object at " + this._name + ":insert")
         }
     }
 
@@ -298,7 +169,7 @@ class Connector {
             try {
                 request = request.replace("DATE:NOW", "date('now')")
                 let result = false
-                if(options.run) {
+                if (options.run) {
                     result = await this._connector.prepare(request).run()
                 } else {
                     result = await this._connector.prepare(request).all()
@@ -327,58 +198,56 @@ class Connector {
         }
     }
 
-    getWhere(fields) {
-        let total = 0
+    getWhere(wheres, prefix = "") {
+        let totalCondition = 0
         let statment = " WHERE "
-        for (let field in fields) {
-            let value = fields[field];
-
-            if (total > 0) {
+        for (let key in wheres) {
+            if (totalCondition > 0) {
                 statment = statment + " AND "
             }
-            if (typeof value == "object") {
-                if (value.value == "DATE:NOW") {
-                    statment = statment + field + value.statement + "date('now')"
-                } else {
-                    statment = statment + field + value.statement + "'" + value.value + "'"
-                }
-            } else {
-                statment = statment + field + "='" + value + "'"
-            }
-            total = total + 1
+            statment = statment + key + "=@" + prefix + key
+            totalCondition = totalCondition + 1
         }
-        if (total === 0) {
+        if (totalCondition === 0) {
             return ""
         }
         return statment
     }
 
-    getSet(fields) {
-        let total = 0
+
+
+    getSet(fields, prefix = "") {
+        let totalSet = 0
         let statment = " SET "
-        for (let field in fields) {
-            let value = fields[field];
-            if (total > 0) {
+        for (let key in fields) {
+            if (totalSet > 0) {
                 statment = statment + " , "
             }
-            if (value == null) {
-                statment = statment + field + "=NULL,"
-            } else if (typeof value == 'number') {
-                statment = statment + field + "=" + value + ","
-            } else if (value.slice(0, 11) == "DATE:CUSTOM") {
-                statment = statment + field + "=date('now',+" + field.slice(11) + " second),"
-            } else if (value == "DATE:NOW") {
-                statment = statment + field + "=date('now'),"
-            } else if (typeof value == 'string') {
-                statment = statment + field + "='" + value.replace(/'/g, "''") + "',"
-            }
-            total = total + 1
+            statment = statment + key + "=@" + prefix + key
+            totalSet = totalSet + 1
         }
-        statment = statment.slice(0, -1)
-        if (total === 0) {
+        if (totalSet === 0) {
             return ""
         }
         return statment
+    }
+
+    getInsert(fields) {
+        let totalFields = 0
+        let valueStatment = "("
+        let keyStatment = "("
+        for (let key in fields) {
+            if (totalFields > 0) {
+                valueStatment = valueStatment + ","
+                keyStatment = keyStatment + ","
+            }
+            keyStatment = keyStatment + key
+            valueStatment = valueStatment + "@" + key
+            totalFields = totalFields + 1
+        }
+        valueStatment = valueStatment + ")"
+        keyStatment = keyStatment + ")"
+        return keyStatment + " VALUES " + valueStatment
     }
 
 }

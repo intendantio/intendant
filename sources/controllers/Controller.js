@@ -15,6 +15,8 @@ class Controller {
             this.sqlRoutineTriggerArgument = new Connector("routine_trigger_argument")
             
             this.sqlUser = new Connector("user")
+            this.sqlUserHistory = new Connector("user_history")
+
             this.sqlClient = new Connector("client")
             this.sqlProfile = new Connector("profile")
             this.sqlAuthorization = new Connector("authorization")

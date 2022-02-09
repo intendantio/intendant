@@ -11,18 +11,16 @@ class Module extends React.Component {
         super(props)
         this.state = {
             page: 0,
-            enabled: false,
-            message: "",
             modules: []
         }
     }
 
     async componentDidMount() {
-        let resultModule = await new Request().get().fetch("/api/configurations/module")
-        if (resultModule.error) {
-            this.setState({ enabled: true, message: resultModule.package + " : " + resultModule.message })
+        let result = await new Request().get().fetch("/api/configurations/module")
+        if (result.error) {
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.setState({ enabled: false, message: "", modules: resultModule.data })
+            this.setState({ modules: result.data })
         }
     }
 
@@ -65,9 +63,6 @@ class Module extends React.Component {
                         onPageChange={(event, page) => { this.setState({ page: page }) }}
                     />
                 </div>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </div>
         )
     }

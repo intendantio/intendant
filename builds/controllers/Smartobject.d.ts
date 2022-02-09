@@ -3,7 +3,7 @@ import Result from '../utils/Result'
 
 declare class Smartobject extends Controller {
 
-    constructor(smartobjectManager: Object)
+    constructor(smartobjectManager: Object, userController: Controller)
 
     public getAll(): Promise<Result>
 

@@ -16,8 +16,6 @@ class Widget extends React.Component {
         this.state = {
             page: 0,
             loading: true,
-            enabled: false,
-            message: "",
             widgets: [],
             open: false,
             widget: {
@@ -26,25 +24,21 @@ class Widget extends React.Component {
         }
         props.setTitle("Widget")
         props.setActionType("list")
-
-        setInterval(() => {
-            this.componentDidMount()
-        }, 10000)
     }
 
     async componentDidMount() {
         let result = await new Request().get().fetch("/api/widgets")
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.setState({ enabled: false, loading: false, message: "", widgets: result.data })
+            this.setState({ loading: false, widgets: result.data })
         }
     }
 
     async delete(id) {
         let result = await new Request().delete({}).fetch("/api/widgets/" + this.state.widget.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.setState({ loading: true, anchorEl: null, popover: false }, () => { this.componentDidMount() })
         }
@@ -90,9 +84,6 @@ class Widget extends React.Component {
                         </IconButton>
                     </Link>
                 </Paper>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </div>
         )
     }

@@ -24,8 +24,6 @@ class NewRapport extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            enabled: false,
-            message: "",
             loading: true,
             step: "mode",
             index: -1,
@@ -52,14 +50,14 @@ class NewRapport extends React.Component {
         let resultModule = await new Request().get().fetch("/api/modules/configuration")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects")
         if (resultModule.error) {
-            this.setState({ enabled: true, message: resultModule.package + " : " + resultModule.message })
+            this.props.setMessage(resultModule.package + " : " + resultModule.message)
             this.props.history.push('/process')
         } else if (resultSmartobject.error) {
-            this.setState({ enabled: true, message: resultSmartobject.package + " : " + resultSmartobject.message })
+            this.props.setMessage(resultSmartobject.package + " : " + resultSmartobject.message)
             this.props.history.push('/process')
         } else {
             let smartobjects = resultSmartobject.data.filter(smartobject => smartobject.configuration != null)
-            this.setState({ enabled: false, message: "", loading: false, configurations: [], smartobjects: smartobjects, modules: resultModule.data })
+            this.setState({ loading: false, configurations: [], smartobjects: smartobjects, modules: resultModule.data })
         }
     }
 
@@ -88,11 +86,11 @@ class NewRapport extends React.Component {
         let settings = []
 
         if (this.state.mode == "button" && this.state.actionsOn.length == 0) {
-            this.setState({ enabled: true, message: "You must define at least one action" })
+            this.props.setMessage("You must define at least one action")
         } else if (this.state.mode == "switch" && this.state.actionsOn.length == 0) {
-            this.setState({ enabled: true, message: "You must define at least one action in mode ON" })
+            this.props.setMessage("You must define at least one action in mode ON")
         } else if (this.state.mode == "switch" && this.state.actionsOff.length == 0) {
-            this.setState({ enabled: true, message: "You must define at least one action in mode OFF" })
+            this.props.setMessage("You must define at least one action in mode OFF")
         } else {
 
             let keys = new Map()
@@ -143,7 +141,7 @@ class NewRapport extends React.Component {
             description_off: this.state.descriptionOff,
             mode: this.state.mode,
             state: "on",
-            localisation: 0,
+            room: 0,
             actions: [],
             inputs: []
         }
@@ -269,12 +267,9 @@ class NewRapport extends React.Component {
         let result = await new Request().post(process).fetch("/api/processes")
 
         if (result.error) {
-            this.setState({ enabled: true, loading: false, message: result.package + " : " + result.message })
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            document.getElementById('main').scroll({
-                top: 0,
-                left: 0
-            })
+            document.getElementById('main').scroll({ top: 0, left: 0 })
             this.props.history.push('/process')
         }
 
@@ -347,9 +342,6 @@ class NewRapport extends React.Component {
                         }} />
                     </StepperProxy>
                 </Grid>
-                <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={"error"}>
-                    {this.state.message}
-                </Alert>
             </>
         )
     }

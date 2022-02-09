@@ -15,23 +15,23 @@ class Widget extends Controller {
         this.smartobjectManager = smartobjectManager
     }
 
-    async getPackageName(type,object) {
+    async getPackageName(type, object) {
         let packageName = "n/a"
-        if(type == "smartobject") {
+        if (type == "smartobject") {
             let resultSmartobject = await this.smartobjectController.getOne(object)
-            if(resultSmartobject.error) {
+            if (resultSmartobject.error) {
                 return resultSmartobject
             }
             let smartobject = resultSmartobject.data
-            if(smartobject.configuration != null) {
+            if (smartobject.configuration != null) {
                 packageName = smartobject.configuration.name
             } else {
-                return new Result(Package.name, true, "Missing configuration with smartobject n°" + object) 
+                return new Result(Package.name, true, "Missing configuration with smartobject n°" + object)
             }
         } else {
-            packageName= object
+            packageName = object
         }
-        return new Result(Package.name, false, "", packageName) 
+        return new Result(Package.name, false, "", packageName)
     }
 
     async getOne(idWidget) {
@@ -51,42 +51,42 @@ class Widget extends Controller {
                 return requestWidgetSettings
             }
 
-            let packageNameResult = await this.getPackageName(widget.type,widget.object)
-            if(packageNameResult.error) {
+            let packageNameResult = await this.getPackageName(widget.type, widget.object)
+            if (packageNameResult.error) {
                 return packageNameResult
             }
             let packageName = packageNameResult.data
-            let widgetConfiguration = false 
-            let resultWidget = this.getWidget(packageName,widget.reference)
-            if(resultWidget.error) {
+            let widgetConfiguration = false
+            let resultWidget = this.getWidget(packageName, widget.reference)
+            if (resultWidget.error) {
                 return resultWidget
             }
             widgetConfiguration = resultWidget.data
             let settings = {}
-            widget.contents = JSON.parse(JSON.stringify(widgetConfiguration.contents)) 
+            widget.contents = JSON.parse(JSON.stringify(widgetConfiguration.contents))
             widget.values = JSON.parse(JSON.stringify(widgetConfiguration.contents))
             widget.dataSources = {}
             requestWidgetSettings.data.forEach(setting => {
                 switch (setting.type) {
                     case "string":
                         settings[setting.reference] = setting.value
-                    break
+                        break
                     case "integer":
                         settings[setting.reference] = parseInt(setting.value)
-                    break
+                        break
                     case "boolean":
                         settings[setting.reference] = setting.value == "true" ? true : false
-                    break
+                        break
                 }
                 widget.values = widget.values.map(value => {
-                    value.value = value.value.replace("{settings." + setting.reference + "}",settings[setting.reference])
+                    value.value = value.value.replace("{settings." + setting.reference + "}", settings[setting.reference])
                     return value
                 })
             })
             for (let indexWidgetDataSource = 0; indexWidgetDataSource < widgetConfiguration.dataSources.length; indexWidgetDataSource++) {
                 let dataSource = widgetConfiguration.dataSources[indexWidgetDataSource]
-                let resultDataSource = await this.getDataSourceValue(packageName,dataSource,settings, widget.object)
-                if(resultDataSource.error) {
+                let resultDataSource = await this.getDataSourceValue(packageName, dataSource, settings, widget.object)
+                if (resultDataSource.error) {
                     return resultDataSource
                 }
                 widget.dataSources[dataSource] = resultDataSource.data.value
@@ -96,20 +96,20 @@ class Widget extends Controller {
                 })
             }
 
-            if(widget.type == "smartobject") {
+            if (widget.type == "smartobject") {
                 let smartobjectResult = await this.smartobjectController.getOne(widget.object)
-                if(smartobjectResult.error) {
+                if (smartobjectResult.error) {
                     return smartobjectResult
                 }
                 widget.values = widget.values.map(value => {
-                    value.value = value.value.replace("{smartobject.reference}",smartobjectResult.data.reference)
+                    value.value = value.value.replace("{smartobject.reference}", smartobjectResult.data.reference)
                     return value
                 })
             }
 
 
             widget.values = widget.values.map(value => {
-                value.value = capitalizeFirstLetter(value.value) 
+                value.value = capitalizeFirstLetter(value.value)
                 return value
             })
             widget.settings = requestWidgetSettings.data
@@ -145,59 +145,34 @@ class Widget extends Controller {
         }
     }
 
-    async insert(reference, type, object,settings) {
+    async insert(body) {
         try {
-            if (reference) {
-                if (type) {
-                    if(type == "smartobject" || type == "module") {
-                        if (object) {
-                            if (settings) {
-                                let resultInsertWidget = await this.sqlWidget.insert({
-                                    type: type,
-                                    object: object,
-                                    reference: reference
-                                })
-                                if(resultInsertWidget.error) {
-                                    return resultInsertWidget
-                                }
-                                let idWidget = resultInsertWidget.data.insertId
-                                for (let indexSettings = 0; indexSettings < settings.length; indexSettings++) {
-                                    let setting = settings[indexSettings]
-                                    let resultInsertWidgetArgument = await this.sqlWidgetArgument.insert({
-                                        reference: setting.reference,
-                                        value: setting.value,
-                                        type:  setting.type,
-                                        widget: idWidget
-                                    })
-                                    if(resultInsertWidgetArgument.error) {
-                                        return resultInsertWidgetArgument
-                                    }
-                                }
-                                let resultGetOne = await this.getOne(idWidget)
-                                if(resultGetOne.error) {
-                                    await this.delete(idWidget)
-                                }
-                                return resultGetOne
-                            } else {
-                                Tracing.warning(Package.name, "Missing settings")
-                                return new Result(Package.name, true, "Missing settings")
-                            }
-                        } else {
-                            Tracing.warning(Package.name, "Missing object")
-                            return new Result(Package.name, true, "Missing object")
-                        }
-                    } else {
-                        Tracing.warning(Package.name, "Invalid type")
-                        return new Result(Package.name, true, "Invalid type")
-                    }
-                } else {
-                    Tracing.warning(Package.name, "Missing type")
-                    return new Result(Package.name, true, "Missing type")
-                }
-            } else {
-                Tracing.warning(Package.name, "Missing reference")
-                return new Result(Package.name, true, "Missing reference")
+            let resultInsertWidget = await this.sqlWidget.insert({
+                type: body.type,
+                object: body.object,
+                reference: body.reference
+            })
+            if (resultInsertWidget.error) {
+                return resultInsertWidget
             }
+            let idWidget = resultInsertWidget.data.insertId
+            for (let indexSettings = 0; indexSettings < body.settings.length; indexSettings++) {
+                let setting = body.settings[indexSettings]
+                let resultInsertWidgetArgument = await this.sqlWidgetArgument.insert({
+                    reference: setting.reference,
+                    value: setting.value,
+                    type: setting.type,
+                    widget: idWidget
+                })
+                if (resultInsertWidgetArgument.error) {
+                    return resultInsertWidgetArgument
+                }
+            }
+            let resultGetOne = await this.getOne(idWidget)
+            if (resultGetOne.error) {
+                await this.delete(idWidget)
+            }
+            return resultGetOne
 
         } catch (error) {
             StackTrace.save(error)
@@ -269,10 +244,10 @@ class Widget extends Controller {
                         error: true,
                         message: "n/a"
                     }
-                    if(configuration.module == "module") {
+                    if (configuration.module == "module") {
                         resultAction = await this.moduleController.executeAction(pModule, action.id, settings)
-                    } else if(configuration.module == "smartobject") {
-                        resultAction =  await this.smartobjectController.executeAction(id, action.id, 1, settings, true)
+                    } else if (configuration.module == "smartobject") {
+                        resultAction = await this.smartobjectController.executeAction(id, action.id, 1, settings, true)
                     }
                     if (resultAction.error) {
                         return resultAction
