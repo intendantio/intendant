@@ -41,7 +41,6 @@ class Rapport extends Controller {
 
             resultRapport.data.lastData = resultLastData.data.length == 0 ? false : resultLastData.data[0]
 
-
             let resultCounter = await this.sqlRapportData.execute("SELECT count(*) as total FROM rapport_data WHERE rapport = " + idRapport + " ")
 
             if (resultCounter.error) {
@@ -50,31 +49,30 @@ class Rapport extends Controller {
 
             resultRapport.data.total = resultCounter.data.length == 0 ? 0 : resultCounter.data[0].total
 
-            let packageName = ""
-
-            if (resultRapport.data.type == "smartobject") {
-                let resultGetPackage = await this.widgetController.getPackageName("smartobject", resultRapport.data.object)
-                if (resultGetPackage.error) {
-                    return resultGetPackage
-                }
-                packageName = resultGetPackage.data
-
-                let smartobjectResult = await this.smartobjectController.getOne(resultRapport.data.object)
-                if (smartobjectResult.error) {
-                    return smartobjectResult
-                }
-                resultRapport.data.smartobject = smartobjectResult.data
-
-            } else {
-                packageName = resultRapport.data.object
+            let resultPackage = await this.widgetController.getPackageName(resultRapport.data.type,resultRapport.data.object)
+            
+            if(resultPackage.error) {
+                return resultPackage
             }
-            let resultConfiguration = await this.widgetController.getConfiguration(packageName)
+            
+            let resultConfiguration = await this.widgetController.getConfiguration(resultPackage.data)
+            
             if (resultConfiguration.error) {
                 return resultConfiguration
             }
-
             resultRapport.data.configuration = resultConfiguration.data
 
+            if(resultRapport.data.type == "smartobject") {
+
+                let resultSmartobject = await this.smartobjectController.getOne(resultRapport.data.object)
+
+                if(resultSmartobject.error) {
+                    return resultSmartobject
+                }
+
+                resultRapport.data.smartobject = resultSmartobject.data
+
+            }
 
 
             return resultRapport
@@ -88,20 +86,20 @@ class Rapport extends Controller {
     async getAll() {
         try {
             let resultRapports = await this.sqlRapport.getAll()
-
             if (resultRapports.error) {
                 return resultRapports
             }
-
             let rapports = []
 
             for (let indexRapport = 0; indexRapport < resultRapports.data.length; indexRapport++) {
                 let rapport = resultRapports.data[indexRapport]
                 let resultGetOne = await this.getOne(rapport.id)
                 if (resultGetOne.error) {
-                    return resultGetOne
+                    Tracing.warning(Package.name, "Error occurred when get one rapport " + rapport.id)
+                    this.delete(rapport.id)
+                } else {
+                    rapports.push(resultGetOne.data)
                 }
-                rapports.push(resultGetOne.data)
             }
 
             return new Result(Package.name, false, "", rapports)
@@ -147,10 +145,13 @@ class Rapport extends Controller {
     }
 
     async delete(idRapport) {
+        Tracing.verbose(Package.name, "Delete rapport n°" + idRapport)
         try {
-            let resultDeleteInstance = await this.rapportManager.delete(idRapport)
-            if (resultDeleteInstance.error) {
-                return resultDeleteInstance
+            if(this.rapportManager.instances.has(idRapport)) {
+                let resultDeleteInstance = await this.rapportManager.delete(idRapport)
+                if (resultDeleteInstance.error) {
+                    return resultDeleteInstance
+                }
             }
             let rapportArgumentRequest = await this.truncate(idRapport)
             if (rapportArgumentRequest.error) {

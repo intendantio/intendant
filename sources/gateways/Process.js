@@ -82,7 +82,7 @@ export default (app, core) => {
 
     // Execute action
     app.post("/api/processes/:id/execute",
-        body('inputs').isArray().withMessage("Invalid inputs"),
+        body('inputs').isObject().withMessage("Invalid inputs"),
         async (request, result) => {
             let resultValid = validationResult(request)
             if (resultValid.isEmpty()) {

@@ -51,7 +51,6 @@ class Authentification extends React.Component {
     }
 
     disconnect() {
-        console.log("disconnect")
         localStorage.removeItem("authorization")
         this.setState({ authentification: true, password: "" })
     }

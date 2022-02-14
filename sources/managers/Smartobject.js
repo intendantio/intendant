@@ -20,7 +20,6 @@ class SmartobjectManager {
         this.sqlSmartobject = new Connector("smartobject")
         this.sqlSmartobjectArgument = new Connector("smartobject_argument")
 
-        this.before()
 
     }
 
@@ -46,7 +45,7 @@ class SmartobjectManager {
 
     async initialisation() {
         try {
-            let smartobjectsRequest = await this.sqlSmartobject.getAll()
+            let smartobjectsRequest = await this.smartobjectController.getAll()
             if (smartobjectsRequest.error) {
                 return smartobjectsRequest
             }
@@ -80,29 +79,22 @@ class SmartobjectManager {
         let instances = this._instances
         try {
             if (instances.has(smartobject.id) === false) {
-                let settingsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: smartobject.id })
-                if (settingsRequest.error) {
-                    Tracing.warning(Package.name, settingsRequest.package + " : " + settingsRequest.message)
-                    return settingsRequest
-                }
-                let settings = settingsRequest.data
-                let pSettings = {
-                    _id: smartobject.id.toString(),
-                    _reference: smartobject.reference
-                }
-                for (let index = 0; index < settings.length; index++) {
-                    let setting = settings[index]
-                    pSettings[setting.reference] = setting.value
-                }
+                
+
                 if (this._packages.includes(smartobject.module)) {
                     try {
+                        let settings = {}
+                        smartobject.arguments.forEach(argument => {
+                            settings[argument.reference] = argument.value
+                        })
+                        let configurations = require(smartobject["module"] + "/package.json")
                         let Module = require(smartobject["module"])
-                        let instanceSmartObject = new Module(this.core, pSettings, Tracing)
+                        let instance = new Module(this.core, smartobject.id, smartobject.reference, settings, Tracing,configurations)
                         let resultUpdateRequest = await this.sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
                         if (resultUpdateRequest.error) {
                             return resultUpdateRequest
                         }
-                        instances.set(smartobject.id, instanceSmartObject)
+                        instances.set(smartobject.id, instance)
                         Tracing.verbose(Package.name, "Instanciate smartobject n°" + smartobject.id)
                     } catch (error) {
                         Tracing.warning(Package.name, error)
@@ -135,7 +127,7 @@ class SmartobjectManager {
     async update(id) {
         Tracing.verbose(Package.name, "Update smartobject instance n°" + id)
         try {
-            let getRequest = await this.sqlSmartobject.getOne(id)
+            let getRequest = await this.smartobjectController.getOne(id)
             if (getRequest.error) {
                 return getRequest
             }

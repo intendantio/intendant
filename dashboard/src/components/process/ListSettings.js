@@ -39,7 +39,7 @@ function ListSettings(props) {
                         </Grid>
                         <Grid item xs={12} md={2} lg={2}>
                             <Typography variant='body1'   >
-                                {capitalizeFirstLetter(setting.setting.id)}
+                                {String.capitalizeFirstLetter(setting.setting.id)}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" >
                                 {"Default: " + setting.setting.default}
@@ -95,9 +95,6 @@ function ListSettings(props) {
 
 }
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 
 export default ListSettings

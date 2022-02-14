@@ -102,6 +102,7 @@ class Detail extends React.Component {
         }
     }
 
+
     getIntervals(rapport) {
         let cIntervals = []
         this.INTERVALS.forEach(interval => {
@@ -233,7 +234,7 @@ class Detail extends React.Component {
                 }
             },
             title: {
-                text: capitalizeFirstLetter(this.state.rapport.reference),
+                text: String.capitalizeFirstLetter(this.state.rapport.reference),
                 align: 'center',
                 style: {
                     color: "#ffffff",
@@ -243,7 +244,7 @@ class Detail extends React.Component {
                 }
             },
             subtitle: {
-                text: capitalizeFirstLetter(this.state.rapport.configuration.module == "smartobject" ? this.state.rapport.smartobject.reference : ""),
+                text: String.capitalizeFirstLetter(this.state.rapport.configuration.module == "smartobject" ? this.state.rapport.smartobject.reference : ""),
                 align: 'center',
                 style: {
                     color: "rgba(255, 255, 255, 0.7)",
@@ -281,7 +282,7 @@ class Detail extends React.Component {
             <>
                 <Desktop {... this.props}>
                     <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                        <Typography variant='h5' >Rapport</Typography>
+                        <Typography variant='h6' fontWeight='bold' >Rapport</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >Show what you need</Typography>
                     </Paper>
                 </Desktop>
@@ -377,9 +378,6 @@ class Detail extends React.Component {
     }
 }
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 
 export default Detail

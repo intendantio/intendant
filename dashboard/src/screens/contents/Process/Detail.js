@@ -11,6 +11,7 @@ import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
 import Source from '../../../utils/Source'
 import DeleteButton from '../../../components/views/DeleteButton'
+import Loading from '../../../components/Loading'
 
 class DetailProcess extends React.Component {
 
@@ -18,7 +19,15 @@ class DetailProcess extends React.Component {
         super(props)
         this.state = {
             id: props.match.params.id,
-            process: null,
+            process: {
+                state: "",
+                mode: "",
+                description: "",
+                description_on: "",
+                description_off: "",
+                inputs: [],
+                profiles: []
+            },
             profiles: [],
             executeInformation: "",
             referenceInput: "",
@@ -37,7 +46,6 @@ class DetailProcess extends React.Component {
 
 
     async componentDidMount() {
-        this.setState({ loading: true })
         let resultProfile = await new Request().get().fetch("/api/profiles")
         let result = await new Request().get().fetch("/api/processes/" + this.state.id)
         if (result.error) {
@@ -94,6 +102,7 @@ class DetailProcess extends React.Component {
         }
         let result = await new Request().post({ inputs: tmp }).fetch("/api/processes/" + this.state.process.id + "/execute")
         if (result.error) {
+            this.setState({ loading: false })
             this.props.setMessage(result.package + " : " + result.message)
         } else {
             this.setState(resetState)
@@ -130,24 +139,24 @@ class DetailProcess extends React.Component {
     }
 
     render() {
-        if (this.state.process) {
-            return (
-                <>
-                    <Desktop {... this.props}>
-                        <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                            <Typography variant='h5' >Process</Typography>
-                            <Typography variant='subtitle2' color="text.secondary" >Execute action</Typography>
-                        </Paper>
-                    </Desktop>
-                    <Grid container spacing={1}>
+        return (
+            <>
+                <Desktop {... this.props}>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Typography variant='h6' fontWeight='bold' >Process</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >Execute action</Typography>
+                    </Paper>
+                </Desktop>
+                <Loading loading={this.state.loading}>
+                    <Grid container spacing={1} style={{ marginTop: 0 }}>
                         <Grid item xs={12} md={8} lg={9}>
                             <Card variant='outlined' style={{ padding: 12 }}>
-                                <Typography variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description)}</Typography>
+                                <Typography variant='subtitle1'>{String.capitalizeFirstLetter(this.state.process.description)}</Typography>
                             </Card>
                         </Grid>
                         <Grid item xs={12} md={4} lg={3}>
                             <Card elevation={3} >
-                                <Button variant='contained'  onClick={() => { this.executeAction() }} style={{width:'100%', padding: 10, flexDirection: 'row', display: 'flex' }}>
+                                <Button variant='contained' onClick={() => { this.executeAction() }} style={{ width: '100%', padding: 10, flexDirection: 'row', display: 'flex' }}>
                                     {
                                         this.state.process.mode == "button" ?
                                             <RadioButtonChecked fontSize='large' style={{ marginRight: 16 }} /> :
@@ -159,41 +168,35 @@ class DetailProcess extends React.Component {
                                     }
                                     {
                                         this.state.process.mode == "button" ?
-                                            <Typography textAlign='center' variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description_on)}</Typography>
+                                            <Typography textAlign='center' variant='subtitle1'>{String.capitalizeFirstLetter(this.state.process.description_on)}</Typography>
                                             :
                                             this.state.process.state == "on" ?
-                                                <Typography textAlign='center' variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description_on)}</Typography>
+                                                <Typography textAlign='center' variant='subtitle1'>{String.capitalizeFirstLetter(this.state.process.description_on)}</Typography>
                                                 :
-                                                <Typography textAlign='center' variant='subtitle1'>{capitalizeFirstLetter(this.state.process.description_off)}</Typography>
+                                                <Typography textAlign='center' variant='subtitle1'>{String.capitalizeFirstLetter(this.state.process.description_off)}</Typography>
                                     }
                                 </Button>
                             </Card>
                         </Grid>
                         <Grid item xs={12} md={9} lg={9}>
-                            {
-                                this.state.loading ?
-                                    null
-                                    :
-                                    <Card variant='outlined' style={{ padding: 12 }}>
-                                        <Grid container spacing={2}>
-                                            {
-                                                this.state.process.inputs.filter(input => input.state == this.state.process.state).length == 0 ?
-                                                    <Grid item xs={12} md={12} lg={12}>
-                                                        <Typography variant='subtitle1' color="text.secondary" >No input</Typography>
+                            <Card variant='outlined' style={{ padding: 12 }}>
+                                <Grid container spacing={1}>
+                                    {
+                                        this.state.process.inputs.filter(input => input.state == this.state.process.state).length == 0 ?
+                                            <Grid item xs={12} md={12} lg={12}>
+                                                <Typography variant='subtitle1' color="text.secondary" >No input</Typography>
+                                            </Grid>
+                                            :
+                                            this.state.process.inputs.filter(input => input.state == this.state.process.state).map((input, index) => {
+                                                return (
+                                                    <Grid item xs={12} md={6} lg={4}>
+                                                        <Action options={input.options} label={String.capitalizeFirstLetter(input.reference.split("_")[0])} setState={this.setState.bind(this)} id={input.id} action={input} />
                                                     </Grid>
-                                                    :
-                                                    this.state.process.inputs.filter(input => input.state == this.state.process.state).map((input, index) => {
-                                                        return (
-                                                            <Grid item xs={12} md={6} lg={4}>
-                                                                <Action options={input.options} label={capitalizeFirstLetter(input.reference.split("_")[0])} setState={this.setState.bind(this)} id={input.id} action={input} />
-                                                            </Grid>
-                                                        )
-                                                    })
-                                            }
-                                        </Grid>
-                                    </Card>
-                            }
-
+                                                )
+                                            })
+                                    }
+                                </Grid>
+                            </Card>
                         </Grid>
                         <Grid item xs={12} md={3} lg={3}>
                             <Card variant='outlined' style={{ padding: 12 }}>
@@ -223,19 +226,11 @@ class DetailProcess extends React.Component {
                             </Card>
                         </Grid>
                     </Grid>
-                    <DeleteButton onClick={() => {this.delete(this.state.process.id) }} />
-                </>
-            )
-        } else {
-            return (
-                null
-            )
-        }
+                    <DeleteButton onClick={() => { this.delete(this.state.process.id) }} />
+                </Loading>
+            </>
+        )
     }
-}
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default DetailProcess

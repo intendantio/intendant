@@ -156,25 +156,25 @@ export default (app, core) => {
     })
 
     // Insert smartobject profiles
-    app.post("/api/smartobjects/:idSmartobject/profiles", 
+    app.post("/api/smartobjects/:idSmartobject/profiles",
         body('idProfile').isNumeric().withMessage("Invalid profile"),
-    async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = "/smartobjects/:idSmartobject/profiles"
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = "/smartobjects/:idSmartobject/profiles"
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.smartobject.insertSmartobjectProfile(
+                        request.params.idSmartobject,
+                        request.body.idProfile
+                    ))
+                }
             } else {
-                result.send(await core.controller.smartobject.insertSmartobjectProfile(
-                    request.params.idSmartobject,
-                    request.body.idProfile
-                ))
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
             }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
+        })
 
     // Delete smartobject profiles
     app.delete("/api/smartobjects/:idSmartobject/profiles/:idProfile", async (request, result) => {
@@ -208,6 +208,25 @@ export default (app, core) => {
                     result.send(authorization)
                 } else {
                     result.send(await core.controller.smartobject.updateRoom(request.params.idSmartobject, request.body.idRoom))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
+
+    //Update reference
+
+    app.post("/api/smartobjects/:idSmartobject/reference",
+        body('reference').isString().withMessage("Invalid reference"),
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = "/smartobjects/:idSmartobject/reference"
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.smartobject.updateReference(request.params.idSmartobject, request.body.reference))
                 }
             } else {
                 result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))

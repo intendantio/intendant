@@ -1,9 +1,8 @@
 import React from 'react'
-import JSONPretty from 'react-json-pretty'
-import { Paper, Typography, Radio, Box, Grid, Card, FormControl, RadioGroup, ListItem, TableCell, TableRow, TableContainer, Table, TextField, FormControlLabel, IconButton, Switch } from '@mui/material'
-import { Sensors, Delete, Devices, FlashOff, FlashOn } from '@mui/icons-material'
-import AlertComponent from '../../../components/Alert'
+import { Paper, Typography, Radio, Box, Grid, Card, FormControl, RadioGroup, FormControlLabel } from '@mui/material'
 import Desktop from '../../../components/Desktop'
+import Loading from '../../../components/Loading'
+import DeleteButton from '../../../components/views/DeleteButton'
 import Request from '../../../utils/Request'
 import Moment from 'moment'
 
@@ -14,7 +13,15 @@ class DetailUser extends React.Component {
         this.state = {
             id: props.match.params.id,
             profiles: [],
-            user: null
+            loading: false,
+            user: {
+                login: "",
+                imei: "",
+                histories: [],
+                profile: {
+                    id: ""
+                }
+            }
         }
         props.setTitle("")
         props.setActionType("return")
@@ -23,13 +30,16 @@ class DetailUser extends React.Component {
     async componentDidMount() {
         let resultProfile = await new Request().get().fetch("/api/profiles")
         let resultUser = await new Request().get().fetch("/api/users/" + this.state.id)
-        if (resultUser.error || resultProfile.error) {
+        if (resultUser.error) {
+            this.props.setMessage(resultUser.package + " : " + resultUser.message)
+            this.props.history.push('/user')
+        } else if (resultProfile.error) {
+            this.props.setMessage(resultProfile.package + " : " + resultProfile.message)
             this.props.history.push('/user')
         } else {
             this.props.setTitle(resultUser.data.login)
-            this.setState({ user: resultUser.data, profiles: resultProfile.data })
+            this.setState({ loading: false, user: resultUser.data, profiles: resultProfile.data })
         }
-        this.setState({ loading: null })
     }
 
     async delete() {
@@ -42,42 +52,41 @@ class DetailUser extends React.Component {
     }
 
     async updateProfile(profile) {
-        let result = await new Request().post({profile: profile}).fetch("/api/users/" + this.state.id + "/profile")
+        let result = await new Request().post({ profile: profile }).fetch("/api/users/" + this.state.id + "/profile")
         if (result.error) {
+            this.setState({ loading: true })
             this.props.setMessage(result.package + " : " + result.message)
-        } else {
             this.componentDidMount()
         }
     }
 
     render() {
-        console.log(this.state)
-        if (this.state.user) {
-            return (
-                <>
-                    <Desktop {... this.props}>
-                        <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                            <Box style={{ display: 'flex', flex: 1 }} >
-                                <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
-                                    <Typography variant='h5'  >
-                                        {capitalizeFirstLetter(this.state.user.login)}
-                                    </Typography>
-                                    <Typography variant='subtitle2' color="text.secondary"  >
-                                        {this.state.user.imei}
-                                    </Typography>
-                                </Box>
+        return (
+            <>
+                <Desktop {... this.props}>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Box style={{ display: 'flex', flex: 1 }} >
+                            <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
+                                <Typography variant='h6' fontWeight='bold'  >
+                                    {String.capitalizeFirstLetter(this.state.user.login)}
+                                </Typography>
+                                <Typography variant='subtitle2' color="text.secondary"  >
+                                    {this.state.user.imei}
+                                </Typography>
                             </Box>
-                        </Paper>
-                    </Desktop>
-                    <Grid container spacing={2}>
+                        </Box>
+                    </Paper>
+                </Desktop>
+                <Loading loading={this.state.loading}>
+                    <Grid container spacing={1} style={{ marginTop: 0 }}>
                         <Grid item xs={12} md={4} lg={4}>
                             <Card variant={'outlined'} style={{ padding: 10 }} >
                                 <FormControl>
-                                    <RadioGroup value={this.state.user.profile} onChange={(event) => { this.updateProfile(event.target.value)  }} >
+                                    <RadioGroup value={this.state.user.profile.id} onChange={(event) => { this.updateProfile(event.target.value) }} >
                                         {
                                             this.state.profiles.map(profile => {
                                                 return (
-                                                    <FormControlLabel value={profile.id} control={<Radio />} label={capitalizeFirstLetter(profile.name)} />
+                                                    <FormControlLabel value={profile.id} control={<Radio />} label={String.capitalizeFirstLetter(profile.name)} />
                                                 )
                                             })
                                         }
@@ -103,21 +112,12 @@ class DetailUser extends React.Component {
                             </Card>
                         </Grid>
                     </Grid>
-                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
-                        <IconButton onClick={() => { this.delete() }} style={{ borderRadius: 5 }}>
-                            <Delete />
-                        </IconButton>
-                    </Paper>
-                </>
-            )
-        } else {
-            return null
-        }
+                    <DeleteButton onClick={() => { this.delete() }} />
+                </Loading>
+            </>
+        )
     }
 }
 
-function capitalizeFirstLetter(string = "") {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 export default DetailUser

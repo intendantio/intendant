@@ -64,7 +64,7 @@ class RedirectSmartobject extends React.Component {
                     })
                 }
 
-                let resultInsert = await new Request().post({ room: room, module: resultJSON.package.name, reference: reference, settings: realSettings }).fetch("/api/smartobjects")
+                let resultInsert = await new Request().post({ room: room, module: resultJSON.package.name, reference: reference.replace(/\%20/g," "), settings: realSettings }).fetch("/api/smartobjects")
                 if (resultInsert.error) {
                     this.setState({
                         message: resultInsert.message,
@@ -76,7 +76,6 @@ class RedirectSmartobject extends React.Component {
             }
 
         } catch (error) {
-            console.log(error)
             this.setState({
                 message: error.toString(),
                 error: true
@@ -88,7 +87,7 @@ class RedirectSmartobject extends React.Component {
 
     render() {
         return (
-            <div>
+            <>
                 <Desktop isMobile={this.props.isMobile}>
                     <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
                         <Typography variant='h5' >Smartobject</Typography>
@@ -107,7 +106,7 @@ class RedirectSmartobject extends React.Component {
                     </Link>
                     </Card> : null
                 }
-            </div>
+            </>
         )
     }
 }

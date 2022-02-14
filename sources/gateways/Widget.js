@@ -13,7 +13,9 @@ export default (app, core) => {
             if (authorization.error) {
                 result.send(authorization)
             } else {
-                result.send(await core.controller.widget.getAll())
+                result.send(
+                    await core.controller.widget.getAll()
+                )
             }
         } else {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
@@ -29,7 +31,9 @@ export default (app, core) => {
             if (authorization.error) {
                 result.send(authorization)
             } else {
-                result.send(await core.controller.widget.getOne(request.params.idWidget))
+                result.send(
+                    await core.controller.widget.getOne(request.params.idWidget)
+                )
             }
         } else {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
@@ -40,7 +44,7 @@ export default (app, core) => {
     app.post("/api/widgets",
         body('reference').isString().isLength({ min: 5 }).withMessage("Invalid reference {min: 5}"),
         body('type').isIn(["module", "smartobject"]).withMessage("Invalid type"),
-        body('object').notEmpty().not().isObject().not().isArray().withMessage("Invalid object"),
+        body('object').isString().withMessage("Invalid object"),
         body('settings').isArray().withMessage("Invalid settings"),
         async (request, result) => {
             let resultValid = validationResult(request)
@@ -50,7 +54,14 @@ export default (app, core) => {
                 if (authorization.error) {
                     result.send(authorization)
                 } else {
-                    result.send(await core.controller.widget.insert(request.body))
+                    result.send(
+                        await core.controller.widget.insert(
+                            request.body.reference,
+                            request.body.object,
+                            request.body.type,
+                            request.body.settings
+                        )
+                    )
                 }
             } else {
                 let error = resultValid.array({ onlyFirstError: true }).pop()
@@ -67,7 +78,9 @@ export default (app, core) => {
             if (authorization.error) {
                 result.send(authorization)
             } else {
-                result.send(await core.controller.widget.delete(request.params.idWidget))
+                result.send(
+                    await core.controller.widget.delete(request.params.idWidget)
+                )
             }
         } else {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))

@@ -6,8 +6,10 @@ import Request from '../../../utils/Request'
 import AccordionSkeleton from '../../../components/AccordionSkeleton'
 
 import { Grid, Card, AccordionDetails, CardContent, Box, Accordion, AccordionSummary, Typography, Button, Paper, Divider, CardHeader, CardActions } from '@mui/material'
-import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import { ExpandLess, ExpandMore, SettingsSharp } from '@mui/icons-material'
 import WidgetNewItem from '../../../components/WidgetNewItem'
+import Loading from '../../../components/Loading'
+import Desktop from '../../../components/Desktop'
 
 
 
@@ -33,55 +35,47 @@ class NewWidget extends React.Component {
     }
 
     async componentDidMount() {
-        let result = await new Request().get().fetch("/api/smartobjects")
         let resultConfigurationModule = await new Request().get().fetch("/api/modules/configuration")
-        let resultConfigurationSmartobject = await new Request().get().fetch("/api/smartobjects")
-        if (result.error) {
-            this.props.setMessage(result.package + " : " + result.message)
+        let resultSmartobjects = await new Request().get().fetch("/api/smartobjects")
+        if (resultSmartobjects.error) {
+            this.props.setMessage(resultSmartobjects.package + " : " + resultSmartobjects.message)
+            this.props.history.push('/widget')
         } else if (resultConfigurationModule.error) {
             this.props.setMessage(resultConfigurationModule.package + " : " + resultConfigurationModule.message)
-        } else if (resultConfigurationSmartobject.error) {
-            this.props.setMessage(resultConfigurationSmartobject.package + " : " + resultConfigurationSmartobject.message)
+            this.props.history.push('/widget')
         } else {
-            let configurations = resultConfigurationModule.data
-            resultConfigurationSmartobject.data.forEach(smartobject => {
-                if (smartobject.configuration != null) {
-                    smartobject.configuration.smartobject = {
-                        id: smartobject.id,
-                        reference: smartobject.reference
-                    }
-                    configurations.unshift(smartobject.configuration)
-                }
+            
+            let smartobjects = resultSmartobjects.data.filter(smartobject => {
+                return smartobject.widgets.length > 0
             })
 
-            configurations = configurations.filter(configuration => {
-                return Array.isArray(configuration.widgets) && configuration.widgets.length > 0
-            })
-
-            this.setState({ loading: false, configurations: configurations })
+            if(smartobjects.length == 0) {
+                this.props.setMessage("No widget available")
+                this.props.history.push('/widget')
+            } else {
+                this.setState({ loading: false, configurations: smartobjects })
+            }
         }
     }
 
     async submit(callback) {
 
         let settings = []
-
+        let resetState = {}
         for (let indexSettings = 0; indexSettings < this.state.settings.length; indexSettings++) {
-            let setting = this.state.settings[indexSettings];
-            if (this.state["settings-" + setting.id] == undefined) {
-                this.props.setMessage("Missing " + setting.id)
-                return
-            }
+            let setting = this.state.settings[indexSettings]
+
+            resetState["widget-" + setting.id] = null
             settings.push({
                 reference: setting.id,
-                value: this.state["settings-" + setting.id] ? this.state["settings-" + setting.id] : "",
-                type: typeof this.state["settings-" + setting.id]
+                value: this.state["widget-" + setting.id] ? this.state["widget-" + setting.id] : null,
+                type: typeof this.state["widget-" + setting.id]
             })
         }
         let result = await new Request().post({
             reference: this.state.widget.id,
-            type: this.state.configuration.module,
-            object: this.state.configuration.module == "smartobject" ? this.state.configuration.smartobject.id : this.state.configuration.name,
+            type: this.state.configuration.configuration.module,
+            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id.toString() : this.state.configuration.name,
             settings: settings
         }).fetch("/api/widgets")
 
@@ -89,10 +83,8 @@ class NewWidget extends React.Component {
             callback()
             this.props.setMessage(result.package + " : " + result.message)
         } else {
-            document.getElementById('main').scroll({
-                top: 0,
-                left: 0
-            })
+            this.setState(resetState)
+            document.getElementById('main').scroll({ top: 0, left: 0 })
             this.props.history.push('/widget')
         }
     }
@@ -143,41 +135,28 @@ class NewWidget extends React.Component {
 
     render() {
         return (
-            <div>
-                <Paper variant="outlined" style={{ padding: 16, marginBottom: 10, justifyContent: 'left' }}>
-                        <Typography variant='h5' >Widget</Typography>
+            <>
+                <Desktop isMobile={this.props.isMobile}>
+                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
+                        <Typography variant='h6' fontWeight='bold' >Widget</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >Show what you need</Typography>
-                </Paper>
-                {
-                    this.state.loading ?
-                        <Box style={{ marginTop: 10 }}>
-                            <AccordionSkeleton />
-                            <AccordionSkeleton />
-                            <AccordionSkeleton />
-                            <AccordionSkeleton />
-                            <AccordionSkeleton />
-                            <AccordionSkeleton />
-                        </Box>
-                        :
+                    </Paper>
+                </Desktop>
+                <Loading loading={this.state.loading}>
+                    {
                         this.state.configurations.map((configuration, index) => (
-                            Array.isArray(configuration.widgets) &&
-                            <Accordion style={{ marginBottom: 10, borderRadius: 5 }} elevation={0} variant='outlined' expanded={this.state.index == index} onChange={() => { this.setState({ index: this.state.index == index ? -1 : index }) }}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMore />}
-                                    aria-controls="panel4bh-content"
-                                    id="panel4bh-header"
-                                >
+                            <Accordion style={{ marginBottom: 10, borderRadius: 5 }} variant='outlined' expanded={this.state.index == index} onChange={() => { this.setState({ index: this.state.index == index ? -1 : index }) }}>
+                                <AccordionSummary expandIcon={<ExpandMore />} >
                                     {
-                                        configuration.module == "smartobject" ?
+                                        configuration.configuration.module == "smartobject" ?
                                             <Box>
                                                 <Typography variant='subtitle1'  >
-                                                    {configuration.smartobject.reference}
+                                                    {configuration.reference}
                                                 </Typography>
                                                 <Typography variant='body2' color="text.secondary"  >
                                                     {configuration.name}
                                                 </Typography>
                                             </Box>
-
                                             :
                                             <Typography variant='h6' color="text.secondary"  >
                                                 {configuration.name}
@@ -186,18 +165,16 @@ class NewWidget extends React.Component {
                                 </AccordionSummary>
                                 <Divider style={{ marginBottom: 15 }} />
                                 <AccordionDetails>
-                                    <Grid container spacing={2} >
+                                    <Grid container spacing={1} >
                                         {
                                             configuration.widgets.map((widget, pIndex) => {
                                                 return (
                                                     <WidgetNewItem
-                                                        key={pIndex}
+                                                        index={pIndex}
                                                         open={
                                                             this.state.open &&
                                                             this.state.widget.id == widget.id &&
-                                                            (
-                                                                this.state.configuration.module == "smartobject" &&
-                                                                    configuration.module == "smartobject" ? this.state.configuration.smartobject.id == configuration.smartobject.id ? true : false : true)
+                                                            this.state.configuration.id == configuration.id
                                                         }
                                                         onSelect={() => { this.selectWidget(configuration, widget) }}
                                                         onClose={() => { this.setState({ open: false }) }}
@@ -214,8 +191,9 @@ class NewWidget extends React.Component {
                                 </AccordionDetails>
                             </Accordion>
                         ))
-                }
-            </div >
+                    }
+                </Loading>
+            </ >
         )
     }
 }

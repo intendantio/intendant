@@ -1,20 +1,17 @@
 import React from 'react'
-import { IconButton, TextField, Select, Grid, Card, InputLabel, Typography, Paper, CardActionArea } from '@mui/material'
+import { TextField, Grid, Card, Typography, CardActionArea, IconButton } from '@mui/material'
 import { Hotel, KingBed, Balcony, Bathtub, Shower, Kitchen, Blender, Weekend, Chair, Tv, Crib, MeetingRoom, Park, LocalFlorist, AutoStories } from '@mui/icons-material'
-import Alert from '../../../components/Alert'
 import Desktop from '../../../components/Desktop'
 import SaveButton from '../../../components/views/SaveButton'
 import Request from '../../../utils/Request'
 
 const IconContainer = (props) => {
     return (
-        <Card variant="outlined" style={{borderColor: props.enabled ? 'white' : null ,  alignSelf: 'center', height: 'minContent', marginLeft: 5, marginRight: 5, marginTop: 5, marginBottom: 5 }}>
-            <CardActionArea onClick={() => props.onClick(props.name)} style={{ padding: 5 }}>
+        <IconButton style={{backgroundColor:props.enabled ?  'rgb(0, 127, 255)' : null, borderRadius: 5, marginLeft: 10}} onClick={() => props.onClick(props.name)} >
                 {
                     props.children
                 }
-            </CardActionArea>
-        </Card>
+        </IconButton>
     )
 }
 
@@ -50,12 +47,12 @@ class NewLocalisation extends React.Component {
         return (
             <>
                 <Desktop isMobile={this.props.isMobile}>
-                    <Card variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                        <Typography variant='h5' >New room</Typography>
+                    <Card variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Typography variant='h6' fontWeight='bold'>New room</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >Adding a room to your home</Typography>
                     </Card>
                 </Desktop>
-                <Grid container spacing={1} style={{ marginTop: -10 }} >
+                <Grid container spacing={1} style={{marginTop: 0}} >
                     <Grid item xs={12} md={12} lg={12}>
                         <Card variant="outlined" style={{ padding: 10, textAlign: 'center', display: 'flex', flexWrap: 'wrap', width: '100%' }}>
                             <IconContainer enabled={this.state.icon == "Hotel"} name="Hotel" onClick={(icon) => { this.setState({ icon: icon }) }} >

@@ -11,7 +11,7 @@ function ListModulesActions(props) {
     return props.smartobjects.map((smartobject, index) => {
         return (
             <Grid item xs={12} md={12} lg={12} >
-                <Accordion style={{ borderRadius: 5 }} elevation={0} variant='outlined' expanded={props.index == index} onChange={() => { props.onOpen(index) }}>
+                <Accordion style={{ borderRadius: 5 }} variant='outlined' expanded={props.index == index} onChange={() => { props.onOpen(index) }}>
                     <AccordionSummary expandIcon={<ExpandMore />} >
                         <Box>
                             <Typography variant='subtitle1'   >
@@ -21,7 +21,7 @@ function ListModulesActions(props) {
                     </AccordionSummary>
                     <Divider style={{ marginBottom: 15 }} />
                     <AccordionDetails>
-                        <Grid container spacing={2} >
+                        <Grid container spacing={1} >
                             {
                                 smartobject.configuration.actions.map((action, ppIndex) => {
                                     return (

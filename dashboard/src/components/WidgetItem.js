@@ -30,8 +30,8 @@ class WidgetItem extends React.Component {
             return <WidgetSkeleton />
         }
         return (
-            <Grid item xs={12} md={6} lg={4}>
-                <Card variant='outlined' elevation={1}  >
+            <Grid key={this.props.index} item xs={12} md={6} lg={4}>
+                <Card variant='outlined'   >
                     <CardActionArea onClick={() => { this.props.onSelect() }}>
                         <CardContent>
                             {

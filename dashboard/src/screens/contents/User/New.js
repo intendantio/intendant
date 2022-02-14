@@ -5,6 +5,7 @@ import Alert from '../../../components/Alert'
 import SaveButton from '../../../components/views/SaveButton'
 import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
+import Loading from '../../../components/Loading'
 
 class NewUser extends React.Component {
 
@@ -16,6 +17,7 @@ class NewUser extends React.Component {
                 id: 0
             },
             login: "",
+            loading: true,
             password: "",
             confirmationPassword: ""
         }
@@ -27,8 +29,9 @@ class NewUser extends React.Component {
         let result = await new Request().get().fetch("/api/profiles")
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
+            this.props.history.push('/users')
         } else {
-            this.setState({ profiles: result.data, profile: result.data[0] })
+            this.setState({ profiles: result.data, profile: result.data[0], loading: false })
         }
     }
 
@@ -50,32 +53,26 @@ class NewUser extends React.Component {
     }
 
     updateProfile(id) {
-        let profile = {
-            id: 0
-        }
-
+        let profile = { id: 0 }
         this.state.profiles.forEach(pProfile => {
             if (pProfile.id == id) {
                 profile = pProfile
             }
         })
-
-        this.setState({
-            profile: profile
-        })
+        this.setState({ profile: profile })
     }
 
     render() {
         return (
             <>
                 <Desktop {... this.props}>
-                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                        <Typography variant='h5' >New user</Typography>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Typography variant='h6' fontWeight='bold' >New user</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >Create new access</Typography>
                     </Paper>
                 </Desktop>
-                <Card variant='outlined' style={{ padding: 10 }}>
-                    <Grid container spacing={2}>
+                <Loading loading={this.state.loading}>
+                    <Grid container spacing={1} style={{ marginTop: 0 }}>
                         <Grid item xs={12} md={12} lg={12}>
                             <TextField style={{ width: '100%' }} placeholder='Login' variant="outlined" value={this.state.login} onChange={(event) => { this.setState({ login: event.currentTarget.value }) }} />
                         </Grid>
@@ -91,7 +88,7 @@ class NewUser extends React.Component {
                                     {
                                         this.state.profiles.map(profile => {
                                             return (
-                                                <FormControlLabel value={profile.id} control={<Radio />} label={capitalizeFirstLetter(profile.name)} />
+                                                <FormControlLabel value={profile.id} control={<Radio />} label={String.capitalizeFirstLetter(profile.name)} />
                                             )
                                         })
                                     }
@@ -99,15 +96,12 @@ class NewUser extends React.Component {
                             </FormControl>
                         </Grid>
                     </Grid>
-                </Card>
-                <SaveButton onClick={() => { this.add() }} />
+                    <SaveButton onClick={() => { this.add() }} />
+                </Loading>
             </>
         )
     }
 }
 
-function capitalizeFirstLetter(string = "") {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 export default NewUser

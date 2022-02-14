@@ -24,7 +24,7 @@ class CountdownRapport extends React.Component {
             this.setState({ remaning: 0 })
         }  else {
             let nextMoment = Moment(result.data.lastData.date).add({ second: result.data.interval })
-            let idInterval = setInterval(() => {
+            this.idInterval = setInterval(() => {
                 let remaning = nextMoment.diff(Moment(), 'second')
                 this.setState({ remaning: remaning, percent: 100 - ((100 * remaning) / result.data.interval), loading: false })
                 if (remaning < 0) {
@@ -39,6 +39,11 @@ class CountdownRapport extends React.Component {
                 } 
             }, 1000)
         }
+    }
+
+    
+    componentWillUnmount() {
+        clearInterval(this.idInterval)
     }
 
     getOption() {
@@ -98,7 +103,7 @@ class CountdownRapport extends React.Component {
     render() {
         return (
             <Grid item xs={12} md={12} lg={4}>
-                <Card variant='outlined' elevation={1} style={{ padding: 10 }}  >
+                <Card variant='outlined' style={{ padding: 10 }}  >
                     {
                         this.state.loading ?
                         <Box style={{justifyContent:'center', display:'flex', marginTop: 75, marginBottom: 50}}>

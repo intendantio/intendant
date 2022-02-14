@@ -46,13 +46,13 @@ class Action extends React.Component {
         switch (this.state.action.type) {
             case 'text':
                 return (
-                    <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
+                    <div key={this.props.id} elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
                         <TextField multiline variant="outlined" placeholder={this.state.action.id == "default" ? "" : this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
                     </div>
                 )
             case 'cron':
                 return (
-                    <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
+                    <div key={this.props.id} elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
                         <Modal open={this.state.modal} onClose={() => { this.setState({ modal: false }) }} >
                             <Fade in={this.state.modal} >
                                 <Paper style={style}>
@@ -69,14 +69,14 @@ class Action extends React.Component {
                 )
             case 'number':
                 return (
-                    <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
+                    <div key={this.props.id} elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
                         <TextField variant="outlined" placeholder={this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
                     </div>
                 )
             case 'select':
                 return (
-                    <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10 }} >
-                        <FormControl variant="outlined" style={{ minWidth: '200px' }} >
+                    <Paper key={this.props.id} elevation={0} style={{ minWidth: 150, alignSelf: 'flex-start', display: 'flex', flexDirection: 'column', paddingLeft: 15, paddingRight: 15, paddingTop: 10, paddingBottom: 10, marginRight: 10 }} >
+                        <FormControl style={{ minWidth: '200px' }} >
                             {
                                 this.state.action.id == "default" || this.props.noLabel ? null :
                                     <InputLabel>{this.state.action.id}</InputLabel>
@@ -93,75 +93,81 @@ class Action extends React.Component {
                                 }
                             </Select>
                         </FormControl>
-                    </div>
+                    </Paper>
                 )
             case 'colorpicker':
                 return (
-                   <Card variant='outlined' style={{padding: 10, borderColor: this.state.value, width: 250}}>
-                       {
-                            this.props.label && this.props.label.length == 0 ? null :
-                                <Typography variant='body1' style={{ padding: 0, marginBottom: 5  }} >
-                                    {this.props.label}
-                                </Typography>
-                        }
+                    <Grid key={this.props.id} item xs={this.props.xs ? this.props.xs : 12} md={this.props.md ? this.props.md : 6} lg={this.props.lg ? this.props.lg : 5}>
+                        <Card variant='outlined' style={{ padding: 10, borderColor: this.state.value, width: 250 }}>
+                            {
+                                this.props.label && this.props.label.length == 0 ? null :
+                                    <Typography variant='body1' style={{ padding: 0, marginBottom: 5 }} >
+                                        {this.props.label}
+                                    </Typography>
+                            }
                             <Grid container spacing={1}>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#d00a0a')}} style={{height: 32, width: 32, backgroundColor: '#d00a0a', borderRadius: 4}}/>
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#d00a0a') }} style={{ height: 32, width: 32, backgroundColor: '#d00a0a', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#FF6900')}} style={{height: 32, width: 32, backgroundColor: '#FF6900', borderRadius: 4}}/>
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#FF6900') }} style={{ height: 32, width: 32, backgroundColor: '#FF6900', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#FCB900')}} style={{height: 32, width: 32, backgroundColor: '#FCB900', borderRadius: 4}}/>
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#FCB900') }} style={{ height: 32, width: 32, backgroundColor: '#FCB900', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#F9DE79')}} style={{height: 32, width: 32, backgroundColor: '#F9DE79', borderRadius: 4}}/>
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#F9DE79') }} style={{ height: 32, width: 32, backgroundColor: '#F9DE79', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#F78DA7')}} style={{height: 32, width: 32, backgroundColor: '#F78DA7', borderRadius: 4}}/>
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#F78DA7') }} style={{ height: 32, width: 32, backgroundColor: '#F78DA7', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#9900EF')}} style={{height: 32, width: 32, backgroundColor: '#9900EF', borderRadius: 4}}/>
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#9900EF') }} style={{ height: 32, width: 32, backgroundColor: '#9900EF', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#0e60f4')}} style={{height: 32, width: 32, backgroundColor: '#0e60f4', borderRadius: 4}}/>
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#0e60f4') }} style={{ height: 32, width: 32, backgroundColor: '#0e60f4', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#8ED1FC')}} style={{height: 32, width: 32, backgroundColor: '#8ED1FC', borderRadius: 4}} />
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#8ED1FC') }} style={{ height: 32, width: 32, backgroundColor: '#8ED1FC', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#11f4b8')}} style={{height: 32, width: 32, backgroundColor: '#11f4b8', borderRadius: 4}} />
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#11f4b8') }} style={{ height: 32, width: 32, backgroundColor: '#11f4b8', borderRadius: 4 }} />
                                 </Grid>
-                                <Grid item xs={2} md={2} lg={2}> 
-                                    <CardActionArea onClick={() => {this.updateAction(this.state.action,'#53b909')}} style={{height: 32, width: 32, backgroundColor: '#53b909', borderRadius: 4}} />
+                                <Grid item xs={2} md={2} lg={2}>
+                                    <CardActionArea onClick={() => { this.updateAction(this.state.action, '#53b909') }} style={{ height: 32, width: 32, backgroundColor: '#53b909', borderRadius: 4 }} />
                                 </Grid>
                             </Grid>
                         </Card>
+                    </Grid>
                 )
             case 'slider':
                 return (
-                    <Paper variant='outlined' elevation={1} style={{ minWidth: 150, alignSelf: 'flex-start', display: 'flex', flexDirection: 'column', paddingLeft: 10, paddingRight: 10, paddingTop: 10, paddingBottom: 10, marginRight: 10 }} >
-                        {
-                            this.props.label && this.props.label.length == 0 ? null :
-                                <Typography variant='body1' style={{ padding: 0, marginRight: 15  }} >
-                                    {this.props.label}
-                                </Typography>
-                        }
-                        <Slider
-                            size={'small'}
-                            defaultValue={0}
-                            valueLabelDisplay="auto"
-                            orientation={'horizontal'}
-                            min={parseInt(this.state.options.min)}
-                            max={parseInt(this.state.options.max)}
-                            step={parseInt(this.state.options.step)}
-                            onChange={(event, value) => { this.updateAction(this.state.action, value) }}
-                        />
-                    </Paper>
+                    <Grid key={this.props.id} item xs={this.props.xs ? this.props.xs :  12} md={this.props.md ? this.props.md : 6} lg={this.props.lg ? this.props.lg : 3}>
+                        <Paper variant='outlined' style={{ minWidth: 150, alignSelf: 'flex-start', display: 'flex', flexDirection: 'column', paddingLeft: 15, paddingRight: 15, paddingTop: 10, paddingBottom: 10 }} >
+                            {
+                                this.props.label && this.props.label.length == 0 ? null :
+                                    <Typography variant='body1' style={{ padding: 0, marginRight: 15 }} >
+                                        {this.props.label}
+                                    </Typography>
+                            }
+                            <Slider
+                                style={{ height: 7 }}
+                                size={'small'}
+                                height={20}
+                                defaultValue={0}
+                                valueLabelDisplay="auto"
+                                orientation={'horizontal'}
+                                min={parseInt(this.state.options.min)}
+                                max={parseInt(this.state.options.max)}
+                                step={parseInt(this.state.options.step)}
+                                onChangeCommitted={(event, value) => { this.updateAction(this.state.action, value) }}
+                            />
+                        </Paper>
+                    </Grid>
                 )
             case 'checkbox':
                 return (
-                    <div elevation={3} style={{ height: "fit-content", alignSelf: 'center', borderWidth: 1, borderStyle: 'solid', borderRadius: 5, borderColor: 'rgba(255, 255, 255, 0.23)', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15, marginRight: 10 }} >
+                    <div key={this.props.id} elevation={3} style={{ height: "fit-content", alignSelf: 'center', borderWidth: 1, borderStyle: 'solid', borderRadius: 5, borderColor: 'rgba(255, 255, 255, 0.23)', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: this.props.flexDirection ? this.props.flexDirection : 'row', paddingTop: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 15, marginRight: 10 }} >
                         {
                             this.state.action.id == "default" ? null :
                                 <Typography variant='body1' style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', padding: 0 }}>
@@ -171,26 +177,9 @@ class Action extends React.Component {
                         <Checkbox defaultChecked={this.state.action.default} color='primary' onChange={(event, value) => { this.updateAction(this.state.action, value) }} />
                     </div>
                 )
-            case 'oauth2':
-                let url = this.state.action.url.replace("%local%",
-                    window.location.origin +
-                    "/admin/smartobject/redirect/" +
-                    window.btoa(
-                        JSON.stringify(this.props.object)
-                    )
-                )
-                return (
-                    <div elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, marginTop: 10, width: '200px' }} >
-                        <Button color='inherit' disabled={this.props.isDisabled} variant='outlined' style={{ flexDirection: 'column', width: '200px' }} size='small' onClick={() => { window.location.replace(url) }}>
-                            <Typography style={{ fontSize: 12, fontWeight: 'bold', padding: 8, color: this.props.isDisabled ? 'rgba(255, 255, 255, 0.6)' : 'white' }}>
-                                {this.props.isDisabled ? "Missing reference or localisation" : this.state.action.name}
-                            </Typography>
-                        </Button>
-                    </div>
-                )
             case 'gallery':
                 return (
-                    <div style={{ marginRight: 10 }}>
+                    <div key={this.props.id} style={{ marginRight: 10 }}>
                         <TextField
                             onChange={(event) => { this.setState({ value: event.nativeEvent.target.value, modal: false }); this.updateAction(this.state.action, event.nativeEvent.target.value) }}
                             label="Icon"

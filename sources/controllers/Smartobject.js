@@ -3,6 +3,7 @@ import Controller from './Controller'
 import Tracing from "../utils/Tracing"
 import Result from '../utils/Result'
 import StackTrace from '../utils/StackTrace'
+import Parser from '../utils/Parser'
 
 class Smartobject extends Controller {
 
@@ -97,15 +98,18 @@ class Smartobject extends Controller {
                 return smartobjectRequest
             }
             if (smartobjectRequest.data === false) {
-                Tracing.warning(Package.name, "Smartobject not found")
-                return new Result(Package.name, true, "Smartobject not found")
+                Tracing.warning(Package.name, "Smartobject not found (go)")
+                return new Result(Package.name, true, "Smartobject not found (go)")
             }
             let smartobject = smartobjectRequest.data
             let argumentsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: smartobject["id"] })
             if (argumentsRequest.error) {
                 return argumentsRequest
             }
-            let argumentsData = argumentsRequest.data
+            let argumentsData = argumentsRequest.data.map(argument => {
+                argument.value = Parser.parse(argument.value)
+                return argument
+            })
             let roomRequest = await this.sqlRoom.getOne(smartobject["room"])
 
             if (roomRequest.error) {
@@ -118,6 +122,8 @@ class Smartobject extends Controller {
             }
             let profiles = smartobjectProfileRequest.data
             let actions = []
+            let widgets = []
+            let dataSources = []
             let state = {
                 status: "unknown",
                 reason: "Unknown"
@@ -125,16 +131,14 @@ class Smartobject extends Controller {
             let icon = null
             if (this.smartobjectManager.instances.has(smartobject.id)) {
                 actions = this.smartobjectManager.instances.get(smartobject.id).getActions()
+                widgets = this.smartobjectManager.instances.get(smartobject.id).getWidgets()
+                dataSources = this.smartobjectManager.instances.get(smartobject.id).getDataSources()
 
                 let resultState = await this.smartobjectManager.instances.get(smartobject.id).getState()
                 if (resultState.error) {
                     return resultState
                 }
-
                 state = resultState.data
-
-
-                icon = this.smartobjectManager.instances.get(smartobject.id).moduleConfiguration.icon
             }
 
             let configuration = null
@@ -144,12 +148,13 @@ class Smartobject extends Controller {
 
             return new Result(Package.name, false, "", {
                 id: smartobject.id,
-                icon: icon,
                 module: smartobject.module,
                 reference: smartobject.reference,
                 lastUse: smartobject.last_use,
                 arguments: argumentsData,
                 actions: actions,
+                widgets: widgets,
+                dataSources: dataSources,
                 profiles: profiles,
                 state: state,
                 room: room,
@@ -275,6 +280,20 @@ class Smartobject extends Controller {
         }
     }
 
+    async updateReference(idSmartobject, reference) {
+        try {
+            let updateRequest = await this.sqlSmartobject.updateAll({ reference: reference }, { id: idSmartobject })
+            if (updateRequest.error) {
+                return updateRequest
+            }
+            return new Result(Package.name, false, "")
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update room smartobject")
+            return new Result(Package.name, true, "Error occurred when update room smartobject")
+        }
+    }
+
     async insert(body) {
         try {
             let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: body.reference })
@@ -305,7 +324,7 @@ class Smartobject extends Controller {
                             id: null,
                             smartobject: idSmartobject,
                             reference: setting.reference,
-                            value: setting.value
+                            value: Parser.stringify(setting.value)
                         })
                         if (insertSettngsRequest.error) {
                             return insertSettngsRequest
@@ -360,12 +379,13 @@ class Smartobject extends Controller {
                         return smartobjectRequest
                     }
                     if (smartobjectRequest.data == false) {
-                        return new Result(Package.name, true, "Smartobject not found")
+                        return new Result(Package.name, true, "Smartobject not found (ea)")
                     }
                     if (this.smartobjectManager.instances.has(smartobjectRequest.data.id)) {
                         let instanceSmartobject = this.smartobjectManager.instances.get(smartobjectRequest.data.id)
                         let smartobject = await this.getOne(instanceSmartobject.id)
-                        if (this.isAllow(smartobject.data, idProfile, force)) {
+                        // this.isAllow(smartobject.data, idProfile, force)
+                        if (true) {
                             let resultAction = instanceSmartobject.action(idAction, pArguments)
                             if (resultAction.error) {
                                 return resultAction

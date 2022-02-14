@@ -1,11 +1,9 @@
 import React from 'react'
-import { MenuItem, TextField, Select, Button, Card, Box, Grid, FormControl, Typography, Paper, MobileStepper } from '@mui/material'
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
-import Alert from '../../../components/Alert'
-import SaveButton from '../../../components/views/SaveButton'
+import { MenuItem, TextField, Select, Button, Card, Grid, FormControl, Typography, Paper, Box, Divider } from '@mui/material'
 import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
-import md5 from 'md5'
+import * as AbstractIcon from '@mui/icons-material'
+import Loading from '../../../components/Loading'
 
 class NewSmartobject extends React.Component {
 
@@ -13,9 +11,11 @@ class NewSmartobject extends React.Component {
         super(props)
         this.state = {
             id: props.match.params.id,
+            loading: true,
             reference: "",
             activeStep: 0,
             package: {
+                name: "",
                 settings: [],
                 submit: {
                     type: "none"
@@ -27,24 +27,46 @@ class NewSmartobject extends React.Component {
             },
             docs: {
                 steps: [],
-                conditions: []
+                conditions: [],
+                video: ""
             }
         }
-
-
-
     }
 
     async componentDidMount() {
 
         let result = await fetch("https://market.intendant.io/docs?id=" + this.props.match.params.id)
         let resultJSON = await result.json()
+
+        if (resultJSON.conditions == undefined) {
+            this.props.setMessage("Missing docs")
+            this.props.history.push('/smartobject')
+            return
+        }
+        if (resultJSON.steps == undefined) {
+            this.props.setMessage("Missing docs")
+            this.props.history.push('/smartobject')
+            return
+        }
+        if (resultJSON.video == undefined) {
+            this.props.setMessage("Missing docs")
+            this.props.history.push('/smartobject')
+            return
+        }
+        if (resultJSON.package == undefined) {
+            this.props.setMessage("Missing docs")
+            this.props.history.push('/smartobject')
+            return
+        }
+
         let resultRooms = await new Request().get().fetch("/api/rooms")
 
         if (resultRooms.data.length == 0) {
+            this.props.setMessage("You must have a minimum of one room")
             this.props.history.push('/room')
         }
         this.setState({
+            loading: false,
             docs: resultJSON,
             package: resultJSON.package,
             rooms: resultRooms.data,
@@ -62,7 +84,6 @@ class NewSmartobject extends React.Component {
                         module: pModule
                     })
                 })
-
             }
         })
     }
@@ -109,7 +130,6 @@ class NewSmartobject extends React.Component {
     }
 
     getSettings(setting) {
-        console.log(setting)
         switch (setting.type) {
             case "oauth":
                 if (this.state.reference.length == 0) {
@@ -127,10 +147,7 @@ class NewSmartobject extends React.Component {
         }
     }
 
-    getSubmitButton(settings) {
-
-
-
+    getSubmitButton() {
         if (this.state.reference.length == 0) {
             return (
                 <Button size='large' variant='contained' disabled style={{ height: '100%', textTransform: 'none' }} color='inherit'>
@@ -149,16 +166,23 @@ class NewSmartobject extends React.Component {
                     </Button>
                 </a>
             )
+        } else if (this.state.package.submit.type == "disabled") {
+            return (
+                <Button size='large' disabled variant='contained' style={{ height: '100%', textTransform: 'none' }} >
+                    <Typography color="text.secondary" >
+                        {this.state.package.submit.name}
+                    </Typography>
+                </Button>
+            )
         }
     }
-
-
 
     setRoom(id) {
         this.state.rooms.forEach(pRoom => {
             if (pRoom.id === id) {
-                this.state.smartobject.room = pRoom
-                this.updateRoom(this.state.smartobject, pRoom)
+                this.setState({
+                    room: pRoom
+                })
             }
         })
     }
@@ -167,89 +191,89 @@ class NewSmartobject extends React.Component {
         return (
             <>
                 <Desktop {... this.props}>
-                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                        <Typography variant='h5' >New smartobject</Typography>
-                        <Typography variant='subtitle2' color="text.secondary" >Create new smartobject</Typography>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Typography variant='h6' fontWeight='bold' >{"New smartobject"}</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >{"New " + this.state.package.name}</Typography>
                     </Paper>
                 </Desktop>
-                <Grid container spacing={2} style={{ marginBottom: 16 }}>
-                    <Grid item xs={12} md={12} lg={12}>
-                        <Card variant="outlined" style={{ padding: 10, flexDirection: this.props.isMobile ? 'column' : 'row', display: 'flex' }}>
-                            <TextField onChange={(event) => { this.setState({ reference: event.nativeEvent.target.value }) }} style={{ width: '100%', marginRight: 10, marginBottom: this.props.isMobile ? 10 : 0 }} label="Reference" variant="outlined" />
-                            <FormControl fullWidth variant="outlined" >
-                                <Select value={this.state.room.id} onChange={(event) => { this.setRoom(event.target.value) }} >
-                                    {
-                                        this.state.rooms.map((pRoom, index) => {
-                                            return <MenuItem key={index} value={pRoom.id} >{pRoom.name}</MenuItem>
-                                        })
-                                    }
-                                </Select>
-                            </FormControl>
-                        </Card>
+                <Loading loading={this.state.loading}>
+                    <Grid container spacing={1} style={{ marginTop: 0 }}>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Card variant="outlined" style={{ padding: 10, flexDirection: this.props.isMobile ? 'column' : 'row', display: 'flex' }}>
+                                <TextField onChange={(event) => { this.setState({ reference: event.nativeEvent.target.value }) }} style={{ width: '100%', marginRight: 10, marginBottom: this.props.isMobile ? 10 : 0 }} label="Name" variant="outlined" />
+                                <FormControl fullWidth variant="outlined" >
+                                    <Select value={this.state.room.id} onChange={(event) => { this.setRoom(event.target.value) }} >
+                                        {
+                                            this.state.rooms.map((pRoom, index) => {
+                                                return <MenuItem key={index} value={pRoom.id} >{pRoom.name}</MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Card variant='outlined' style={{ padding: 10 }}>
+                                <Typography variant='h6' color='white' >
+                                    {"Condition"}
+                                </Typography>
+                                <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+                                {
+                                    this.state.docs.conditions.map((condition, index) => {
+                                        return (
+                                            <Box key={index} style={{ flexDirection: 'row', display: 'flex', padding: 5 }}>
+                                                <Typography variant='body2' >
+                                                    {condition.text}
+                                                </Typography>
+                                            </Box>
+                                        )
+                                    })
+                                }
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12}>
+                            <Card variant='outlined' style={{ padding: 10 }}>
+                                <Typography variant='h6' color='white' >
+                                    {"Step"}
+                                </Typography>
+                                <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+                                {
+                                    this.state.docs.steps.map((step, index) => {
+                                        return (
+                                            <Box key={index} style={{ flexDirection: 'row', display: 'flex', padding: 5 }}>
+                                                <Typography variant='body2' >
+                                                    {(index + 1) + " - " + step.text}
+                                                </Typography>
+                                            </Box>
+                                        )
+                                    })
+                                }
+                            </Card>
+                        </Grid>
+                        {
+                            this.state.docs.video.length > 0 &&
+                            <Grid item xs={12} md={12} lg={12}>
+                                <Card variant='outlined' style={{ padding: 10 }}>
+                                    <Typography variant='h6' color='white' >
+                                        {"Video tutorial"}
+                                    </Typography>
+                                    <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+                                    <Typography variant='body2' >
+                                        <a target='_blank' style={{ color: 'white', textDecoration: 'none' }} href={this.state.docs.video}>
+                                            {this.state.docs.video}
+                                        </a>
+                                    </Typography>
+                                </Card>
+                            </Grid>
+                        }
                     </Grid>
-                </Grid>
-                <Card variant='outlined' style={{ width: 'max-content' }}>
-                    {this.getSubmitButton()}
-                </Card>
+                    <Card variant='outlined' style={{ width: 'max-content', marginTop: 8 }}>
+                        {this.getSubmitButton()}
+                    </Card>
+                </Loading>
             </>
         )
     }
 }
 
 export default NewSmartobject
-
-/*
-
-                    <Grid item xs={12} md={9} lg={6}>
-                        {
-                            this.state.docs.conditions.length > 0 &&
-                            <Card variant='outlined'>
-                                <Paper square elevation={0} sx={{ display:'flex', alignItems: 'center', padding: 2, bgcolor: 'background.default' }}>
-                                    <Typography >{this.state.docs.conditions[this.state.activeStep].text}</Typography>
-                                </Paper>
-                                <Box style={{ height: 200, padding: 10 }}>
-                                </Box>
-                                <MobileStepper
-                                    position="static"
-                                    activeStep={this.state.activeStep}
-                                    variant="dots"
-                                    steps={this.state.docs.conditions.length}
-                                    backButton={
-                                        0 == this.state.activeStep
-                                            ?
-                                            <Button size="small" onClick={() => { }} disabled={true} >
-                                                <KeyboardArrowLeft />
-                                                <Typography variant='body2' color="text.secondary">
-                                                    Back
-                                                </Typography>
-                                            </Button>
-                                            :
-                                            <Button style={{ color: 'white' }} size="small" onClick={() => { this.setState({ activeStep: this.state.activeStep - 1 }) }}>
-                                                <KeyboardArrowLeft />
-                                                <Typography variant='body2' >
-                                                    Back
-                                                </Typography>
-                                            </Button>
-                                    }
-                                    nextButton={
-                                        this.state.docs.conditions.length - 1 == this.state.activeStep ?
-                                            <Button size="small" onClick={() => { }} disabled={true}>
-                                                <Typography variant='body2' color="text.secondary">
-                                                    Next
-                                                </Typography>
-                                                <KeyboardArrowRight />
-                                            </Button>
-                                            :
-                                            <Button style={{ color: 'white' }} size="small" onClick={() => { this.setState({ activeStep: this.state.activeStep + 1 }) }}>
-                                                <Typography variant='body2'>
-                                                    Next
-                                                </Typography>
-                                                <KeyboardArrowRight />
-                                            </Button>
-                                    }
-                                />
-                            </Card>
-                        }
-                    </Grid>
-
-                    */

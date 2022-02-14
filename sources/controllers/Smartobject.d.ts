@@ -21,6 +21,7 @@ declare class Smartobject extends Controller {
     public isAllow(smartobject: Object, profile: Object, force: Boolean): Boolean
     public executeAction(idSmartobject: Number, idAction: Number, idProfile: Number, pArguments: Array<Object>, force: Boolean): Promise<Result>
     public getConfiguration(): Promise<Result>
+    public updateReference(idSmartobject: Number, reference: String): Promise<Result>
 }
 
 export default Smartobject

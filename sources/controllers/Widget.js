@@ -16,7 +16,7 @@ class Widget extends Controller {
     }
 
     async getPackageName(type, object) {
-        let packageName = "n/a"
+        let packageName = ""
         if (type == "smartobject") {
             let resultSmartobject = await this.smartobjectController.getOne(object)
             if (resultSmartobject.error) {
@@ -28,8 +28,10 @@ class Widget extends Controller {
             } else {
                 return new Result(Package.name, true, "Missing configuration with smartobject n°" + object)
             }
-        } else {
+        } else if (type == "module") {
             packageName = object
+        } else {
+            return new Result(Package.name, true, "Invalid type")
         }
         return new Result(Package.name, false, "", packageName)
     }
@@ -50,14 +52,13 @@ class Widget extends Controller {
             if (requestWidgetSettings.error) {
                 return requestWidgetSettings
             }
-
             let packageNameResult = await this.getPackageName(widget.type, widget.object)
             if (packageNameResult.error) {
                 return packageNameResult
             }
             let packageName = packageNameResult.data
             let widgetConfiguration = false
-            let resultWidget = this.getWidget(packageName, widget.reference)
+            let resultWidget = this.getWidget(packageName, widget.reference, widget.object, widget.type)
             if (resultWidget.error) {
                 return resultWidget
             }
@@ -83,9 +84,10 @@ class Widget extends Controller {
                     return value
                 })
             })
+
             for (let indexWidgetDataSource = 0; indexWidgetDataSource < widgetConfiguration.dataSources.length; indexWidgetDataSource++) {
                 let dataSource = widgetConfiguration.dataSources[indexWidgetDataSource]
-                let resultDataSource = await this.getDataSourceValue(packageName, dataSource, settings, widget.object)
+                let resultDataSource = await this.getDataSourceValue(packageName, dataSource, widget.type, settings, widget.object)
                 if (resultDataSource.error) {
                     return resultDataSource
                 }
@@ -107,9 +109,8 @@ class Widget extends Controller {
                 })
             }
 
-
             widget.values = widget.values.map(value => {
-                value.value = capitalizeFirstLetter(value.value)
+                value.value = value.value
                 return value
             })
             widget.settings = requestWidgetSettings.data
@@ -145,19 +146,19 @@ class Widget extends Controller {
         }
     }
 
-    async insert(body) {
+    async insert(reference,object,type,settings) {
         try {
             let resultInsertWidget = await this.sqlWidget.insert({
-                type: body.type,
-                object: body.object,
-                reference: body.reference
+                type: type,
+                object: object,
+                reference: reference
             })
             if (resultInsertWidget.error) {
                 return resultInsertWidget
             }
             let idWidget = resultInsertWidget.data.insertId
-            for (let indexSettings = 0; indexSettings < body.settings.length; indexSettings++) {
-                let setting = body.settings[indexSettings]
+            for (let indexSettings = 0; indexSettings < settings.length; indexSettings++) {
+                let setting = settings[indexSettings]
                 let resultInsertWidgetArgument = await this.sqlWidgetArgument.insert({
                     reference: setting.reference,
                     value: setting.value,
@@ -179,13 +180,10 @@ class Widget extends Controller {
             Tracing.error(Package.name, "Error occurred when insert widget")
             return new Result(Package.name, true, "Error occurred when insert widget")
         }
-
     }
-
 
     async delete(idWidget) {
         try {
-            Tracing.verbose(Package.name, "Delete widget " + idWidget)
             let widgetArgumentRequest = await this.sqlWidgetArgument.deleteAllByField({ widget: idWidget })
             if (widgetArgumentRequest.error) {
                 return widgetArgumentRequest
@@ -202,32 +200,115 @@ class Widget extends Controller {
         }
     }
 
+    getAllActions(pModule, idSource, type) {
+        try {
+            let resultInstance = this.getInstance(pModule, idSource, type)
+            if (resultInstance.error) {
+                return resultInstance
+            } else {
+                let actions = resultInstance.data.getActions()
+                if(actions == undefined) { actions = [] }
+                return new Result(Package.name, false, "",actions)
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all actions")
+            return new Result(Package.name, true, "Error occurred when get all actions")
+        }
+    }
+
+    getAllDataSources(pModule, idSource, type) {
+        try {
+            let resultInstance = this.getInstance(pModule, idSource, type)
+            if (resultInstance.error) {
+                return resultInstance
+            } else {
+                let dataSources = resultInstance.data.getDataSources()
+                if(dataSources == undefined) { dataSources = [] }
+                return new Result(Package.name, false, "",dataSources)
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get data sources")
+            return new Result(Package.name, true, "Error occurred when get data sources")
+        }
+    }
+
+    getAllWidgets(pModule, idSource, type) {
+        try {
+            let resultInstance = this.getInstance(pModule, idSource, type)
+            if (resultInstance.error) {
+                return resultInstance
+            } else {
+                let widgets = resultInstance.data.getWidgets()
+                if(widgets == undefined) { widgets = [] }
+                return new Result(Package.name, false, "",widgets)
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all widgets")
+            return new Result(Package.name, true, "Error occurred when get all widgets")
+        }
+    }
 
     getConfiguration(pModule) {
         try {
             let configuration = require(pModule + "/package.json")
             return new Result(Package.name, false, "", configuration)
         } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when get configuration in module")
-            return new Result(Package.name, true, "Error occurred when get configuration in module")
+            Tracing.error(Package.name, "Error occured when get configuration")
+            return new Result(Package.name, true, "Error occured when get configuration")
         }
     }
 
-    async getDataSourceValue(pModule, idDataSource, settings = {}, id = -1) {
+    getInstance(pModule, idSource, type) {
         try {
-            let resultGetDataSource = this.getDataSource(pModule, idDataSource)
+            if (type == "module") {
+                let configuration = this.getConfiguration(pModule)
+                if (configuration.error) {
+                    return configuration
+                }
+                return new Result(Package.name, false, "", {
+                    getActions: () => { return configuration.data.actions },
+                    getDataSources: () => { return configuration.data.dataSources },
+                    getWidgets: () => { return configuration.data.widgets }
+                })
+            } else if (type == "smartobject") {
+                if (this.smartobjectManager.instances.has(parseInt(idSource))) {
+                    let instance = this.smartobjectManager.instances.get(parseInt(idSource))
+                    if (instance.configurations.name == pModule) {
+                        return new Result(Package.name, false, "", instance)
+                    } else {
+                        Tracing.error(Package.name, "Invalid module type")
+                        return new Result(Package.name, true, "Invalid module type")
+                    }
+                } else {
+                    Tracing.error(Package.name, "Smartobject not found (gi)")
+                    return new Result(Package.name, true, "Smartobject not found (gi)")
+                }
+            } else {
+                Tracing.error(Package.name, "Invalid type")
+                return new Result(Package.name, true, "Invalid type")
+            }
+        } catch (error) {
+            Tracing.error(Package.name, "Error occured when get instance")
+            return new Result(Package.name, true, "Error occured when get instance")
+        }
+    }
+
+    async getDataSourceValue(pModule, idDataSource, type, settings = {}, idSource = -1) {
+        try {
+            let resultGetDataSource = this.getDataSource(pModule, idDataSource, idSource, type)
             if (resultGetDataSource.error) {
                 return resultGetDataSource
             }
-            let resultConfiguration = this.getConfiguration(pModule)
-            if (resultConfiguration.error) {
-                return resultConfiguration
+            let resultAllActions = this.getAllActions(pModule, idSource, type)
+            if (resultAllActions.error) {
+                return resultAllActions
             }
-            let configuration = resultConfiguration.data
             let dataSource = resultGetDataSource.data
             let action = false
-            configuration.actions.forEach(pAction => {
+            resultAllActions.data.forEach(pAction => {
                 if (pAction.id == dataSource.action) {
                     action = pAction
                 }
@@ -240,14 +321,11 @@ class Widget extends Controller {
                     }
                 })
                 if (missingSettings.length == 0) {
-                    let resultAction = {
-                        error: true,
-                        message: "n/a"
-                    }
-                    if (configuration.module == "module") {
+                    let resultAction = { error: true, message: "" }
+                    if (type == "module") {
                         resultAction = await this.moduleController.executeAction(pModule, action.id, settings)
-                    } else if (configuration.module == "smartobject") {
-                        resultAction = await this.smartobjectController.executeAction(id, action.id, 1, settings, true)
+                    } else if (type == "smartobject") {
+                        resultAction = await this.smartobjectController.executeAction(idSource, action.id, 1, settings, true)
                     }
                     if (resultAction.error) {
                         return resultAction
@@ -265,21 +343,20 @@ class Widget extends Controller {
             }
         } catch (error) {
             StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when get data source value in widget")
-            return new Result(Package.name, true, "Error occurred when get data source value in widget")
+            Tracing.error(Package.name, "Error occurred when get data source value")
+            return new Result(Package.name, true, "Error occurred when get data source value")
         }
     }
 
-    getDataSource(pModule, idDataSource) {
+    getDataSource(pModule, idDataSource, idSource, type) {
         try {
-            let resultConfiguration = this.getConfiguration(pModule)
-            if (resultConfiguration.error) {
-                return resultConfiguration
+            let resultAllDataSources = this.getAllDataSources(pModule, idSource, type)
+            if (resultAllDataSources.error) {
+                return resultAllDataSources
             }
-            let configuration = resultConfiguration.data
-            if (Array.isArray(configuration.dataSources)) {
+            if (Array.isArray(resultAllDataSources.data)) {
                 let dataSource = false
-                configuration.dataSources.forEach(pDataSource => {
+                resultAllDataSources.data.forEach(pDataSource => {
                     if (pDataSource.id == idDataSource) {
                         dataSource = pDataSource
                     }
@@ -301,29 +378,23 @@ class Widget extends Controller {
         }
     }
 
-    getWidget(pModule, idWidget) {
+    getWidget(pModule, idWidget, idSource, type) {
         try {
-            let resultConfiguration = this.getConfiguration(pModule)
-            if (resultConfiguration.error) {
-                return resultConfiguration
+            let resultAllWidgets = this.getAllWidgets(pModule, idSource, type)
+            if (resultAllWidgets.error) {
+                return resultAllWidgets
             }
-            let configuration = resultConfiguration.data
-            if (Array.isArray(configuration.widgets)) {
-                let widget = false
-                configuration.widgets.forEach(pWidget => {
-                    if (pWidget.id == idWidget) {
-                        widget = pWidget
-                    }
-                })
-                if (widget) {
-                    return new Result(Package.name, false, "", widget)
-                } else {
-                    Tracing.warning(Package.name, "Widget not found")
-                    return new Result(Package.name, true, "Widget not found")
+            let widget = false
+            resultAllWidgets.data.forEach(pWidget => {
+                if (pWidget.id == idWidget) {
+                    widget = pWidget
                 }
+            })
+            if (widget) {
+                return new Result(Package.name, false, "", widget)
             } else {
-                Tracing.error(Package.name, "Widgets was not implemented")
-                return new Result(Package.name, true, "Widgets was not implemented")
+                Tracing.warning(Package.name, "Widget not found")
+                return new Result(Package.name, true, "Widget not found")
             }
         } catch (error) {
             StackTrace.save(error)
@@ -332,11 +403,6 @@ class Widget extends Controller {
         }
     }
 
-
-}
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default Widget

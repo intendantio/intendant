@@ -17,25 +17,19 @@ class WidgetNewItem extends React.Component {
         }
     }
 
-
-    onSelect() {
-        this.props.onSelect()
-        
-    }
-
     render() {
         if (this.state.loading) {
             return <WidgetSkeleton />
         }
         return (
-            <Grid item xs={12} md={6} lg={3}>
-                <Card variant='outlined' elevation={1}  >
-                    <CardActionArea onClick={() => { this.onSelect() }}>
+            <Grid key={this.props.index} item xs={12} md={6} lg={4}>
+                <Card variant='outlined'  >
+                    <CardActionArea onClick={() => { this.props.onSelect() }}>
                         <CardContent>
                             {
                                 this.state.widget.contents.filter(value => value.type == "title").map((value, ppIndex) => {
                                     return (
-                                        <Typography key={ppIndex} variant='h6' component='div'  color="text.secondary">
+                                        <Typography key={ppIndex} variant='subtitle1' component='div'>
                                             {value.example}
                                         </Typography>
                                     )
@@ -48,7 +42,7 @@ class WidgetNewItem extends React.Component {
                             {
                                 this.state.widget.contents.filter(value => value.type == "text").map((value, ppIndex) => {
                                     return (
-                                        <Typography key={ppIndex} variant='body2' color={value.style && value.style.color  ? this.state.widget.dataSources[value.style.color] : "text.secondary"}>
+                                        <Typography key={ppIndex} variant='body2' color={value.style && value.style.color ? this.state.widget.dataSources[value.style.color] : "text.secondary"}>
                                             {value.example}
                                         </Typography>
                                     )
@@ -59,29 +53,27 @@ class WidgetNewItem extends React.Component {
                     <Collapse in={this.props.open} timeout="auto" unmountOnExit>
                         <Divider />
                         {
-                            this.props.settings.length > 0 && <CardHeader titleTypographyProps={{ variant: 'subtitle1' }} action={
-                                <IconButton onClick={() => { this.props.onClose() }} aria-label="settings">
-                                    <ExpandLess />
-                                </IconButton>
-                            } style={{ paddingBottom: 8 }} title={this.state.widget.name} />}
-
-                        {
                             this.props.settings.length > 0 &&
-                            <CardContent style={{ paddingBottom: 4, paddingTop: 4 }}>
+                            <CardContent style={{ padding: 10 }}>
+                                <Grid container spacing={1} >
                                 {
-                                    this.props.settings.map((settings, index) => {
+                                    this.props.settings.map((setting, index) => {
                                         return (
-                                            <div key={index} >
-                                                <Action
-                                                    setState={this.props.setState} action={settings}
-                                                    action={settings}
-                                                    isDisabled={settings.type == "oauth2" && (this.state.localisation == false || this.state.reference.length == 0)}
-
-                                                />
-                                            </div>
+                                            <Action
+                                                xs={12} 
+                                                md={12} 
+                                                lg={12}
+                                                key={"widget-" + setting.id}
+                                                id={"widget-" + setting.id}
+                                                options={setting.options}
+                                                label={String.capitalizeFirstLetter(setting.id.split("_")[0])}
+                                                setState={this.props.setState}
+                                                action={setting}
+                                            />
                                         )
                                     })
                                 }
+                                </Grid>
                             </CardContent>
                         }
                         <CardActions>

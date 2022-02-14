@@ -1,20 +1,18 @@
 import React from 'react'
-import { Link } from "react-router-dom"
-import Moment from 'moment'
-import { Add, Delete, Settings, QrCode } from '@mui/icons-material'
-import { FormControl, Card, CardActionArea, Grid, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@mui/material'
+import { Card, CardActionArea, Grid, Typography, Paper } from '@mui/material'
 import Request from '../../../utils/Request'
-import Alert from '../../../components/Alert'
 import Desktop from '../../../components/Desktop'
 import AddButton from '../../../components/views/AddButton'
+import Loading from '../../../components/Loading'
 
-class Smartobject extends React.Component {
+class UserList extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
             page: 0,
             users: [],
+            loading: true,
             profiles: []
         }
         props.setTitle("User")
@@ -30,6 +28,7 @@ class Smartobject extends React.Component {
             this.props.setMessage(resultProfile.package + " : " + resultProfile.message)
         } else {
             this.setState({
+                loading: false,
                 users: result.data,
                 profiles: resultProfile.data
             })
@@ -61,17 +60,14 @@ class Smartobject extends React.Component {
         return (
             <>
                 <Desktop isMobile={this.props.isMobile}>
-                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                        <Typography variant='h5' >User</Typography>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Typography variant='h6' fontWeight='bold' >User</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >User list</Typography>
                     </Paper>
                 </Desktop>
-                <Grid container spacing={2}>
-                    {
-                        this.state.loading ?
-                            <>
-                            </>
-                            :
+                <Loading loading={this.state.loading}>
+                    <Grid container spacing={1} style={{marginTop: 0}}>
+                        {
                             this.state.users.map(user => {
                                 let profile = this.state.profiles.filter(profile => {
                                     return profile.id == user.profile
@@ -80,10 +76,10 @@ class Smartobject extends React.Component {
                                     <Grid item xs={12} md={6} lg={4} >
                                         <Card variant={'outlined'}   >
                                             <CardActionArea style={{ padding: 12, display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }} onClick={() => { this.props.history.push('/user/' + user.id) }}  >
-                                                <Grid container spacing={2}>
+                                                <Grid container spacing={1}>
                                                     <Grid item xs={12} md={12} lg={12} >
                                                         <Typography variant='subtitle1'  >
-                                                            {capitalizeFirstLetter(user.login)}
+                                                            {String.capitalizeFirstLetter(user.login)}
                                                         </Typography>
                                                         {
                                                             profile.length == 0 ?
@@ -92,7 +88,7 @@ class Smartobject extends React.Component {
                                                                 </Typography>
                                                                 :
                                                                 <Typography variant='body2' color="text.secondary"  >
-                                                                    {capitalizeFirstLetter(profile[0].name)}
+                                                                    {String.capitalizeFirstLetter(profile[0].name)}
                                                                 </Typography>
                                                         }
                                                     </Grid>
@@ -102,17 +98,14 @@ class Smartobject extends React.Component {
                                     </Grid>
                                 )
                             })
-                    }
-                </Grid>
-                <AddButton to="/user/new" />
+                        }
+                    </Grid>
+                    <AddButton to="/user/new" />
+                </Loading>
             </>
         )
     }
 }
 
 
-function capitalizeFirstLetter(string = "") {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-export default Smartobject
+export default UserList

@@ -54,7 +54,7 @@ class Sidebar extends React.Component {
             let pathname = location.pathname.split("/")
             return (
                 <>
-                    <AppBar elevation={0} variant='outlined' position="static" >
+                    <AppBar variant='outlined' position="static" >
                         <Toolbar >
                             <IconButton
                                 onClick={() => { this.onClick() }}
@@ -64,17 +64,17 @@ class Sidebar extends React.Component {
                             >
                                 {
                                     this.props.actionType == "list" ?
-                                    <Menu /> : <ArrowBackIos/>
+                                    <Menu /> : <ArrowBackIos />
 
                                 }
                                 </IconButton> 
                             <Link to="/smartobject" onClick={() => { this.navigate() }} style={{ paddingTop: 10, paddingBottom: 10, display: 'flex', textDecoration: 'none', color: 'white', flexDirection: 'row', alignItems: 'center' }}>
-                                <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ minHeight: 30, minWidth: 30, height: '3vh', width: '3vh', borderRadius: 7, marginRight: 10 }} />
+                                <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ minHeight: 40, minWidth: 40, height: '3vh', width: '3vh', borderRadius: 7, marginRight: 10 }} />
                                 {
                                     this.props.title.length == 0 ?
                                     <Skeleton height={30} variant="text" style={{width: 100}} />
                                     :
-                                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                                    <Typography variant="h5" fontWeight='bold' component="div" sx={{ flexGrow: 1 }}>
                                         {this.props.title}
                                     </Typography>
                                 }
@@ -87,10 +87,10 @@ class Sidebar extends React.Component {
                                 <Box style={{ display: 'flex', justifyContent: 'flex-start', padding: 5, alignContent: 'center', alignSelf: 'center', alignItems: 'center' }}>
                                     <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ minHeight: 40, minWidth: 40, height: '7vh', width: '7vh', borderRadius: 7, marginLeft: 15 }} />
                                     <Box>
-                                        <Typography variant='h5' style={{ paddingTop: 15, paddingLeft: 10 }}>
+                                        <Typography variant='h5' fontWeight={'bold'} style={{ paddingTop: 15, paddingLeft: 10 }}>
                                             Intendant
                                         </Typography>
-                                        <Typography variant='subtitle1' style={{ paddingTop: 0, paddingBottom: 15, paddingLeft: 10 }}>
+                                        <Typography variant='subtitle2' style={{ paddingTop: 0, paddingBottom: 15, paddingLeft: 10 }}>
                                             Smart home
                                         </Typography>
                                     </Box>
@@ -203,10 +203,10 @@ class Sidebar extends React.Component {
                         <Box style={{ display: 'flex', justifyContent: 'flex-start', padding: 5, alignContent: 'center', alignSelf: 'center', alignItems: 'center' }}>
                             <img src={process.env.PUBLIC_URL + "/logo.svg"} style={{ minHeight: 40, minWidth: 40, height: '7vh', width: '7vh', borderRadius: 7, marginLeft: 15 }} />
                             <Box>
-                                <Typography variant='h5' style={{ paddingTop: 15, paddingLeft: 10 }}>
+                                <Typography variant='h5' fontWeight={'bold'} style={{ paddingTop: 15, paddingLeft: 10 }}>
                                     Intendant
                                 </Typography>
-                                <Typography variant='subtitle1' style={{ paddingTop: 0, paddingBottom: 15, paddingLeft: 10 }}>
+                                <Typography variant='subtitle2' style={{ paddingTop: 0, paddingBottom: 15, paddingLeft: 10 }}>
                                     Smart home
                                 </Typography>
                             </Box>
@@ -313,8 +313,5 @@ class Sidebar extends React.Component {
 
 }
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 export default withRouter(Sidebar) 

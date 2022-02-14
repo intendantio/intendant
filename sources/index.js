@@ -63,10 +63,12 @@ class Core {
         this.controller.essential = new Essential(this.controller)
         this.controller.process = new Process(this.manager.smartobject, this.manager.module,this.controller.essential)
 
+        this.manager.smartobject.smartobjectController = this.controller.smartobject
 
         setTimeout(() => {
             this.api = new API(this)
             this.manager.rapport.initialisation()
+            this.manager.smartobject.before()
         },1000)
     }
 

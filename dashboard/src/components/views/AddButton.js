@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 
 function AddButton(props) {
     return (
-        <Card variant='outlined' style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
+        <Card variant='outlined' style={{ width: 'min-content', marginTop: 8, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
             <Link to={props.to}>
                 <IconButton style={{borderRadius: 0 }} >
-                    <Add />
+                    <Add  />
                 </IconButton>
             </Link>
         </Card>

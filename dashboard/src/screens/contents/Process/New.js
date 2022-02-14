@@ -1,10 +1,8 @@
 import React from 'react'
-import Alert from '../../../components/Alert'
 import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
 
-import { Grid, Card, Step, StepLabel, Stepper, Box, Accordion, AccordionSummary, AccordionDetails, Typography, ToggleButtonGroup, Button, ToggleButton, Paper, Divider, CardHeader, CardActions, CardActionArea, Tooltip, Switch, ButtonGroup, TextField, Checkbox } from '@mui/material'
-import { ToggleOff, RadioButtonChecked, ToggleOn, ExpandMore, Lightbulb, Thermostat, Alarm, SettingsRemote, Cloud, NavigateNext } from '@mui/icons-material'
+import { Grid, Card, Step, StepLabel, Stepper, Typography, Paper } from '@mui/material'
 
 import TypeProcess from '../../../components/process/TypeProcess'
 import SwitchState from '../../../components/process/SwitchState'
@@ -16,6 +14,7 @@ import ListSettings from '../../../components/process/ListSettings'
 import MergeActions from '../../../components/process/MergeActions'
 import Descriptions from '../../../components/process/Descriptions'
 import StepperProxy from '../../../components/StepperProxy'
+import Loading from '../../../components/Loading'
 
 
 
@@ -129,12 +128,6 @@ class NewRapport extends React.Component {
 
 
     async submitDescription() {
-
-
-
-
-
-
         let process = {
             description: this.state.description,
             description_on: this.state.descriptionOn,
@@ -149,7 +142,7 @@ class NewRapport extends React.Component {
         //Create input
         let used = new Map()
         this.state.settingsMode.forEach((settingMode, index) => {
-            
+
             if (settingMode == "dynamic") {
                 let options = []
 
@@ -162,14 +155,14 @@ class NewRapport extends React.Component {
                         })
                     }
                 }
-                if(this.state.useMerge) {
-                    if(used.has(this.state.settings[index].setting.id + "_" + this.state.settings[index].state)) {
+                if (this.state.useMerge) {
+                    if (used.has(this.state.settings[index].setting.id + "_" + this.state.settings[index].state)) {
                         return
                     }
-                    used.set(this.state.settings[index].setting.id + "_" + this.state.settings[index].state,true)
+                    used.set(this.state.settings[index].setting.id + "_" + this.state.settings[index].state, true)
                 }
 
-                if(this.state.useMerge) {
+                if (this.state.useMerge) {
                     process.inputs.push({
                         reference: this.state.settings[index].setting.id,
                         type: this.state.settings[index].setting.type,
@@ -184,7 +177,7 @@ class NewRapport extends React.Component {
                         state: this.state.settings[index].state
                     })
                 }
-                
+
             }
         })
 
@@ -214,7 +207,7 @@ class NewRapport extends React.Component {
                             }
                             break
                         case "dynamic":
-                            if(this.state.useMerge) {
+                            if (this.state.useMerge) {
                                 value = "{" + setting.setting.id + "}"
                             } else {
                                 value = "{" + setting.setting.id + "_" + setting.index + "}"
@@ -280,68 +273,70 @@ class NewRapport extends React.Component {
         return (
             <>
                 <Desktop isMobile={this.props.isMobile}>
-                    <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                        <Typography variant='h5' >New process</Typography>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Typography variant='h6' fontWeight='bold' >New process</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >TODO</Typography>
                     </Paper>
                 </Desktop>
-                <Card variant='outlined' style={{ padding: 10, marginBottom: 10 }}>
-                    <Stepper activeStep={{ mode: 0, action: 1, settings: 2, description: 3 }[this.state.step]} >
-                        <Step key={"mode"}>
-                            <StepLabel>{"Mode"}</StepLabel>
-                        </Step>
-                        <Step key={"action"}>
-                            <StepLabel>{"Action"}</StepLabel>
-                        </Step>
-                        <Step key={"settings"}>
-                            <StepLabel>{"Settings"}</StepLabel>
-                        </Step>
-                        <Step key={"description"}>
-                            <StepLabel>{"Description"}</StepLabel>
-                        </Step>
-                    </Stepper>
-                </Card>
-                <Grid container spacing={2} style={{ marginTop: -10 }} >
-                    <StepperProxy index={"mode"} value={this.state.step} >
-                        <TypeProcess onChange={(mode) => { this.submitMode(mode) }} />
-                    </StepperProxy>
-                    <StepperProxy index={"action"} value={this.state.step} >
-                        <TypeProduct product={this.state.product} onChange={(product) => { this.setState({ product: product, index: -1 }) }} />
-                        {
-                            this.state.mode == "button" ? null :
-                                <SwitchState actionsOff={this.state.actionsOff} actionsOn={this.state.actionsOn} state={this.state.currentState} onChange={(state) => { this.setState({ currentState: state, index: -1 }) }} />
-                        }
-                        <NextButton xs={4} md={this.state.mode == "button" ? 8 : 5} lg={this.state.mode == "button" ? 8 : 5} onClick={() => { this.submitAction() }} />
-                        <ExecuteActions mode={this.state.mode} state={this.state.currentState} actions={this.state.currentState == "on" ? this.state.actionsOn : this.state.actionsOff} onChange={(action) => { this.updateAction(action) }} />
-                        {
-                            this.state.product == "cloud" ?
-                                <>{/*TODO*/}</>
-                                :
-                                <ListSmartobjectsActions
-                                    smartobjects={this.state.smartobjects.filter(smartobject => {
-                                        return smartobject.configuration.product == this.state.product
-                                    })}
-                                    actions={this.state.currentState == "on" ? this.state.actionsOn : this.state.actionsOff}
-                                    index={this.state.index}
-                                    onOpen={(index) => { this.setState({ index: this.state.index == index ? -1 : index }) }}
-                                    onChange={(action, parent) => { this.updateAction(action, parent) }}
-                                />
-                        }
-                    </StepperProxy>
-                    <StepperProxy index={"settings"} value={this.state.step} >
-                        <MergeActions value={this.state.useMerge} onChange={(value) => { this.setState({ useMerge: value }) }} disabled={this.state.canMerge == false} />
-                        <NextButton xs={12} md={2} lg={2} onClick={() => { this.submitSettings() }} />
-                        <ListSettings settings={this.state.settings} mode={this.state.mode} isMobile={this.props.isMobile}
-                            settingsMode={this.state.settingsMode} setState={this.setState.bind(this)}
-                            onChange={(settingsMode) => { this.setState({ settingsMode: settingsMode }) }}
-                        />
-                    </StepperProxy>
-                    <StepperProxy index={"description"} value={this.state.step} >
-                        <Descriptions mode={this.state.mode} onClick={() => { this.submitDescription() }} onChange={(mode, value) => {
-                            this.setState(mode == "" ? { description: value } : mode == "on" ? { descriptionOn: value } : { descriptionOff: value })
-                        }} />
-                    </StepperProxy>
-                </Grid>
+                <Loading loading={this.state.loading}>
+                    <Card variant='outlined' style={{ padding: 10, marginTop: 8 }}>
+                        <Stepper activeStep={{ mode: 0, action: 1, settings: 2, description: 3 }[this.state.step]} >
+                            <Step key={"mode"}>
+                                <StepLabel>{"Mode"}</StepLabel>
+                            </Step>
+                            <Step key={"action"}>
+                                <StepLabel>{"Action"}</StepLabel>
+                            </Step>
+                            <Step key={"settings"}>
+                                <StepLabel>{"Settings"}</StepLabel>
+                            </Step>
+                            <Step key={"description"}>
+                                <StepLabel>{"Description"}</StepLabel>
+                            </Step>
+                        </Stepper>
+                    </Card>
+                    <Grid container spacing={1} style={{ marginTop: 0 }} >
+                        <StepperProxy index={"mode"} value={this.state.step} >
+                            <TypeProcess onChange={(mode) => { this.submitMode(mode) }} />
+                        </StepperProxy>
+                        <StepperProxy index={"action"} value={this.state.step} >
+                            <TypeProduct product={this.state.product} onChange={(product) => { this.setState({ product: product, index: -1 }) }} />
+                            {
+                                this.state.mode == "button" ? null :
+                                    <SwitchState actionsOff={this.state.actionsOff} actionsOn={this.state.actionsOn} state={this.state.currentState} onChange={(state) => { this.setState({ currentState: state, index: -1 }) }} />
+                            }
+                            <NextButton xs={4} md={this.state.mode == "button" ? 8 : 5} lg={this.state.mode == "button" ? 8 : 5} onClick={() => { this.submitAction() }} />
+                            <ExecuteActions mode={this.state.mode} state={this.state.currentState} actions={this.state.currentState == "on" ? this.state.actionsOn : this.state.actionsOff} onChange={(action) => { this.updateAction(action) }} />
+                            {
+                                this.state.product == "cloud" ?
+                                    <>{/*TODO*/}</>
+                                    :
+                                    <ListSmartobjectsActions
+                                        smartobjects={this.state.smartobjects.filter(smartobject => {
+                                            return smartobject.configuration.product == this.state.product
+                                        })}
+                                        actions={this.state.currentState == "on" ? this.state.actionsOn : this.state.actionsOff}
+                                        index={this.state.index}
+                                        onOpen={(index) => { this.setState({ index: this.state.index == index ? -1 : index }) }}
+                                        onChange={(action, parent) => { this.updateAction(action, parent) }}
+                                    />
+                            }
+                        </StepperProxy>
+                        <StepperProxy index={"settings"} value={this.state.step} >
+                            <MergeActions value={this.state.useMerge} onChange={(value) => { this.setState({ useMerge: value }) }} disabled={this.state.canMerge == false} />
+                            <NextButton xs={12} md={2} lg={2} onClick={() => { this.submitSettings() }} />
+                            <ListSettings settings={this.state.settings} mode={this.state.mode} isMobile={this.props.isMobile}
+                                settingsMode={this.state.settingsMode} setState={this.setState.bind(this)}
+                                onChange={(settingsMode) => { this.setState({ settingsMode: settingsMode }) }}
+                            />
+                        </StepperProxy>
+                        <StepperProxy index={"description"} value={this.state.step} >
+                            <Descriptions mode={this.state.mode} onClick={() => { this.submitDescription() }} onChange={(mode, value) => {
+                                this.setState(mode == "" ? { description: value } : mode == "on" ? { descriptionOn: value } : { descriptionOff: value })
+                            }} />
+                        </StepperProxy>
+                    </Grid>
+                </Loading>
             </>
         )
     }

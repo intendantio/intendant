@@ -5,6 +5,13 @@ import React from 'react'
 import Context from './utils/Context'
 import Alert from './components/Alert'
 
+String.capitalizeFirstLetter = function (string) {
+  if (string == undefined || string.length == 0) {
+    return ""
+  }
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -16,7 +23,7 @@ class App extends React.Component {
       title: "Intendant",
       setTitle: (title) => {
         this.setState({
-          title: capitalizeFirstLetter(title)
+          title: String.capitalizeFirstLetter(title)
         })
       },
       setActionType: (actionType) => {
@@ -37,7 +44,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this.mediaQueries('(max-width: 1200px),(max-height: 675px)')
-
   }
 
   mediaQueries(query) {
@@ -62,11 +68,6 @@ class App extends React.Component {
       </Context.Provider>
     )
   }
-
-}
-
-function capitalizeFirstLetter(string = "") {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 

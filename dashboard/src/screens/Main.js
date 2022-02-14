@@ -19,7 +19,6 @@ import DetailRapport from './contents/Rapport/Detail'
 import User from './contents/User/List'
 import NewUser from './contents/User/New'
 import DetailUser from './contents/User/Detail'
-import NewPassword from './contents/User/NewPassword'
 import Sidebar from '../components/Sidebar'
 import Room from './contents/Room/List'
 import NewRoom from './contents/Room/New'
@@ -42,8 +41,8 @@ function Main(mainProps) {
             {({ title, setTitle, setActionType, actionType, setMessage }) => (
                 <Router basename='/admin'>
                     <Sidebar title={title} actionType={actionType} isMobile={mainProps.isMobile} onDisconnect={() => { mainProps.onDisconnect() }} />
-                    <main id='main' style={{ paddingTop: mainProps.isMobile ? 20 : '4vh', width: '100vw', paddingLeft: '5vw', paddingRight: '5vw', overflowX: 'hidden', overflowY: 'visible' }} >
-                        <div style={{ marginLeft: mainProps.isMobile ? 0 : 240, height: '100vh' }}>
+                    <main id='main' style={{ paddingTop: mainProps.isMobile ? 8 : '4vh', width: '100vw', paddingLeft: '5vw', paddingRight: '5vw', overflowX: 'hidden', overflowY: 'visible' }} >
+                        <div style={{ marginLeft: mainProps.isMobile ? 0 : 240, height: '96vh' }}>
                             <Switch>
                                 <Route exact path="/" render={(props) => <Room setMessage={setMessage} setTitle={setTitle} setActionType={setActionType} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/smartobject" render={(props) => <SmartObject setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
@@ -67,7 +66,6 @@ function Main(mainProps) {
                                 <Route exact path="/user" render={(props) => <User setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/user/new" render={(props) => <NewUser setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/user/:id" render={(props) => <DetailUser setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
-                                <Route exact path="/user/:id/password" render={(props) => <NewPassword setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/room" render={(props) => <Room setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/room/new" render={(props) => <NewRoom setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/room/:id" render={(props) => <DetailRoom setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />

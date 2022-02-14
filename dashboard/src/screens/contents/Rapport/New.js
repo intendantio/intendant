@@ -1,12 +1,9 @@
 import React from 'react'
-import Alert from '../../../components/Alert'
-import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
 
-import { Grid, Card, Step, StepLabel, Stepper, Box, Accordion, AccordionSummary, Typography, Button, Paper, Divider, CardHeader, CardActions, CardActionArea, Tooltip } from '@mui/material'
-import { ExpandLess, ExpandMore } from '@mui/icons-material'
-import WidgetNewItem from '../../../components/WidgetNewItem'
+import { Grid, Card, Step, StepLabel, Stepper, Typography, Paper, CardActionArea } from '@mui/material'
 import NewTypePie from '../../../components/NewTypePie'
+import Loading from '../../../components/Loading'
 
 const INTERVAL = [
     {
@@ -72,30 +69,23 @@ class NewRapport extends React.Component {
         } else if (resultConfigurationSmartobject.error) {
             this.props.setMessage(resultConfigurationSmartobject.package + " : " + resultConfigurationSmartobject.message)
         } else {
-            let configurations = resultConfigurationModule.data
-            resultConfigurationSmartobject.data.forEach(smartobject => {
-                if (smartobject.configuration != null) {
-                    smartobject.configuration.smartobject = {
-                        id: smartobject.id,
-                        reference: smartobject.reference
-                    }
-                    configurations.unshift(smartobject.configuration)
-                }
+            let smartobjects = resultConfigurationSmartobject.data.filter(smartobject => {
+                return smartobject.dataSources.length > 0
             })
 
-            configurations = configurations.filter(configuration => {
-                return Array.isArray(configuration.widgets) && configuration.widgets.length > 0
-            })
+            if (smartobjects.length == 0) {
+                this.props.setMessage("No smartobject available")
+                this.props.history.push('/rapport')
+            } else {
+                this.setState({ loading: false, configurations: smartobjects })
+            }
 
-            this.setState({ loading: false, configurations: configurations })
+            this.setState({ loading: false, configurations: smartobjects })
         }
     }
 
     selectSource(configuration, source) {
-
-        this.setState({
-            open: false
-        })
+        this.setState({ open: false })
         let settings = []
         let settingsId = []
         if (Array.isArray(configuration.dataSources)) {
@@ -129,12 +119,12 @@ class NewRapport extends React.Component {
                     <NewTypePie onSelect={(type) => { this.setState({ type: type, step: 1 }) }} />
                 )
             case 1:
-                return this.state.configurations.map(configuration => {
+                return this.state.configurations.map((configuration, index) => {
                     if (configuration.module == "module") {
                         return (
-                            <Grid item xs={12} md={12} lg={12} >
+                            <Grid key={index} item xs={12} md={12} lg={12} >
                                 <Card variant='outlined' >
-                                    <CardActionArea onClick={() => { this.setState({reference: configuration.name, configuration: configuration, step: 2 }) }} style={{ padding: 10 }}>
+                                    <CardActionArea onClick={() => { this.setState({ reference: configuration.name, configuration: configuration, step: 2 }) }} style={{ padding: 10 }}>
                                         <Typography variant='h6' color="text.secondary"  >
                                             {configuration.name}
                                         </Typography>
@@ -144,14 +134,14 @@ class NewRapport extends React.Component {
                         )
                     } else {
                         return (
-                            <Grid item xs={12} md={12} lg={12} >
+                            <Grid key={index} item xs={12} md={12} lg={12} >
                                 <Card variant='outlined'   >
-                                    <CardActionArea onClick={() => { this.setState({configuration: configuration, step: 2 }) }} style={{ padding: 10 }} >
+                                    <CardActionArea onClick={() => { this.setState({ configuration: configuration, step: 2 }) }} style={{ padding: 10 }} >
                                         <Typography variant='h6' color="text.secondary"  >
-                                            {configuration.smartobject.reference}
+                                            {configuration.reference}
                                         </Typography>
                                         <Typography variant='body2' color="text.secondary"  >
-                                            {configuration.name}
+                                            {configuration.configuration.name}
                                         </Typography>
                                     </CardActionArea>
                                 </Card>
@@ -160,27 +150,27 @@ class NewRapport extends React.Component {
                     }
                 })
             case 2:
-                return this.state.configuration.dataSources.map(dataSource => {
+                return this.state.configuration.dataSources.map((dataSource, index) => {
                     return (
-                        <Grid item xs={12} md={12} lg={12} >
+                        <Grid key={index} item xs={12} md={12} lg={12} >
                             <Card variant='outlined'   >
-                                <CardActionArea onClick={() => { this.setState({ reference: dataSource.id,  step: 3 }) }} style={{ padding: 10 }} >
+                                <CardActionArea onClick={() => { this.setState({ reference: dataSource.id, step: 3 }) }} style={{ padding: 10 }} >
                                     <Typography variant='h6' color="text.secondary"  >
-                                        {capitalizeFirstLetter(dataSource.id)}
+                                        {String.capitalizeFirstLetter(dataSource.id)}
                                     </Typography>
                                 </CardActionArea>
                             </Card>
                         </Grid>
                     )
                 })
-                case 3:
-                return INTERVAL.map(interval => {
+            case 3:
+                return INTERVAL.map((interval, index) => {
                     return (
-                        <Grid item xs={12} md={12} lg={12} >
+                        <Grid key={index} item xs={12} md={12} lg={12} >
                             <Card variant='outlined'   >
-                                <CardActionArea onClick={() => { this.setState({ loading: true,interval: interval.interval },() => { this.submit() }) }} style={{ padding: 10 }} >
+                                <CardActionArea onClick={() => { this.setState({ loading: true, interval: interval.interval }, () => { this.submit() }) }} style={{ padding: 10 }} >
                                     <Typography variant='h6' color="text.secondary"  >
-                                        {"Each " + capitalizeFirstLetter(interval.name)}
+                                        {"Each " + String.capitalizeFirstLetter(interval.name)}
                                     </Typography>
                                 </CardActionArea>
                             </Card>
@@ -197,8 +187,8 @@ class NewRapport extends React.Component {
             reference: this.state.reference,
             chart: this.state.type,
             interval: this.state.interval,
-            type: this.state.configuration.module,
-            object: this.state.configuration.module == "smartobject" ? this.state.configuration.smartobject.id : this.state.configuration.name,
+            type: this.state.configuration.configuration.module,
+            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id : this.state.configuration.name,
             settings: settings
         }).fetch("/api/rapports")
 
@@ -217,36 +207,34 @@ class NewRapport extends React.Component {
     render() {
         return (
             <>
-                <Paper variant="outlined" style={{ padding: 12, marginBottom: 10, justifyContent: 'left' }}>
-                    <Typography variant='h5' >New rapport</Typography>
+                <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                    <Typography variant='h6' fontWeight='bold' >New rapport</Typography>
                     <Typography variant='subtitle2' color="text.secondary" >TODO</Typography>
                 </Paper>
-                <Card variant='outlined' style={{ padding: 10, marginBottom: 10 }}>
-                    <Stepper activeStep={this.state.step} >
-                        <Step key={"type"}>
-                            <StepLabel>{"Type"}</StepLabel>
-                        </Step>
-                        <Step key={"source"}>
-                            <StepLabel>{"Source"}</StepLabel>
-                        </Step>
-                        <Step key={"data"}>
-                            <StepLabel>{"Data"}</StepLabel>
-                        </Step>
-                        <Step key={"interval"}>
-                            <StepLabel>{"Interval"}</StepLabel>
-                        </Step>
-                    </Stepper>
-                </Card>
-                <Grid container spacing={2} >
-                    {this.getStep()}
-                </Grid>
+                <Loading loading={this.state.loading}>
+                    <Card variant='outlined' style={{ padding: 10, marginTop: 8}}>
+                        <Stepper activeStep={this.state.step} >
+                            <Step key={"type"}>
+                                <StepLabel>{"Type"}</StepLabel>
+                            </Step>
+                            <Step key={"source"}>
+                                <StepLabel>{"Source"}</StepLabel>
+                            </Step>
+                            <Step key={"data"}>
+                                <StepLabel>{"Data"}</StepLabel>
+                            </Step>
+                            <Step key={"interval"}>
+                                <StepLabel>{"Interval"}</StepLabel>
+                            </Step>
+                        </Stepper>
+                    </Card>
+                    <Grid container spacing={1} style={{ marginTop: 0 }} >
+                        {this.getStep()}
+                    </Grid>
+                </Loading>
             </>
         )
     }
-}
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default NewRapport

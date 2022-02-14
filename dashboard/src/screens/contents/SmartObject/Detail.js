@@ -1,10 +1,15 @@
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
-import { Paper, Alert, Typography, TableContainer, Table, FormControl, Box, Select, MenuItem, TableBody, Divider, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch } from '@mui/material'
-import { FileCopy, Delete, Close, Add, Send } from '@mui/icons-material'
+import { Paper, Alert, Typography, Card, Grid, Accordion, Box, Modal, AccordionSummary, AccordionDetails, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch, Divider, CardActionArea } from '@mui/material'
+import { ExpandMore, Edit, Room, FlashOff, FlashOn, House, Cached, RocketLaunch } from '@mui/icons-material'
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'
+import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
+import Loading from '../../../components/Loading'
+import * as AbstractIcon from '@mui/icons-material'
+import DeleteButton from '../../../components/views/DeleteButton'
+
 
 class DetailSmartObject extends React.Component {
 
@@ -12,30 +17,42 @@ class DetailSmartObject extends React.Component {
         super(props)
         this.state = {
             id: props.match.params.id,
-            smartobject: null,
-            profiles: [],
+            smartobject: {
+                reference: "",
+                actions: [],
+                room: {},
+                state: {
+                    status: 'unknown'
+                }
+            },
+            expanded: "action",
             rooms: [],
-            loading: null,
-            referenceArguments: "",
-            valueArguments: "",
-            executeInformation: ""
+            modalOpen: false,
+            content: {},
+            loadingAction: "",
+            loading: true
         }
+        props.setTitle("")
+        props.setActionType("return")
     }
 
     async componentDidMount() {
-        let resultProfile = await new Request().get().fetch("/api/profiles")
         let resultRoom = await new Request().get().fetch("/api/rooms")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects/" + this.state.id)
-        if (resultProfile.error || resultSmartobject.error || resultRoom.error) {
+        if (resultRoom.error) {
+            this.props.setMessage(resultRoom.package + " : " + resultRoom.message)
+            this.props.history.push('/smartobject')
+        } else if (resultSmartobject.error) {
+            this.props.setMessage(resultSmartobject.package + " : " + resultSmartobject.message)
             this.props.history.push('/smartobject')
         } else {
-            this.setState({ smartobject: resultSmartobject.data, profiles: resultProfile.data, rooms: resultRoom.data })
+            this.props.setTitle(resultSmartobject.data.reference)
+            this.setState({ reference: resultSmartobject.data.reference, loadingAction: "", loading: false, smartobject: resultSmartobject.data, rooms: resultRoom.data })
         }
-        this.setState({ loading: null })
     }
 
-    async delete(id) {
-        let result = await new Request().delete().fetch("/api/smartobjects/" + id)
+    async delete() {
+        let result = await new Request().delete().fetch("/api/smartobjects/" + this.state.id)
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
         } else {
@@ -44,29 +61,35 @@ class DetailSmartObject extends React.Component {
     }
 
     async executeAction(action, settings) {
-        this.setState({ loading: action })
+        this.setState({ loadingAction: action.id })
         let tmp = {}
+        let resetState = {}
         for (let index = 0; index < settings.length; index++) {
-            let argument = settings[index];
-            let value = this.state["settings-" + argument.id]
-            if (value == undefined) {
-                value = argument.default
+            let setting = settings[index]
+            let value = this.state[action.id + "-" + setting.id]
+            resetState[action.id + "-" + setting.id] = null
+            if (value) {
+                tmp[setting.id] = value
+            } else {
+                tmp[setting.id] = null
             }
-            tmp[argument.id] = value
         }
-        let result = await new Request().post({ settings: tmp }).fetch("/api/smartobjects/" + this.state.id + "/actions/" + action)
+        this.setState(resetState)
+        let result = await new Request().post({ settings: tmp }).fetch("/api/smartobjects/" + this.state.id + "/actions/" + action.id)
         if (result.error) {
-            this.setState({ enabled: true, message: result.package + " : " + result.message, loading: null })
+            this.props.setMessage(result.package + " : " + result.message)
+            this.setState({ loadingAction: "" })
         } else {
-            if (result.data) {
-                this.setState({ executeInformation: JSON.stringify(result.data) })
-            }
+            this.setState({
+                modalOpen: true,
+                content: result
+            })
             this.componentDidMount()
         }
     }
 
-    async deleteSmartobjectArguments(pArguments) {
-        let result = await new Request().delete().fetch("/api/smartobjects/" + pArguments.smartobject + "/arguments/" + pArguments.id)
+    async updateRoom(room) {
+        let result = await new Request().post({ idRoom: room.id }).fetch("/api/smartobjects/" + this.state.smartobject.id + "/room")
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
         } else {
@@ -74,18 +97,8 @@ class DetailSmartObject extends React.Component {
         }
     }
 
-    async insertSmartobjectArguments(id, reference, value) {
-        let result = await new Request().post({ reference: reference, value: value }).fetch("/api/smartobjects/" + id + "/arguments")
-        if (result.error) {
-            this.props.setMessage(result.package + " : " + result.message)
-        } else {
-            this.setState({ referenceArguments: "", valueArguments: "" })
-            this.componentDidMount()
-        }
-    }
-
-    async insertProfile(smartobject, profile) {
-        let result = await new Request().post({ idProfile: profile.id, }).fetch("/api/smartobjects/" + smartobject.id + "/profiles")
+    async updateReference() {
+        let result = await new Request().post({ reference: this.state.reference }).fetch("/api/smartobjects/" + this.state.smartobject.id + "/reference")
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
         } else {
@@ -93,171 +106,161 @@ class DetailSmartObject extends React.Component {
         }
     }
 
-    async deleteProfile(smartobject, profile) {
-        let result = await new Request().delete().fetch("/api/smartobjects/" + smartobject.id + "/profiles/" + profile.id)
-        if (result.error) {
-            this.props.setMessage(result.package + " : " + result.message)
-        } else {
-            this.componentDidMount()
-        }
-    }
-
-    async updateRoom(smartobject, room) {
-        let result = await new Request().post({ idRoom: room.id, }).fetch("/api/smartobjects/" + smartobject.id + "/room")
-        if (result.error) {
-            this.props.setMessage(result.package + " : " + result.message)
-        } else {
-            this.componentDidMount()
-        }
-    }
-
-
-    setRoom(id) {
-        this.state.rooms.forEach(pRoom => {
-            if (pRoom.id === id) {
-                this.state.smartobject.room = pRoom
-                this.updateRoom(this.state.smartobject, pRoom)
-            }
-        })
-    }
 
     render() {
-        if (this.state.smartobject) {
-            return (
-                <div>
-                    <Paper variant="outlined" style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
-                        <div style={{ padding: 10, }}>
-                            <Typography variant='h5' >
-                                {this.state.smartobject.reference}
-                            </Typography>
-                            <Typography variant='subtitle1' >
-                                {this.state.smartobject.module}
-                            </Typography>
-                        </div>
-                        <Divider />
-                        <div style={{ padding: 10, paddingBottom: 0 }}>
-                            <Typography variant='h5' >
-                                Configuration
-                            </Typography>
-                            <Paper variant="outlined" style={{ marginTop: 10 }}>
-                                <TableContainer>
-                                    <Table >
-                                        <TableBody >
-                                            {this.state.smartobject.arguments.map((pArgument, index) => (
-                                                <TableRow key={index} >
-                                                    <TableCell style={{ borderBottom: 0 }} align="left">
-                                                        <Typography variant='subtitle1'>
-                                                            {pArgument.reference}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="left" style={{ width: '70%', borderBottom: 0 }}>
-                                                        <Typography variant='subtitle1'>
-                                                            {pArgument.value.slice(0, 50) + (pArgument.value.length > 50 ? " (...)" : "")}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell align="right" style={{ padding: 4, borderBottom: 0 }}>
-                                                        <IconButton onClick={() => { navigator.clipboard.writeText(pArgument.value) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                            <FileCopy />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                    <TableCell align="right" style={{ padding: 4, borderBottom: 0 }}>
-                                                        <IconButton onClick={() => { this.deleteSmartobjectArguments(pArgument) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                            <Delete />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                            <TableRow key={-1} >
-                                                <TableCell style={{ borderBottom: 0 }} align="left">
-                                                    <TextField value={this.state.referenceArguments} onChange={(event) => { this.setState({ referenceArguments: event.nativeEvent.target.value }) }} placeholder='Name' style={{ width: '100%' }}>
-                                                    </TextField>
-                                                </TableCell>
-                                                <TableCell style={{ borderBottom: 0 }} align="left">
-                                                    <TextField value={this.state.valueArguments} onChange={(event) => { this.setState({ valueArguments: event.nativeEvent.target.value }) }} placeholder='Value' style={{ width: '100%' }}>
-                                                    </TextField>
-                                                </TableCell>
-                                                <TableCell style={{ borderBottom: 0 }} align="left">
-                                                </TableCell>
-                                                <TableCell align="right" style={{ padding: 4, borderBottom: 0 }}>
-                                                    <IconButton onClick={() => { this.insertSmartobjectArguments(this.state.smartobject.id, this.state.referenceArguments, this.state.valueArguments) }} style={{ borderRadius: 5, margin: 0 }}>
-                                                        <Add />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </Paper>
-                        </div>
-                        <div style={{ padding: 10, paddingBottom: 0 }}>
-                            <Typography variant='h5' >
-                                {"Action"}
-                            </Typography>
-                            {
-                                this.state.smartobject.actions.map((action, index) => {
-                                    return (
-                                        <Paper variant="outlined" key={index} style={{ padding: 10, marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '100%' }}>
-                                            <Box >
-                                                <Button style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }} disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={'contained'}  >
-                                                    <Typography variant='body2'  >
-                                                        {action.name}
-                                                    </Typography>
-                                                </Button>
-                                            </Box>
-                                            {
-                                                action.settings.length > 0 ?
-                                                    <Box style={{ display: 'grid', gridRowGap: '10px', gridTemplateColumns: this.props.isMobile ? 'repeat(1,min-content)' : 'repeat(4,min-content)', marginTop: 10, marginBottom: 10 }}>
-                                                        {
-                                                            action.settings.map((setting, pIndex) => {
-                                                                return <Action  key={pIndex} options={setting.options} setState={this.setState.bind(this)} action={setting} />
-                                                            })
-                                                        }
-                                                    </Box> : null
-                                            }
-                                        </Paper>
-                                    )
-                                })
-                            }
-                        </div>
-                        {
-                            this.state.executeInformation.length > 0 ?
-                                <Alert style={{ overflow: 'auto', margin: 10 }} severity="success" action={
-                                    <IconButton onClick={() => { this.setState({ executeInformation: "" }) }} style={{ alignSelf: 'start' }} color="inherit" size="small">
-                                        <Close />
-                                    </IconButton>
-                                }>
-                                    <JSONPretty id="json-pretty" data={JSON.parse(this.state.executeInformation)}></JSONPretty>
-                                </Alert>
-                                :
-                                null
-                        }
-                        <div style={{ padding: 10, paddingBottom: 0 }}>
-                            <Typography variant='h5' >
-                                Localisation
-                            </Typography>
-                            <FormControl variant="outlined" style={{ marginRight: 10, width: '300px', marginTop: 10 }} >
-                                <Select value={this.state.smartobject.room.id} onChange={(event) => { this.setRoom(event.target.value) }} >
-                                    {
-                                        this.state.rooms.map((pRoom, index) => {
-                                            return <MenuItem key={index} value={pRoom.id} >{pRoom.name}</MenuItem>
-                                        })
-                                    }
-                                </Select>
-                            </FormControl>
-                        </div>
+        let lastGroup = ""
+        return (
+            <>
+                <Desktop {... this.props}>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Box style={{ display: 'flex', flex: 1 }} >
+                            <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
+                                <Typography variant='h6' fontWeight='bold'  >
+                                    {String.capitalizeFirstLetter(this.state.smartobject.reference)}
+                                </Typography>
+                                <Typography variant='subtitle2' color="text.secondary"  >
+                                    {String.capitalizeFirstLetter(this.state.smartobject.module)}
+                                </Typography>
+                            </Box>
+                        </Box>
                     </Paper>
-                    <Paper variant="outlined" style={{ width: 'min-content', marginTop: 10, marginBottom: 10, alignContent: 'center', justifyContent: 'center', alignSelf: 'center' }} >
-                        <IconButton onClick={() => { this.delete(this.state.id) }} style={{ borderRadius: 5 }}>
-                            <Delete />
-                        </IconButton>
-                    </Paper>
-                </div>
-            )
-        } else {
-            return (
-                null
-            )
-        }
+                </Desktop>
+                <Loading loading={this.state.loading}>
+                    <Grid container spacing={1} style={{ marginTop: 0 }}>
+                        <Grid item xs={12} md={12} lg={12} >
+                            <Accordion variant='outlined' expanded={this.state.expanded === 'action'} onChange={() => this.setState({ expanded: "action" })}>
+                                <AccordionSummary expandIcon={<ExpandMore />} >
+                                    <RocketLaunch style={{ fontSize: '28px' }} />
+                                    <Typography variant='h6' style={{ marginLeft: 5 }}>
+                                        Action
+                                    </Typography>
+                                </AccordionSummary>
+                                <Divider />
+                                <AccordionDetails>
+                                    <Grid container >
+                                        {
+                                            this.state.smartobject.actions.map((action, index) => {
+                                                let showDivider = action.group && action.group != lastGroup
+                                                lastGroup = action.group ? action.group : ""
+                                                return (
+                                                    <>
+
+                                                        <Grid key={index} item xs={12} md={12} lg={12} style={{ marginTop: 7 }} >
+                                                            {
+                                                                showDivider &&
+                                                                <Divider style={{ marginBottom: 14 }}>
+                                                                    <Typography textAlign='center' variant='subtitle1'>
+                                                                        {lastGroup}
+                                                                    </Typography>
+                                                                </Divider>
+                                                            }
+                                                            <Grid container spacing={action.settings.length == 0 && this.props.isMobile ? 0 : 2} >
+                                                                <Grid item xs={12} md={3} lg={2} >
+                                                                    <Card elevation={2}  >
+                                                                        <Button disabled={action.id == this.state.loadingAction} variant='contained' onClick={() => { this.executeAction(action, action.settings) }} style={{ width: '100%', flexDirection: 'row', display: 'flex' }}>
+                                                                            <Typography textAlign='center' variant='subtitle2'>
+                                                                                {action.name}
+                                                                            </Typography>
+                                                                        </Button>
+                                                                    </Card>
+                                                                </Grid>
+                                                                <Grid item xs={12} md={9} lg={9} style={{ alignSelf: 'center', paddingLeft: 10 }}>
+                                                                    <Grid container spacing={1}>
+                                                                        {
+                                                                            action.settings.length == 0 ?
+                                                                                null
+                                                                                :
+                                                                                action.settings.map((setting, index) => {
+                                                                                    return (
+                                                                                        <Action options={setting.options} label={String.capitalizeFirstLetter(setting.id)} setState={this.setState.bind(this)} id={action.id + "-" + setting.id} action={setting} />
+                                                                                    )
+                                                                                })
+                                                                        }
+                                                                    </Grid>
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Divider style={{ marginBottom: 7, marginTop: 14 }} />
+                                                        </Grid>
+                                                    </>
+                                                )
+                                            })
+                                        }
+                                    </Grid>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Grid>
+
+                        <Grid item xs={12} md={12} lg={12} >
+                            <Accordion variant='outlined' expanded={this.state.expanded === 'edit'} onChange={() => this.setState({ expanded: "edit" })}>
+                                <AccordionSummary expandIcon={<ExpandMore />} >
+                                    <Edit style={{ fontSize: '28px' }} />
+                                    <Typography variant='h6' style={{ marginLeft: 5 }}>
+                                        Edit
+                                    </Typography>
+                                </AccordionSummary>
+                                <Divider />
+                                <AccordionDetails>
+                                    <Grid container spacing={1} style={{marginTop: 2}}>
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <TextField 
+                                                value={this.state.reference} 
+                                                color={this.state.smartobject.reference != this.state.reference && "warning"}
+                                                onChange={(event) => { this.setState({ reference: event.nativeEvent.target.value }) }} 
+                                                onBlur={(event) => {this.updateReference() }}
+                                                style={{
+                                                    width: '100%', 
+                                                    marginRight: 10, 
+                                                    marginBottom: this.props.isMobile ? 10 : 0 
+                                                }} 
+                                                label="Name" 
+                                                variant="outlined" 
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12} >
+                            <Accordion variant='outlined' expanded={this.state.expanded === 'room'} onChange={() => this.setState({ expanded: "room" })}>
+                                <AccordionSummary expandIcon={<ExpandMore />} >
+                                    <House style={{ fontSize: '28px' }} />
+                                    <Typography variant='h6' style={{ marginLeft: 5 }}>
+                                        Room
+                                    </Typography>
+                                </AccordionSummary>
+                                <Divider />
+                                <AccordionDetails>
+                                    <Grid container spacing={1} style={{marginTop: 2}}>
+                                        {
+                                            this.state.rooms.map((room, index) => {
+                                                let CurrentIcon = AbstractIcon[room.icon]
+                                                return (
+                                                    <Grid key={index} item xs={12} md={3} lg={2}>
+                                                        <Button onClick={() => { this.updateRoom(room) }} variant={room.id == this.state.smartobject.room.id ? 'contained' : 'outlined'} style={{ padding: 5, paddingTop: 10, paddingBottom: 10, borderColor: 'white', width: '100%' }} >
+                                                            <CurrentIcon style={{ color: 'white' }} />
+                                                            <Typography variant='body1' style={{ marginLeft: 10, color: 'white' }}   >
+                                                                {room.name}
+                                                            </Typography>
+                                                        </Button>
+                                                    </Grid>
+                                                )
+                                            })
+                                        }
+                                    </Grid>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Grid>
+                    </Grid>
+                    <DeleteButton onClick={() => { this.delete() }} />
+                    <Modal open={this.state.modalOpen} style={{ top: '25%', left: '25%' }} onClose={() => { this.setState({ modalOpen: false }) }} >
+                        <Card variant='outlined' style={{ overflow: 'auto', maxHeight: '50vh', maxWidth: '50vw', padding: 20 }}>
+                            <JSONPretty style={{ fontSize: 12 }} id="json-pretty" data={this.state.content}></JSONPretty>
+
+                        </Card>
+                    </Modal>
+                </Loading>
+            </>
+        )
     }
 }
 
