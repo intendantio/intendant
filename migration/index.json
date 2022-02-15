@@ -1,10 +1,9 @@
 {
     "last": 20,
-    "versions": [
-        {
-            "version": 20,
+    "versions": {
+        "20": {
             "url": "https://raw.githubusercontent.com/intendantio/intendant/main/migration/20.sql",
             "release": "15/02/2022"
         }
-    ]
+    }
 }
