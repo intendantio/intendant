@@ -5,14 +5,9 @@ import Package from '../package.json'
 import Tracing from "../utils/Tracing"
 import Result from "../utils/Result"
 import StackTrace from '../utils/StackTrace'
+import Smartobject from './Smartobject'
 
 class Authentification extends Controller {
-
-    constructor(token, salt) {
-        super()
-        this.token = token
-        this.salt = salt
-    }
 
     async getAll() {
         try {
@@ -69,96 +64,124 @@ class Authentification extends Controller {
 
     async checkAuthorization(request = {}) {
         try {
-            let authorization = request.headers['authorization']
-            if (authorization == undefined) {
-                authorization = "Bearer aaaa.bbbb.cccc"
-            }
-            let authorizationSplit = authorization.split(" ")
-            if (authorizationSplit.length != 2) {
-                return new Result(Package.name, true, "Invalid token")
-            }
-            if (authorizationSplit[0] != "Bearer") {
-                return new Result(Package.name, true, "Invalid token")
-            }
-            let token = authorizationSplit[1]
-            let resultRequest = await this.sqlAuthorization.getOneByField({
-                reference: request.url,
-                method: request.method
-            })
-            if (resultRequest.error) {
-                return resultRequest
-            }
-            if (resultRequest.data == false) {
-                let resultInsert = await this.sqlAuthorization.insert({
-                    id: null,
-                    reference: request.url,
-                    method: request.method,
-                    secure: '1'
-                })
-                if (resultInsert.error) {
-                    return resultRequest
+            if (request.query.code) {
+                let resultQuery = await this.sqlSingleCode.getOneByField({ code: request.query.code })
+                if (resultQuery.error) {
+                    return resultQuery
                 }
-                let resultGetOne = await this.sqlAuthorization.getOneByField({
+                if (resultQuery.data == false) {
+                    Tracing.warning(Package.name, "Invalid single code authorization")
+                    return new Result(Package.name, true, "Invalid single code authorization")
+                }
+                let splitRequest = request.url.split("/")
+                if (splitRequest[1] == "smartobjects" && request.params.idSmartobject) {
+                    let singleCode = resultQuery.data
+                    let idSmartobject = parseInt(request.params.idSmartobject)
+                    if (parseInt(singleCode.smartobject) == idSmartobject) {
+                        return new Result(Package.name, false, "", {
+                            profile: -1,
+                            user: -1
+                        })
+                    } else {
+                        Tracing.warning(Package.name, "Invalid method to single code")
+                        return new Result(Package.name, true, "Invalid method to single code")
+                    }
+                } else {
+                    Tracing.warning(Package.name, "Invalid single code authorization")
+                    return new Result(Package.name, true, "Invalid single code authorization")
+                }
+            } else {
+                let authorization = request.headers['authorization']
+                if (authorization == undefined) {
+                    authorization = "Bearer aaaa.bbbb.cccc"
+                }
+                let authorizationSplit = authorization.split(" ")
+                if (authorizationSplit.length != 2) {
+                    return new Result(Package.name, true, "Invalid token")
+                }
+                if (authorizationSplit[0] != "Bearer") {
+                    return new Result(Package.name, true, "Invalid token")
+                }
+                let token = authorizationSplit[1]
+                let resultRequest = await this.sqlAuthorization.getOneByField({
                     reference: request.url,
                     method: request.method
                 })
-                if (resultGetOne.error) {
-                    return resultGetOne
+                if (resultRequest.error) {
+                    return resultRequest
                 }
-                await this.sqlAuthorizationProfile.insert({
-                    id: null,
-                    authorization: resultInsert.data.insertId,
-                    profile: 1
-                })
-                return new Result(Package.name, false, "")
-            }
-            if (resultRequest.data.secure === 0) {
-                return new Result(Package.name, false, "")
-            }
-            let resultJwt = Jwt.verifyAccessToken(token, this.token)
-            if (resultJwt.valid) {
-                let jwt = resultJwt.login.split("~")
-                let userRequest = await this.sqlUser.getOneByField({
-                    login: jwt[1]
-                })
-                if (jwt[0] == "anonymous") {
-                    let result = new Result(Package.name, false, "")
-                    result.profile = 1
-                    result.user = 1
-                    return result
+                if (resultRequest.data == false) {
+                    let resultInsert = await this.sqlAuthorization.insert({
+                        id: null,
+                        reference: request.url,
+                        method: request.method,
+                        secure: '1'
+                    })
+                    if (resultInsert.error) {
+                        return resultRequest
+                    }
+                    let resultGetOne = await this.sqlAuthorization.getOneByField({
+                        reference: request.url,
+                        method: request.method
+                    })
+                    if (resultGetOne.error) {
+                        return resultGetOne
+                    }
+                    await this.sqlAuthorizationProfile.insert({
+                        id: null,
+                        authorization: resultInsert.data.insertId,
+                        profile: 1
+                    })
+                    return new Result(Package.name, false, "")
                 }
-                if (jwt[0] != this.salt) {
+                if (resultRequest.data.secure === 0) {
+                    return new Result(Package.name, false, "")
+                }
+                let resultJwt = Jwt.verifyAccessToken(token, this.token)
+                if (resultJwt.valid) {
+                    let jwt = resultJwt.login.split("~")
+                    let userRequest = await this.sqlUser.getOneByField({
+                        login: jwt[1]
+                    })
+                    if (jwt[0] == "anonymous") {
+                        let result = new Result(Package.name, false, "")
+                        result.profile = 1
+                        result.user = 1
+                        return result
+                    }
+                    if (jwt[0] != this.salt) {
+                        return new Result(Package.name, true, "Invalid token")
+                    }
+                    if (userRequest.error) {
+                        return userRequest
+                    } else {
+                        if (userRequest.data) {
+                            let resultAuthorizationProfile = await this.sqlAuthorizationProfile.getOneByField({
+                                profile: userRequest.data.profile,
+                                authorization: resultRequest.data.id
+                            })
+                            if (resultAuthorizationProfile.error) {
+                                return resultAuthorizationProfile
+                            } else {
+                                if (resultAuthorizationProfile.data) {
+                                    let result = new Result(Package.name, false, "")
+                                    result.profile = userRequest.data.profile
+                                    result.user = userRequest.data.id
+                                    return result
+                                } else {
+                                    Tracing.warning(Package.name, "Forbidden")
+                                    return new Result(Package.name, true, "Forbidden")
+                                }
+                            }
+                        } else {
+                            Tracing.warning(Package.name, "Invalid user")
+                            return new Result(Package.name, true, "Invalid user")
+                        }
+                    }
+                } else {
+                    Tracing.warning(Package.name, "Invalid token")
                     return new Result(Package.name, true, "Invalid token")
                 }
-                if (userRequest.error) {
-                    return userRequest
-                } else {
-                    if (userRequest.data) {
-                        let resultAuthorizationProfile = await this.sqlAuthorizationProfile.getOneByField({
-                            profile: userRequest.data.profile,
-                            authorization: resultRequest.data.id
-                        })
-                        if (resultAuthorizationProfile.error) {
-                            return resultAuthorizationProfile
-                        } else {
-                            if (resultAuthorizationProfile.data) {
-                                let result = new Result(Package.name, false, "")
-                                result.profile = userRequest.data.profile
-                                result.user = userRequest.data.id
-                                return result
-                            } else {
-                                Tracing.warning(Package.name, "Forbidden")
-                                return new Result(Package.name, true, "Forbidden")
-                            }
-                        }
-                    } else {
-                        Tracing.warning(Package.name, "Invalid user")
-                        return new Result(Package.name, true, "Invalid user")
-                    }
-                }
-            } else {
-                Tracing.warning(Package.name, "Invalid token")
-                return new Result(Package.name, true, "Invalid token")
             }
         } catch (error) {
             StackTrace.save(error)

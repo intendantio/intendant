@@ -44,7 +44,7 @@ export default (app, core) => {
     app.post("/api/widgets",
         body('reference').isString().isLength({ min: 5 }).withMessage("Invalid reference {min: 5}"),
         body('type').isIn(["module", "smartobject"]).withMessage("Invalid type"),
-        body('object').isString().withMessage("Invalid object"),
+        body('object').isNumeric().withMessage("Invalid object"),
         body('settings').isArray().withMessage("Invalid settings"),
         async (request, result) => {
             let resultValid = validationResult(request)

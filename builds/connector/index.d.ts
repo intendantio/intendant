@@ -2,15 +2,18 @@ import Result from '../utils/Result'
 
 declare class Connector {
 
-    constructor(name: String);
+    constructor(name: String)
+
+    static migration(callback: Function): String
 
     private check(exec: String): Object
     private getWhere(fields: Object): Object
     private getSet(fields: Object): Object
 
     public getOne(id: Number): Promise<Result>
-    public getgetOneByFieldOne(wheres: Object): Promise<Result>
+    public getOneByField(wheres: Object): Promise<Result>
     public getAllByField(wheres: Object): Promise<Result>
+    public count(wheres: Object): Promise<Result>
     public updateAll(sets: Object, wheres: Object): Promise<Result>
     public getAll(): Promise<Result>
     public deleteOne(id: Number): Promise<Result>

@@ -4,12 +4,13 @@ import Connector from '../connector'
 import Tracing from '../utils/Tracing'
 import Result from '../utils/Result'
 import StackTrace from '../utils/StackTrace'
+import Manager from './Manager'
 
-class RoutinesManager {
+class Routine extends Manager {
 
     constructor(core) {
+        super()
         this.core = core
-        this.configuration = this.core.configuration
         this._instances = new Map()
         Tracing.verbose(Package.name, "Routine manager : start")
         this.initialisation()
@@ -46,4 +47,4 @@ class RoutinesManager {
 
 }
 
-export default RoutinesManager
+export default Routine

@@ -8,7 +8,7 @@ import { ToggleOff, RadioButtonChecked, ToggleOn, ExpandMore, Lightbulb, Thermos
 function TypeProduct(props) {
 
     return (
-        <Grid item xs={8} md={4} lg={4} style={{ minWidth: 'min-content' }} >
+        <Grid item xs={12} md={6} lg={4} style={{ minWidth: 'min-content' }} >
             <Card variant='outlined' >
                 <ToggleButtonGroup style={{ width: '100%' }} value={props.product} onChange={(event, product) => {
                     if (product != null) {
@@ -26,9 +26,6 @@ function TypeProduct(props) {
                     </ToggleButton >
                     <ToggleButton style={{ width: '100%' }} value="switch">
                         <SettingsRemote />
-                    </ToggleButton >
-                    <ToggleButton style={{ width: '100%' }} value="cloud">
-                        <Cloud />
                     </ToggleButton >
                     <ToggleButton style={{ width: '100%' }} value="bridge">
                         <Hub />

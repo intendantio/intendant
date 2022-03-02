@@ -1,10 +1,12 @@
 
 /* Create new widget model */
 
-CREATE TABLE widget(id INTEGER PRIMARY KEY, type TEXT, object TEXT, reference TEXT);
+CREATE TABLE widget(id INTEGER PRIMARY KEY, type TEXT, object INTEGER, reference TEXT);
 CREATE TABLE widget_argument(id INTEGER PRIMARY KEY,reference TEXT,value TEXT,type TEXT,widget INTEGER);
 
-CREATE TABLE rapport(id INTEGER PRIMARY KEY, chart TEXT, type TEXT, object TEXT, reference TEXT, interval INTEGER);
+DROP TABLE IF EXISTS rapport;
+
+CREATE TABLE rapport(id INTEGER PRIMARY KEY, chart TEXT, type TEXT, object INTEGER, reference TEXT, interval INTEGER);
 CREATE TABLE rapport_data(id INTEGER PRIMARY KEY, value TEXT, date TIMESTAMP, rapport INTEGER);
 CREATE TABLE rapport_argument(id INTEGER PRIMARY KEY,reference TEXT,value TEXT,type TEXT,rapport INTEGER);
 
@@ -15,12 +17,14 @@ DROP TABLE IF EXISTS process_action;
 DROP TABLE IF EXISTS process_action_argument;
 DROP TABLE IF EXISTS process_input_option;
 DROP TABLE IF EXISTS process_input;
+
 DROP TABLE IF EXISTS localisation;
 DROP TABLE IF EXISTS localisation_profile;
+
 DROP TABLE IF EXISTS espace;
 
 CREATE TABLE process(id INTEGER PRIMARY KEY, description TEXT, description_on TEXT, description_off TEXT, mode TEXT, state TEXT, room INTEGER);
-CREATE TABLE process_action(id INTEGER PRIMARY KEY,process INTEGER, type TEXT, object TEXT, action TEXT, state TEXT);
+CREATE TABLE process_action(id INTEGER PRIMARY KEY,process INTEGER, type TEXT, object INTEGER, action TEXT, state TEXT);
 CREATE TABLE process_action_argument(id INTEGER PRIMARY KEY, reference TEXT, value TEXT, process_action INTEGER, default_value TEXT);
 CREATE TABLE process_input(id INTEGER PRIMARY KEY,process INTEGER, reference TEXT, type TEXT, state TEXT);
 CREATE TABLE process_input_option(id INTEGER PRIMARY KEY, reference TEXT, value TEXT, process_input INTEGER);
@@ -43,8 +47,57 @@ CREATE TABLE user(id INTEGER PRIMARY KEY, login TEXT, imei TEXT, password TEXT, 
 DROP TABLE IF EXISTS user_history;
 CREATE TABLE user_history(id INTEGER PRIMARY KEY, type TEXT, action TEXT, user INTEGER, date TIMESTAMP);
 
+DROP TABLE IF EXISTS version;
+DROP TABLE IF EXISTS metadata;
 
 
+DROP TABLE IF EXISTS configuration;
+DROP TABLE IF EXISTS metadata;
+/*
+INSERT INTO metadata(reference,value) VALUES ("database",19)
+*/
+CREATE TABLE metadata(id INTEGER PRIMARY KEY, reference TEXT, value TEXT);
+
+
+DROP TABLE IF EXISTS single_code;
+CREATE TABLE single_code(id INTEGER PRIMARY KEY, code TEXT, smartobject INTEGER);
+
+
+
+DROP TABLE IF EXISTS routine;
+DROP TABLE IF EXISTS routine_effect;
+DROP TABLE IF EXISTS routine_effect_argument;
+DROP TABLE IF EXISTS routine_trigger;
+DROP TABLE IF EXISTS routine_trigger_argument;
+
+/*
+    Type automation
+    
+    - Récurrent (execute each time)
+    - Date  (execute in date)
+    - Event (execute when click on button)
+
+
+*/
+
+DROP TABLE IF EXISTS automation;
+DROP TABLE IF EXISTS automation_trigger;
+DROP TABLE IF EXISTS automation_action;
+DROP TABLE IF EXISTS automation_action_argument;
+
+
+CREATE TABLE automation(id INTEGER PRIMARY KEY, reference TEXT);
+CREATE TABLE automation_trigger(id INTEGER PRIMARY KEY, automation INTEGER, type TEXT, object INTEGER, trigger TEXT );
+CREATE TABLE automation_action(id INTEGER PRIMARY KEY, automation INTEGER, type TEXT, object INTEGER, action TEXT );
+CREATE TABLE automation_action_argument(id INTEGER PRIMARY KEY, reference TEXT, value TEXT, automation_action INTEGER);
+
+
+/*
+DROP TABLE IF EXISTS configuration;
+CREATE TABLE configuration(id INTEGER PRIMARY KEY, reference TEXT, value TEXT);
+INSERT INTO configuration (reference,value) VALUES ("database",19)
+INSERT INTO version (model) VALUES(19);
+*/
 
 /* 
     

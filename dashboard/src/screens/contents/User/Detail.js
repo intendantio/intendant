@@ -18,9 +18,7 @@ class DetailUser extends React.Component {
                 login: "",
                 imei: "",
                 histories: [],
-                profile: {
-                    id: ""
-                }
+                profile: ""
             }
         }
         props.setTitle("")
@@ -82,7 +80,7 @@ class DetailUser extends React.Component {
                         <Grid item xs={12} md={4} lg={4}>
                             <Card variant={'outlined'} style={{ padding: 10 }} >
                                 <FormControl>
-                                    <RadioGroup value={this.state.user.profile.id} onChange={(event) => { this.updateProfile(event.target.value) }} >
+                                    <RadioGroup value={this.state.user.profile} onChange={(event) => { this.updateProfile(event.target.value) }} >
                                         {
                                             this.state.profiles.map(profile => {
                                                 return (

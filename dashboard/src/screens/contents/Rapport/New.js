@@ -4,6 +4,9 @@ import Request from '../../../utils/Request'
 import { Grid, Card, Step, StepLabel, Stepper, Typography, Paper, CardActionArea } from '@mui/material'
 import NewTypePie from '../../../components/NewTypePie'
 import Loading from '../../../components/Loading'
+import Action from '../../../components/Action'
+import NextButton from '../../../components/NextButton'
+import Utils from '../../../utils/Utils'
 
 const INTERVAL = [
     {
@@ -52,6 +55,7 @@ class NewRapport extends React.Component {
         this.state = {
             loading: true,
             step: 0,
+            reference: "",
             interval: 0,
             configurations: [],
             configuration: {},
@@ -62,54 +66,59 @@ class NewRapport extends React.Component {
     }
 
     async componentDidMount() {
-        let resultConfigurationModule = await new Request().get().fetch("/api/modules/configuration")
-        let resultConfigurationSmartobject = await new Request().get().fetch("/api/smartobjects")
-        if (resultConfigurationModule.error) {
-            this.props.setMessage(resultConfigurationModule.package + " : " + resultConfigurationModule.message)
-        } else if (resultConfigurationSmartobject.error) {
-            this.props.setMessage(resultConfigurationSmartobject.package + " : " + resultConfigurationSmartobject.message)
+        let resultModules = await new Request().get().fetch("/api/modules")
+        let resultSmartobjects = await new Request().get().fetch("/api/smartobjects")
+        if (resultModules.error) {
+            this.props.setMessage(resultModules.package + " : " + resultModules.message)
+        } else if (resultSmartobjects.error) {
+            this.props.setMessage(resultSmartobjects.package + " : " + resultSmartobjects.message)
         } else {
-            let smartobjects = resultConfigurationSmartobject.data.filter(smartobject => {
-                return smartobject.dataSources.length > 0
-            })
 
-            if (smartobjects.length == 0) {
-                this.props.setMessage("No smartobject available")
+            let configurations = []
+
+            resultSmartobjects.data.forEach(smartobject => {
+                if (Array.isArray(smartobject.dataSources) && smartobject.dataSources.length > 0) {
+                    configurations.push(smartobject)
+                }
+            })
+            resultModules.data.forEach(pModule => {
+                if (Array.isArray(pModule.dataSources) && pModule.dataSources.length > 0) {
+                    configurations.push({
+                        configuration: pModule,
+                        name: pModule.name,
+                        reference: pModule.reference,
+                        widgets: pModule.widgets,
+                        dataSources: pModule.dataSources,
+                        actions: pModule.actions
+                    })
+                }
+            })
+            if (configurations.length == 0) {
+                this.props.setMessage("No sources available")
                 this.props.history.push('/rapport')
             } else {
-                this.setState({ loading: false, configurations: smartobjects })
+                this.setState({ loading: false, configurations: configurations })
             }
 
-            this.setState({ loading: false, configurations: smartobjects })
+            this.setState({ loading: false, configurations: configurations })
         }
     }
 
-    selectSource(configuration, source) {
+    selectSource(dataSource) {
         this.setState({ open: false })
         let settings = []
-        let settingsId = []
-        if (Array.isArray(configuration.dataSources)) {
-            let actions = []
-            configuration.dataSources.forEach(dataSource => {
-                if (source.dataSources.includes(dataSource.id) && actions.includes(dataSource.action) == false) {
-                    actions.push(dataSource.action)
-                }
-            })
-            configuration.actions.forEach(action => {
-                if (actions.includes(action.id)) {
-                    action.settings.forEach(setting => {
-                        if (settingsId.includes(setting.id) == false) {
-                            settings.push(setting)
-                            settingsId.push(setting.id)
-                        }
-                    })
-                }
 
-            })
-        }
-        this.setState({ source: source, settings: settings, configuration: configuration }, () => {
-            this.setState({ open: true })
+        this.state.configuration.actions.forEach(action => {
+            if (action.id == dataSource.action) {
+                settings = action.settings
+            }
         })
+
+        if (settings.length == 0) {
+            this.setState({ step: 4, reference: dataSource.id, settings: settings })
+        } else {
+            this.setState({ step: 3, reference: dataSource.id, settings: settings })
+        }
     }
 
     getStep() {
@@ -124,8 +133,8 @@ class NewRapport extends React.Component {
                         return (
                             <Grid key={index} item xs={12} md={12} lg={12} >
                                 <Card variant='outlined' >
-                                    <CardActionArea onClick={() => { this.setState({ reference: configuration.name, configuration: configuration, step: 2 }) }} style={{ padding: 10 }}>
-                                        <Typography variant='h6' color="text.secondary"  >
+                                    <CardActionArea onClick={() => { this.setState({ configuration: configuration, step: 2 }) }} style={{ padding: 10 }}>
+                                        <Typography variant='subtitle1'  >
                                             {configuration.name}
                                         </Typography>
                                     </CardActionArea>
@@ -137,10 +146,10 @@ class NewRapport extends React.Component {
                             <Grid key={index} item xs={12} md={12} lg={12} >
                                 <Card variant='outlined'   >
                                     <CardActionArea onClick={() => { this.setState({ configuration: configuration, step: 2 }) }} style={{ padding: 10 }} >
-                                        <Typography variant='h6' color="text.secondary"  >
+                                        <Typography variant='subtitle1'  >
                                             {configuration.reference}
                                         </Typography>
-                                        <Typography variant='body2' color="text.secondary"  >
+                                        <Typography variant='caption' color="text.secondary"  >
                                             {configuration.configuration.name}
                                         </Typography>
                                     </CardActionArea>
@@ -150,12 +159,13 @@ class NewRapport extends React.Component {
                     }
                 })
             case 2:
+
                 return this.state.configuration.dataSources.map((dataSource, index) => {
                     return (
                         <Grid key={index} item xs={12} md={12} lg={12} >
                             <Card variant='outlined'   >
-                                <CardActionArea onClick={() => { this.setState({ reference: dataSource.id, step: 3 }) }} style={{ padding: 10 }} >
-                                    <Typography variant='h6' color="text.secondary"  >
+                                <CardActionArea onClick={() => { this.selectSource(dataSource) }} style={{ padding: 10 }} >
+                                    <Typography variant='subtitle1' >
                                         {String.capitalizeFirstLetter(dataSource.id)}
                                     </Typography>
                                 </CardActionArea>
@@ -164,12 +174,29 @@ class NewRapport extends React.Component {
                     )
                 })
             case 3:
+                return (
+                    <>
+                        {
+                            this.state.settings.map((setting, index) => {
+                                return (
+                                    <Grid key={index} item xs={12} md={12} lg={12} >
+                                        <Card variant='outlined' style={{ padding: 10 }}>
+                                            <Action options={setting.options} label={String.capitalizeFirstLetter(setting.id)} setState={this.setState.bind(this)} id={"rapport-" + setting.id} action={setting} />
+                                        </Card>
+                                    </Grid>
+                                )
+                            })
+                        }
+                        <NextButton xs={12} md={12} lg={12} onClick={() => { this.setState({ step: 4 }) }} />
+                    </>
+                )
+            case 4:
                 return INTERVAL.map((interval, index) => {
                     return (
                         <Grid key={index} item xs={12} md={12} lg={12} >
                             <Card variant='outlined'   >
                                 <CardActionArea onClick={() => { this.setState({ loading: true, interval: interval.interval }, () => { this.submit() }) }} style={{ padding: 10 }} >
-                                    <Typography variant='h6' color="text.secondary"  >
+                                    <Typography variant='subtitle1'  >
                                         {"Each " + String.capitalizeFirstLetter(interval.name)}
                                     </Typography>
                                 </CardActionArea>
@@ -183,12 +210,22 @@ class NewRapport extends React.Component {
     async submit() {
 
         let settings = []
+        let resetState = {}
+        for (let indexSettings = 0; indexSettings < this.state.settings.length; indexSettings++) {
+            let setting = this.state.settings[indexSettings]
+            resetState["rapport-" + setting.id] = null
+            settings.push({
+                reference: setting.id,
+                value: this.state["rapport-" + setting.id] ? this.state["rapport-" + setting.id] : null,
+                type: typeof this.state["rapport-" + setting.id]
+            })
+        }
         let result = await new Request().post({
             reference: this.state.reference,
             chart: this.state.type,
             interval: this.state.interval,
             type: this.state.configuration.configuration.module,
-            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id : this.state.configuration.name,
+            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id : Utils.getSum(this.state.configuration.name) ,
             settings: settings
         }).fetch("/api/rapports")
 
@@ -209,10 +246,10 @@ class NewRapport extends React.Component {
             <>
                 <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
                     <Typography variant='h6' fontWeight='bold' >New rapport</Typography>
-                    <Typography variant='subtitle2' color="text.secondary" >TODO</Typography>
+                    <Typography variant='subtitle2' color="text.secondary" >Capture your data</Typography>
                 </Paper>
                 <Loading loading={this.state.loading}>
-                    <Card variant='outlined' style={{ padding: 10, marginTop: 8}}>
+                    <Card variant='outlined' style={{ padding: 10, marginTop: 8 }}>
                         <Stepper activeStep={this.state.step} >
                             <Step key={"type"}>
                                 <StepLabel>{"Type"}</StepLabel>
@@ -222,6 +259,9 @@ class NewRapport extends React.Component {
                             </Step>
                             <Step key={"data"}>
                                 <StepLabel>{"Data"}</StepLabel>
+                            </Step>
+                            <Step key={"settings"}>
+                                <StepLabel>{"Settings"}</StepLabel>
                             </Step>
                             <Step key={"interval"}>
                                 <StepLabel>{"Interval"}</StepLabel>

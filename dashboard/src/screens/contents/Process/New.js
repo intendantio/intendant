@@ -46,7 +46,7 @@ class NewRapport extends React.Component {
     }
 
     async componentDidMount() {
-        let resultModule = await new Request().get().fetch("/api/modules/configuration")
+        let resultModule = await new Request().get().fetch("/api/modules")
         let resultSmartobject = await new Request().get().fetch("/api/smartobjects")
         if (resultModule.error) {
             this.props.setMessage(resultModule.package + " : " + resultModule.message)
@@ -275,7 +275,7 @@ class NewRapport extends React.Component {
                 <Desktop isMobile={this.props.isMobile}>
                     <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
                         <Typography variant='h6' fontWeight='bold' >New process</Typography>
-                        <Typography variant='subtitle2' color="text.secondary" >TODO</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >Do multiple action at once</Typography>
                     </Paper>
                 </Desktop>
                 <Loading loading={this.state.loading}>

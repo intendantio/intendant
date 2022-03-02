@@ -6,15 +6,10 @@ import Package from "../package.json"
 
 class Essential extends Controller {
 
-    constructor(controllers) {
-        super()
-        this.controllers = controllers
-    }
-
     async sendNotification(settings = {}) {
         try {
-            let result = await this.controllers.client.getAll()
-            await this.controllers.notification.notify("Intendant", settings.message, result.data.map(data => data.token))
+            /*let result = await this.controllers.client.getAll()
+            await this.controllers.notification.notify("Intendant", settings.message, result.data.map(data => data.token))*/
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
@@ -25,7 +20,7 @@ class Essential extends Controller {
 
     async enableRoutine(settings = {}) {
         try {
-            await this.controllers.routine.updateStatus(settings.routine,1)
+            /*await this.controllers.routine.updateStatus(settings.routine,1)*/
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
@@ -36,7 +31,7 @@ class Essential extends Controller {
 
     async disableRoutine(settings = {}) {
         try {
-            await this.controllers.routine.updateStatus(settings.routine,0)
+            /*await this.controllers.routine.updateStatus(settings.routine,0)*/
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)

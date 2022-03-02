@@ -59,7 +59,7 @@ export default (app, core) => {
     app.post("/api/rapports",
         body('chart').isIn(["lineChart"]).withMessage("Invalid chart"),
         body('type').isIn(["smartobject", "module"]).withMessage("Invalid type"),
-        body('object').notEmpty().not().isObject().not().isArray().withMessage("Invalid object"),
+        body('object').isNumeric().withMessage("Invalid object"),
         body('reference').isString().withMessage("Invalid reference"),
         body('interval').isNumeric().withMessage("Invalid interval {min:120}"),
         body('settings').isArray().withMessage("Invalid settings"),

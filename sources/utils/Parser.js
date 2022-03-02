@@ -4,8 +4,8 @@ class Parser {
         try {
             switch (typeof value) {
                 case 'string':
-                    return value
                 case 'number':
+                    return value
                 case 'object':
                 case 'boolean':
                     return JSON.stringify(value)

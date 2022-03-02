@@ -82,7 +82,7 @@ class DetailSmartObject extends React.Component {
         } else {
             this.setState({
                 modalOpen: true,
-                content: result
+                content: result.data
             })
             this.componentDidMount()
         }
@@ -143,79 +143,42 @@ class DetailSmartObject extends React.Component {
                                                 let showDivider = action.group && action.group != lastGroup
                                                 lastGroup = action.group ? action.group : ""
                                                 return (
-                                                    <>
-
-                                                        <Grid key={index} item xs={12} md={12} lg={12} style={{ marginTop: 7 }} >
-                                                            {
-                                                                showDivider &&
-                                                                <Divider style={{ marginBottom: 14 }}>
-                                                                    <Typography textAlign='center' variant='subtitle1'>
-                                                                        {lastGroup}
-                                                                    </Typography>
-                                                                </Divider>
-                                                            }
-                                                            <Grid container spacing={action.settings.length == 0 && this.props.isMobile ? 0 : 2} >
-                                                                <Grid item xs={12} md={3} lg={2} >
-                                                                    <Card elevation={2}  >
-                                                                        <Button disabled={action.id == this.state.loadingAction} variant='contained' onClick={() => { this.executeAction(action, action.settings) }} style={{ width: '100%', flexDirection: 'row', display: 'flex' }}>
-                                                                            <Typography textAlign='center' variant='subtitle2'>
-                                                                                {action.name}
-                                                                            </Typography>
-                                                                        </Button>
-                                                                    </Card>
-                                                                </Grid>
-                                                                <Grid item xs={12} md={9} lg={9} style={{ alignSelf: 'center', paddingLeft: 10 }}>
-                                                                    <Grid container spacing={1}>
-                                                                        {
-                                                                            action.settings.length == 0 ?
-                                                                                null
-                                                                                :
-                                                                                action.settings.map((setting, index) => {
-                                                                                    return (
-                                                                                        <Action options={setting.options} label={String.capitalizeFirstLetter(setting.id)} setState={this.setState.bind(this)} id={action.id + "-" + setting.id} action={setting} />
-                                                                                    )
-                                                                                })
-                                                                        }
-                                                                    </Grid>
+                                                    <Grid key={index} item xs={12} md={12} lg={12} style={{ marginTop: 7 }} >
+                                                        {
+                                                            showDivider &&
+                                                            <Divider style={{ marginBottom: 14 }}>
+                                                                <Typography textAlign='center' variant='subtitle1'>
+                                                                    {lastGroup}
+                                                                </Typography>
+                                                            </Divider>
+                                                        }
+                                                        <Grid container spacing={action.settings.length == 0 && this.props.isMobile ? 0 : 2} >
+                                                            <Grid item xs={12} md={3} lg={3} >
+                                                                <Card elevation={2}  >
+                                                                    <Button disabled={action.id == this.state.loadingAction || this.state.smartobject.state.status != "online" } variant='contained' onClick={() => { this.executeAction(action, action.settings) }} style={{ width: '100%', flexDirection: 'row', display: 'flex' }}>
+                                                                        <Typography textAlign='center' variant='subtitle2'>
+                                                                            {action.name}
+                                                                        </Typography>
+                                                                    </Button>
+                                                                </Card>
+                                                            </Grid>
+                                                            <Grid item xs={12} md={9} lg={9} style={{ alignSelf: 'center', paddingLeft: 10 }}>
+                                                                <Grid container spacing={1}>
+                                                                    {
+                                                                        action.settings.map((setting, index) => {
+                                                                            return (
+                                                                                <Action options={setting.options} label={String.capitalizeFirstLetter(setting.id)} setState={this.setState.bind(this)} id={action.id + "-" + setting.id} action={setting} />
+                                                                            )
+                                                                        })
+                                                                    }
                                                                 </Grid>
                                                             </Grid>
-                                                            <Divider style={{ marginBottom: 7, marginTop: 14 }} />
                                                         </Grid>
-                                                    </>
+                                                        <Divider style={{ marginBottom: 7, marginTop: 14 }} />
+                                                    </Grid>
                                                 )
                                             })
                                         }
-                                    </Grid>
-                                </AccordionDetails>
-                            </Accordion>
-                        </Grid>
-
-                        <Grid item xs={12} md={12} lg={12} >
-                            <Accordion variant='outlined' expanded={this.state.expanded === 'edit'} onChange={() => this.setState({ expanded: "edit" })}>
-                                <AccordionSummary expandIcon={<ExpandMore />} >
-                                    <Edit style={{ fontSize: '28px' }} />
-                                    <Typography variant='h6' style={{ marginLeft: 5 }}>
-                                        Edit
-                                    </Typography>
-                                </AccordionSummary>
-                                <Divider />
-                                <AccordionDetails>
-                                    <Grid container spacing={1} style={{marginTop: 2}}>
-                                        <Grid item xs={12} md={4} lg={4}>
-                                            <TextField 
-                                                value={this.state.reference} 
-                                                color={this.state.smartobject.reference != this.state.reference && "warning"}
-                                                onChange={(event) => { this.setState({ reference: event.nativeEvent.target.value }) }} 
-                                                onBlur={(event) => {this.updateReference() }}
-                                                style={{
-                                                    width: '100%', 
-                                                    marginRight: 10, 
-                                                    marginBottom: this.props.isMobile ? 10 : 0 
-                                                }} 
-                                                label="Name" 
-                                                variant="outlined" 
-                                            />
-                                        </Grid>
                                     </Grid>
                                 </AccordionDetails>
                             </Accordion>
@@ -230,7 +193,7 @@ class DetailSmartObject extends React.Component {
                                 </AccordionSummary>
                                 <Divider />
                                 <AccordionDetails>
-                                    <Grid container spacing={1} style={{marginTop: 2}}>
+                                    <Grid container spacing={1} style={{ marginTop: 2 }}>
                                         {
                                             this.state.rooms.map((room, index) => {
                                                 let CurrentIcon = AbstractIcon[room.icon]
@@ -246,6 +209,36 @@ class DetailSmartObject extends React.Component {
                                                 )
                                             })
                                         }
+                                    </Grid>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Grid>
+                        <Grid item xs={12} md={12} lg={12} >
+                            <Accordion variant='outlined' expanded={this.state.expanded === 'edit'} onChange={() => this.setState({ expanded: "edit" })}>
+                                <AccordionSummary expandIcon={<ExpandMore />} >
+                                    <Edit style={{ fontSize: '28px' }} />
+                                    <Typography variant='h6' style={{ marginLeft: 5 }}>
+                                        Edit
+                                    </Typography>
+                                </AccordionSummary>
+                                <Divider />
+                                <AccordionDetails>
+                                    <Grid container spacing={1} style={{ marginTop: 2 }}>
+                                        <Grid item xs={12} md={4} lg={4}>
+                                            <TextField
+                                                value={this.state.reference}
+                                                color={this.state.smartobject.reference != this.state.reference && "warning"}
+                                                onChange={(event) => { this.setState({ reference: event.nativeEvent.target.value }) }}
+                                                onBlur={(event) => { this.updateReference() }}
+                                                style={{
+                                                    width: '100%',
+                                                    marginRight: 10,
+                                                    marginBottom: this.props.isMobile ? 10 : 0
+                                                }}
+                                                label="Name"
+                                                variant="outlined"
+                                            />
+                                        </Grid>
                                     </Grid>
                                 </AccordionDetails>
                             </Accordion>

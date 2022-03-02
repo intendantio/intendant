@@ -7,14 +7,6 @@ import Result from '../utils/Result'
 
 class Widget extends Controller {
 
-    constructor(smartobjectManager, moduleManager, moduleController, smartobjectController) {
-        super()
-        this.moduleManager = moduleManager
-        this.moduleController = moduleController
-        this.smartobjectController = smartobjectController
-        this.smartobjectManager = smartobjectManager
-    }
-
     async getPackageName(type, object) {
         let packageName = ""
         if (type == "smartobject") {

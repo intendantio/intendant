@@ -35,7 +35,7 @@ class Process extends React.Component {
                 <Desktop isMobile={this.props.isMobile}>
                     <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
                         <Typography variant='h6' fontWeight='bold' >Process</Typography>
-                        <Typography variant='subtitle2' color="text.secondary" >Execute action</Typography>
+                        <Typography variant='subtitle2' color="text.secondary" >Do multiple action at once</Typography>
                     </Paper>
                 </Desktop>
                 <Loading loading={this.state.loading}>

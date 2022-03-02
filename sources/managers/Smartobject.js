@@ -4,10 +4,12 @@ import Tracing from '../utils/Tracing'
 import StackTrace from '../utils/StackTrace'
 import fs from 'fs'
 import Result from '../utils/Result'
+import Manager from './Manager'
 
-class SmartobjectManager {
+class Smartobject extends Manager {
 
     constructor(core) {
+        super()
         Tracing.verbose(Package.name, "Start smartobject manager")
 
         this.core = core
@@ -19,7 +21,6 @@ class SmartobjectManager {
         /* Connector */
         this.sqlSmartobject = new Connector("smartobject")
         this.sqlSmartobjectArgument = new Connector("smartobject_argument")
-
 
     }
 
@@ -79,8 +80,6 @@ class SmartobjectManager {
         let instances = this._instances
         try {
             if (instances.has(smartobject.id) === false) {
-                
-
                 if (this._packages.includes(smartobject.module)) {
                     try {
                         let settings = {}
@@ -115,13 +114,13 @@ class SmartobjectManager {
                     }
                 }
             }
+            this._instances = instances
+            return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when instanciate an smartobject")
             return new Result(Package.name, true, "Error occurred when instanciate an smartobject")
         }
-        this._instances = instances
-        return new Result(Package.name, false, "")
     }
 
     async update(id) {
@@ -183,5 +182,4 @@ class SmartobjectManager {
 
 }
 
-
-export default SmartobjectManager
+export default Smartobject

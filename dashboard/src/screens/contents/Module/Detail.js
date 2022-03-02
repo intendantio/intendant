@@ -1,134 +1,145 @@
 import React from 'react'
-import md5 from 'md5'
 import JSONPretty from 'react-json-pretty'
-
-import { Close } from '@mui/icons-material'
-import { Paper, Typography, Divider, Button, IconButton, Alert } from '@mui/material'
+import { Paper, Alert, Typography, Card, Grid, Accordion, Box, Modal, AccordionSummary, AccordionDetails, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch, Divider, CardActionArea } from '@mui/material'
+import { ExpandMore, Edit, Room, FlashOff, FlashOn, House, Cached, RocketLaunch } from '@mui/icons-material'
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'
+import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
+import Loading from '../../../components/Loading'
+import * as AbstractIcon from '@mui/icons-material'
+import DeleteButton from '../../../components/views/DeleteButton'
+
 
 class Detail extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            hashId: props.match.params.id,
-            loading: null,
-            module: null,
-            executeInformation: ""
+            id: props.match.params.id,
+            module: {
+                reference: "",
+                actions: [],
+                room: {},
+                state: {
+                    status: 'unknown'
+                }
+            },
+            expanded: "action",
+            rooms: [],
+            modalOpen: false,
+            content: {},
+            loadingAction: "",
+            loading: true
         }
+        props.setTitle("")
+        props.setActionType("return")
     }
 
     async componentDidMount() {
-        let result = await new Request().get().fetch("/api/configurations/module")
+        let result = await new Request().get().fetch("/api/modules/" + this.state.id)
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
             this.props.history.push('/module')
         } else {
-            let _module = false
-            result.data.forEach(pModule => {
-                if (md5(pModule.name) == this.state.hashId) {
-                    _module = pModule
-                }
-            })
-            if (_module) {
-                this.setState({
-                    module: _module
-                })
-            } else {
-                this.props.history.push('/module')
-            }
+            this.props.setTitle(result.data.reference)
+            this.setState({ loadingAction: "", loading: false, module: result.data })
         }
-        this.setState({ loading: null })
     }
 
     async executeAction(action, settings) {
-        this.setState({ loading: action })
+        this.setState({ loadingAction: action.id })
         let tmp = {}
+        let resetState = {}
         for (let index = 0; index < settings.length; index++) {
-            let argument = settings[index];
-            let value = this.state["settings-" + argument.id]
-            if (value == undefined) {
-                value = argument.default
+            let setting = settings[index]
+            let value = this.state[action.id + "-" + setting.id]
+            resetState[action.id + "-" + setting.id] = null
+            if (value) {
+                tmp[setting.id] = value
+            } else {
+                tmp[setting.id] = null
             }
-            tmp[argument.id] = value
         }
-        let result = await new Request().post({ settings: tmp, reference: this.state.module.reference }).fetch("/api/modules/" + md5(this.state.module.name) + "/actions/" + action)
+        this.setState(resetState)
+        let result = await new Request().post({ settings: tmp }).fetch("/api/modules/" + this.state.id + "/actions/" + action.id)
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
-            this.setState({ loading: null })
+            this.setState({ loadingAction: "" })
         } else {
-            if (result.data) {
-                this.setState({
-                    executeInformation: JSON.stringify(result.data)
-                })
-            } else {
-            }
+            this.setState({
+                modalOpen: true,
+                content: result
+            })
             this.componentDidMount()
         }
     }
 
     render() {
-        if (this.state.module) {
-            return (
-                <div>
-                    <Paper variant="outlined" style={{ padding: 10, marginBottom: 10, justifyContent: 'left' }}>
-                        <div style={{ padding: 10 }}>
-                            <Typography variant='h4' >
-                                {this.state.module.name.split("/")[1]}
-                            </Typography>
-                            <Typography variant='subtitle1' >
-                                {this.state.module.name}
-                            </Typography>
-                        </div>
-                        <Divider />
-                        <div style={{ padding: 10, paddingBottom: 0 }}>
-                            {
-                                this.state.module.actions.map((action,index) => {
-                                    return (
-                                        <Paper variant="outlined" key={index} style={{ marginTop: 10, marginBottom: 10, display: 'flex', flexDirection: 'column', padding: 10 }}>
-                                            <Button color='inherit' disabled={this.state.loading == action.id} onClick={() => { this.executeAction(action.id, action.settings) }} variant={this.state.loading == action.id ? 'contained' : 'outlined'}  style={{ width: '250px', height: '100%', borderColor: 'rgba(255, 255, 255, 0.15)'  }} >
-                                                {action.name}
-                                            </Button>
-                                            {
-                                                action.settings.length > 0 ?
-                                                    <div style={{ display: 'flex', flexDirection: 'row', marginTop: 10, marginBottom: 10 }}>
-                                                        {
-                                                            action.settings.map(setting => {
-                                                                return <Action flexDirection='column' orientation='horizontal' setState={this.setState.bind(this)} action={setting} />
-                                                            })
-                                                        }
-                                                    </div>
-                                                    : null
-                                            }
-                                        </Paper>
-                                    )
-                                })
-                            }
-                        </div>
-                        {
-                            this.state.executeInformation.length > 0 ?
-                                <div style={{ padding: 10 }}>
-                                    <Alert severity="success" action={
-                                        <IconButton onClick={() => { this.setState({ executeInformation: "" }) }} style={{ alignSelf: 'start' }} color="inherit" size="small">
-                                            <Close />
-                                        </IconButton>
-                                    }>
-                                        <JSONPretty id="json-pretty" data={JSON.parse(this.state.executeInformation)}></JSONPretty>
-                                    </Alert>
-                                </div>
-                                :
-                                null
-                        }
+        let lastGroup = ""
+        return (
+            <>
+                <Desktop {... this.props}>
+                    <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
+                        <Box style={{ display: 'flex', flex: 1 }} >
+                            <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
+                                <Typography variant='h6' fontWeight='bold'  >
+                                    {String.capitalizeFirstLetter(this.state.module.reference)}
+                                </Typography>
+                                <Typography variant='subtitle2' color="text.secondary"  >
+                                    {String.capitalizeFirstLetter(this.state.module.name)}
+                                </Typography>
+                            </Box>
+                        </Box>
                     </Paper>
-                </div>
-            )
-        } else {
-            return (
-                null
-            )
-        }
+                </Desktop>
+                <Loading loading={this.state.loading}>
+                    <Card variant='outlined' style={{ padding: 12, marginTop: 8 }} >
+                        <Grid container spacing={2} >
+                                {
+                                    this.state.module.actions.map((action, index) => {
+                                        return (
+                                            <Grid key={index} item xs={12} md={12} lg={12}  >
+                                                <Grid container spacing={action.settings.length == 0 && this.props.isMobile ? 0 : 2} >
+                                                    <Grid item xs={12} md={3} lg={3} >
+                                                        <Card elevation={2}  >
+                                                            <Button disabled={action.id == this.state.loadingAction} size='large' variant='contained' onClick={() => { this.executeAction(action, action.settings) }} style={{ width: '100%', flexDirection: 'row', display: 'flex' }}>
+                                                                <Typography textAlign='center' variant='subtitle2'>
+                                                                    {action.name}
+                                                                </Typography>
+                                                            </Button>
+                                                        </Card>
+                                                    </Grid>
+                                                    <Grid item xs={12} md={9} lg={9} style={{ alignSelf: 'center' }}>
+                                                        <Grid container spacing={1}>
+                                                            {
+                                                                action.settings.length == 0 ?
+                                                                    null
+                                                                    :
+                                                                    action.settings.map((setting, index) => {
+                                                                        return (
+                                                                            <Action options={setting.options} label={String.capitalizeFirstLetter(setting.id)} setState={this.setState.bind(this)} id={action.id + "-" + setting.id} action={setting} />
+                                                                        )
+                                                                    })
+                                                            }
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                    })
+                                }
+                        </Grid>
+                    </Card>
+                    <Modal open={this.state.modalOpen} style={{ top: '25%', left: '25%' }} onClose={() => { this.setState({ modalOpen: false }) }} >
+                        <Card variant='outlined' style={{ overflow: 'auto', maxHeight: '50vh', maxWidth: '50vw', padding: 20 }}>
+                            <JSONPretty style={{ fontSize: 12 }} id="json-pretty" data={this.state.content}></JSONPretty>
+
+                        </Card>
+                    </Modal>
+                </Loading>
+            </>
+        )
     }
 }
 

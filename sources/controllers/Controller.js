@@ -8,11 +8,11 @@ import Result from "../utils/Result"
 class Controller {
     constructor() {
         try {
-            this.sqlRoutine = new Connector("routine")
-            this.sqlRoutineEffect = new Connector("routine_effect")
-            this.sqlRoutineEffectArgument = new Connector("routine_effect_argument")
-            this.sqlRoutineTrigger = new Connector("routine_trigger")
-            this.sqlRoutineTriggerArgument = new Connector("routine_trigger_argument")
+
+            this.sqlAutomation = new Connector("automation")
+            this.sqlAutomationTrigger = new Connector("automation_trigger")
+            this.sqlAutomationAction = new Connector("automation_action")
+            this.sqlAutomationActionArgument = new Connector("automation_action_argument")
             
             this.sqlUser = new Connector("user")
             this.sqlUserHistory = new Connector("user_history")
@@ -47,12 +47,27 @@ class Controller {
             this.sqlRapport = new Connector("rapport")
             this.sqlRapportData = new Connector("rapport_data")
             this.sqlRapportArgument = new Connector("rapport_argument")
+
+            
+            this.sqlSingleCode = new Connector("single_code")
             
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when construct an controller")
             return new Result(Package.name, true, "Error occurred when construct an controller")
         }
+    }
+
+    addController(entity) {
+        let className = entity.constructor.name
+        let lowerClassName = className.toLowerCase()
+        this[lowerClassName + "Controller"] = entity
+    }
+
+    addManager(entity) {
+        let className = entity.constructor.name
+        let lowerClassName = className.toLowerCase()
+        this[lowerClassName + "Manager"] = entity
     }
 }
 

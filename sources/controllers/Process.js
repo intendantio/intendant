@@ -7,13 +7,6 @@ import { lutimes } from "fs-extra"
 
 class Process extends Controller {
 
-    constructor(smartobjectManager, moduleManager, essentialController) {
-        super()
-        this.moduleManager = moduleManager
-        this.smartobjectManager = smartobjectManager
-        this.essentialController = essentialController
-    }
-
     async getOne(idProcess) {
         try {
             let processRequest = await this.sqlProcess.getOne(idProcess)

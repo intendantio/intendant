@@ -7,12 +7,6 @@ import Parser from '../utils/Parser'
 
 class Smartobject extends Controller {
 
-    constructor(smartobjectManager, userController) {
-        super()
-        this.smartobjectManager = smartobjectManager
-        this.userController = userController
-    }
-
     async getAll() {
         try {
             let pSmartObjects = []
@@ -39,58 +33,6 @@ class Smartobject extends Controller {
         }
     }
 
-    async deleteArguments(idArgument) {
-        try {
-            let getRequest = await this.sqlSmartobjectArgument.getOne(idArgument)
-            if (getRequest.error) {
-                return getRequest
-            }
-            let smartobjectArgument = getRequest.data
-            let deleteAllRequest = await this.sqlSmartobjectArgument.deleteAllByField({
-                id: idArgument
-            })
-            if (deleteAllRequest.error) {
-                return deleteAllRequest
-            }
-            let updateRequest = await this.smartobjectManager.update(smartobjectArgument.smartobject)
-            if (updateRequest.error) {
-                return updateRequest
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete smartobject argument")
-            return new Result(Package.name, true, "Error occurred when delete smartobject argument")
-        }
-    }
-
-    async insertArguments(idSmartobject, body) {
-        try {
-            let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
-            if (smartobjectRequest.error) {
-                return smartobjectRequest
-            }
-            let insertRequest = await this.sqlSmartobjectArgument.insert({
-                id: null,
-                smartobject: idSmartobject,
-                reference: body.reference,
-                value: body.value
-            })
-            if (insertRequest.error) {
-                return insertRequest
-            }
-            let updateRequest = await this.smartobjectManager.update(smartobjectRequest.data.id)
-            if (updateRequest.error) {
-                return updateRequest
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when insert smartobject argument")
-            return new Result(Package.name, true, "Error occurred when insert smartobject argument")
-        }
-    }
-
     async getOne(idSmartobject) {
         try {
             let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
@@ -98,11 +40,11 @@ class Smartobject extends Controller {
                 return smartobjectRequest
             }
             if (smartobjectRequest.data === false) {
-                Tracing.warning(Package.name, "Smartobject not found (go)")
-                return new Result(Package.name, true, "Smartobject not found (go)")
+                Tracing.warning(Package.name, "Smartobject not found")
+                return new Result(Package.name, true, "Smartobject not found")
             }
             let smartobject = smartobjectRequest.data
-            let argumentsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: smartobject["id"] })
+            let argumentsRequest = await this.sqlSmartobjectArgument.getAllByField({ smartobject: idSmartobject })
             if (argumentsRequest.error) {
                 return argumentsRequest
             }
@@ -110,13 +52,17 @@ class Smartobject extends Controller {
                 argument.value = Parser.parse(argument.value)
                 return argument
             })
-            let roomRequest = await this.sqlRoom.getOne(smartobject["room"])
+
+            let roomRequest = await this.sqlRoom.getOne(smartobject.room)
 
             if (roomRequest.error) {
                 return roomRequest
             }
+
             let room = roomRequest.data
-            let smartobjectProfileRequest = await this.sqlSmartobjectProfile.getAllByField({ smartobject: smartobject["id"] })
+            let configuration = require(smartobject.module + "/package.json")
+
+            let smartobjectProfileRequest = await this.sqlSmartobjectProfile.getAllByField({ smartobject: idSmartobject })
             if (smartobjectProfileRequest.error) {
                 return smartobjectProfileRequest
             }
@@ -124,27 +70,31 @@ class Smartobject extends Controller {
             let actions = []
             let widgets = []
             let dataSources = []
+            let triggers = []
             let state = {
                 status: "unknown",
                 reason: "Unknown"
             }
-            let icon = null
-            if (this.smartobjectManager.instances.has(smartobject.id)) {
-                actions = this.smartobjectManager.instances.get(smartobject.id).getActions()
-                widgets = this.smartobjectManager.instances.get(smartobject.id).getWidgets()
-                dataSources = this.smartobjectManager.instances.get(smartobject.id).getDataSources()
 
-                let resultState = await this.smartobjectManager.instances.get(smartobject.id).getState()
+            if (this.smartobjectManager.instances.has(parseInt(smartobject.id))) {
+                actions = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions()
+                if(actions == undefined) {
+                    console.log(this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions)
+                }
+                widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
+                dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
+                triggers = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getTriggers()
+
+                let resultState = await this.smartobjectManager.instances.get(parseInt(smartobject.id)).getState()
                 if (resultState.error) {
                     return resultState
                 }
                 state = resultState.data
+            } else {
+                Tracing.warning(Package.name, "Smartobject n°" + smartobject.id + " was not instanciate")
             }
 
-            let configuration = null
-            try {
-                configuration = require(smartobject.module + "/package.json")
-            } catch (error) { }
+
 
             return new Result(Package.name, false, "", {
                 id: smartobject.id,
@@ -155,6 +105,7 @@ class Smartobject extends Controller {
                 actions: actions,
                 widgets: widgets,
                 dataSources: dataSources,
+                triggers: triggers,
                 profiles: profiles,
                 state: state,
                 room: room,
@@ -169,20 +120,19 @@ class Smartobject extends Controller {
 
     getAllConfiguration() {
         try {
-            let modules = []
+            let configurations = []
             for (let indexPackage = 0; indexPackage < this.smartobjectManager.packages.length; indexPackage++) {
                 let pPackage = this.smartobjectManager.packages[indexPackage]
                 let configuration = require(pPackage + "/package.json")
-                modules.push(configuration)
+                configurations.push(configuration)
             }
-            return new Result(Package.name, false, "", modules)
+            return new Result(Package.name, false, "", configurations)
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get all configuration in module")
             return new Result(Package.name, true, "Error occurred when get all configuration in module")
         }
     }
-
 
     async insertSmartobjectProfile(idSmartobject, idProfile) {
         try {
@@ -217,7 +167,6 @@ class Smartobject extends Controller {
             if (smartobjectRequest.error) {
                 return smartobjectRequest
             }
-            let smartobject = smartobjectRequest.data
             let profileRequest = await this.sqlSmartobjectProfile.getOneByField({ smartobject: idSmartobject, profile: idProfile })
             if (profileRequest.error) {
                 return profileRequest
@@ -240,9 +189,9 @@ class Smartobject extends Controller {
 
     async updateLastUse(idSmartobject) {
         try {
-            let updateRequest = await this.sqlSmartobject.updateAll({ last_use: "DATE:NOW" }, { id: idSmartobject })
-            if (updateRequest.error) {
-                return updateRequest
+            let result = await this.sqlSmartobject.updateAll({ last_use: "DATE:NOW" }, { id: idSmartobject })
+            if (result.error) {
+                return result
             }
             return new Result(Package.name, false, "")
         } catch (error) {
@@ -268,23 +217,37 @@ class Smartobject extends Controller {
 
     async updateRoom(idSmartobject, idRoom) {
         try {
-            let updateRequest = await this.sqlSmartobject.updateAll({ room: idRoom }, { id: idSmartobject })
-            if (updateRequest.error) {
-                return updateRequest
+            let result = await this.sqlSmartobject.updateAll({ room: idRoom }, { id: idSmartobject })
+            if (result.error) {
+                return result
             }
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when update room smartobject")
             return new Result(Package.name, true, "Error occurred when update room smartobject")
+        }
+    }
+
+    async updateArgument(idSmartobject, reference, value) {
+        try {
+            let result = await this.sqlSmartobjectArgument.updateAll({ reference: reference, smartobject: idSmartobject }, { value: value })
+            if (result.error) {
+                return result
+            }
+            return new Result(Package.name, false, "")
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update arguments smartobject")
+            return new Result(Package.name, true, "Error occurred when update arguments smartobject")
         }
     }
 
     async updateReference(idSmartobject, reference) {
         try {
-            let updateRequest = await this.sqlSmartobject.updateAll({ reference: reference }, { id: idSmartobject })
-            if (updateRequest.error) {
-                return updateRequest
+            let result = await this.sqlSmartobject.updateAll({ reference: reference }, { id: idSmartobject })
+            if (result.error) {
+                return result
             }
             return new Result(Package.name, false, "")
         } catch (error) {
@@ -294,9 +257,9 @@ class Smartobject extends Controller {
         }
     }
 
-    async insert(body) {
+    async insert(reference, pModule, room, settings) {
         try {
-            let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: body.reference })
+            let smartobjectRequest = await this.sqlSmartobject.getOneByField({ reference: reference })
             if (smartobjectRequest.error) {
                 return smartobjectRequest
             }
@@ -305,23 +268,15 @@ class Smartobject extends Controller {
                 Tracing.warning(Package.name, "Smartobject already exist")
                 return new Result(Package.name, true, "Smartobject already exist")
             } else {
-                let data = {
-                    id: null,
-                    module: body.module,
-                    status: '2',
-                    reference: body.reference,
-                    last_use: "DATE:NOW",
-                    room: body.room
-                }
+                let data = { module: pModule, status: 2, reference: reference, last_use: "", room: room }
                 let insertRequest = await this.sqlSmartobject.insert(data)
                 if (insertRequest.error) {
                     return insertRequest
                 } else {
                     let idSmartobject = insertRequest.data.insertId
-                    for (let index = 0; index < body.settings.length; index++) {
-                        let setting = body.settings[index]
+                    for (let index = 0; index < settings.length; index++) {
+                        let setting = settings[index]
                         let insertSettngsRequest = await this.sqlSmartobjectArgument.insert({
-                            id: null,
                             smartobject: idSmartobject,
                             reference: setting.reference,
                             value: Parser.stringify(setting.value)
@@ -344,6 +299,49 @@ class Smartobject extends Controller {
 
     async delete(idSmartobject) {
         try {
+            /* Check process */
+            let resultProcessAction = await this.sqlProcessAction.count({ type: "smartobject", object: idSmartobject })
+            if (resultProcessAction.error) {
+                return resultProcessAction
+            }
+            if (resultProcessAction.data.count > 0) {
+                return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a process")
+            }
+
+            /* Check rapport */
+            let resultRapport = await this.sqlRapport.count({ type: "smartobject", object: idSmartobject })
+            if (resultRapport.error) {
+                return resultRapport
+            }
+            if (resultRapport.data.count > 0) {
+                return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a rapport")
+            }
+
+            /* Check widget */
+            let resultWidget = await this.sqlWidget.count({ type: "smartobject", object: idSmartobject })
+            if (resultWidget.error) {
+                return resultWidget
+            }
+            if (resultWidget.data.count > 0) {
+                return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a widget")
+            }
+
+            /* Check automation */
+            let resultAutomationTrigger = await this.sqlAutomationTrigger.count({ type: "smartobject", object: idSmartobject })
+            if (resultAutomationTrigger.error) {
+                return resultAutomationTrigger
+            }
+            if (resultAutomationTrigger.data.count > 0) {
+                return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a automation")
+            }
+            let resultAutomationAction = await this.sqlAutomationAction.count({ type: "smartobject", object: idSmartobject })
+            if (resultAutomationAction.error) {
+                return resultAutomationAction
+            }
+            if (resultAutomationAction.data.count > 0) {
+                return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a automation")
+            }
+
             let historyettingsRequest = await this.sqlSmartobjectArgument.deleteAllByField({ smartobject: idSmartobject })
             if (historyettingsRequest.error) {
                 return historyettingsRequest
@@ -360,54 +358,36 @@ class Smartobject extends Controller {
         }
     }
 
-    isAllow(smartobject, profile, force = false) {
-        let allow = false
-        smartobject.profiles.forEach(pprofile => {
-            if (pprofile.profile == profile) {
-                allow = true
-            }
-        })
-        return allow || force
-    }
-
-    async executeAction(idSmartobject, idAction, idProfile, pArguments, force = false, idUser = 0) {
+    async executeAction(idSmartobject, idAction, idProfile = 1, pArguments, force = false, idUser = 0) {
         try {
             if (idAction) {
-                if (idProfile) {
-                    let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
-                    if (smartobjectRequest.error) {
-                        return smartobjectRequest
-                    }
-                    if (smartobjectRequest.data == false) {
-                        return new Result(Package.name, true, "Smartobject not found (ea)")
-                    }
-                    if (this.smartobjectManager.instances.has(smartobjectRequest.data.id)) {
-                        let instanceSmartobject = this.smartobjectManager.instances.get(smartobjectRequest.data.id)
-                        let smartobject = await this.getOne(instanceSmartobject.id)
-                        // this.isAllow(smartobject.data, idProfile, force)
-                        if (true) {
-                            let resultAction = instanceSmartobject.action(idAction, pArguments)
-                            if (resultAction.error) {
-                                return resultAction
-                            }
-                            if (idUser != 0) {
-                                let resultHistory = await this.userController.insertHistory(idUser, "EXECUTE", smartobject.data.reference + " - " + idAction)
-                                if (resultHistory.error) {
-                                    return resultHistory
-                                }
-                            }
+                let smartobjectRequest = await this.getOne(idSmartobject)
+                if (smartobjectRequest.error) {
+                    return smartobjectRequest
+                }
+                let smartobject = smartobjectRequest.data
+                if (this.smartobjectManager.instances.has(parseInt(idSmartobject))) {
+                    let instanceSmartobject = this.smartobjectManager.instances.get(parseInt(idSmartobject))
+                    if (true) {
+                        this.updateLastUse(idSmartobject)
+                        let resultAction = instanceSmartobject.action(idAction, pArguments)
+                        if (resultAction.error) {
                             return resultAction
-                        } else {
-                            Tracing.warning(Package.name, "Not allowed")
-                            return new Result(Package.name, true, "You are not allowed")
                         }
+                        if (idUser != 0) {
+                            let resultHistory = await this.userController.insertHistory(idUser, "EXECUTE", smartobject.reference + " - " + idAction)
+                            if (resultHistory.error) {
+                                return resultHistory
+                            }
+                        }
+                        return resultAction
                     } else {
-                        Tracing.warning(Package.name, "Smartobject missing")
-                        return new Result(Package.name, true, "Smartobject missing")
+                        Tracing.warning(Package.name, "Not allowed")
+                        return new Result(Package.name, true, "You are not allowed")
                     }
                 } else {
-                    Tracing.warning(Package.name, "Missing argument")
-                    return new Result(Package.name, true, "Missing arguments")
+                    Tracing.warning(Package.name, "Smartobject missing")
+                    return new Result(Package.name, true, "Smartobject missing")
                 }
             } else {
                 Tracing.warning(Package.name, "Missing action")
@@ -419,8 +399,6 @@ class Smartobject extends Controller {
             return new Result(Package.name, true, "Error occurred when execute smartobject action")
         }
     }
-
-
 
 }
 

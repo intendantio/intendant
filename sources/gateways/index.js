@@ -5,7 +5,6 @@ import Package from '../package.json'
 import Smartobject from './Smartobject'
 import User from './User'
 import Profile from './Profile'
-import Routine from './Routine'
 import Process from './Process'
 import Authentification from './Authentification'
 import Authorization from './Authorization'
@@ -19,6 +18,8 @@ import Room from './Room'
 import Tracing from '../utils/Tracing'
 import Essential from './Essential'
 import Rapport from './Rapport'
+import Result from '../utils/Result'
+import Automation from './Automation'
 
 class API {
 
@@ -37,7 +38,7 @@ class API {
         Smartobject(app,core)
         User(app,core)
         Profile(app,core)
-        Routine(app,core)
+        Automation(app,core)
         Process(app,core)
         Module(app,core)
         Ping(app,core)
@@ -48,6 +49,14 @@ class API {
         Room(app,core)
         Essential(app,core)
         Rapport(app,core)
+
+        app.use("/api",(request, res) => {
+            res.send(new Result(Package.name, true, "Invalid method"))
+        })
+
+        app.use("/api/*",(request, res) => {
+            res.send(new Result(Package.name, true, "Invalid method"))
+        })
 
         app.use((request, res) => {
             res.redirect('/admin')

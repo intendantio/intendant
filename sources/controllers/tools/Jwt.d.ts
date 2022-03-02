@@ -6,6 +6,3 @@ declare class Jwt {
 }
 
 export default Jwt
-
-
-

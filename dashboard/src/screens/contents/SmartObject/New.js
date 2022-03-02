@@ -1,6 +1,7 @@
 import React from 'react'
 import { MenuItem, TextField, Select, Button, Card, Grid, FormControl, Typography, Paper, Box, Divider } from '@mui/material'
 import Desktop from '../../../components/Desktop'
+import Action from '../../../components/Action'
 import Request from '../../../utils/Request'
 import * as AbstractIcon from '@mui/icons-material'
 import Loading from '../../../components/Loading'
@@ -104,51 +105,48 @@ class NewSmartobject extends React.Component {
         this.setState(tmp)
     }
 
-    async add() {
-        if (this.state.reference === "") {
-            this.props.setMessage("Missing-parameter : reference is empty")
-        } else if (this.state.room === false) {
-            this.props.setMessage("Missing-parameter : room not selected")
-        } else if (this.state.module.name === "") {
-            this.props.setMessage("Missing-parameter : type not selected")
+    async submit() {
+        let settings = []
+        for (let index = 0; index < this.state.package.settings.length; index++) {
+            let setting = this.state.package.settings[index]
+            settings.push({
+                reference: setting.id,
+                value: this.state["settings-" + setting.id] ? this.state["settings-" + setting.id] : ""
+            })
+        }
+        let result = await new Request().post({ room: this.state.room.id, module: this.state.package.name, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
+        if (result.error) {
+            this.props.setMessage(result.package + " : " + result.message)
         } else {
-            let settings = []
-            for (let index = 0; index < this.state.module.settings.length; index++) {
-                let setting = this.state.module.settings[index];
-                settings.push({
-                    reference: setting.id,
-                    value: this.state["settings-" + setting.id] ? this.state["settings-" + setting.id] : ""
-                })
-            }
-            let result = await new Request().post({ room: this.state.room.id, module: this.state.module.name, reference: this.state.reference, settings: settings }).fetch("/api/smartobjects")
-            if (result.error) {
-                this.props.setMessage(result.package + " : " + result.message)
-            } else {
-                this.props.history.push('/smartobject')
-            }
+            this.props.history.push('/smartobject')
         }
     }
 
-    getSettings(setting) {
-        switch (setting.type) {
-            case "oauth":
-                if (this.state.reference.length == 0) {
-                    return (
-                        <Button variant='outlined' color='inherit'>
-                            {
-                                "Missing reference"
-                            }
-                        </Button>
-                    )
-                }
-
-            default:
-                break;
+    missingSettings() {
+        for (let index = 0; index < this.state.package.settings.length; index++) {
+            let setting = this.state.package.settings[index]
+            if (this.state["settings-" + setting.id] == undefined || this.state["settings-" + setting.id] == "" || this.state["settings-" + setting.id] == null) {
+                return true
+            }
         }
+        return false
     }
+
+    getOauthSettings() {
+        if (this.state.package.settings.length == 0) {
+            return ""
+        }
+        let url = "&"
+        for (let index = 0; index < this.state.package.settings.length; index++) {
+            let setting = this.state.package.settings[index]
+            url = url + setting.id + "=" + this.state["settings-" + setting.id]
+        }
+        return url
+    }
+
 
     getSubmitButton() {
-        if (this.state.reference.length == 0) {
+        if (this.state.reference.length == 0 || this.missingSettings()) {
             return (
                 <Button size='large' variant='contained' disabled style={{ height: '100%', textTransform: 'none' }} color='inherit'>
                     <Typography color="text.secondary">
@@ -158,13 +156,21 @@ class NewSmartobject extends React.Component {
             )
         } else if (this.state.package.submit.type == "oauth") {
             return (
-                <a href={this.state.package.submit.url + "?reference=" + this.state.reference + "&room=" + this.state.room.id + "&redirect_uri=" + window.location.origin + "/admin/smartobject/oauth/" + this.props.match.params.id}>
+                <a href={this.state.package.submit.url + "?reference=" + this.state.reference + this.getOauthSettings() + "&room=" + this.state.room.id + "&redirect_uri=" + window.location.origin + "/admin/smartobject/oauth/" + this.props.match.params.id}>
                     <Button size='large' variant='contained' style={{ height: '100%', textTransform: 'none' }} >
                         <Typography color='white' >
                             {this.state.package.submit.name}
                         </Typography>
                     </Button>
                 </a>
+            )
+        } else if (this.state.package.submit.type == "submit") {
+            return (
+                <Button onClick={() => {this.submit()}} size='large' variant='contained' style={{ height: '100%', textTransform: 'none' }} >
+                    <Typography color='white' >
+                        {this.state.package.submit.name}
+                    </Typography>
+                </Button>
             )
         } else if (this.state.package.submit.type == "disabled") {
             return (
@@ -212,6 +218,26 @@ class NewSmartobject extends React.Component {
                                 </FormControl>
                             </Card>
                         </Grid>
+                        {
+                            this.state.package.settings.length == 0 ?
+                                null :
+                                <Grid item xs={12} md={12} lg={12}>
+                                    <Card variant='outlined' style={{ padding: 10 }}>
+                                        <Typography variant='h6' color='white' >
+                                            {"Settings"}
+                                        </Typography>
+                                        <Grid container spacing={2}>
+                                            {
+                                                this.state.package.settings.map((setting, index) => {
+                                                    return (
+                                                        <Action options={setting.options} label={String.capitalizeFirstLetter(setting.id)} setState={this.setState.bind(this)} id={"settings-" + setting.id} action={setting} />
+                                                    )
+                                                })
+                                            }
+                                        </Grid>
+                                    </Card>
+                                </Grid>
+                        }
                         <Grid item xs={12} md={12} lg={12}>
                             <Card variant='outlined' style={{ padding: 10 }}>
                                 <Typography variant='h6' color='white' >

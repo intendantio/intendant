@@ -1,9 +1,7 @@
 import Result from '../utils/Result'
 import Authentification from './Authentification'
 import Cache from './Cache'
-import Client from './Client'
 import Controller from './Controller'
-import Espace from './Espace'
 import Market from './Market'
 import Notification from './Notification'
 import Process from './Process'
@@ -21,19 +19,15 @@ interface Controllers {
     routine: Routine,
     profile: Profile,
     process: Process,
-    client: Client,
     widget: Widget,
     user: User,
     cache: Cache,
-    espace: Espace,
     market: Market,
     notification: Notification,
     authentification: Authentification
 }
 
 declare class Essential extends Controller {
-
-    constructor(controllers: Controllers)
 
     controllers: Controllers
 

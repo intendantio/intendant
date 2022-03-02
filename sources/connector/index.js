@@ -2,6 +2,8 @@ import Connection from './lib/Connection'
 import Package from '../package.json'
 import Tracing from '../utils/Tracing'
 import Result from '../utils/Result'
+import Utils from '../utils/Utils'
+import fetch from 'node-fetch'
 
 class Connector {
 
@@ -15,6 +17,50 @@ class Connector {
         }
     }
 
+    
+
+    static async migration(callback) {
+        let connector = Connection.getInstance()
+        let result = await fetch("https://raw.githubusercontent.com/intendantio/intendant/main/migration/index.json")
+        let resultJSON = await result.json()
+        let databaseVersion = await connector.prepare("SELECT * FROM metadata WHERE reference=@reference").get({ reference: "database" })
+        if (databaseVersion.data == false) {
+            Tracing.error(Package.name, "Error configuration in version is missing")
+        } else {
+            let last = resultJSON.last
+            let current = parseInt(databaseVersion.value)
+            let difference = last - current
+            Tracing.verbose(Package.name, difference + " update(s) is available")
+            if (difference == 0) {
+                callback()
+            } else if (difference > 0) {
+                let next = (current + 1)
+                let nextVersion = resultJSON.versions[next]
+
+                if(Utils.isCompatible(Package.version,nextVersion.core)) {
+                    let result = await fetch(nextVersion.url)
+                    if (result.status == 200) {
+                        let request = await result.text()
+                        let requests = request.split(";")
+                        for (let index = 0; index < requests.length; index++) {
+                            let pRequest = requests[index].replace('\n', "")
+                            if (pRequest != "") {
+                                await connector.prepare(pRequest).run()
+                            }
+                        }
+                        Tracing.verbose(Package.name, "Migration success version n°" + (current + 1))
+                        await this.migration(callback)
+                    }
+                } else {
+                    Tracing.warning(Package.name, "Core must have a minimum version of " + nextVersion.core + " to accept the update")
+                    callback()
+                }
+
+            } else if (difference < 0) {
+                Tracing.error(Package.name, "Invalid version")
+            }
+        }
+    }
 
     check(exec) {
         if (this._connector.open == false) {
@@ -69,6 +115,22 @@ class Connector {
         } else {
             Tracing.warning("Wheres must be an object at " + this._name + ":getAllByField")
             return new Result(Package.name, true, "Wheres must be an object at " + this._name + ":getAllByField")
+        }
+    }
+
+    async count(wheres = {}) {
+        this.check("count")
+        if (typeof wheres == 'object') {
+            try {
+                let result = await this._connector.prepare("SELECT * FROM " + this._name + this.getWhere(wheres)).all(wheres)
+                return new Result(Package.name, false, "", { count: result.length })
+            } catch (error) {
+                Tracing.error(Package.name, "Catch Sqlite error on " + this._name + ":count : " + error.toString())
+                return new Result(Package.name, true, "Error occurred when get all by field " + this._name)
+            }
+        } else {
+            Tracing.warning("Wheres must be an object at " + this._name + ":count")
+            return new Result(Package.name, true, "Wheres must be an object at " + this._name + ":count")
         }
     }
 
@@ -148,6 +210,7 @@ class Connector {
 
     async insert(sets) {
         this.check("insert")
+        console.log(sets)
         if (typeof sets == 'object') {
             try {
                 let result = await this._connector.prepare("INSERT INTO " + this._name + " " + this.getInsert(sets)).run(sets)
@@ -214,8 +277,6 @@ class Connector {
         return statment
     }
 
-
-
     getSet(fields, prefix = "") {
         let totalSet = 0
         let statment = " SET "
@@ -249,7 +310,8 @@ class Connector {
         keyStatment = keyStatment + ")"
         return keyStatment + " VALUES " + valueStatment
     }
-
+    
+    
 }
 
 export default Connector

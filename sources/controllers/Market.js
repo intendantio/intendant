@@ -9,12 +9,6 @@ import StackTrace from "../utils/StackTrace"
 
 class Market extends Controller {
 
-    constructor(smartobjectManager, moduleManager) {
-        super()
-        this.moduleManager = moduleManager
-        this.smartobjectManager = smartobjectManager
-    }
-
     async install(pPackage) {
         try {
             Tracing.verbose(Package.name, "Download list from https://market.intendant.io")

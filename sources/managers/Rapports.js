@@ -7,10 +7,12 @@ import StackTrace from '../utils/StackTrace'
 import * as ToadScheduler from 'toad-scheduler'
 
 import Schedule from 'node-schedule'
+import Manager from './Manager'
 
-class RapportManager {
+class Rapport extends Manager {
 
     constructor(core) {
+        super()
         this.core = core
         this.configuration = this.core.configuration
         this.instances = new Map()
@@ -19,7 +21,7 @@ class RapportManager {
     }
 
 
-    async initialisation() {
+    async before() {
         let getAllRapports = await this.core.controller.rapport.getAll()
         if (getAllRapports.error) {
             return getAllRapports
@@ -91,4 +93,4 @@ class RapportManager {
 
 }
 
-export default RapportManager
+export default Rapport

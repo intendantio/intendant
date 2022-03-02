@@ -9,13 +9,6 @@ import Moment from 'moment'
 
 class Rapport extends Controller {
 
-    constructor(rapportManager, widgetController, smartobjectController) {
-        super()
-        this.rapportManager = rapportManager
-        this.widgetController = widgetController
-        this.smartobjectController = smartobjectController
-    }
-
     async getOne(idRapport) {
         try {
             let resultRapport = await this.sqlRapport.getOne(idRapport)
@@ -115,11 +108,10 @@ class Rapport extends Controller {
             let result = await this.sqlRapport.insert({
                 type: body.type,
                 chart: body.chart,
-                object: body.object,
+                object: body.object.toString(),
                 reference: body.reference,
                 interval: body.interval
             })
-            
             if (result.error) {
                 return result
             }
@@ -135,7 +127,7 @@ class Rapport extends Controller {
                     return resultInserRapportArgument
                 }
             }
-            this.rapportManager.initialisation(result.data.insertId)
+            this.rapportManager.before()
             return await this.getOne(result.data.insertId)
         } catch (error) {
             StackTrace.save(error)
@@ -147,7 +139,7 @@ class Rapport extends Controller {
     async delete(idRapport) {
         Tracing.verbose(Package.name, "Delete rapport n°" + idRapport)
         try {
-            if(this.rapportManager.instances.has(idRapport)) {
+            if(this.rapportManager.instances.has(parseInt(idRapport))) {
                 let resultDeleteInstance = await this.rapportManager.delete(idRapport)
                 if (resultDeleteInstance.error) {
                     return resultDeleteInstance

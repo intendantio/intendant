@@ -6,6 +6,3 @@ declare class Math {
 }
 
 export default Math
-
-
-

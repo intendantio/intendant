@@ -3,8 +3,6 @@ import Result from '../utils/Result'
 
 declare class Smartobject extends Controller {
 
-    constructor(smartobjectManager: Object, userController: Controller)
-
     public getAll(): Promise<Result>
 
     public deleteArguments(idArgument: Number): Promise<Result>

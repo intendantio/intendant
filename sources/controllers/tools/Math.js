@@ -1,4 +1,4 @@
-class Utils {
+class pMath {
 
     static random(L) {
         var s = '';
@@ -14,4 +14,4 @@ class Utils {
 
 }
 
-export default Utils
+export default pMath

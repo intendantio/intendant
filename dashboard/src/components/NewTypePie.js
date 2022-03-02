@@ -66,7 +66,7 @@ const optionLine = {
         style: {
             color: "#ffffff",
             fontWeight: 500,
-            fontSize: 22,
+            fontSize: 18,
             fontFamily: 'Poppins,sans-serif',
         }
     },

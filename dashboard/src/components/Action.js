@@ -46,9 +46,9 @@ class Action extends React.Component {
         switch (this.state.action.type) {
             case 'text':
                 return (
-                    <div key={this.props.id} elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
-                        <TextField multiline variant="outlined" placeholder={this.state.action.id == "default" ? "" : this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
-                    </div>
+                    <Grid key={this.props.id} item xs={this.props.xs ? this.props.xs : 12} md={this.props.md ? this.props.md : 6} lg={this.props.lg ? this.props.lg : 3}>
+                        <TextField multiline style={{minWidth:150, width: '100%'}} variant="outlined" placeholder={this.state.action.id == "default" ? "" : this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
+                    </Grid>
                 )
             case 'cron':
                 return (
@@ -69,14 +69,14 @@ class Action extends React.Component {
                 )
             case 'number':
                 return (
-                    <div key={this.props.id} elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
-                        <TextField variant="outlined" placeholder={this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
-                    </div>
+                    <Grid key={this.props.id} item xs={this.props.xs ? this.props.xs : 12} md={this.props.md ? this.props.md : 6} lg={this.props.lg ? this.props.lg : 3}>
+                        <TextField type='number' multiline style={{minWidth:150, width: '100%'}} variant="outlined" placeholder={this.state.action.id == "default" ? "" : this.state.action.id} onChange={(event) => { this.updateAction(this.state.action, event.currentTarget.value) }} />
+                    </Grid>
                 )
             case 'select':
                 return (
-                    <Paper key={this.props.id} elevation={0} style={{ minWidth: 150, alignSelf: 'flex-start', display: 'flex', flexDirection: 'column', paddingLeft: 15, paddingRight: 15, paddingTop: 10, paddingBottom: 10, marginRight: 10 }} >
-                        <FormControl style={{ minWidth: '200px' }} >
+                    <Grid key={this.props.id} item xs={this.props.xs ? this.props.xs : 12} md={this.props.md ? this.props.md : 6} lg={this.props.lg ? this.props.lg : 3}>
+                        <FormControl style={{ minWidth:150, width: '100%' }} >
                             {
                                 this.state.action.id == "default" || this.props.noLabel ? null :
                                     <InputLabel>{this.state.action.id}</InputLabel>
@@ -93,7 +93,7 @@ class Action extends React.Component {
                                 }
                             </Select>
                         </FormControl>
-                    </Paper>
+                    </Grid>
                 )
             case 'colorpicker':
                 return (
@@ -142,7 +142,7 @@ class Action extends React.Component {
                 )
             case 'slider':
                 return (
-                    <Grid key={this.props.id} item xs={this.props.xs ? this.props.xs :  12} md={this.props.md ? this.props.md : 6} lg={this.props.lg ? this.props.lg : 3}>
+                    <Grid key={this.props.id} item xs={this.props.xs ? this.props.xs : 12} md={this.props.md ? this.props.md : 6} lg={this.props.lg ? this.props.lg : 3}>
                         <Paper variant='outlined' style={{ minWidth: 150, alignSelf: 'flex-start', display: 'flex', flexDirection: 'column', paddingLeft: 15, paddingRight: 15, paddingTop: 10, paddingBottom: 10 }} >
                             {
                                 this.props.label && this.props.label.length == 0 ? null :
@@ -178,6 +178,7 @@ class Action extends React.Component {
                     </div>
                 )
             case 'gallery':
+                return null
                 return (
                     <div key={this.props.id} style={{ marginRight: 10 }}>
                         <TextField
@@ -213,3 +214,10 @@ class Action extends React.Component {
 }
 
 export default Action
+
+/*
+
+
+                    <div key={this.props.id} elevation={3} style={{ alignItems: 'center', display: 'flex', marginRight: 10, width: '200px' }} >
+                    </div>
+                    */

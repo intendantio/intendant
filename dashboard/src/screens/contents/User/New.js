@@ -1,7 +1,5 @@
 import React from 'react'
-import { IconButton, TextField, Select, MenuItem, FormControl, Radio, Typography, Paper, Grid, Card, RadioGroup, FormControlLabel } from '@mui/material'
-import { Save } from '@mui/icons-material'
-import Alert from '../../../components/Alert'
+import { TextField, FormControl, Radio, Typography, Paper, Grid, Card, RadioGroup, FormControlLabel } from '@mui/material'
 import SaveButton from '../../../components/views/SaveButton'
 import Desktop from '../../../components/Desktop'
 import Request from '../../../utils/Request'
@@ -72,30 +70,32 @@ class NewUser extends React.Component {
                     </Paper>
                 </Desktop>
                 <Loading loading={this.state.loading}>
-                    <Grid container spacing={1} style={{ marginTop: 0 }}>
-                        <Grid item xs={12} md={12} lg={12}>
-                            <TextField style={{ width: '100%' }} placeholder='Login' variant="outlined" value={this.state.login} onChange={(event) => { this.setState({ login: event.currentTarget.value }) }} />
+                    <Card variant='outlined' style={{ paddingTop: 4, paddingBottom: 4, paddingLeft: 12, paddingRight: 12, marginTop: 8 }}>
+                        <Grid container spacing={1} style={{ marginTop: 0 }}>
+                            <Grid item xs={12} md={12} lg={12}>
+                                <TextField style={{ width: '100%' }} placeholder='Login' variant="outlined" value={this.state.login} onChange={(event) => { this.setState({ login: event.currentTarget.value }) }} />
+                            </Grid>
+                            <Grid item xs={12} md={6} lg={6}>
+                                <TextField style={{ width: '100%' }} type='password' placeholder='Password' variant="outlined" value={this.state.password} onChange={(event) => { this.setState({ password: event.currentTarget.value }) }} />
+                            </Grid>
+                            <Grid item xs={12} md={6} lg={6}>
+                                <TextField style={{ width: '100%' }} placeholder='Confirm password' type='password' variant="outlined" value={this.state.confirmationPassword} onChange={(event) => { this.setState({ confirmationPassword: event.currentTarget.value }) }} />
+                            </Grid>
+                            <Grid item xs={12} md={10} lg={7}>
+                                <FormControl>
+                                    <RadioGroup value={this.state.profile.id} style={{ display: 'flex', flexDirection: this.props.isMobile ? 'column' : 'row' }} onChange={(event) => { this.updateProfile(event.target.value) }} >
+                                        {
+                                            this.state.profiles.map(profile => {
+                                                return (
+                                                    <FormControlLabel value={profile.id} control={<Radio />} label={String.capitalizeFirstLetter(profile.name)} />
+                                                )
+                                            })
+                                        }
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} md={6} lg={6}>
-                            <TextField style={{ width: '100%' }} type='password' placeholder='Password' variant="outlined" value={this.state.password} onChange={(event) => { this.setState({ password: event.currentTarget.value }) }} />
-                        </Grid>
-                        <Grid item xs={12} md={6} lg={6}>
-                            <TextField style={{ width: '100%' }} placeholder='Confirm password' type='password' variant="outlined" value={this.state.confirmationPassword} onChange={(event) => { this.setState({ confirmationPassword: event.currentTarget.value }) }} />
-                        </Grid>
-                        <Grid item xs={12} md={10} lg={7}>
-                            <FormControl>
-                                <RadioGroup value={this.state.profile.id} style={{ display: 'flex', flexDirection: this.props.isMobile ? 'column' : 'row' }} onChange={(event) => { this.updateProfile(event.target.value) }} >
-                                    {
-                                        this.state.profiles.map(profile => {
-                                            return (
-                                                <FormControlLabel value={profile.id} control={<Radio />} label={String.capitalizeFirstLetter(profile.name)} />
-                                            )
-                                        })
-                                    }
-                                </RadioGroup>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
+                    </Card>
                     <SaveButton onClick={() => { this.add() }} />
                 </Loading>
             </>

@@ -5,15 +5,15 @@ declare class Controller {
     constructor();
 
     core: Core;
-    sqlRoutine: Connector;
-    sqlRoutineEffect: Connector;
-    sqlRoutineEffectArgument: Connector;
-    sqlRoutineTrigger: Connector;
-    sqlRoutineTriggerArgument: Connector;
+    sqlAutomation: Connector;
+    sqlAutomationTrigger: Connector;
+    sqlAutomationAction: Connector;
+    sqlAutomationActionArgument: Connector;
 
     sqlUser: Connector;
     sqlUserHistory: Connector;
-    sqlClient: Connector;
+
+    
     sqlProfile: Connector;
     sqlAuthorization: Connector;
     sqlAuthorizationProfile: Connector;
@@ -28,12 +28,13 @@ declare class Controller {
     sqlWidgetArgument: Connector;
 
     sqlProcess: Connector;
+    sqlProcessAction: Connector;
     sqlProcessActionArgument: Connector;
-    sqlProcessProfile: Connector;
     sqlProcessInput: Connector;
     sqlProcessInputOption: Connector;
     
     sqlCache: Connector;
+
     sqlRoom: Connector;
     sqlRoomProfile: Connector;
 
@@ -41,6 +42,12 @@ declare class Controller {
     sqlRapport: Connector;
     sqlRapportData: Connector;
     sqlRapportArgument: Connector;
+
+    sqlSingleCode: Connector;
+
+    public addController(entity: Controller)
+    public addManager(entity: Object)
+
 }
 
 export default Controller

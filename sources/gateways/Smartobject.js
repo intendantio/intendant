@@ -68,7 +68,13 @@ export default (app, core) => {
                 if (authorization.error) {
                     result.send(authorization)
                 } else {
-                    result.send(await core.controller.smartobject.insert(request.body))
+                    result.send(await core.controller.smartobject.insert(
+                            request.body.reference,
+                            request.body.module,
+                            request.body.room,
+                            request.body.settings
+                        )
+                    )
                 }
             } else {
                 result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
@@ -93,46 +99,7 @@ export default (app, core) => {
         }
     })
 
-    //Insert smartobject settings
-    app.post('/api/smartobjects/:idSmartobject/arguments',
-        body('value').isString().withMessage("Invalid value"),
-        body('reference').isString().withMessage("Invalid reference"),
-        async (request, result) => {
-            let resultValid = validationResult(request)
-            if (resultValid.isEmpty()) {
-                request.url = '/smartobjects/:idSmartobject/arguments'
-                let authorization = await core.controller.authentification.checkAuthorization(request)
-                if (authorization.error) {
-                    result.send(authorization)
-                } else {
-                    result.send(await core.controller.smartobject.insertArguments(request.params.idSmartobject, request.body))
-                }
-            } else {
-                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-            }
-        })
-
-    //Delete smartobject arguments
-    app.delete('/api/smartobjects/:idSmartobject/arguments/:idArgument', async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = '/smartobjects/:idSmartobject/arguments/:idArgument'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
-            } else {
-                result.send(await core.controller.smartobject.deleteArguments(
-                    request.params.idArgument,
-                    request.params.idSmartobject
-                ))
-            }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
-
     // Execute one action 
-    //TODO Rework
     app.post('/api/smartobjects/:idSmartobject/actions/:idAction', async (request, result) => {
         let resultValid = validationResult(request)
         if (resultValid.isEmpty()) {
@@ -196,7 +163,6 @@ export default (app, core) => {
     })
 
     //Update rooms
-
     app.post("/api/smartobjects/:idSmartobject/room",
         body('idRoom').isNumeric().withMessage("Invalid room"),
         async (request, result) => {
@@ -215,7 +181,6 @@ export default (app, core) => {
         })
 
     //Update reference
-
     app.post("/api/smartobjects/:idSmartobject/reference",
         body('reference').isString().withMessage("Invalid reference"),
         async (request, result) => {

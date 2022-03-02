@@ -3,7 +3,6 @@ import Result from '../utils/Result'
 
 declare class Authentification extends Controller {
 
-    constructor(configuration: Object, salt: String)
         
     public getAll(): Promise<Result>
     public getAllAuthorizationByProfile(idProfile: Number): Promise<Result>

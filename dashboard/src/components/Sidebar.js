@@ -136,12 +136,12 @@ class Sidebar extends React.Component {
                                         <ListItemText primary={"Process"} />
                                     </ListItem>
                                 </Link>
-                                <Link to="/routine" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                                    <ListItem button key={"routine"} >
+                                <Link to="/automation" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
+                                    <ListItem button key={"automation"} >
                                         <ListItemIcon>
                                             <AccountTree />
                                         </ListItemIcon>
-                                        <ListItemText primary={"Routine"} />
+                                        <ListItemText primary={"Automation"} />
                                     </ListItem>
                                 </Link>
                                 <Link to="/rapport" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
@@ -252,12 +252,12 @@ class Sidebar extends React.Component {
                                 <ListItemText primary={"Process"} />
                             </ListItem>
                         </Link>
-                        <Link to="/routine" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                            <ListItem button key={"routine"} >
+                        <Link to="/automation" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
+                            <ListItem button key={"automation"} >
                                 <ListItemIcon>
                                     <AccountTree />
                                 </ListItemIcon>
-                                <ListItemText primary={"Routine"} />
+                                <ListItemText primary={"Automation"} />
                             </ListItem>
                         </Link>
                         <Link to="/rapport" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>

@@ -6,11 +6,6 @@ import StackTrace from '../utils/StackTrace'
 
 class Room extends Controller {
 
-    constructor(smartobjectController) {
-        super()
-        this.smartobjectController = smartobjectController
-    }
-
     async getAll() {
         try {
             let roomsRequest = await this.sqlRoom.getAll()

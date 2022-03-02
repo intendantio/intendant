@@ -3,8 +3,6 @@ import Result from '../utils/Result'
 
 declare class Widget extends Controller {
 
-    constructor(smartobjectManager: Object, moduleManager: Object)
-
     public extract(str: String): Object
 
     public getOne(idWidget: Number): Promise<Result>

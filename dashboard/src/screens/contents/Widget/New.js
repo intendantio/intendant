@@ -10,6 +10,7 @@ import { ExpandLess, ExpandMore, SettingsSharp } from '@mui/icons-material'
 import WidgetNewItem from '../../../components/WidgetNewItem'
 import Loading from '../../../components/Loading'
 import Desktop from '../../../components/Desktop'
+import Utils from '../../../utils/Utils'
 
 
 
@@ -35,25 +36,42 @@ class NewWidget extends React.Component {
     }
 
     async componentDidMount() {
-        let resultConfigurationModule = await new Request().get().fetch("/api/modules/configuration")
+        let resultModules = await new Request().get().fetch("/api/modules")
         let resultSmartobjects = await new Request().get().fetch("/api/smartobjects")
         if (resultSmartobjects.error) {
             this.props.setMessage(resultSmartobjects.package + " : " + resultSmartobjects.message)
             this.props.history.push('/widget')
-        } else if (resultConfigurationModule.error) {
-            this.props.setMessage(resultConfigurationModule.package + " : " + resultConfigurationModule.message)
+        } else if (resultModules.error) {
+            this.props.setMessage(resultModules.package + " : " + resultModules.message)
             this.props.history.push('/widget')
         } else {
-            
-            let smartobjects = resultSmartobjects.data.filter(smartobject => {
-                return smartobject.widgets.length > 0
+            let configurations = []
+
+            resultSmartobjects.data.forEach(smartobject => {
+                if (Array.isArray(smartobject.widgets) && smartobject.widgets.length > 0) {
+                    configurations.push(smartobject)
+                }
             })
 
-            if(smartobjects.length == 0) {
+            resultModules.data.forEach(pModule => {
+                console.log(pModule)
+                if (Array.isArray(pModule.widgets) && pModule.widgets.length > 0) {
+                    configurations.push({
+                        configuration: pModule,
+                        name: pModule.name,
+                        reference: pModule.reference,
+                        widgets: pModule.widgets,
+                        dataSources: pModule.dataSources,
+                        actions: pModule.actions
+                    })
+                }
+            })
+
+            if (configurations.length == 0) {
                 this.props.setMessage("No widget available")
                 this.props.history.push('/widget')
             } else {
-                this.setState({ loading: false, configurations: smartobjects })
+                this.setState({ loading: false, configurations: configurations })
             }
         }
     }
@@ -75,7 +93,7 @@ class NewWidget extends React.Component {
         let result = await new Request().post({
             reference: this.state.widget.id,
             type: this.state.configuration.configuration.module,
-            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id.toString() : this.state.configuration.name,
+            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id : Utils.getSum(this.state.configuration.name),
             settings: settings
         }).fetch("/api/widgets")
 
@@ -147,21 +165,11 @@ class NewWidget extends React.Component {
                         this.state.configurations.map((configuration, index) => (
                             <Accordion style={{ marginBottom: 10, borderRadius: 5 }} variant='outlined' expanded={this.state.index == index} onChange={() => { this.setState({ index: this.state.index == index ? -1 : index }) }}>
                                 <AccordionSummary expandIcon={<ExpandMore />} >
-                                    {
-                                        configuration.configuration.module == "smartobject" ?
-                                            <Box>
-                                                <Typography variant='subtitle1'  >
-                                                    {configuration.reference}
-                                                </Typography>
-                                                <Typography variant='body2' color="text.secondary"  >
-                                                    {configuration.name}
-                                                </Typography>
-                                            </Box>
-                                            :
-                                            <Typography variant='h6' color="text.secondary"  >
-                                                {configuration.name}
-                                            </Typography>
-                                    }
+                                    <Box>
+                                        <Typography variant='subtitle1'  >
+                                            {configuration.reference}
+                                        </Typography>
+                                    </Box>
                                 </AccordionSummary>
                                 <Divider style={{ marginBottom: 15 }} />
                                 <AccordionDetails>
