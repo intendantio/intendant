@@ -32,13 +32,15 @@
             ]
         },
         "dependencies": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": true
         },
         "submit": {
             "type": "object",
             "oneOf": [
                 {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "type": {
                             "description": "Type submit",
@@ -59,6 +61,7 @@
                 },
                 {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "type": {
                             "description": "Type disabled",
@@ -79,6 +82,7 @@
                 },
                 {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "type": {
                             "description": "Type oAuth",
@@ -113,6 +117,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "description": "Action id",
@@ -135,6 +140,7 @@
                         "type": "array",
                         "items": {
                             "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "id": {
                                     "description": "Setting id",
@@ -160,6 +166,7 @@
                                 },
                                 "options": {
                                     "description": "Setting options",
+                                    "additionalProperties": true,
                                     "type": "object"
                                 }
                             },
@@ -187,6 +194,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "description": "Data source id",
@@ -223,6 +231,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "description": "Widget id",
@@ -246,6 +255,7 @@
                         "type": "array",
                         "items": {
                             "type": "object",
+                            "additionalProperties": false,
                             "properties": {
                                 "type": {
                                     "description": "Content type",
@@ -264,7 +274,8 @@
                                     "type": "string"
                                 },
                                 "style": {
-                                    "type": "object"
+                                    "type": "object",
+                                    "additionalProperties": true
                                 }
                             },
                             "required": [
@@ -287,6 +298,7 @@
             "uniqueItems": true,
             "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "description": "Trigger id",
