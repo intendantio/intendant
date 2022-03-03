@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://example.com/product.schema.json",
+    "$id": "https://raw.githubusercontent.com/intendantio/intendant/main/schemas/smartobject.package.json",
     "title": "Smartobject",
     "description": "Package on smartobject",
     "type": "object",
