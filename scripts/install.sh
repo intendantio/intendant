@@ -23,4 +23,4 @@ curl -s https://raw.githubusercontent.com/intendantio/intendant/main/template/in
 echo "> Installation dependencies";
 npm install --silent &>/dev/null;
 echo "> Installation successful";
-echo "> Start with 'node index.js'";
+echo "> Start with 'npm install'";
