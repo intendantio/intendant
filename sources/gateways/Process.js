@@ -51,7 +51,7 @@ export default (app, core) => {
         async (request, result) => {
             let resultValid = validationResult(request)
             if (resultValid.isEmpty()) {
-                request.url = '/espace/:id/processes/:idProcess'
+                request.url = '/processes/:idProcess'
                 let authorization = await core.controller.authentification.checkAuthorization(request)
                 if (authorization.error) {
                     result.send(authorization)

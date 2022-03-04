@@ -51,7 +51,7 @@ dev/
 
 # Dependency directories
 node_modules/
-jspm_packages/
+jspmpackages/
 
 # TypeScript v1 declaration files
 typings/

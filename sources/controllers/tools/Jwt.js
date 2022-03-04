@@ -1,26 +1,20 @@
 import jwt from 'jsonwebtoken'
+import Package from '../../package.json'
+import Result from '../../utils/Result'
+import Tracing from '../../utils/Tracing'
 
 class Jwt {
 
-    static generateAccessToken(login,secret) {
-        return jwt.sign(login, secret)
+    static generateAccessToken(payload, secret) {
+        return new Result(Package.name, false, "", jwt.sign(payload, secret))
     }
 
-    static verifyAccessToken(token = "",secret) {
-        if (token.length === 0) {
-            return {
-                valid: false
-            }
-        }
+    static verifyAccessToken(token = "", secret) {
         try {
-            return {
-                valid: true,
-                login: jwt.verify(token, secret)
-            }
+            return new Result(Package.name, false, "", jwt.verify(token, secret))
         } catch (error) {
-            return {
-                valid: false
-            }
+            Tracing.error(Package.name, error.toString())
+            return new Result(Package.name, true, "Invalid token")
         }
     }
 

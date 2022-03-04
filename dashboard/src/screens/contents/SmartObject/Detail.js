@@ -63,18 +63,15 @@ class DetailSmartObject extends React.Component {
     async executeAction(action, settings) {
         this.setState({ loadingAction: action.id })
         let tmp = {}
-        let resetState = {}
         for (let index = 0; index < settings.length; index++) {
             let setting = settings[index]
             let value = this.state[action.id + "-" + setting.id]
-            resetState[action.id + "-" + setting.id] = null
             if (value) {
                 tmp[setting.id] = value
             } else {
                 tmp[setting.id] = null
             }
         }
-        this.setState(resetState)
         let result = await new Request().post({ settings: tmp }).fetch("/api/smartobjects/" + this.state.id + "/actions/" + action.id)
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
@@ -140,6 +137,9 @@ class DetailSmartObject extends React.Component {
                                     <Grid container >
                                         {
                                             this.state.smartobject.actions.map((action, index) => {
+                                                if(action.type == "trigger") {
+                                                    return null
+                                                }
                                                 let showDivider = action.group && action.group != lastGroup
                                                 lastGroup = action.group ? action.group : ""
                                                 return (

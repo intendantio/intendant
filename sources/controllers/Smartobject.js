@@ -4,6 +4,7 @@ import Tracing from "../utils/Tracing"
 import Result from '../utils/Result'
 import StackTrace from '../utils/StackTrace'
 import Parser from '../utils/Parser'
+import Moment from 'moment'
 
 class Smartobject extends Controller {
 
@@ -62,11 +63,6 @@ class Smartobject extends Controller {
             let room = roomRequest.data
             let configuration = require(smartobject.module + "/package.json")
 
-            let smartobjectProfileRequest = await this.sqlSmartobjectProfile.getAllByField({ smartobject: idSmartobject })
-            if (smartobjectProfileRequest.error) {
-                return smartobjectProfileRequest
-            }
-            let profiles = smartobjectProfileRequest.data
             let actions = []
             let widgets = []
             let dataSources = []
@@ -78,9 +74,6 @@ class Smartobject extends Controller {
 
             if (this.smartobjectManager.instances.has(parseInt(smartobject.id))) {
                 actions = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions()
-                if(actions == undefined) {
-                    console.log(this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions)
-                }
                 widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
                 dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
                 triggers = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getTriggers()
@@ -94,8 +87,6 @@ class Smartobject extends Controller {
                 Tracing.warning(Package.name, "Smartobject n°" + smartobject.id + " was not instanciate")
             }
 
-
-
             return new Result(Package.name, false, "", {
                 id: smartobject.id,
                 module: smartobject.module,
@@ -106,7 +97,6 @@ class Smartobject extends Controller {
                 widgets: widgets,
                 dataSources: dataSources,
                 triggers: triggers,
-                profiles: profiles,
                 state: state,
                 room: room,
                 configuration: configuration
@@ -134,62 +124,10 @@ class Smartobject extends Controller {
         }
     }
 
-    async insertSmartobjectProfile(idSmartobject, idProfile) {
-        try {
-            let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
-            if (smartobjectRequest.error) {
-                return smartobjectRequest
-            }
-            let smartobject = smartobjectRequest.data
-            let profileRequest = await this.sqlSmartobjectProfile.getOneByField({ smartobject: idSmartobject, profile: idProfile })
-            if (profileRequest.error) {
-                return profileRequest
-            }
-            let profile = profileRequest.data
-            if (profile === false) {
-                let insertProfile = await this.sqlSmartobjectProfile.insert({ id: null, smartobject: smartobject.id, profile: idProfile })
-                if (insertProfile.error) {
-                    return insertProfile
-                }
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when insert smartobject profile")
-            return new Result(Package.name, true, "Error occurred when insert smartobject profile")
-        }
-
-    }
-
-    async deleteSmartobjectProfile(idSmartobject, idProfile) {
-        try {
-            let smartobjectRequest = await this.sqlSmartobject.getOne(idSmartobject)
-            if (smartobjectRequest.error) {
-                return smartobjectRequest
-            }
-            let profileRequest = await this.sqlSmartobjectProfile.getOneByField({ smartobject: idSmartobject, profile: idProfile })
-            if (profileRequest.error) {
-                return profileRequest
-            }
-            let profile = profileRequest.data
-            if (profile) {
-                let deleteProfileRequest = await this.sqlSmartobjectProfile.deleteAllByField({ id: profile.id })
-                if (deleteProfileRequest.error) {
-                    return deleteProfileRequest
-                }
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete smartobject profile")
-            return new Result(Package.name, true, "Error occurred when delete smartobject profile")
-        }
-
-    }
 
     async updateLastUse(idSmartobject) {
         try {
-            let result = await this.sqlSmartobject.updateAll({ last_use: "DATE:NOW" }, { id: idSmartobject })
+            let result = await this.sqlSmartobject.updateAll({ last_use: Moment().valueOf() }, { id: idSmartobject })
             if (result.error) {
                 return result
             }
@@ -268,7 +206,7 @@ class Smartobject extends Controller {
                 Tracing.warning(Package.name, "Smartobject already exist")
                 return new Result(Package.name, true, "Smartobject already exist")
             } else {
-                let data = { module: pModule, status: 2, reference: reference, last_use: "", room: room }
+                let data = { module: pModule, status: 2, reference: reference, last_use: Moment().valueOf(), room: room }
                 let insertRequest = await this.sqlSmartobject.insert(data)
                 if (insertRequest.error) {
                     return insertRequest
@@ -358,33 +296,29 @@ class Smartobject extends Controller {
         }
     }
 
-    async executeAction(idSmartobject, idAction, idProfile = 1, pArguments, force = false, idUser = 0) {
+    async executeAction(idSmartobject, idAction, settings, idProfile) {
         try {
+            idSmartobject = parseInt(idSmartobject)
             if (idAction) {
                 let smartobjectRequest = await this.getOne(idSmartobject)
-                if (smartobjectRequest.error) {
-                    return smartobjectRequest
-                }
+                if (smartobjectRequest.error) { return smartobjectRequest }
                 let smartobject = smartobjectRequest.data
-                if (this.smartobjectManager.instances.has(parseInt(idSmartobject))) {
-                    let instanceSmartobject = this.smartobjectManager.instances.get(parseInt(idSmartobject))
-                    if (true) {
-                        this.updateLastUse(idSmartobject)
-                        let resultAction = instanceSmartobject.action(idAction, pArguments)
-                        if (resultAction.error) {
-                            return resultAction
-                        }
-                        if (idUser != 0) {
-                            let resultHistory = await this.userController.insertHistory(idUser, "EXECUTE", smartobject.reference + " - " + idAction)
-                            if (resultHistory.error) {
-                                return resultHistory
-                            }
-                        }
+                let resultRoomProfile = await this.sqlRoomProfile.getOneByField({ room: smartobject.room.id, profile: idProfile })
+                if (resultRoomProfile.error) {
+                    return resultRoomProfile
+                }
+                if (resultRoomProfile.data == false) {
+                    Tracing.warning(Package.name, "Not allowed at " + smartobject.room.name)
+                    return new Result(Package.name, true, "You do not have access to this room (" + smartobject.room.name + ")")
+                }
+                if (this.smartobjectManager.instances.has(idSmartobject)) {
+                    let instanceSmartobject = this.smartobjectManager.instances.get(idSmartobject)
+                    this.updateLastUse(idSmartobject)
+                    let resultAction = instanceSmartobject.action(idAction, settings)
+                    if (resultAction.error) {
                         return resultAction
-                    } else {
-                        Tracing.warning(Package.name, "Not allowed")
-                        return new Result(Package.name, true, "You are not allowed")
                     }
+                    return resultAction
                 } else {
                     Tracing.warning(Package.name, "Smartobject missing")
                     return new Result(Package.name, true, "Smartobject missing")

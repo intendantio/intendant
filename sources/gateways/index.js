@@ -9,8 +9,6 @@ import Process from './Process'
 import Authentification from './Authentification'
 import Authorization from './Authorization'
 import Module from './Module'
-import Ping from './Ping'
-import GetStarted from './GetStarted'
 import Widget from './Widget'
 import Configuration from './Configuration'
 import Market from './Market'
@@ -41,8 +39,6 @@ class API {
         Automation(app,core)
         Process(app,core)
         Module(app,core)
-        Ping(app,core)
-        GetStarted(app,core)
         Widget(app,core)
         Configuration(app,core)
         Market(app,core)

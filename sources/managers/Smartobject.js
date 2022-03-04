@@ -10,13 +10,14 @@ class Smartobject extends Manager {
 
     constructor(core) {
         super()
+
         Tracing.verbose(Package.name, "Start smartobject manager")
 
         this.core = core
 
         /* Private */
-        this._packages = []
-        this._instances = new Map()
+        this.packages = []
+        this.instances = new Map()
 
         /* Connector */
         this.sqlSmartobject = new Connector("smartobject")
@@ -67,7 +68,7 @@ class Smartobject extends Manager {
 
     async restart() {
         try {
-            this._instances = new Map()
+            this.instances = new Map()
             return await this.before()
         } catch (error) {
             StackTrace.save(error)
@@ -77,10 +78,9 @@ class Smartobject extends Manager {
     }
 
     async instanciate(smartobject) {
-        let instances = this._instances
         try {
-            if (instances.has(smartobject.id) === false) {
-                if (this._packages.includes(smartobject.module)) {
+            if (this.instances.has(smartobject.id) === false) {
+                if (this.packages.includes(smartobject.module)) {
                     try {
                         let settings = {}
                         smartobject.arguments.forEach(argument => {
@@ -88,19 +88,19 @@ class Smartobject extends Manager {
                         })
                         let configurations = require(smartobject["module"] + "/package.json")
                         let Module = require(smartobject["module"])
-                        let instance = new Module(this.core, smartobject.id, smartobject.reference, settings, Tracing,configurations)
+                        let instance = new Module(this.core, smartobject.id, smartobject.reference, settings, Tracing, configurations)
                         let resultUpdateRequest = await this.sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
                         if (resultUpdateRequest.error) {
                             return resultUpdateRequest
                         }
-                        instances.set(smartobject.id, instance)
+                        this.instances.set(smartobject.id, instance)
                         Tracing.verbose(Package.name, "Instanciate smartobject n°" + smartobject.id)
                     } catch (error) {
                         Tracing.warning(Package.name, error)
                     }
                 } else {
                     if (fs.existsSync("./node_modules/" + smartobject.module)) {
-                        this._packages.push(smartobject.module)
+                        this.packages.push(smartobject.module)
                         let resultInstanciate = await this.instanciate(smartobject)
                         if (resultInstanciate.error) {
                             return resultInstanciate
@@ -114,7 +114,6 @@ class Smartobject extends Manager {
                     }
                 }
             }
-            this._instances = instances
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
@@ -123,16 +122,16 @@ class Smartobject extends Manager {
         }
     }
 
-    async update(id) {
-        Tracing.verbose(Package.name, "Update smartobject instance n°" + id)
+    async update(idSmartobject) {
+        Tracing.verbose(Package.name, "Update smartobject instance n°" + idSmartobject)
         try {
-            let getRequest = await this.smartobjectController.getOne(id)
+            let getRequest = await this.smartobjectController.getOne(idSmartobject)
             if (getRequest.error) {
                 return getRequest
             }
             let smartobject = getRequest.data
-            if (this._instances.has(smartobject.id)) {
-                this._instances.delete(smartobject.id)
+            if (this.instances.has(smartobject.id)) {
+                this.instances.delete(smartobject.id)
             }
             let resultInstanciate = await this.instanciate(smartobject)
             if (resultInstanciate.error) {
@@ -140,7 +139,7 @@ class Smartobject extends Manager {
             }
             return new Result(Package.name, false, "")
         } catch (error) {
-            Tracing.error(Package.name, "An error occurred when update smartobject instance n°" + id)
+            Tracing.error(Package.name, "An error occurred when update smartobject instance n°" + idSmartobject)
             StackTrace.save(error)
             return new Result(Package.name, true, "Error occurred when update smartobject")
         }
@@ -149,8 +148,8 @@ class Smartobject extends Manager {
     getAll() {
         try {
             let smartobjects = []
-            for (let indexPackages = 0; indexPackages < this._packages.length; indexPackages++) {
-                let pPackage = this._packages[indexPackages]
+            for (let indexPackages = 0; indexPackages < this.packages.length; indexPackages++) {
+                let pPackage = this.packages[indexPackages]
                 let configuration = require(pPackage + "/package.json")
                 smartobjects.push(configuration)
             }
@@ -160,24 +159,6 @@ class Smartobject extends Manager {
             Tracing.error(Package.name, "Error occurred when get all configuration in smartobject manager")
             return new Result(Package.name, true, "Error occurred when get all configuration in smartobject manage")
         }
-    }
-
-    get packages() {
-        return this._packages
-    }
-
-    get instances() {
-        return this._instances
-    }
-
-    set instances(instances) {
-        this._instances = instances
-        return this.instances
-    }
-    
-    set packages(packages) {
-        this._packages = packages
-        return this.packages
     }
 
 }

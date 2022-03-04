@@ -45,7 +45,7 @@ class DetailUser extends React.Component {
         if (result.error) {
             this.props.setMessage(result.package + " : " + result.message)
         } else {
-            this.props.history.push('/users')
+            this.props.history.push('/user')
         }
     }
 

@@ -60,12 +60,6 @@ class Process extends Controller {
             let process = processRequest.data
             process.inputs = inputs
             process.actions = actions
-            /*
-                process.inputs = inputRequest.data.map(input => {
-                    input.id = input.reference
-                    return input
-                })
-            */
             process.profiles = processProfileRequest.data
             return new Result(Package.name, false, "", process)
         } catch (error) {

@@ -38,7 +38,7 @@ class WidgetItem extends React.Component {
                                 this.state.widget.values.filter(value => value.type == "title").map((value, ppIndex) => {
                                     return (
                                         <Typography key={ppIndex} variant='subtitle1' component='div'>
-                                            {value.value}
+                                           {String.capitalizeFirstLetter(value.value)}
                                         </Typography>
                                     )
                                 })
@@ -51,7 +51,7 @@ class WidgetItem extends React.Component {
                                 this.state.widget.values.filter(value => value.type == "text").map((value, ppIndex) => {
                                     return (
                                         <Typography key={ppIndex} variant='body2' color={value.style && value.style.color  ? this.state.widget.dataSources[value.style.color] : "text.secondary"}>
-                                            {value.value}
+                                            {String.capitalizeFirstLetter(value.value)}
                                         </Typography>
                                     )
                                 })

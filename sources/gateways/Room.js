@@ -58,27 +58,6 @@ export default (app, core) => {
     })
 
 
-    // Execute action by room
-    //TODO Rework
-    app.post("/api/rooms/:idRoom/actions/:idAction", async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = "/rooms/:idRoom/actions/:idAction"
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
-            } else {
-                result.send(await core.controller.room.executeAction(
-                    request.params.idRoom,
-                    request.params.idAction,
-                    request.body.settings
-                ))
-            }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
-
 
     //Delete rooms
 

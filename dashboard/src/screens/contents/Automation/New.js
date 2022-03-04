@@ -23,7 +23,7 @@ class NewAutomation extends React.Component {
             step: "trigger",
             description: ""
         }
-        props.setTitle("Automations")
+        props.setTitle("New automation")
         props.setActionType("return")
     }
 
@@ -43,12 +43,10 @@ class NewAutomation extends React.Component {
             }).filter(smartobject => {
                 return smartobject.configuration.triggers != null
             }).forEach(smartobject => {
-                console.log(smartobject)
                 smartobject.type = "smartobject"
                 sources.push(smartobject)
             })
             resultProcess.data.forEach(process => {
-                console.log(process)
                 process.type = "process"
                 process.reference = process.description
                 process.triggers = []
@@ -66,8 +64,6 @@ class NewAutomation extends React.Component {
                 ]
                 sources.push(process)
             })
-            
-            console.log(resultProcess)
             this.setState({ loading: false, sources: sources })
         }
     }

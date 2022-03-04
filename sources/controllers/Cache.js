@@ -8,7 +8,7 @@ class Cache extends Controller {
 
     async get(data) {
         try {
-            Tracing.verbose(Package.name, "Get cache [" + data.reference + "]")
+            Tracing.verbose(Package.name, "Get cache " + data.reference)
             await this.check()
             let resultGetOne = await this.sqlCache.getOneByField({ reference: data.reference })
             if (resultGetOne.error) {
@@ -32,6 +32,17 @@ class Cache extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get all cache")
             return new Result(Package.name, true, "Error occurred when get all cache")
+        }
+    }
+
+    async clear(reference) {
+        try {
+            Tracing.verbose(Package.name, "Clear cache " + reference)
+            return await this.sqlCache.deleteAllByField({ reference: reference })
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when clear cache")
+            return new Result(Package.name, true, "Error occurred when clear cache")
         }
     }
 
@@ -59,7 +70,7 @@ class Cache extends Controller {
 
     async check() {
         try {
-            let result = await this.sqlCache.execute("DELETE FROM cache WHERE expiry < datetime('now')", {run: true})
+            let result = await this.sqlCache.execute("DELETE FROM cache WHERE expiry < datetime('now')", { run: true })
             if (result.error) {
                 return result
             }

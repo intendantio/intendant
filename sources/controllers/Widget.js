@@ -21,7 +21,14 @@ class Widget extends Controller {
                 return new Result(Package.name, true, "Missing configuration with smartobject n°" + object)
             }
         } else if (type == "module") {
-            packageName = object
+            let resultModule = await this.moduleController.getBySum(object)
+            if(resultModule.error) {
+                return resultModule
+            }
+            if(resultModule.data == false) {
+                return new Result(Package.name, true, "Missing configuration with module n°" + object)
+            }
+            packageName = resultModule.data
         } else {
             return new Result(Package.name, true, "Invalid type")
         }

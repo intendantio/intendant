@@ -51,7 +51,7 @@ class Automation extends Controller {
                 return automationTriggerRequest
             }
 
-            if(automationTriggerRequest.data == false) {
+            if (automationTriggerRequest.data == false) {
                 Tracing.warning(Package.name, "Automation trigger not found")
                 return new Result(Package.name, true, "Automation trigger not found")
             }
@@ -60,7 +60,7 @@ class Automation extends Controller {
             if (automationActionRequest.error) {
                 return automationActionRequest
             }
-            if(automationActionRequest.data == false) {
+            if (automationActionRequest.data == false) {
                 Tracing.warning(Package.name, "Automation action not found")
                 return new Result(Package.name, true, "Automation action not found")
             }
@@ -74,7 +74,7 @@ class Automation extends Controller {
             automation.trigger = automationTriggerRequest.data
             automation.action = automationActionRequest.data
             automation.action.settings = automationActionArgumentRequest.data
-            
+
             return new Result(Package.name, false, "", automation)
         } catch (error) {
             StackTrace.save(error)
@@ -143,7 +143,7 @@ class Automation extends Controller {
     async delete(idAutomation) {
         try {
             let removeInstance = await this.automationManager.removeInstance(parseInt(idAutomation))
-            if(removeInstance.error) {
+            if (removeInstance.error) {
                 return removeInstance
             }
             let automationActionRequest = await this.sqlAutomationAction.getAllByField({ automation: idAutomation })

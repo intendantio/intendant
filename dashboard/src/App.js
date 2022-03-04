@@ -59,7 +59,7 @@ class App extends React.Component {
         <ThemeProvider theme={Theme} >
           <CssBaseline />
           <Box style={{ userSelect: 'none', outline: 'none', WebkitTapHighlightColor: 'rgba(41,108,71,0.33)', height: '100vh', width: '100wh', backgroundColor: Theme.palette.background.default, display: 'flex', flexDirection: 'column', alignSelf: 'center', justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
-            <Authentification isMobile={this.state.isMobile} />
+            <Authentification setMessage={this.state.setMessage.bind(this)} isMobile={this.state.isMobile} />
           </Box>
           <Alert onClose={() => { this.setState({ enabled: false }) }} open={this.state.enabled} severity={this.state.severity}>
             {this.state.message}

@@ -72,6 +72,10 @@ class Room extends Controller {
             if (insertRequest.error) {
                 return insertRequest
             } else {
+                let resultInsertProfile = await this.sqlRoomProfile.insert({room: insertRequest.data.insertId, profile: 0})
+                if(resultInsertProfile.error) {
+                    return resultInsertProfile
+                }
                 return new Result(Package.name, false, "")
             }
         } catch (error) {

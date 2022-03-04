@@ -15,13 +15,10 @@ declare class Controller {
 
     
     sqlProfile: Connector;
-    sqlAuthorization: Connector;
-    sqlAuthorizationProfile: Connector;
 
     sqlSmartobject: Connector;
     sqlSmartobjectStatus: Connector;
     sqlSmartobjectArgument: Connector;
-    sqlSmartobjectProfile: Connector;
 
     sqlStorage: Connector;
     sqlWidget: Connector;

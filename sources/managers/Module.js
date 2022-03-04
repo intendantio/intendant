@@ -13,13 +13,11 @@ class Module extends Manager {
         this.core = core
 
         /* Private */
-        this._packages = []
-        this._instances = new Map()
+        this.packages = []
+        this.instances = new Map()
 
         this.before()
     }
-
-    
 
     async before() {
         try {
@@ -29,7 +27,7 @@ class Module extends Manager {
             resultMarketJSON.filter(pModule => {
                 return fs.existsSync("./node_modules/" + pModule.name)
             }).forEach(pModule => {
-                this._packages.push(pModule.name)
+                this.packages.push(pModule.name)
             })
             return this.restart()
         } catch (error) {
@@ -41,18 +39,18 @@ class Module extends Manager {
 
     restart() {
         try {
-            this._instances = new Map()
-            for (let indexPackage = 0; indexPackage < this._packages.length; indexPackage++) {
+            this.instances = new Map()
+            for (let indexPackage = 0; indexPackage < this.packages.length; indexPackage++) {
                 try {
-                    let pPackage = this._packages[indexPackage]
+                    let pPackage = this.packages[indexPackage]
                     let Module = require(pPackage)
                     let instanceModule = new Module(this.core, Tracing)
-                    this._instances.set(pPackage, instanceModule)
+                    this.instances.set(pPackage, instanceModule)
                     Tracing.verbose(Package.name, "Instanciate " + pPackage)
                 } catch (error) {
                     StackTrace.save(error)
                     Tracing.error(Package.name, "Error occurred when instanciate " + pPackage)
-                    this._packages = this._packages.filter(installModule => {
+                    this.packages = this.packages.filter(installModule => {
                         return installModule != pPackage
                     })
                 }
@@ -64,13 +62,11 @@ class Module extends Manager {
             return new Result(Package.name, true, "Error occurred when restart module manager")
         }
     }
-
-
     getAll() {
         try {
             let modules = []
-            for (let indexPackage = 0; indexPackage < this._packages.length; indexPackage++) {
-                let pPackage = this._packages[indexPackage]
+            for (let indexPackage = 0; indexPackage < this.packages.length; indexPackage++) {
+                let pPackage = this.packages[indexPackage]
                 let configuration = require(pPackage + "/package.json")
                 modules.push(configuration)
             }
@@ -82,23 +78,6 @@ class Module extends Manager {
         }
     }
 
-    get packages() {
-        return this._packages
-    }
-
-    get instances() {
-        return this._instances
-    }
-
-    set instances(instances) {
-        this._instances = instances
-        return this.instances
-    }
-    
-    set packages(packages) {
-        this._packages = packages
-        return this.packages
-    }
 }
 
 

@@ -20,22 +20,6 @@ export default (app, core) => {
         }
     })
 
-    //Get all smartobject
-    app.get('/api/smartobjects/configuration', async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = '/smartobjects/configuration'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
-            } else {
-                result.send(await core.controller.smartobject.getAllConfiguration())
-            }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
-
     //Get one smartobject
     app.get('/api/smartobjects/:idSmartobject', async (request, result) => {
         let resultValid = validationResult(request)
@@ -111,50 +95,8 @@ export default (app, core) => {
                 result.send(await core.controller.smartobject.executeAction(
                     request.params.idSmartobject,
                     request.params.idAction,
-                    authorization.profile,
                     request.body.settings,
-                    false,
-                    authorization.user
-                ))
-            }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
-
-    // Insert smartobject profiles
-    app.post("/api/smartobjects/:idSmartobject/profiles",
-        body('idProfile').isNumeric().withMessage("Invalid profile"),
-        async (request, result) => {
-            let resultValid = validationResult(request)
-            if (resultValid.isEmpty()) {
-                request.url = "/smartobjects/:idSmartobject/profiles"
-                let authorization = await core.controller.authentification.checkAuthorization(request)
-                if (authorization.error) {
-                    result.send(authorization)
-                } else {
-                    result.send(await core.controller.smartobject.insertSmartobjectProfile(
-                        request.params.idSmartobject,
-                        request.body.idProfile
-                    ))
-                }
-            } else {
-                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-            }
-        })
-
-    // Delete smartobject profiles
-    app.delete("/api/smartobjects/:idSmartobject/profiles/:idProfile", async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = "/smartobjects/:idSmartobject/profiles/:idProfile"
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
-            } else {
-                result.send(await core.controller.smartobject.deleteSmartobjectProfile(
-                    request.params.idSmartobject,
-                    request.params.idProfile
+                    authorization.data.idProfile
                 ))
             }
         } else {

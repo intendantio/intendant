@@ -29,7 +29,7 @@ class CountdownRapport extends React.Component {
                 this.setState({ remaning: remaning, percent: 100 - ((100 * remaning) / result.data.interval), loading: false })
                 if (remaning < 0) {
                     this.setState({ remaning: 0, loading: true })
-                    clearInterval(idInterval)
+                    clearInterval(this.idInterval)
                     if(remaning > -3600) {
                         setTimeout(() => {
                             this.props.onRefresh()

@@ -65,7 +65,6 @@ class Smartobject extends React.Component {
                                         <Grid item xs={12} md={6} lg={6} >
                                             <Card variant={'outlined'}   >
                                                 <CardActionArea style={{ padding: 12, display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }} onClick={() => { this.props.history.push('/smartobject/' + smartobject.id) }}  >
-
                                                     <Box style={{ display: 'flex', flex: 1 }} >
                                                         <Box style={{ display: 'flex', justifyContent: 'center', alignSelf: 'center', marginRight: 16 }}>
                                                             {smartobject.state.status == "online" ? <FlashOn fontSize='large' /> : <FlashOff color='disabled' fontSize='large' />}
@@ -73,9 +72,6 @@ class Smartobject extends React.Component {
                                                         <Box style={{ flex: 4, alignSelf: 'center', alignItems: 'center' }} >
                                                             <Typography variant='subtitle1' color={smartobject.state.status == "online" ? "text.primary" : "text.secondary"} >
                                                                 {smartobject.reference}
-                                                            </Typography>
-                                                            <Typography variant='body2' color={smartobject.state.status == "online" ? "text.secondary" : "text.secondary"}  >
-                                                                {smartobject.module}
                                                             </Typography>
                                                         </Box>
                                                     </Box>

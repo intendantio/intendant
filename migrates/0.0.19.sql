@@ -1,6 +1,8 @@
 
 /* Create new widget model */
 
+DROP TABLE IF EXISTS widget;
+
 CREATE TABLE widget(id INTEGER PRIMARY KEY, type TEXT, object INTEGER, reference TEXT);
 CREATE TABLE widget_argument(id INTEGER PRIMARY KEY,reference TEXT,value TEXT,type TEXT,widget INTEGER);
 
@@ -91,6 +93,8 @@ CREATE TABLE automation_trigger(id INTEGER PRIMARY KEY, automation INTEGER, type
 CREATE TABLE automation_action(id INTEGER PRIMARY KEY, automation INTEGER, type TEXT, object INTEGER, action TEXT );
 CREATE TABLE automation_action_argument(id INTEGER PRIMARY KEY, reference TEXT, value TEXT, automation_action INTEGER);
 
+DROP TABLE IF EXISTS profile;
+CREATE TABLE profile(id INTEGER PRIMARY KEY, name TEXT, scope TEXT);
 
 /*
 DROP TABLE IF EXISTS configuration;

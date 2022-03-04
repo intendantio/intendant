@@ -52,7 +52,6 @@ class Module extends React.Component {
         this.setState({ loadingAction: loadingAction })
 
         let result = await new Request().patch().fetch("/api/modules/" + idModule)
-        console.log(result)
         let index = this.state.loadingAction.indexOf(idModule)
         loadingAction = this.state.loadingAction
         loadingAction.splice(index, 1)

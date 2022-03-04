@@ -26,8 +26,7 @@ class Authentification extends React.Component {
 
     async componentDidMount() {
         let server = localStorage.getItem("server")
-        let authorization = localStorage.getItem("authorization")
-        if (server && authorization) {
+        if (server) {
             let result = await new Request().get().fetch("/api/smartobjects")
             if (result.error == false) {
                 this.setState({ enabled: false, authentification: false })
@@ -40,18 +39,28 @@ class Authentification extends React.Component {
 
     async login() {
         if (await this.checkServer()) {
-            let result = await new Request().post({ login: this.state.login, password: this.state.password }).fetch("/api/authentification")
-            if (result.error) {
-                this.props.setMessage(result.package + " : " + result.message)
+            let result = await fetch(localStorage.getItem("server") + "/api/authentification", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ login: this.state.login, password: this.state.password })
+            })
+            let resultJSON = await result.json()
+            if (resultJSON.error) {
+                this.props.setMessage(resultJSON.package + " : " + resultJSON.message)
             } else {
-                localStorage.setItem("authorization", result.token)
+                localStorage.setItem("expiry", resultJSON.data.expiry + "")
+                localStorage.setItem("access_token", resultJSON.data.access_token)
+                localStorage.setItem("refresh_token", resultJSON.data.refresh_token)
                 this.setState({ enabled: false, message: "", authentification: false })
             }
         }
     }
 
     disconnect() {
-        localStorage.removeItem("authorization")
+        localStorage.removeItem("access_token")
         this.setState({ authentification: true, password: "" })
     }
 
@@ -62,20 +71,19 @@ class Authentification extends React.Component {
             protocol = ""
         }
         try {
-            let result = await fetch(protocol + this.state.address + "/api/ping", {}, 2000)
+            let result = await fetch(protocol + this.state.address + "/api/configurations", {}, 2000)
             let resultJSON = await result.json()
-            if (resultJSON.message != "pong") {
-                this.setState({ enabled: true, message: 'Connection to server failed' })
-                ok = false
+            if (resultJSON.error) {
+                this.props.setMessage('Connection to server failed')
             } else {
                 localStorage.setItem("server", protocol + this.state.address)
-                if (resultJSON.getStarted) {
+                if (resultJSON.data.getStarted) {
                     this.setState({ getStarted: true })
                     return false
                 }
             }
         } catch (error) {
-            this.setState({ enabled: true, message: 'Connection to server failed' })
+            this.props.setMessage('Connection to server failed')
             ok = false
         }
         return ok
@@ -87,7 +95,7 @@ class Authentification extends React.Component {
         }
         if (this.state.getStarted) {
             return (
-                <GetStarted isMobile={this.props.isMobile} onFinish={() => { this.setState({ getStarted: false }) }} />
+                <GetStarted setMessage={this.props.setMessage} isMobile={this.props.isMobile} onFinish={() => { this.setState({ getStarted: false }) }} />
             )
         } else {
             if (this.state.authentification) {

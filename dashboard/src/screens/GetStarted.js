@@ -1,9 +1,5 @@
 import React from 'react'
-import Package from '../../package.json'
-import { Paper, TextField, Button, Typography } from '@mui/material'
-import Alert from '../components/Alert'
-import Main from './Main'
-import Request from '../utils/Request'
+import { Paper, TextField, Button } from '@mui/material'
 
 class GetStarted extends React.Component {
 
@@ -20,9 +16,17 @@ class GetStarted extends React.Component {
 
     async register() {
         if (this.state.password == this.state.confirmePassword) {
-            let result = await new Request().put({ password: this.state.password }).fetch("/api/getstarted")
-            if (result.error) {
-                this.props.setMessage(result.package + " : " + result.message)
+            let result = await fetch(localStorage.getItem("server") + "/api/configurations", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: this.state.password })
+            })
+            let resultJSON = await result.json()
+            if (resultJSON.error) {
+                this.props.setMessage(resultJSON.package + " : " + resultJSON.message)
             } else {
                 this.props.onFinish()
             }
@@ -44,14 +48,14 @@ class GetStarted extends React.Component {
                         At the first launch, you must set the admin password
                     </div>
                 </div>
-                <div noValidate autoComplete="off" style={{ marginBottom: 10, marginTop: 25}}>
+                <div noValidate autoComplete="off" style={{ marginBottom: 10, marginTop: 25 }}>
                     <div style={{ marginTop: 10 }}>
                         <TextField value={this.state.password} fullWidth label="Password" type='password' inputProps={{ maxLength: 12 }} onChange={(event) => { this.setState({ password: event.nativeEvent.target.value }) }} />
                     </div>
                     <div style={{ marginTop: 10 }}>
                         <TextField value={this.state.confirmePassword} fullWidth label="Confirmation" type='password' inputProps={{ maxLength: 12 }} onChange={(event) => { this.setState({ confirmePassword: event.nativeEvent.target.value }) }} />
                     </div>
-                    <div style={{  marginTop: 15, textAlign: 'end' }}>
+                    <div style={{ marginTop: 15, textAlign: 'end' }}>
                         <Button color='inherit' variant='plain' onClick={() => { this.register() }}  >
                             Let's get started
                         </Button>

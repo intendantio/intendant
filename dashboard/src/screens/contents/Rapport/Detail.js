@@ -319,7 +319,7 @@ class Detail extends React.Component {
                     <Desktop {... this.props}>
                         <Grid item xs={12} md={1} lg={2}>
                             <Card variant='outlined' style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center' }} >
-                                <Typography style={{ alignSelf: 'center' }} textAlign='center' variant='subtitle2' ></Typography>
+                                <Typography style={{ alignSelf: 'center'}} textAlign='center' variant='subtitle2' ></Typography>
                             </Card>
                         </Grid>
                         <Grid item xs={6} md={1} lg={1}>

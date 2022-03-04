@@ -54,7 +54,6 @@ class NewWidget extends React.Component {
             })
 
             resultModules.data.forEach(pModule => {
-                console.log(pModule)
                 if (Array.isArray(pModule.widgets) && pModule.widgets.length > 0) {
                     configurations.push({
                         configuration: pModule,

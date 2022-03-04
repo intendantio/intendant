@@ -210,7 +210,6 @@ class Connector {
 
     async insert(sets) {
         this.check("insert")
-        console.log(sets)
         if (typeof sets == 'object') {
             try {
                 let result = await this._connector.prepare("INSERT INTO " + this._name + " " + this.getInsert(sets)).run(sets)

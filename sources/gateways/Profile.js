@@ -36,38 +36,5 @@ export default (app, core) => {
             }
         })
 
-    app.get('/api/profiles/:idProfile/authorizations',
-        async (request, result) => {
-            let resultValid = validationResult(request)
-            if (resultValid.isEmpty()) {
-                request.url = '/profiles/:idProfile/authorizations'
-                let authorization = await core.controller.authentification.checkAuthorization(request)
-                if (authorization.error) {
-                    result.send(authorization)
-                } else {
-                    result.send(await core.controller.authentification.getAllAuthorizationByProfile(request.params.idProfile))
-                }
-            } else {
-                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-            }
-        })
-
-    app.post('/api/profiles/:idProfile/authorizations',
-        body('secure').isNumeric().withMessage("Invalid secure"),
-        body('authorization').isNumeric().withMessage("Invalid authorization"),
-        async (request, result) => {
-            let resultValid = validationResult(request)
-            if (resultValid.isEmpty()) {
-                request.url = '/profiles/:idProfile/authorizations'
-                let authorization = await core.controller.authentification.checkAuthorization(request)
-                if (authorization.error) {
-                    result.send(authorization)
-                } else {
-                    result.send(await core.controller.authentification.updateAuthorizationByProfile(request.params.idProfile, request.body))
-                }
-            } else {
-                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-            }
-        })
 
 }

@@ -61,7 +61,7 @@ class UserList extends React.Component {
             <>
                 <Desktop isMobile={this.props.isMobile}>
                     <Paper variant="outlined" style={{ padding: 12, justifyContent: 'left' }}>
-                        <Typography variant='h6' fontWeight='bold' >User</Typography>
+                        <Typography variant='h6' fontWeight='bold' >Account</Typography>
                         <Typography variant='subtitle2' color="text.secondary" >User list</Typography>
                     </Paper>
                 </Desktop>

@@ -8,9 +8,8 @@ export default (app, core) => {
         let resultValid = validationResult(request)
         if (resultValid.isEmpty()) {
             request.url = '/authentification'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
+            if (request.body.refresh) {
+                result.send(await core.controller.authentification.getTokenWithRefresh(request.body.refresh))
             } else {
                 result.send(await core.controller.authentification.getToken(request.body.login, request.body.password))
             }

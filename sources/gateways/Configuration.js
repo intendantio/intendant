@@ -4,68 +4,48 @@ import Package from '../package.json'
 
 export default (app, core) => {
 
-    //Get all smartobject configuration
-    app.get('/api/configurations/smartobject', async (request, result) => {
+    app.get("/api/configurations", async (request, result) => {
         let resultValid = validationResult(request)
         if (resultValid.isEmpty()) {
-            request.url = '/configurations/smartobject'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
+            request.url = '/configurations'
+            let resultGetStarted = await core.controller.user.getStarted()
+            if (resultGetStarted.error) {
+                result.send(resultGetStarted.error)
             } else {
-                result.send(await core.manager.smartobject.getAll())
+                result.send(new Result(Package.name, false, "", {
+                    getStarted: resultGetStarted.getStarted,
+                    version: Package.version,
+                }))
             }
         } else {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
         }
     })
 
-    //Get all module configuration
-    app.get("/api/configurations/module", async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = '/configurations/module'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
+    app.post("/api/configurations",
+        body('password').isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 }).withMessage("Invalid password {minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1}"),
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/configurations'
+                let resultGetStarted = await core.controller.user.getStarted()
+                if (resultGetStarted.error) {
+                    result.send(resultGetStarted.error)
+                } else if (resultGetStarted.getStarted) {
+                    result.send(
+                        await core.controller.user.insert({
+                            login: "admin",
+                            password: request.body.password,
+                            imei: "",
+                            profile: 0
+                        })
+                    )
+                } else {
+                    result.send(new Result(Package.name, true, "Invalid core state"))
+                }
             } else {
-                result.send(await core.manager.module.getAll())
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
             }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
-
-    //Get all widget configuration
-    app.get("/api/configurations/widget", async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = '/configurations/widget'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
-            } else {
-                result.send(await core.controller.widget.getConfiguration())
-            }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
-
-    //Get all routine configuration 
-    app.get('/api/configurations/routine', async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = '/configurations/routine'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
-            } else {
-                result.send(await core.controller.routine.getConfiguration())
-            }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
+        })
 
 }

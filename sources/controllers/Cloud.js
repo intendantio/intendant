@@ -13,14 +13,14 @@ class Cloud extends Controller {
 
 
     async getSingleCode(idSmartobject) {
-        let resultSmartobject = await this.sqlSmartobject.getOne(idSmartobject) 
+        let resultSmartobject = await this.sqlSmartobject.getOne(idSmartobject)
 
-        if(resultSmartobject.error) {
+        if (resultSmartobject.error) {
             return resultSmartobject
         }
 
-        if(resultSmartobject.data == false) {
-            return new Result(Package.name,true,"")
+        if (resultSmartobject.data == false) {
+            return new Result(Package.name, true, "")
         }
 
         let getOneSingleCode = await this.sqlSingleCode.getOneByField({ smartobject: idSmartobject })

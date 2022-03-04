@@ -20,12 +20,9 @@ class Controller {
             this.sqlClient = new Connector("client")
             this.sqlProfile = new Connector("profile")
             this.sqlAuthorization = new Connector("authorization")
-            this.sqlAuthorizationProfile = new Connector("authorization_profile")
 
             this.sqlSmartobject = new Connector("smartobject")
-            this.sqlSmartobjectStatus = new Connector("smartobject_status")
             this.sqlSmartobjectArgument = new Connector("smartobject_argument")
-            this.sqlSmartobjectProfile = new Connector("smartobject_profile")
             
             this.sqlStorage = new Connector("storage")
             

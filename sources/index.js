@@ -14,6 +14,8 @@ import Room from './controllers/Room'
 import Essential from './controllers/Essential'
 import Module from './controllers/Module'
 import Rapport from './controllers/Rapport'
+import Cloud from './controllers/Cloud'
+import Automation from './controllers/Automation'
 
 import API from './gateways'
 
@@ -21,11 +23,10 @@ import SmartobjectManager from './managers/Smartobject'
 import ModulesManager from './managers/Module'
 import AutomationManager from './managers/Automation'
 import RapportManager from './managers/Rapports'
+
 import Tracing from './utils/Tracing'
 
 import Connector from './connector'
-import Cloud from './controllers/Cloud'
-import Automation from './controllers/Automation'
 
 class Core {
     constructor(configuration) {
@@ -104,7 +105,7 @@ class Core {
                 this.manager.smartobject.before()
                 setTimeout(() => {
                     this.manager.automation.before()
-                },1000)
+                }, 1000)
             }, 1000)
         })
     }

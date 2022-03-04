@@ -1,12 +1,9 @@
 import Authentification from './controllers/Authentification'
 import Cache from './controllers/Cache'
-import Client from './controllers/Client'
-import Espace from './controllers/Espace'
 import Market from './controllers/Market'
 import Notification from './controllers/Notification'
 import Process from './controllers/Process'
 import Profile from './controllers/Profile'
-import Routine from './controllers/Routine'
 import Smartobject from './controllers/Smartobject'
 import Storage from './controllers/Storage'
 import User from './controllers/User'
@@ -21,14 +18,11 @@ interface Managers { }
 interface Controllers {
     storage: Storage,
     smartobject: Smartobject,
-    routine: Routine,
     profile: Profile,
     process: Process,
-    client: Client,
     widget: Widget,
     user: User,
     cache: Cache,
-    espace: Espace,
     market: Market,
     notification: Notification,
     authentification: Authentification
