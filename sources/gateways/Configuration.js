@@ -37,7 +37,7 @@ export default (app, core) => {
                             login: "admin",
                             password: request.body.password,
                             imei: "",
-                            profile: 0
+                            profile: 1
                         })
                     )
                 } else {
