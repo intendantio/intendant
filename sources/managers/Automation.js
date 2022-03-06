@@ -29,7 +29,7 @@ class Automation extends Manager {
                                 automation.action.settings.forEach(setting => {
                                     settings[setting.reference] = setting.value
                                 })
-                                this.smartobjectController.executeAction(idSmartobject, automation.action.action, 1, settings)
+                                this.smartobjectController.executeAction(idSmartobject, automation.action.action, settings, false )
                             } else {
                                 Tracing.error(Package.name, "Smartobject not instanciate")
                             }
