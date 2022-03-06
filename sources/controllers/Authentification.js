@@ -35,7 +35,7 @@ class Authentification extends Controller {
             let idSmartobject = parseInt(params.idSmartobject)
             if (parseInt(singleCode.smartobject) == idSmartobject) {
                 return new Result(Package.name, false, "", {
-                    idProfile: 0
+                    idProfile: false
                 })
             } else {
                 Tracing.warning(Package.name, "Invalid method to single code")
