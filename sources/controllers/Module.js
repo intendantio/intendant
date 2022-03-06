@@ -6,6 +6,7 @@ import StackTrace from '../utils/StackTrace'
 import _ from 'lodash'
 import md5 from 'md5'
 import fetch from 'node-fetch'
+import fsExtra from 'fs-extra'
 import { exec } from 'child_process'
 import Utils from '../utils/Utils'
 
@@ -144,7 +145,7 @@ class Module extends Controller {
             })
 
             if (fs.existsSync("./node_modules/" + pPackage)) {
-                fs.rmdirSync("./node_modules/" + pPackage, { recursive: true, force: true })
+                fsExtra.removeSync("./node_modules/" + pPackage)
             }
             this.moduleManager.packages = this.moduleManager.packages.filter((pModule) => {
                 return pPackage != pModule

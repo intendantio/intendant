@@ -9,6 +9,7 @@ import fs from 'fs'
 import fetch from 'node-fetch'
 import { exec } from 'child_process'
 import Utils from '../utils/Utils'
+import fsExtra from 'fs-extra'
 
 class Smartobject extends Controller {
 
@@ -16,7 +17,7 @@ class Smartobject extends Controller {
         try {
 
             if (fs.existsSync("./node_modules/" + pPackage)) {
-                fs.rmdirSync("./node_modules/" + pPackage, { recursive: true, force: true })
+                fsExtra.removeSync("./node_modules/" + pPackage)
             }
 
             Tracing.verbose(Package.name, "Download list from https://market.intendant.io/smartobjects.json")
