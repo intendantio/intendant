@@ -20,7 +20,7 @@ class Authentification extends Controller {
         }
     }
 
-    async checkSingleCode(code) {
+    async checkSingleCode(code,url,params) {
         let resultQuery = await this.sqlSingleCode.getOneByField({ code: code })
         if (resultQuery.error) {
             return resultQuery
@@ -29,10 +29,10 @@ class Authentification extends Controller {
             Tracing.warning(Package.name, "Invalid single code authorization")
             return new Result(Package.name, true, "Invalid single code authorization")
         }
-        let splitRequest = request.url.split("/")
-        if (splitRequest[1] == "smartobjects" && request.params.idSmartobject) {
+        let splitRequest = url.split("/")
+        if (splitRequest[1] == "smartobjects" && params.idSmartobject) {
             let singleCode = resultQuery.data
-            let idSmartobject = parseInt(request.params.idSmartobject)
+            let idSmartobject = parseInt(params.idSmartobject)
             if (parseInt(singleCode.smartobject) == idSmartobject) {
                 return new Result(Package.name, false, "", {
                     profile: -1,
@@ -77,7 +77,7 @@ class Authentification extends Controller {
                 return new Result(Package.name, false, "")
             } else {
                 if (request.query.code) {
-                    return this.checkSingleCode(request.query.code)
+                    return this.checkSingleCode(request.query.code,request.url,request.params)
                 } else {
                     let authorization = request.headers['authorization']
                     if (authorization == undefined) {
