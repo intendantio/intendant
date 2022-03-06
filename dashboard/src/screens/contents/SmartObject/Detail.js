@@ -69,7 +69,7 @@ class DetailSmartObject extends React.Component {
             if (value) {
                 tmp[setting.id] = value
             } else {
-                tmp[setting.id] = null
+                tmp[setting.id] = setting.default
             }
         }
         let result = await new Request().post({ settings: tmp }).fetch("/api/smartobjects/" + this.state.id + "/actions/" + action.id)

@@ -202,8 +202,8 @@ class NewRapport extends React.Component {
                     let value = setting.setting.default
                     switch (this.state.settingsMode[setting.index]) {
                         case "custom":
-                            if (this.state["setting" + setting.index] != undefined) {
-                                value = this.state["setting" + setting.index]
+                            if (this.state["setting-" + setting.index]) {
+                                value = this.state["setting-" + setting.index]
                             }
                             break
                         case "dynamic":
@@ -243,10 +243,16 @@ class NewRapport extends React.Component {
                     let value = setting.setting.default
                     switch (this.state.settingsMode[setting.index]) {
                         case "custom":
-                            value = this.state["setting-" + setting.index]
+                            if (this.state["setting-" + setting.index]) {
+                                value = this.state["setting-" + setting.index]
+                            }
                             break
                         case "dynamic":
-                            value = "{" + setting.setting.id + "_" + setting.index + "}"
+                            if (this.state.useMerge) {
+                                value = "{" + setting.setting.id + "}"
+                            } else {
+                                value = "{" + setting.setting.id + "_" + setting.index + "}"
+                            }
                             break
                     }
                     return {

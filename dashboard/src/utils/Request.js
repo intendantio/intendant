@@ -40,8 +40,7 @@ class Request {
         
         let expiry = parseInt(localStorage.getItem("expiry"))
         let server = localStorage.getItem("server")
-        //Moment().add({ minutes: 5 }).valueOf()
-        if (expiry < Moment().valueOf()) {
+        if (expiry < Moment().add({ minutes: 5 }).valueOf()) {
             let resultRefresh = await this.refreshToken()
             if(resultRefresh.error) {
                 return resultRefresh

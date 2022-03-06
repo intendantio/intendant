@@ -52,8 +52,8 @@ class DetailUser extends React.Component {
     async updateProfile(profile) {
         let result = await new Request().post({ profile: profile }).fetch("/api/users/" + this.state.id + "/profile")
         if (result.error) {
-            this.setState({ loading: true })
             this.props.setMessage(result.package + " : " + result.message)
+        } else {
             this.componentDidMount()
         }
     }

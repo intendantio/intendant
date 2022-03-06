@@ -372,20 +372,22 @@ class Smartobject extends Controller {
         }
     }
 
-    async executeAction(idSmartobject, idAction, settings, idProfile) {
+    async executeAction(idSmartobject, idAction, settings, idProfile = false) {
         try {
             idSmartobject = parseInt(idSmartobject)
             if (idAction) {
                 let smartobjectRequest = await this.getOne(idSmartobject)
                 if (smartobjectRequest.error) { return smartobjectRequest }
                 let smartobject = smartobjectRequest.data
-                let resultRoomProfile = await this.sqlRoomProfile.getOneByField({ room: smartobject.room.id, profile: idProfile })
-                if (resultRoomProfile.error) {
-                    return resultRoomProfile
-                }
-                if (resultRoomProfile.data == false) {
-                    Tracing.warning(Package.name, "Not allowed at " + smartobject.room.name)
-                    return new Result(Package.name, true, "You do not have access to this room (" + smartobject.room.name + ")")
+                if(idProfile) {
+                    let resultRoomProfile = await this.sqlRoomProfile.getOneByField({ room: smartobject.room.id, profile: idProfile })
+                    if (resultRoomProfile.error) {
+                        return resultRoomProfile
+                    }
+                    if (resultRoomProfile.data == false) {
+                        Tracing.warning(Package.name, "Not allowed at " + smartobject.room.name)
+                        return new Result(Package.name, true, "You do not have access to this room (" + smartobject.room.name + ")")
+                    }
                 }
                 if (this.smartobjectManager.instances.has(idSmartobject)) {
                     let instanceSmartobject = this.smartobjectManager.instances.get(idSmartobject)

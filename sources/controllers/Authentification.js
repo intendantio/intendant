@@ -157,7 +157,7 @@ class Authentification extends Controller {
             }
 
             let token = resultToken.data
-            let expiry = Moment().add({ seconds: 30 }).valueOf()
+            let expiry = Moment().add({ minutes: 30 }).valueOf()
             token.exp = expiry
 
             let newToken = await Jwt.generateAccessToken(token, this.token)
@@ -188,7 +188,7 @@ class Authentification extends Controller {
             if (account) {
                 if (md5(password + account.salt) === account.password) {
 
-                    let expiry = Moment().add({ seconds: 30 }).valueOf()
+                    let expiry = Moment().add({ minutes: 30 }).valueOf()
                     let payload = JSON.stringify({ sub: login, exp: expiry })
 
                     let resultAcessToken = Jwt.generateAccessToken(payload, this.token)

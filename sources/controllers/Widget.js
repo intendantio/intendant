@@ -22,10 +22,10 @@ class Widget extends Controller {
             }
         } else if (type == "module") {
             let resultModule = await this.moduleController.getBySum(object)
-            if(resultModule.error) {
+            if (resultModule.error) {
                 return resultModule
             }
-            if(resultModule.data == false) {
+            if (resultModule.data == false) {
                 return new Result(Package.name, true, "Missing configuration with module n°" + object)
             }
             packageName = resultModule.data
@@ -145,7 +145,7 @@ class Widget extends Controller {
         }
     }
 
-    async insert(reference,object,type,settings) {
+    async insert(reference, object, type, settings) {
         try {
             let resultInsertWidget = await this.sqlWidget.insert({
                 type: type,
@@ -206,8 +206,8 @@ class Widget extends Controller {
                 return resultInstance
             } else {
                 let actions = resultInstance.data.getActions()
-                if(actions == undefined) { actions = [] }
-                return new Result(Package.name, false, "",actions)
+                if (actions == undefined) { actions = [] }
+                return new Result(Package.name, false, "", actions)
             }
         } catch (error) {
             StackTrace.save(error)
@@ -223,8 +223,8 @@ class Widget extends Controller {
                 return resultInstance
             } else {
                 let dataSources = resultInstance.data.getDataSources()
-                if(dataSources == undefined) { dataSources = [] }
-                return new Result(Package.name, false, "",dataSources)
+                if (dataSources == undefined) { dataSources = [] }
+                return new Result(Package.name, false, "", dataSources)
             }
         } catch (error) {
             StackTrace.save(error)
@@ -240,8 +240,8 @@ class Widget extends Controller {
                 return resultInstance
             } else {
                 let widgets = resultInstance.data.getWidgets()
-                if(widgets == undefined) { widgets = [] }
-                return new Result(Package.name, false, "",widgets)
+                if (widgets == undefined) { widgets = [] }
+                return new Result(Package.name, false, "", widgets)
             }
         } catch (error) {
             StackTrace.save(error)
@@ -324,7 +324,7 @@ class Widget extends Controller {
                     if (type == "module") {
                         resultAction = await this.moduleController.executeAction(pModule, action.id, settings)
                     } else if (type == "smartobject") {
-                        resultAction = await this.smartobjectController.executeAction(idSource, action.id, 1, settings, true)
+                        resultAction = await this.smartobjectController.executeAction(idSource, action.id, settings)
                     }
                     if (resultAction.error) {
                         return resultAction

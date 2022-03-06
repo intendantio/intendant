@@ -3,6 +3,7 @@ import Package from '../package.json'
 import Tracing from "../utils/Tracing"
 import Result from '../utils/Result'
 import StackTrace from "../utils/StackTrace"
+import Parser from "../utils/Parser"
 
 class Process extends Controller {
 
@@ -26,7 +27,11 @@ class Process extends Controller {
                 if (actionArgumentRequest.error) {
                     return actionArgumentRequest
                 }
-                action.arguments = actionArgumentRequest.data
+                action.arguments = actionArgumentRequest.data.map(argument => {
+                    argument.default = Parser.parse(argument.default)
+                    argument.value = Parser.parse(argument.value)
+                    return argument
+                })
                 actions.push(action)
             }
             let inputRequest = await this.sqlProcessInput.getAllByField({ process: idProcess })
@@ -179,14 +184,14 @@ class Process extends Controller {
         return allow || force
     }
 
-    async executeAction(idProcess, profile, inputs, force = false) {
+    async executeAction(idProcess, inputs, profile) {
         try {
             let processRequest = await this.getOne(idProcess)
             if (processRequest.error) {
                 return processRequest
             }
             let process = processRequest.data
-            if (this.isAllow(process, profile, force)) {
+            if (this.isAllow(process, profile)) {
                 let actions = process.actions
                 let data = []
                 for (let index = 0; index < actions.length; index++) {
@@ -195,10 +200,12 @@ class Process extends Controller {
                     action.arguments.forEach(argument => {
                         for (let inputKey in inputs) {
                             let input = inputs[inputKey]
-                            if(input == null) {
-                                argument.value = argument.value.replace("{" + inputKey + "}", argument.default_value) 
-                            } else {
-                                argument.value = argument.value.replace("{" + inputKey + "}", input)
+                            if(argument.value == "{" + inputKey + "}") {
+                               if(input) {
+                                    argument.value = input
+                               } else {
+                                    argument.value = argument.default_value
+                               }
                             }
                         }
                         pArguments[argument.reference] = argument.value
@@ -280,8 +287,8 @@ class Process extends Controller {
                     let insertSettingsRequest = await this.sqlProcessActionArgument.insert({
                         id: null,
                         reference: setting.reference,
-                        value: setting.value,
-                        default_value: setting.default,
+                        value: Parser.stringify(setting.value),
+                        default_value: Parser.stringify(setting.default),
                         process_action: idProcessAction
                     })
                     if (insertSettingsRequest.error) {

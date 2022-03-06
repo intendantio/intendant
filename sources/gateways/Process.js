@@ -91,7 +91,7 @@ export default (app, core) => {
                 if (authorization.error) {
                     result.send(authorization)
                 } else {
-                    result.send(await core.controller.process.executeAction(request.params.id, authorization.profile, request.body.inputs))
+                    result.send(await core.controller.process.executeAction(request.params.id, request.body.inputs, authorization.data.idProfile))
                 }
             } else {
                 result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
