@@ -5,8 +5,79 @@ import Result from '../utils/Result'
 import StackTrace from '../utils/StackTrace'
 import Parser from '../utils/Parser'
 import Moment from 'moment'
+import fs from 'fs'
+import fetch from 'node-fetch'
+import { exec } from 'child_process'
+import Utils from '../utils/Utils'
 
 class Smartobject extends Controller {
+
+    async install(pPackage) {
+        try {
+
+            if (fs.existsSync("./node_modules/" + pPackage)) {
+                fs.rmSync("./node_modules/" + pPackage, { recursive: true, force: true })
+            }
+
+            Tracing.verbose(Package.name, "Download list from https://market.intendant.io/smartobjects.json")
+            let resultMarket = await fetch("https://market.intendant.io/smartobjects.json", {
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': 0
+                }
+            })
+            let resultMarketJSON = await resultMarket.json()
+            resultMarketJSON = resultMarketJSON.filter(item => {
+                return item.name == pPackage
+            })
+            if (resultMarketJSON.length == 0) {
+                Tracing.warning(Package.name, "Package not found " + pPackage)
+                return new Result(Package.name, true, "Package not found " + pPackage)
+            } else if (resultMarketJSON.length > 1) {
+                Tracing.warning(Package.name, "Package not found " + pPackage)
+                return new Result(Package.name, true, "Package not found " + pPackage)
+            } else {
+                let item = resultMarketJSON[0]
+
+                let resultRaw = await fetch(item.raw, {
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': 0
+                    }
+                })
+                let resultRawJson = {}
+                try {
+                    resultRawJson = await resultRaw.json()
+                } catch (error) {
+                    Tracing.warning(Package.name, "File not found " + item.raw)
+                    return new Result(Package.name, true, "Invalid release file " + pPackage)
+                 
+                }
+                if (Utils.isCompatible(Package.version, resultRawJson.core)) {
+                    Tracing.verbose(Package.name, "Install " + item.name)
+                    await new Promise((resolve, reject) => {
+                        exec("npm install " + resultRawJson.url + " --silent 2>&1 | tee t", (e, std, ster) => {
+                            resolve()
+                        })
+                    })
+
+                    this.smartobjectManager.packages.push(item.name)
+                    await this.smartobjectManager.restart()
+
+                    return new Result(Package.name, false, "")
+                } else {
+                    Tracing.warning(Package.name, "Core must have a minimum version of " + resultRawJson.core + " to accept the module")
+                    return new Result(Package.name, true, "Core must have a minimum version of " + resultRawJson.core + " to accept the module")
+                }
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when install package smartobject")
+            return new Result(Package.name, true, "Error occurred when install package smartobject")
+        }
+    }
 
     async getAll() {
         try {
@@ -61,18 +132,24 @@ class Smartobject extends Controller {
             }
 
             let room = roomRequest.data
-            let configuration = require(smartobject.module + "/package.json")
 
             let actions = []
             let widgets = []
             let dataSources = []
             let triggers = []
+
             let state = {
-                status: "unknown",
-                reason: "Unknown"
+                status: "uninstalled",
+                reason: "Not installed package"
             }
 
+
+            let configuration = false
+
+
+
             if (this.smartobjectManager.instances.has(parseInt(smartobject.id))) {
+                configuration = require(smartobject.module + "/package.json")
                 actions = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions()
                 widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
                 dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
@@ -83,8 +160,6 @@ class Smartobject extends Controller {
                     return resultState
                 }
                 state = resultState.data
-            } else {
-                Tracing.warning(Package.name, "Smartobject n°" + smartobject.id + " was not instanciate")
             }
 
             return new Result(Package.name, false, "", {

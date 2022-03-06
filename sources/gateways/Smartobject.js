@@ -53,11 +53,11 @@ export default (app, core) => {
                     result.send(authorization)
                 } else {
                     result.send(await core.controller.smartobject.insert(
-                            request.body.reference,
-                            request.body.module,
-                            request.body.room,
-                            request.body.settings
-                        )
+                        request.body.reference,
+                        request.body.module,
+                        request.body.room,
+                        request.body.settings
+                    )
                     )
                 }
             } else {
@@ -103,6 +103,27 @@ export default (app, core) => {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
         }
     })
+
+    app.patch("/api/smartobjects",
+        body('package').isString().withMessage("Invalid package"),
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/smartobjects'
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(
+                        await core.controller.smartobject.install(
+                            request.body.package
+                        )
+                    )
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
 
     //Update rooms
     app.post("/api/smartobjects/:idSmartobject/room",

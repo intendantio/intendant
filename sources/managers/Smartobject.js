@@ -68,6 +68,7 @@ class Smartobject extends Manager {
 
     async restart() {
         try {
+            this.packages = []
             this.instances = new Map()
             return await this.before()
         } catch (error) {

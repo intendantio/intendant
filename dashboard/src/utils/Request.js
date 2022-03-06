@@ -22,8 +22,9 @@ class Request {
         return this
     }
 
-    patch() {
+    patch(data = {}) {
         this.method = 'PATCH'
+        this.data = data
         return this
     }
 
@@ -57,7 +58,7 @@ class Request {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + accessToken
                 },
-                body: this.method == 'POST' || this.method == 'PUT' ? JSON.stringify(this.data) : null
+                body: this.method == 'POST' || this.method == 'PATCH' || this.method == 'PUT' ? JSON.stringify(this.data) : null
             })
             return await result.json()
         } catch (error) {

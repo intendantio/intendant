@@ -1,8 +1,8 @@
 import React from 'react'
-import SmartObject from './contents/SmartObject/List'
-import DetailSmartObject from './contents/SmartObject/Detail'
-import GallerySmartobject from './contents/SmartObject/Gallery'
-import NewSmartObject from './contents/SmartObject/New'
+import Smartobject from './contents/Smartobject/List'
+import DetailSmartObject from './contents/Smartobject/Detail'
+import GallerySmartobject from './contents/Smartobject/Gallery'
+import NewSmartObject from './contents/Smartobject/New'
 import ListProcess from './contents/Process/List'
 import NewProcess from './contents/Process/New'
 import DetailProcess from './contents/Process/Detail'
@@ -24,7 +24,7 @@ import Sidebar from '../components/Sidebar'
 import Room from './contents/Room/List'
 import NewRoom from './contents/Room/New'
 import DetailRoom from './contents/Room/Detail'
-import OAuthSmartobject from './contents/SmartObject/OAuth'
+import OAuthSmartobject from './contents/Smartobject/OAuth'
 import Authorisation from './contents/Authorisation/List'
 
 import Context from '../utils/Context'
@@ -46,7 +46,7 @@ function Main(mainProps) {
                         <div style={{ marginLeft: mainProps.isMobile ? 0 : 240, height: '96vh' }}>
                             <Switch>
                                 <Route exact path="/" render={(props) => <Room setMessage={setMessage} setTitle={setTitle} setActionType={setActionType} isMobile={mainProps.isMobile} {...props} />} />
-                                <Route exact path="/smartobject" render={(props) => <SmartObject setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
+                                <Route exact path="/smartobject" render={(props) => <Smartobject setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/smartobject/new/:id" render={(props) => <NewSmartObject setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/smartobject/oauth/:id" render={(props) => <OAuthSmartobject setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />
                                 <Route exact path="/smartobject/gallery" render={(props) => <GallerySmartobject setActionType={setActionType} setMessage={setMessage} setTitle={setTitle} isMobile={mainProps.isMobile} {...props} />} />

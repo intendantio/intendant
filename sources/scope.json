@@ -115,6 +115,9 @@
     "PATCH": {
         "/rapports/:idRapport": [
             "admin"
+        ],
+        "/smartobjects": [
+            "admin"
         ]
     },
     "DELETE": {
@@ -137,6 +140,9 @@
             "admin"
         ],
         "/automations/:idAutomation": [
+            "admin"
+        ],
+        "/processes/:idProcess": [
             "admin"
         ]
     }

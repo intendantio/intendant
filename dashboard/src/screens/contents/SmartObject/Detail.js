@@ -1,7 +1,7 @@
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
 import { Paper, Alert, Typography, Card, Grid, Accordion, Box, Modal, AccordionSummary, AccordionDetails, ListItem, TableCell, TableRow, Button, TextField, FormControlLabel, IconButton, Switch, Divider, CardActionArea } from '@mui/material'
-import { ExpandMore, Edit, Room, FlashOff, FlashOn, House, Cached, RocketLaunch } from '@mui/icons-material'
+import { ExpandMore, Edit, Warning, FlashOff, FlashOn, House, Cached, RocketLaunch } from '@mui/icons-material'
 import AlertComponent from '../../../components/Alert'
 import Action from '../../../components/Action'
 import Desktop from '../../../components/Desktop'
@@ -103,6 +103,17 @@ class DetailSmartObject extends React.Component {
         }
     }
 
+    async installPackage() {
+        this.setState({loading: true})
+        let result = await new Request().patch({package: this.state.smartobject.module}).fetch("/api/smartobjects")
+        if (result.error) {
+            this.props.setMessage(result.package + " : " + result.message)
+            this.props.history.push('/smartobject')
+        } else {
+            this.componentDidMount()
+        }
+    }
+
 
     render() {
         let lastGroup = ""
@@ -124,6 +135,31 @@ class DetailSmartObject extends React.Component {
                 </Desktop>
                 <Loading loading={this.state.loading}>
                     <Grid container spacing={1} style={{ marginTop: 0 }}>
+                        {
+                            this.state.smartobject.state.status == "uninstalled" ?
+                                <><Grid item xs={12} md={6} lg={10} >
+                                    <Card variant='outlined' style={{ padding: 12}}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                                            <Warning style={{ fontSize: '24px' }} />
+                                            <Typography variant='subtitle1' style={{ marginLeft: 12 }}>
+                                                Smartobject is not correctly installed
+                                            </Typography>
+                                        </Box>
+
+                                    </Card>
+                                </Grid>
+                                    <Grid item xs={12} md={6} lg={2} >
+                                        <Card style={{height: '100%'}} variant='outlined'>
+                                            <Button onClick={() => {this.installPackage()}} style={{ padding: 10, height: '100%', width: '100%' }} variant='contained' size='small' color='error' >
+                                                <Typography variant='subtitle1' style={{ textAlign:'center', color:'white', textTransform:'none' }} >
+                                                    Fix smartobject
+                                                </Typography>
+                                            </Button>
+                                        </Card>
+                                    </Grid>
+                                </> : null
+                        }
+
                         <Grid item xs={12} md={12} lg={12} >
                             <Accordion variant='outlined' expanded={this.state.expanded === 'action'} onChange={() => this.setState({ expanded: "action" })}>
                                 <AccordionSummary expandIcon={<ExpandMore />} >
@@ -137,7 +173,7 @@ class DetailSmartObject extends React.Component {
                                     <Grid container >
                                         {
                                             this.state.smartobject.actions.map((action, index) => {
-                                                if(action.type == "trigger") {
+                                                if (action.type == "trigger") {
                                                     return null
                                                 }
                                                 let showDivider = action.group && action.group != lastGroup
@@ -155,7 +191,7 @@ class DetailSmartObject extends React.Component {
                                                         <Grid container spacing={action.settings.length == 0 && this.props.isMobile ? 0 : 2} >
                                                             <Grid item xs={12} md={3} lg={3} >
                                                                 <Card elevation={2}  >
-                                                                    <Button disabled={action.id == this.state.loadingAction || this.state.smartobject.state.status != "online" } variant='contained' onClick={() => { this.executeAction(action, action.settings) }} style={{ width: '100%', flexDirection: 'row', display: 'flex' }}>
+                                                                    <Button disabled={action.id == this.state.loadingAction || this.state.smartobject.state.status != "online"} variant='contained' onClick={() => { this.executeAction(action, action.settings) }} style={{ width: '100%', flexDirection: 'row', display: 'flex' }}>
                                                                         <Typography textAlign='center' variant='subtitle2'>
                                                                             {action.name}
                                                                         </Typography>

@@ -66,6 +66,14 @@ class NewSmartobject extends React.Component {
             this.props.setMessage("You must have a minimum of one room")
             this.props.history.push('/room')
         }
+
+        let resultInstall = await new Request().patch({package: resultJSON.package.name}).fetch("/api/smartobjects")
+        if(resultInstall.error) {
+            this.props.setMessage(resultInstall.message)
+            this.props.history.push('/smartobject')
+            return
+
+        }
         this.setState({
             loading: false,
             docs: resultJSON,
@@ -75,35 +83,8 @@ class NewSmartobject extends React.Component {
         })
     }
 
-    setModule(name) {
-        this.state.types.forEach(pModule => {
-            if (pModule.name === name) {
-                this.setState({
-                    module: false
-                }, () => {
-                    this.setState({
-                        module: pModule
-                    })
-                })
-            }
-        })
-    }
 
-    setLocalisation(id) {
-        this.state.rooms.forEach(pLocalisation => {
-            if (pLocalisation.id === id) {
-                this.setState({
-                    room: pLocalisation
-                })
-            }
-        })
-    }
 
-    updateSettings(key, value) {
-        let tmp = {}
-        tmp["settings-" + key] = value
-        this.setState(tmp)
-    }
 
     async submit() {
         let settings = []
