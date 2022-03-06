@@ -97,7 +97,8 @@ class Smartobject extends Manager {
                         this.instances.set(smartobject.id, instance)
                         Tracing.verbose(Package.name, "Instanciate smartobject n°" + smartobject.id)
                     } catch (error) {
-                        Tracing.warning(Package.name, error)
+                        StackTrace.save(error)
+                        Tracing.error(Package.name, error)
                     }
                 } else {
                     if (fs.existsSync("./node_modules/" + smartobject.module)) {
