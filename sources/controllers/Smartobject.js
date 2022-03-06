@@ -6,6 +6,7 @@ import StackTrace from '../utils/StackTrace'
 import Parser from '../utils/Parser'
 import Moment from 'moment'
 import fs from 'fs'
+import fsExtra from 'fs-extra'
 import fetch from 'node-fetch'
 import { exec } from 'child_process'
 import Utils from '../utils/Utils'
@@ -16,7 +17,7 @@ class Smartobject extends Controller {
         try {
 
             if (fs.existsSync("./node_modules/" + pPackage)) {
-                fs.unlinkSync("./node_modules/" + pPackage, { recursive: true, force: true })
+                fsExtra.rmSync("./node_modules/" + pPackage, { recursive: true, force: true })
             }
 
             Tracing.verbose(Package.name, "Download list from https://market.intendant.io/smartobjects.json")
