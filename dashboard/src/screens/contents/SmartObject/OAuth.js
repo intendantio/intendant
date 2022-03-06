@@ -60,7 +60,7 @@ class RedirectSmartobject extends React.Component {
                 for (const key in settings) {
                     realSettings.push({
                         reference: key,
-                        value: settings[key]
+                        value: settings[key].replace(/%7C/g,"|")
                     })
                 }
 
