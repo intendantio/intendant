@@ -16,7 +16,7 @@ class Smartobject extends Controller {
         try {
 
             if (fs.existsSync("./node_modules/" + pPackage)) {
-                fs.rmSync("./node_modules/" + pPackage, { recursive: true, force: true })
+                fs.unlinkSync("./node_modules/" + pPackage, { recursive: true, force: true })
             }
 
             Tracing.verbose(Package.name, "Download list from https://market.intendant.io/smartobjects.json")

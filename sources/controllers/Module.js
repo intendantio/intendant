@@ -144,7 +144,7 @@ class Module extends Controller {
             })
 
             if (fs.existsSync("./node_modules/" + pPackage)) {
-                fs.rmSync("./node_modules/" + pPackage, { recursive: true, force: true })
+                fs.unlinkSync("./node_modules/" + pPackage, { recursive: true, force: true })
             }
             this.moduleManager.packages = this.moduleManager.packages.filter((pModule) => {
                 return pPackage != pModule
