@@ -101,10 +101,12 @@ class Core {
 
             setTimeout(() => {
                 this.api = new API(this)
-                this.manager.rapport.before()
                 this.manager.smartobject.before()
                 setTimeout(() => {
-                    this.manager.automation.before()
+                    this.manager.rapport.before()
+                    setTimeout(() => {
+                        this.manager.automation.before()
+                    }, 1000)
                 }, 1000)
             }, 1000)
         })

@@ -47,7 +47,6 @@ class Rapport extends Controller {
             if(resultPackage.error) {
                 return resultPackage
             }
-            
             let resultConfiguration = await this.widgetController.getConfiguration(resultPackage.data)
             
             if (resultConfiguration.error) {

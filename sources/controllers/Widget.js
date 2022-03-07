@@ -53,7 +53,6 @@ class Widget extends Controller {
             }
             let packageNameResult = await this.getPackageName(widget.type, widget.object)
             if (packageNameResult.error) {
-                await this.delete(idWidget)
                 return packageNameResult
             }
             let packageName = packageNameResult.data
@@ -134,6 +133,7 @@ class Widget extends Controller {
                 let widget = widgets[indexWidget]
                 let resultWidget = await this.getOne(widget.id)
                 if (resultWidget.error) {
+                    await this.delete(widget.id)
                     return resultWidget
                 }
                 newWidget.push(resultWidget.data)
