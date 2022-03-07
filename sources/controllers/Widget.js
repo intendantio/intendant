@@ -53,6 +53,7 @@ class Widget extends Controller {
             }
             let packageNameResult = await this.getPackageName(widget.type, widget.object)
             if (packageNameResult.error) {
+                await this.delete(idWidget)
                 return packageNameResult
             }
             let packageName = packageNameResult.data

@@ -73,6 +73,12 @@ class Smartobject extends React.Component {
                                                             <Typography variant='subtitle1' color={smartobject.state.status == "online" ? "text.primary" : "text.secondary"} >
                                                                 {smartobject.reference}
                                                             </Typography>
+                                                            {
+                                                                smartobject.room &&
+                                                                <Typography variant='body2' color="text.secondary"  >
+                                                                    {smartobject.room.name}
+                                                                </Typography>
+                                                            }
                                                         </Box>
                                                     </Box>
                                                 </CardActionArea>

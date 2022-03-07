@@ -168,6 +168,12 @@ class NewWidget extends React.Component {
                                         <Typography variant='subtitle1'  >
                                             {configuration.reference}
                                         </Typography>
+                                        {
+                                            configuration.room &&
+                                            <Typography variant='body2' color="text.secondary"  >
+                                                {configuration.room.name}
+                                            </Typography>
+                                        }
                                     </Box>
                                 </AccordionSummary>
                                 <Divider style={{ marginBottom: 15 }} />

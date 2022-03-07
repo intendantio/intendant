@@ -13,6 +13,12 @@ function ListSmartobjectsActions(props) {
                             <Typography variant='subtitle1'   >
                                 {smartobject.reference}
                             </Typography>
+                            {
+                                smartobject.room &&
+                                <Typography variant='body2' color="text.secondary"  >
+                                    {smartobject.room.name}
+                                </Typography>
+                            }
                         </Box>
                     </AccordionSummary>
                     <Divider style={{ marginBottom: 15 }} />

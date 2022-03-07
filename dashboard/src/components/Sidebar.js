@@ -104,14 +104,6 @@ class Sidebar extends React.Component {
                                         <ListItemText primary={"Room"} />
                                     </ListItem>
                                 </Link>
-                                <Link to="/smartobject" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                                    <ListItem button key={"smartobject"}>
-                                        <ListItemIcon>
-                                            <DevicesOther />
-                                        </ListItemIcon>
-                                        <ListItemText primary={"Smartobject"} />
-                                    </ListItem>
-                                </Link>
                                 <Link to="/module" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
                                     <ListItem button key={"module"}>
                                         <ListItemIcon>
@@ -218,14 +210,6 @@ class Sidebar extends React.Component {
                                     <House />
                                 </ListItemIcon>
                                 <ListItemText primary={"Room"} />
-                            </ListItem>
-                        </Link>
-                        <Link to="/smartobject" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>
-                            <ListItem button key={"smartobject"}>
-                                <ListItemIcon>
-                                    <DevicesOther />
-                                </ListItemIcon>
-                                <ListItemText primary={"Smartobject"} />
                             </ListItem>
                         </Link>
                         <Link to="/module" onClick={() => { this.navigate() }} style={{ textDecoration: 'none', color: 'white' }}>

@@ -149,9 +149,12 @@ class NewRapport extends React.Component {
                                         <Typography variant='subtitle1'  >
                                             {configuration.reference}
                                         </Typography>
-                                        <Typography variant='caption' color="text.secondary"  >
-                                            {configuration.configuration.name}
-                                        </Typography>
+                                        {
+                                            configuration.room &&
+                                            <Typography variant='body2' color="text.secondary"  >
+                                                {configuration.room.name}
+                                            </Typography>
+                                        }
                                     </CardActionArea>
                                 </Card>
                             </Grid>
@@ -225,7 +228,7 @@ class NewRapport extends React.Component {
             chart: this.state.type,
             interval: this.state.interval,
             type: this.state.configuration.configuration.module,
-            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id : Utils.getSum(this.state.configuration.name) ,
+            object: this.state.configuration.configuration.module == "smartobject" ? this.state.configuration.id : Utils.getSum(this.state.configuration.name),
             settings: settings
         }).fetch("/api/rapports")
 

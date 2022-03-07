@@ -93,7 +93,7 @@ class Module extends Controller {
             })
             let resultMarketJSON = await resultMarket.json()
             resultMarketJSON = resultMarketJSON.filter(item => {
-                return md5(item.name) == pPackage
+                return Utils.getSum(item.name) == pPackage
             })
             if (resultMarketJSON.length == 0) {
                 Tracing.warning(Package.name, "Package not found " + pPackage)

@@ -118,6 +118,9 @@
         ],
         "/smartobjects": [
             "admin"
+        ],
+        "/modules/:idModule": [
+            "admin"
         ]
     },
     "DELETE": {
