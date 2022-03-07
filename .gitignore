@@ -161,3 +161,4 @@ web-build/
 
 /template/intendant.db.dev
 *.db-journal
+intendant.dashboard.json
