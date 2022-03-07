@@ -78,6 +78,7 @@ typings/
 .node_repl_history
 
 development
+intendant.dashboard.json
 intendant.module.json
 
 # Yarn Integrity file
