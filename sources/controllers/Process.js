@@ -180,7 +180,7 @@ class Process extends Controller {
         }
         let allow = false
         process.profiles.forEach(pprofile => {
-            if (pprofile.profile == profile) {
+            if (pprofile.profile == idProfile) {
                 allow = true
             }
         })
