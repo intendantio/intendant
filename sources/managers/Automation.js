@@ -39,7 +39,7 @@ class Automation extends Manager {
                             automation.action.settings.forEach(setting => {
                                 settings[setting.reference] = setting.value
                             })
-                            this.processController.executeAction(idProcess, 1, settings, true)
+                            this.processController.executeAction(idProcess, settings)
                         }
                     })
                     this.instances.set(automation.id, true)

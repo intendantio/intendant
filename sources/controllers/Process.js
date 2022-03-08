@@ -174,24 +174,27 @@ class Process extends Controller {
         }
     }
 
-    isAllow(process, profile, force = false) {
+    isAllow(process, idProfile) {
+        if(idProfile == false) {
+            return true
+        }
         let allow = false
         process.profiles.forEach(pprofile => {
             if (pprofile.profile == profile) {
                 allow = true
             }
         })
-        return allow || force
+        return allow
     }
 
-    async executeAction(idProcess, inputs, profile) {
+    async executeAction(idProcess, inputs, idProfile = false) {
         try {
             let processRequest = await this.getOne(idProcess)
             if (processRequest.error) {
                 return processRequest
             }
             let process = processRequest.data
-            if (this.isAllow(process, profile)) {
+            if (this.isAllow(process, idProfile)) {
                 let actions = process.actions
                 let data = []
                 for (let index = 0; index < actions.length; index++) {
