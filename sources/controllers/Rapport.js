@@ -26,7 +26,7 @@ class Rapport extends Controller {
 
             resultRapport.data.settings = resultRapportArgument.data
 
-            let resultLastData = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport = " + idRapport + " ORDER BY date DESC LIMIT 1")
+            let resultLastData = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport = " + idRapport + " ORDER BY date DESC LIMIT 1", {}, false)
 
             if (resultLastData.error) {
                 return resultLastData
@@ -34,7 +34,7 @@ class Rapport extends Controller {
 
             resultRapport.data.lastData = resultLastData.data.length == 0 ? false : resultLastData.data[0]
 
-            let resultCounter = await this.sqlRapportData.execute("SELECT count(*) as total FROM rapport_data WHERE rapport = " + idRapport + " ")
+            let resultCounter = await this.sqlRapportData.execute("SELECT count(*) as total FROM rapport_data WHERE rapport = " + idRapport + " ", {}, false)
 
             if (resultCounter.error) {
                 return resultCounter
@@ -220,7 +220,7 @@ class Rapport extends Controller {
             if (resultRapport.error) {
                 return resultRapport
             }
-            let resultRequest = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport=" + idRapport + " AND date >=" + start + " AND date <=" + end + " ORDER BY date ASC")
+            let resultRequest = await this.sqlRapportData.execute("SELECT * FROM rapport_data WHERE rapport=" + idRapport + " AND date >=" + start + " AND date <=" + end + " ORDER BY date ASC", {}, false)
             if (resultRequest.error) {
                 return resultRequest
             }

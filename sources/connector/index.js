@@ -225,16 +225,15 @@ class Connector {
         }
     }
 
-    async execute(request, options = {}) {
+    async execute(request, body, run = true) {
         this.check("execute")
         if (typeof request == 'string') {
             try {
-                request = request.replace("DATE:NOW", "date('now')")
                 let result = false
-                if (options.run) {
-                    result = await this._connector.prepare(request).run()
+                if (run) {
+                    result = await this._connector.prepare(request).run(body)
                 } else {
-                    result = await this._connector.prepare(request).all()
+                    result = await this._connector.prepare(request).all(body)
                 }
                 return {
                     package: Package.name,

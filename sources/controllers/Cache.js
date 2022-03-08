@@ -54,12 +54,12 @@ class Cache extends Controller {
                 return resultReference
             } else if (resultReference.data == false) {
                 let dataMessage = Buffer.from(JSON.stringify({ cache: data.data })).toString('base64')
-                return await this.sqlCache.insert({
-                    id: null,
+                let body = {
                     reference: data.reference,
-                    value: dataMessage,
-                    expiry: "DATE:CUSTOM" + data.interval
-                })
+                    value: dataMessage
+                }
+                return await this.sqlCache.execute("INSERT INTO cache (reference,value,expiry) VALUES (@reference,@value,DATETIME('now','+" + data.interval + " seconds'))", body, true)
+               
             }
         } catch (error) {
             StackTrace.save(error)
@@ -70,7 +70,7 @@ class Cache extends Controller {
 
     async check() {
         try {
-            let result = await this.sqlCache.execute("DELETE FROM cache WHERE expiry < datetime('now')", { run: true })
+            let result = await this.sqlCache.execute("DELETE FROM cache WHERE expiry < datetime('now')", {}, true)
             if (result.error) {
                 return result
             }
