@@ -8,7 +8,6 @@ import Storage from './controllers/Storage'
 import Widget from './controllers/Widget'
 import Cache from './controllers/Cache'
 import User from './controllers/User'
-import Market from './controllers/Market'
 import Notification from './controllers/Notification'
 import Room from './controllers/Room'
 import Essential from './controllers/Essential'
@@ -16,6 +15,7 @@ import Module from './controllers/Module'
 import Rapport from './controllers/Rapport'
 import Cloud from './controllers/Cloud'
 import Automation from './controllers/Automation'
+import System from './controllers/System'
 
 import API from './gateways'
 
@@ -49,7 +49,6 @@ class Core {
                 authentification: new Authentification(),
                 automation: new Automation(),
                 module: new Module(),
-                market: new Market(),
                 profile: new Profile(),
                 storage: new Storage(),
                 user: new User(),
@@ -61,7 +60,8 @@ class Core {
                 room: new Room(),
                 essential: new Essential(),
                 process: new Process(),
-                cloud: new Cloud()
+                cloud: new Cloud(),
+                system: new System()
             }
 
             this.controller.authentification.token = configuration.token
@@ -69,9 +69,6 @@ class Core {
 
 
             this.controller.module.addManager(this.manager.module)
-
-            this.controller.market.addManager(this.manager.smartobject)
-            this.controller.market.addManager(this.manager.module)
 
             this.controller.smartobject.addManager(this.manager.smartobject)
             this.controller.smartobject.addController(this.controller.user)

@@ -36,7 +36,7 @@ class Tracing {
         try {
             if (object && message) {
                 Tracing.write("VERBOSE",object,message)
-                console.log(chalk.green.bgWhiteBright.inverse(" >> " + Tracing.getTime())+ " " + chalk.green.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
+                console.log(chalk.green.bgWhiteBright.inverse(" >> " + Tracing.getTime()+ " " ) + chalk.green.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
                 return true
             }
             throw "Missing parameters"
@@ -49,7 +49,7 @@ class Tracing {
         try {
             if (object && message) {
                 Tracing.write("WARNING",object,message)
-                console.log(chalk.yellow.bgWhiteBright.inverse(" >> " + Tracing.getTime()) + " " + chalk.yellow.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
+                console.log(chalk.yellow.bgWhiteBright.inverse(" >> " + Tracing.getTime() + " " ) + chalk.yellow.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
                 return true
             }
             throw "Missing parameters"
@@ -62,7 +62,7 @@ class Tracing {
         try {
             if (object && message) {
                 Tracing.write("ERROR",object,message)
-                console.log(chalk.red.bgWhiteBright.inverse(" >> " + Tracing.getTime()) + " " + chalk.red.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
+                console.log(chalk.red.bgWhiteBright.inverse(" >> " + Tracing.getTime() + " ") + chalk.red.bgWhiteBright.inverse(object + " ") + (" " + message + " "))
                 return true
             }
             throw "Missing parameters"

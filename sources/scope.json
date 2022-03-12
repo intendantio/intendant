@@ -9,6 +9,9 @@
         "/logs": [
             "admin"
         ],
+        "/upgrade": [
+            "admin"
+        ],
         "/users": [
             "admin"
         ],
@@ -75,6 +78,9 @@
             "admin"
         ],
         "/users": [
+            "admin"
+        ],
+        "/upgrade": [
             "admin"
         ],
         "/automations": [

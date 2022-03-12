@@ -10,8 +10,7 @@ import Authentification from './Authentification'
 import Authorization from './Authorization'
 import Module from './Module'
 import Widget from './Widget'
-import Configuration from './Configuration'
-import Market from './Market'
+import System from './System'
 import Room from './Room'
 import Tracing from '../utils/Tracing'
 import Essential from './Essential'
@@ -40,8 +39,7 @@ class API {
         Process(app,core)
         Module(app,core)
         Widget(app,core)
-        Configuration(app,core)
-        Market(app,core)
+        System(app,core)
         Room(app,core)
         Essential(app,core)
         Rapport(app,core)
