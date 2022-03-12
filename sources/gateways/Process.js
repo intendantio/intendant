@@ -27,7 +27,6 @@ export default (app, core) => {
         body('description_on').isString().withMessage("Invalid description_on"),
         body('description_off').isString().withMessage("Invalid description_off"),
         body('mode').isIn(["button", "switch"]).withMessage("Invalid mode"),
-        body('room').isNumeric().withMessage("Invalid room"),
         body('state').isIn(["on","off"]).withMessage("Invalid state"),
         body('actions').isArray().withMessage("Invalid actions"),
         body('inputs').isArray().withMessage("Invalid inputs"),

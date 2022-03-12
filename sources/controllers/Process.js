@@ -264,7 +264,6 @@ class Process extends Controller {
                 description_on: pProcess.description_on,
                 description_off: pProcess.description_off,
                 mode: pProcess.mode,
-                room: pProcess.room,
                 state: pProcess.state
             })
             if (insertProcessRequest.error) {

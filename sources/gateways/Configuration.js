@@ -15,6 +15,7 @@ export default (app, core) => {
                 result.send(new Result(Package.name, false, "", {
                     getStarted: resultGetStarted.getStarted,
                     version: Package.version,
+                    build: Package.build
                 }))
             }
         } else {
