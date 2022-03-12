@@ -1,8 +1,38 @@
 import { body, validationResult } from 'express-validator'
 import Result from '../utils/Result'
 import Package from '../package.json'
+import fs from 'fs'
 
 export default (app, core) => {
+
+    app.get("/api/logs", async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/logs'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                let finalLogs = []
+                if(fs.existsSync("./intendant.log"))  {
+                    let logs = fs.readFileSync("./intendant.log").toString()
+                    let tmpLogs = logs.split("\n")
+                    tmpLogs.pop()
+                    finalLogs = tmpLogs.map(line => {
+                        let objectLine = {date: 0,type: "UNKNOWN",object: "UNKNOWN", message: "UNKNOWN"}
+                        try {
+                            objectLine = JSON.parse(line)
+                        } catch (error) {}
+                        return objectLine
+                    })
+                }
+                result.send(new Result(Package.name, false, "", finalLogs))
+            }
+
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
 
     app.get("/api/configurations", async (request, result) => {
         let resultValid = validationResult(request)

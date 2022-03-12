@@ -364,8 +364,8 @@ class Widget extends Controller {
                 if (dataSource) {
                     return new Result(Package.name, false, "", dataSource)
                 } else {
-                    Tracing.warning(Package.name, "Datasource not found")
-                    return new Result(Package.name, true, "Datasource not found")
+                    Tracing.warning(Package.name, "Datasource not found " + idDataSource)
+                    return new Result(Package.name, true, "Datasource not found" + idDataSource)
                 }
             } else {
                 Tracing.error(Package.name, "Datasources was not implemented")

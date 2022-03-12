@@ -6,6 +6,9 @@
         "/rooms": [
             "admin"
         ],
+        "/logs": [
+            "admin"
+        ],
         "/users": [
             "admin"
         ],
