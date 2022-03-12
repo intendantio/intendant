@@ -147,6 +147,7 @@ temp/
 
 application/google-services.json
 
+builds/
 node_modules/
 .expo/
 npm-debug.*
