@@ -1,1 +1,0 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;class Manager{addController(a){let b=a.constructor.name,c=b.toLowerCase();this[c+"Controller"]=a}addManager(a){let b=a.constructor.name,c=b.toLowerCase();this[c+"Manager"]=a}}var _default=Manager;exports.default=_default,module.exports=exports.default;

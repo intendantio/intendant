@@ -4,9 +4,6 @@
   "private": "true",
   "author": "Clément MERLET",
   "license": "GPL-3.0+",
-  "files": [
-    "./sources/**/*"
-  ],
   "scripts": {
     "build": "node ./scripts/build",
     "market": "node ./scripts/market",

@@ -20,7 +20,7 @@ class Authentification extends Controller {
         }
     }
 
-    async checkSingleCode(code,url,params) {
+    async checkSingleCode(code, url, params) {
         let resultQuery = await this.sqlSingleCode.getOneByField({ code: code })
         if (resultQuery.error) {
             return resultQuery
@@ -47,88 +47,88 @@ class Authentification extends Controller {
         }
     }
 
-    getScope(url,method) {
+    getScope(url, method) {
         if (Scope[method] == undefined) {
             Tracing.warning(Package.name, "Invalid method")
             return new Result(Package.name, true, "Invalid method")
         }
-        
+
         if (Scope[method][url] == undefined || Array.isArray(Scope[method][url]) == false) {
-            Tracing.warning(Package.name, "Missing url " + method + ":" + url) 
+            Tracing.warning(Package.name, "Missing url " + method + ":" + url)
             return new Result(Package.name, true, "Invalid url")
         }
 
-        
+
         return new Result(Package.name, false, "", Scope[method][url])
     }
 
     async checkAuthorization(request) {
         try {
-            let resultScope = this.getScope(request.url,request.method)
+            let resultScope = this.getScope(request.url, request.method)
 
-            if(resultScope.error) {
+            if (resultScope.error) {
                 return resultScope
             }
 
             let currentScope = resultScope.data
 
-            if(currentScope.includes("public")) {
+            if (currentScope.includes("public")) {
                 return new Result(Package.name, false, "")
             } else {
                 if (request.query.code) {
-                    return this.checkSingleCode(request.query.code,request.url,request.params)
+                    return this.checkSingleCode(request.query.code, request.url, request.params)
                 } else {
                     let authorization = request.headers['authorization']
                     if (authorization == undefined) {
                         return new Result(Package.name, true, "Missing Bearer token")
                     }
-    
+
                     let authorizationSplit = authorization.split(" ")
                     if (authorizationSplit.length != 2 || authorizationSplit[0] != "Bearer") {
                         return new Result(Package.name, true, "Wrong Bearer token")
                     }
                     let bearerToken = authorizationSplit[1]
-    
+
                     let resultToken = Jwt.verifyAccessToken(bearerToken, this.token)
                     if (resultToken.error) {
                         return resultToken
                     }
-    
+
                     let token = resultToken.data
-    
+
                     if (Moment().valueOf() > token.exp) {
                         Tracing.warning(Package.name, "Expired Bearer token")
                         return new Result(Package.name, true, "Expired Bearer token")
                     }
-    
+
                     let resultUser = await this.sqlUser.getOneByField({ login: token.sub })
                     if (resultUser.error) {
                         return resultUser
                     }
-    
+
                     if (resultUser.data == false) {
                         Tracing.warning(Package.name, "Invalid user")
                         return new Result(Package.name, true, "Invalid user")
                     }
                     let user = resultUser.data
-    
+
                     let resultProfile = await this.sqlProfile.getOne(user.profile)
-    
+
                     if (resultProfile.error) {
                         return resultProfile
                     } else if (resultProfile.data == false) {
                         Tracing.warning(Package.name, "Invalid profile")
                         return new Result(Package.name, true, "Invalid profile")
                     }
-    
+
                     let profile = resultProfile.data
-    
+
                     let isAvailable = currentScope.includes(profile.scope)
                     if (isAvailable == false) {
                         Tracing.warning(Package.name, request.url + " was not available in " + profile.scope + " scope")
                         return new Result(Package.name, true, "Forbidden method")
                     }
-    
+
                     return new Result(Package.name, false, "", {
                         idProfile: profile.id
                     })
@@ -155,21 +155,31 @@ class Authentification extends Controller {
                 return resultToken
             }
 
-            let token = resultToken.data
-            let expiry = Moment().add({ minutes: 30 }).valueOf()
-            token.exp = expiry
-
-            let newToken = await Jwt.generateAccessToken(token, this.token)
-
-            if (newToken.error) {
-                return newToken
+            let accountRequest = await this.sqlUser.getOneByField({ login: resultToken.data.sub })
+            if (accountRequest.error) {
+                return accountRequest
             }
 
-            return new Result(Package.name, false, "", {
-                access_token: newToken.data,
-                expiry: expiry
-            })
+            if (accountRequest.data && parseInt(accountRequest.data.profile) == parseInt(resultToken.data.profile)) {
 
+                let token = resultToken.data
+                let expiry = Moment().add({ minutes: 30 }).valueOf()
+                token.exp = expiry
+
+                let newToken = await Jwt.generateAccessToken(token, this.token)
+
+                if (newToken.error) {
+                    return newToken
+                }
+
+                return new Result(Package.name, false, "", {
+                    access_token: newToken.data,
+                    expiry: expiry
+                })
+            } else {
+                Tracing.warning(Package.name, "Invalid user")
+                return new Result(Package.name, true, "Invalid user")
+            }
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get token")
@@ -188,7 +198,7 @@ class Authentification extends Controller {
                 if (md5(password + account.salt) === account.password) {
 
                     let expiry = Moment().add({ minutes: 30 }).valueOf()
-                    let payload = JSON.stringify({ sub: login, exp: expiry })
+                    let payload = JSON.stringify({ sub: login, exp: expiry, profile: account.profile })
 
                     let resultAcessToken = Jwt.generateAccessToken(payload, this.token)
                     if (resultAcessToken.error) {
