@@ -8,7 +8,6 @@ class Cache extends Controller {
 
     async get(data) {
         try {
-            Tracing.verbose(Package.name, "Get cache " + data.reference)
             await this.check()
             let resultGetOne = await this.sqlCache.getOneByField({ reference: data.reference })
             if (resultGetOne.error) {

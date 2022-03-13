@@ -72,7 +72,8 @@ class Room extends Controller {
             if (insertRequest.error) {
                 return insertRequest
             } else {
-                let resultInsertProfile = await this.sqlRoomProfile.insert({room: insertRequest.data.insertId, profile: 0})
+                //Insert admin by default
+                let resultInsertProfile = await this.insertRoomProfile(insertRequest.data.insertId,1)
                 if(resultInsertProfile.error) {
                     return resultInsertProfile
                 }

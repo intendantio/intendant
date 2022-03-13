@@ -6,8 +6,6 @@ const fsextra = require('fs-extra')
 const os = require('os').type()
 let dashboardPackage = (fsextra.readJSONSync("./intendant.dashboard.json")).dashboard
 
-console.log(dashboardPackage)
-
 console.log()
 console.log(chalk.white.bold.bgMagenta(" Intendant - Build "))
 console.log()
@@ -36,8 +34,7 @@ const main = async (path) => {
             fsextra.appendFileSync("./build-error.log", error.stack)
             update(chalk.white.bold.bgRed(" >> ") + chalk(" Error ") + chalk.bold.red(" X"))
         } else {
-            if(fsextra.existsSync(dashboardPackage)) {
-                if (process.argv[2] !== "--no-dashboard" && pPackage.name == "@intendant/core") {
+                if (fsextra.existsSync(dashboardPackage) && process.argv[2] !== "--no-dashboard" && pPackage.name == "@intendant/core") {
                     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Build dashboard"))
                     childProcess.exec("cd " + dashboardPackage + " && yarn && npm run-script build", () => {
                         update(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy dashboard") + " ")
@@ -49,13 +46,11 @@ const main = async (path) => {
                         })
                     })
                 } else {
-                    update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
+                    childProcess.exec("cd " + path + "/releases && npm pack ../builds", () => {
+                        update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
+                    })
                 }
-            } else {
-                childProcess.exec("cd " + path + "/releases && npm pack ../builds", () => {
-                    update(chalk.white.bold.bgGreen(" >> ") + chalk(" Build ") + chalk.bold.green(" ✔"))
-                })
-            } 
+            
         }
     })
 }

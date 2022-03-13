@@ -178,6 +178,8 @@ class Authentification extends Controller {
                 })
             } else {
                 Tracing.warning(Package.name, "Invalid user")
+                Tracing.warning(Package.name, JSON.stringify(accountRequest))
+                Tracing.warning(Package.name, JSON.stringify(resultToken))
                 return new Result(Package.name, true, "Invalid user")
             }
         } catch (error) {

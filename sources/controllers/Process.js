@@ -38,7 +38,7 @@ class Process extends Controller {
             if (inputRequest.error) {
                 return inputRequest
             }
-            
+
             let inputs = []
             for (let indexInput = 0; indexInput < inputRequest.data.length; indexInput++) {
                 let input = inputRequest.data[indexInput]
@@ -55,8 +55,6 @@ class Process extends Controller {
 
                 inputs.push(input)
             }
-            
-
             let processProfileRequest = await this.sqlProcessProfile.getAllByField({ process: idProcess })
             if (processProfileRequest.error) {
                 return processProfileRequest
@@ -175,7 +173,7 @@ class Process extends Controller {
     }
 
     isAllow(process, idProfile) {
-        if(idProfile == false) {
+        if (idProfile == false) {
             return true
         }
         let allow = false
@@ -203,12 +201,12 @@ class Process extends Controller {
                     action.arguments.forEach(argument => {
                         for (let inputKey in inputs) {
                             let input = inputs[inputKey]
-                            if(argument.value == "{" + inputKey + "}") {
-                               if(input) {
+                            if (argument.value == "{" + inputKey + "}") {
+                                if (input) {
                                     argument.value = input
-                               } else {
+                                } else {
                                     argument.value = argument.default_value
-                               }
+                                }
                             }
                         }
                         pArguments[argument.reference] = argument.value
@@ -311,7 +309,6 @@ class Process extends Controller {
                     return insertInputRequest
                 }
                 let idInputOption = insertInputRequest.data.insertId
-
                 for (let indexInputOption = 0; indexInputOption < input.options.length; indexInputOption++) {
                     let option = input.options[indexInputOption];
                     let insertInputOptionRequest = await this.sqlProcessInputOption.insert({
@@ -324,6 +321,11 @@ class Process extends Controller {
                         return insertInputOptionRequest
                     }
                 }
+            }
+            //Insert admin by default
+            let resultProcessProfile = await this.insertProcessProfile(idProcess, 1)
+            if (resultProcessProfile.error) {
+                return resultProcessProfile
             }
             return await this.getOne(idProcess)
         } catch (error) {
