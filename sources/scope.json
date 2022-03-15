@@ -118,6 +118,12 @@
         ],
         "/modules/:idModule/actions/:idAction": [
             "admin"
+        ],
+        "/users/:idUser/dashboards" : [
+            "admin"
+        ],
+        "/users/:idUser/dashboards/:idUserDashboard": [
+            "admin"
         ]
     },
     "PUT": {},
@@ -155,6 +161,9 @@
             "admin"
         ],
         "/processes/:idProcess": [
+            "admin"
+        ],
+        "/users/:idUser/dashboards/:idUserDashboard": [
             "admin"
         ]
     }

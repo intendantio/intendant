@@ -15,6 +15,7 @@ class Controller {
             this.sqlAutomationActionArgument = new Connector("automation_action_argument")
             
             this.sqlUser = new Connector("user")
+            this.sqlUserDashboard = new Connector("user_dashboard")
             this.sqlUserHistory = new Connector("user_history")
 
             this.sqlClient = new Connector("client")

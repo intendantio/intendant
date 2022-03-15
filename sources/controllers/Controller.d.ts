@@ -11,6 +11,7 @@ declare class Controller {
     sqlAutomationActionArgument: Connector;
 
     sqlUser: Connector;
+    sqlUserDashboard: Connector;
     sqlUserHistory: Connector;
 
     

@@ -174,7 +174,9 @@ class Authentification extends Controller {
 
                 return new Result(Package.name, false, "", {
                     access_token: newToken.data,
-                    expiry: expiry
+                    expiry: expiry,
+                    profile: resultToken.data.profile,
+                    user: accountRequest.data.id
                 })
             } else {
                 Tracing.warning(Package.name, "Invalid user")
@@ -217,7 +219,8 @@ class Authentification extends Controller {
                         profile: account.profile,
                         access_token: resultAcessToken.data,
                         refresh_token: resultRefreshToken.data,
-                        expiry: expiry
+                        expiry: expiry,
+                        user: accountRequest.data.id
                     })
 
                 } else {
