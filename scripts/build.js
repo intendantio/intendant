@@ -36,7 +36,7 @@ const main = async (path) => {
         } else {
                 if (fsextra.existsSync(dashboardPackage) && process.argv[2] !== "--no-dashboard" && pPackage.name == "@intendant/core") {
                     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Build dashboard"))
-                    childProcess.exec("cd " + dashboardPackage + " && yarn && npm run-script build", () => {
+                    childProcess.exec("cd " + dashboardPackage + " && npm run-script build", () => {
                         update(chalk.white.bold.bgYellow(" >> ") + chalk(" Copy dashboard") + " ")
                         fsextra.mkdirSync(path + "/builds/public")
                         childProcess.exec("cp -r " + dashboardPackage + "/build/* " + path + "/builds/public", () => {
