@@ -27,6 +27,11 @@ class System extends Controller {
         }
     }
 
+    async restart() {
+        Tracing.verbose(Package.name, "Restart intendant")
+        process.exit()
+    }
+
     async checkUpgrade() {
         try {
             let result = await fetch("https://raw.githubusercontent.com/intendantio/intendant/main/sources/package.json")

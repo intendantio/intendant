@@ -161,4 +161,20 @@ export default (app, core) => {
             }
         })
 
+    //Restart one smartobject
+    app.post("/api/smartobjects/:idSmartobject/restart", async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/:idSmartobject/restart'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.manager.smartobject.update(request.params.idSmartobject))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
 }

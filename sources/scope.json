@@ -124,6 +124,12 @@
         ],
         "/users/:idUser/dashboards/:idUserDashboard": [
             "admin"
+        ],
+        "/restart": [
+            "admin"
+        ],
+        "/smartobjects/:idSmartobject/restart": [
+            "admin"
         ]
     },
     "PUT": {},

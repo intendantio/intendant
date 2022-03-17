@@ -13,7 +13,6 @@ import Room from './controllers/Room'
 import Essential from './controllers/Essential'
 import Module from './controllers/Module'
 import Rapport from './controllers/Rapport'
-import Cloud from './controllers/Cloud'
 import Automation from './controllers/Automation'
 import System from './controllers/System'
 
@@ -60,7 +59,6 @@ class Core {
                 room: new Room(),
                 essential: new Essential(),
                 process: new Process(),
-                cloud: new Cloud(),
                 system: new System()
             }
 

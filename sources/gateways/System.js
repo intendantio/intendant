@@ -83,6 +83,7 @@ export default (app, core) => {
         }
     })
 
+  
 
     app.post("/api/configurations",
         body('password').isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 }).withMessage("Invalid password {minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1}"),
@@ -109,5 +110,21 @@ export default (app, core) => {
                 result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
             }
         })
+
+        app.post("/api/restart", async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/restart'
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.system.restart())
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
+    
 
 }
