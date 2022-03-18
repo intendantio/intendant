@@ -2,7 +2,7 @@
     "name": "@intendant/core",
     "main": "./index.js",
     "author": "Clément MERLET",
-    "version": "0.1.0-beta.28",
+    "version": "0.1.0-beta.29",
     "module": "core",
     "license": "GPL-3.0+",
     "dependencies": {

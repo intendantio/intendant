@@ -54,7 +54,7 @@ class Smartobject extends Controller {
                 } catch (error) {
                     Tracing.warning(Package.name, "File not found " + item.raw)
                     return new Result(Package.name, true, "Invalid release file " + pPackage)
-                 
+
                 }
                 if (Utils.isCompatible(Package.version, resultRawJson.core)) {
                     Tracing.verbose(Package.name, "Install " + item.name)
@@ -144,13 +144,10 @@ class Smartobject extends Controller {
                 reason: "Not installed package"
             }
 
-
             let configuration = false
 
-
-
             if (this.smartobjectManager.instances.has(parseInt(smartobject.id))) {
-                configuration = require(smartobject.module + "/package.json")
+                configuration = JSON.parse(fs.readFileSync("./node_modules/" + smartobject.module + "/package.json").toString())
                 actions = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions()
                 widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
                 dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
@@ -245,7 +242,7 @@ class Smartobject extends Controller {
 
     async updateArgument(idSmartobject, reference, value) {
         try {
-            let result = await this.sqlSmartobjectArgument.updateAll({ value: Parser.stringify(value) },{ reference: reference, smartobject:  idSmartobject })
+            let result = await this.sqlSmartobjectArgument.updateAll({ value: Parser.stringify(value) }, { reference: reference, smartobject: idSmartobject })
             if (result.error) {
                 return result
             }
@@ -311,11 +308,11 @@ class Smartobject extends Controller {
 
     }
 
-    async regenerate(idSmartobject,settings) {
+    async regenerate(idSmartobject, settings) {
         try {
             for (let index = 0; index < settings.length; index++) {
                 let setting = settings[index]
-                let result = await this.updateArgument(idSmartobject,setting.reference,setting.value)
+                let result = await this.updateArgument(idSmartobject, setting.reference, setting.value)
                 if (result.error) {
                     return result
                 }
@@ -397,7 +394,7 @@ class Smartobject extends Controller {
                 let smartobjectRequest = await this.getOne(idSmartobject)
                 if (smartobjectRequest.error) { return smartobjectRequest }
                 let smartobject = smartobjectRequest.data
-                if(idProfile) {
+                if (idProfile) {
                     let resultRoomProfile = await this.sqlRoomProfile.getOneByField({ room: smartobject.room.id, profile: idProfile })
                     if (resultRoomProfile.error) {
                         return resultRoomProfile
