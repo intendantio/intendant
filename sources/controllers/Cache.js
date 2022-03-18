@@ -58,7 +58,6 @@ class Cache extends Controller {
                     value: dataMessage
                 }
                 return await this.sqlCache.execute("INSERT INTO cache (reference,value,expiry) VALUES (@reference,@value,DATETIME('now','+" + data.interval + " seconds'))", body, true)
-               
             }
         } catch (error) {
             StackTrace.save(error)

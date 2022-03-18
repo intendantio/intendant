@@ -145,34 +145,26 @@ class Authentification extends Controller {
     async getTokenWithRefresh(refresh) {
         try {
             let result = await Jwt.verifyAccessToken(refresh, this.token)
-
             if (result.error) {
                 return result
             }
-
             let resultToken = await Jwt.verifyAccessToken(result.data.sub, this.token)
-
             if (resultToken.error) {
                 return resultToken
             }
-
             let accountRequest = await this.sqlUser.getOneByField({ login: resultToken.data.sub })
             if (accountRequest.error) {
                 return accountRequest
             }
-
             if (accountRequest.data && parseInt(accountRequest.data.profile) == parseInt(resultToken.data.profile)) {
-
                 let token = resultToken.data
                 let expiry = Moment().add({ minutes: 30 }).valueOf()
                 token.exp = expiry
-
                 let newToken = await Jwt.generateAccessToken(token, this.token)
 
                 if (newToken.error) {
                     return newToken
                 }
-
                 return new Result(Package.name, false, "", {
                     access_token: newToken.data,
                     expiry: expiry,
@@ -201,21 +193,17 @@ class Authentification extends Controller {
             let account = accountRequest.data
             if (account) {
                 if (md5(password + account.salt) === account.password) {
-
                     let expiry = Moment().add({ minutes: 30 }).valueOf()
                     let payload = JSON.stringify({ sub: login, exp: expiry, profile: account.profile })
-
                     let resultAcessToken = Jwt.generateAccessToken(payload, this.token)
                     if (resultAcessToken.error) {
                         return resultAcessToken
                     }
-
                     let payloadRefresh = JSON.stringify({ sub: resultAcessToken.data })
                     let resultRefreshToken = Jwt.generateAccessToken(payloadRefresh, this.token)
                     if (resultRefreshToken.error) {
                         return resultRefreshToken
                     }
-
                     return new Result(Package.name, false, "", {
                         profile: account.profile,
                         access_token: resultAcessToken.data,
@@ -223,7 +211,6 @@ class Authentification extends Controller {
                         expiry: expiry,
                         user: accountRequest.data.id
                     })
-
                 } else {
                     Tracing.warning(Package.name, "Invalid password")
                     return new Result(Package.name, true, "Invalid password")
@@ -243,15 +230,12 @@ class Authentification extends Controller {
 
     async getSingleCode(idSmartobject) {
         let resultSmartobject = await this.sqlSmartobject.getOne(idSmartobject)
-
         if (resultSmartobject.error) {
             return resultSmartobject
         }
-
         if (resultSmartobject.data == false) {
-            return new Result(Package.name, true, "")
+            return new Result(Package.name, true, "Smartobject not found")
         }
-
         let getOneSingleCode = await this.sqlSingleCode.getOneByField({ smartobject: idSmartobject })
         if (getOneSingleCode.error) {
             return getOneSingleCode

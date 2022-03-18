@@ -12,7 +12,6 @@ class Automation extends Controller {
             if (automationsRequest.error) {
                 return automationsRequest
             }
-
             let automations = []
             for (let index = 0; index < automationsRequest.data.length; index++) {
                 let automation = automationsRequest.data[index]
@@ -22,7 +21,6 @@ class Automation extends Controller {
                 }
                 automations.push(resultAutomation.data)
             }
-
             return new Result(Package.name, false, "", automations)
         } catch (error) {
             StackTrace.save(error)
@@ -34,7 +32,6 @@ class Automation extends Controller {
     async getOne(idAutomation) {
         try {
             let automationRequest = await this.sqlAutomation.getOne(idAutomation)
-
             if (automationRequest.error) {
                 return automationRequest
             }
@@ -42,21 +39,16 @@ class Automation extends Controller {
                 Tracing.warning(Package.name, "Automation not found")
                 return new Result(Package.name, true, "Automation not found")
             }
-
             let automation = automationRequest.data
-
             let automationTriggerRequest = await this.sqlAutomationTrigger.getOneByField({ automation: automation.id })
-
             if (automationTriggerRequest.error) {
                 return automationTriggerRequest
             }
-
             if (automationTriggerRequest.data == false) {
                 Tracing.warning(Package.name, "Automation trigger not found")
                 return new Result(Package.name, true, "Automation trigger not found")
             }
             let automationActionRequest = await this.sqlAutomationAction.getOneByField({ automation: automation.id })
-
             if (automationActionRequest.error) {
                 return automationActionRequest
             }
@@ -64,17 +56,13 @@ class Automation extends Controller {
                 Tracing.warning(Package.name, "Automation action not found")
                 return new Result(Package.name, true, "Automation action not found")
             }
-
             let automationActionArgumentRequest = await this.sqlAutomationActionArgument.getAllByField({ automation_action: automationActionRequest.data.id })
-
             if (automationActionArgumentRequest.error) {
                 return automationActionArgumentRequest
             }
-
             automation.trigger = automationTriggerRequest.data
             automation.action = automationActionRequest.data
             automation.action.settings = automationActionArgumentRequest.data
-
             return new Result(Package.name, false, "", automation)
         } catch (error) {
             StackTrace.save(error)
@@ -85,39 +73,30 @@ class Automation extends Controller {
 
     async insert(description, trigger, action) {
         try {
-
             let resultInsert = await this.sqlAutomation.insert({ reference: description })
-
             if (resultInsert.error) {
                 return resultInsert
             }
-
             let idAutomation = resultInsert.data.insertId
-
             let resultInsertTrigger = await this.sqlAutomationTrigger.insert({
                 automation: idAutomation,
                 type: trigger.type,
                 object: trigger.object,
                 trigger: trigger.trigger
             })
-
             if (resultInsertTrigger.error) {
                 return resultInsertTrigger
             }
-
             let resultInsertAction = await this.sqlAutomationAction.insert({
                 automation: idAutomation,
                 type: action.type,
                 object: action.object,
                 action: action.action
             })
-
             if (resultInsertAction.error) {
                 return resultInsertAction
             }
-
             let idAutomationAction = resultInsertAction.data.insertId
-
             for (let index = 0; index < action.settings.length; index++) {
                 let setting = action.settings[index]
                 let resultInsertActionArgument = await this.sqlAutomationActionArgument.insert({
@@ -129,9 +108,7 @@ class Automation extends Controller {
                     return resultInsertActionArgument
                 }
             }
-
             await this.automationManager.before()
-
             return await this.getOne(idAutomation)
         } catch (error) {
             StackTrace.save(error)

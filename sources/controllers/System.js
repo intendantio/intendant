@@ -10,7 +10,13 @@ class System extends Controller {
 
     async upgrade() {
         try {
-            let result = await fetch("https://raw.githubusercontent.com/intendantio/intendant/main/releases/index.json")
+            let result = await fetch("https://raw.githubusercontent.com/intendantio/intendant/main/releases/index.json", {
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': 0
+                }
+            })
             let resultJSON = await result.json()
             let raw = resultJSON.url
             Tracing.verbose(Package.name, "Upgrade " + raw)
@@ -34,7 +40,13 @@ class System extends Controller {
 
     async checkUpgrade() {
         try {
-            let result = await fetch("https://raw.githubusercontent.com/intendantio/intendant/main/sources/package.json")
+            let result = await fetch("https://raw.githubusercontent.com/intendantio/intendant/main/releases/index.json", {
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': 0
+                }
+            })
             let resultJSON = await result.json()
             let version = resultJSON.version
             let currentVersion = Package.version
