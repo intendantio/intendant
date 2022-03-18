@@ -65,6 +65,29 @@ export default (app, core) => {
             }
         })
 
+    //Insert smartobject 
+    app.post('/api/smartobjects/:idSmartobject',
+        body('settings').isArray().withMessage("Invalid settings"),
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = '/smartobjects'
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.smartobject.regenerate(
+                        request.params.idSmartobject,
+                        request.body.settings
+                    )
+                    )
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
+
+
     // Delete smartobject
     app.delete('/api/smartobjects/:idSmartobject', async (request, result) => {
         let resultValid = validationResult(request)

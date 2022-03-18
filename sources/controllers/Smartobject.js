@@ -245,7 +245,7 @@ class Smartobject extends Controller {
 
     async updateArgument(idSmartobject, reference, value) {
         try {
-            let result = await this.sqlSmartobjectArgument.updateAll({ value: value},{ reference: reference, smartobject: idSmartobject })
+            let result = await this.sqlSmartobjectArgument.updateAll({ value: Parser.stringify(value) },{ reference: reference, smartobject:  idSmartobject })
             if (result.error) {
                 return result
             }
@@ -309,6 +309,24 @@ class Smartobject extends Controller {
             return new Result(Package.name, true, "Error occurred when insert smartobject")
         }
 
+    }
+
+    async regenerate(idSmartobject,settings) {
+        try {
+            for (let index = 0; index < settings.length; index++) {
+                let setting = settings[index]
+                let result = await this.updateArgument(idSmartobject,setting.reference,setting.value)
+                if (result.error) {
+                    return result
+                }
+            }
+            await this.smartobjectManager.update(idSmartobject)
+            return this.getOne(idSmartobject)
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert smartobject")
+            return new Result(Package.name, true, "Error occurred when insert smartobject")
+        }
     }
 
     async delete(idSmartobject) {

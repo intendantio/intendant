@@ -7,6 +7,6 @@
       "start": "node index.js && npm start"
   },
   "dependencies": {
-    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.1.0-beta.27.tgz"
+    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.1.0-beta.28.tgz"
   }
 }

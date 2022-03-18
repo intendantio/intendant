@@ -130,6 +130,9 @@
         ],
         "/smartobjects/:idSmartobject/restart": [
             "admin"
+        ],
+        "/smartobjects/:idSmartobject": [
+            "admin"
         ]
     },
     "PUT": {},
