@@ -57,7 +57,8 @@ class Automation extends Manager {
         }
         if (this.smartobjectManager.instances.has(idSmartobject)) {
             let smartobject = smartobjectResult.data
-            smartobject.configuration.triggers.forEach(pTrigger => {
+
+            smartobject.triggers.forEach(pTrigger => {
                 if (pTrigger.id == trigger.trigger) {
                     if (pTrigger.type == "callback") {
                         this.smartobjectManager.instances.get(idSmartobject).addCallback(pTrigger.id, "automation-" + id, callback)
@@ -77,7 +78,7 @@ class Automation extends Manager {
         }
         if (this.smartobjectManager.instances.has(idSmartobject)) {
             let smartobject = smartobjectResult.data
-            smartobject.configuration.triggers.forEach(pTrigger => {
+            smartobject.triggers.forEach(pTrigger => {
                 if (pTrigger.id == trigger.trigger) {
                     if (pTrigger.type == "callback") {
                         this.smartobjectManager.instances.get(idSmartobject).removeCallback(pTrigger.id, "automation-" + id)

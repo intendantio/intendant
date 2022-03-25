@@ -2,6 +2,7 @@ import Controller from './Controller'
 import Package from '../package.json'
 import Tracing from "../utils/Tracing"
 import Result from '../utils/Result'
+import Parser from '../utils/Parser'
 import StackTrace from '../utils/StackTrace'
 
 class Automation extends Controller {
@@ -62,7 +63,10 @@ class Automation extends Controller {
             }
             automation.trigger = automationTriggerRequest.data
             automation.action = automationActionRequest.data
-            automation.action.settings = automationActionArgumentRequest.data
+            automation.action.settings = automationActionArgumentRequest.data.map(setting => {
+                setting.value = Parser.parse(setting.value)
+                return setting
+            })
             return new Result(Package.name, false, "", automation)
         } catch (error) {
             StackTrace.save(error)
@@ -101,7 +105,7 @@ class Automation extends Controller {
                 let setting = action.settings[index]
                 let resultInsertActionArgument = await this.sqlAutomationActionArgument.insert({
                     reference: setting.reference,
-                    value: setting.value,
+                    value: Parser.stringify(setting.value),
                     automation_action: idAutomationAction
                 })
                 if (resultInsertActionArgument.error) {

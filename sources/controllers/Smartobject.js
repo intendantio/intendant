@@ -139,11 +139,6 @@ class Smartobject extends Controller {
             let dataSources = []
             let triggers = []
 
-            let state = {
-                status: "uninstalled",
-                reason: "Not installed package"
-            }
-
             let configuration = false
 
             if (this.smartobjectManager.instances.has(parseInt(smartobject.id))) {
@@ -153,11 +148,6 @@ class Smartobject extends Controller {
                 dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
                 triggers = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getTriggers()
 
-                let resultState = await this.smartobjectManager.instances.get(parseInt(smartobject.id)).getState()
-                if (resultState.error) {
-                    return resultState
-                }
-                state = resultState.data
             }
 
             return new Result(Package.name, false, "", {
@@ -170,7 +160,9 @@ class Smartobject extends Controller {
                 widgets: widgets,
                 dataSources: dataSources,
                 triggers: triggers,
-                state: state,
+                state: {
+                    status: "online"
+                },
                 room: room,
                 configuration: configuration
             })
@@ -197,6 +189,19 @@ class Smartobject extends Controller {
         }
     }
 
+    async getState(idSmartobject) {
+        try {
+            if(this.smartobjectManager.instances.has(parseInt(idSmartobject))) {
+                return await this.smartobjectManager.instances.get(parseInt(idSmartobject)).getState()
+            } else {
+                return new Result(Package.name,true,"Smartobject not found")
+            }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all state in module")
+            return new Result(Package.name, true, "Error occurred when get all state in module")
+        }
+    }
 
     async updateLastUse(idSmartobject) {
         try {
@@ -305,7 +310,6 @@ class Smartobject extends Controller {
             Tracing.error(Package.name, "Error occurred when insert smartobject")
             return new Result(Package.name, true, "Error occurred when insert smartobject")
         }
-
     }
 
     async regenerate(idSmartobject, settings) {

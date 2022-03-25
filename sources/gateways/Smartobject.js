@@ -38,6 +38,25 @@ export default (app, core) => {
         }
     })
 
+    
+    //Get one smartobject
+    app.get('/api/smartobjects/:idSmartobject/state', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/:idSmartobject/state'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.smartobject.getState(
+                    request.params.idSmartobject
+                ))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
     //Insert smartobject 
     app.post('/api/smartobjects',
         body('module').isString().withMessage("Invalid module"),

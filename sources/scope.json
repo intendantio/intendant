@@ -60,6 +60,9 @@
         "/smartobjects/:idSmartobject": [
             "admin"
         ],
+        "/smartobjects/:idSmartobject/state": [
+            "admin"
+        ],
         "/modules/:idModule": [
             "admin"
         ],
