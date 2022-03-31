@@ -22,6 +22,21 @@ class Utils {
         return s.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
     }
 
+    static clearCacheModule(pModule) {
+        Object.keys(require.cache).forEach(function(key) { 
+            let arrModule = pModule.split("/")
+            if(arrModule.length == 1) {
+                if(key.includes(pModule)) {
+                    delete require.cache[key] 
+                }
+            } else if(arrModule.length == 2) {
+                if(key.includes(arrModule[1])) {
+                    delete require.cache[key] 
+                }
+            }
+        })
+    }
+
 }
 
 export default Utils

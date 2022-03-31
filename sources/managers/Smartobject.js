@@ -5,6 +5,7 @@ import StackTrace from '../utils/StackTrace'
 import fs from 'fs'
 import Result from '../utils/Result'
 import Manager from './Manager'
+import Utils from '../utils/Utils'
 
 class Smartobject extends Manager {
 
@@ -87,6 +88,9 @@ class Smartobject extends Manager {
                         smartobject.arguments.forEach(argument => {
                             settings[argument.reference] = argument.value
                         })
+
+                        Utils.clearCacheModule(smartobject["module"])
+                        
                         let configurations = require(smartobject["module"] + "/package.json")
                         let Module = require(smartobject["module"])
                         let instance = new Module(this.core, smartobject.id, smartobject.reference, settings, Tracing, configurations)
@@ -162,6 +166,7 @@ class Smartobject extends Manager {
             return new Result(Package.name, true, "Error occurred when get all configuration in smartobject manage")
         }
     }
+    
 
 }
 
