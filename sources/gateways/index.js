@@ -56,8 +56,8 @@ class API {
             res.redirect('/admin')
         })
 
-        app.listen(core.configuration.port, () => {
-            Tracing.verbose(Package.name, "Listening localhost:" + core.configuration.port)
+        app.listen(process.env.PORT, () => {
+            Tracing.verbose(Package.name, "Listening localhost:" + process.env.PORT)
         })
     }
 

@@ -1,12 +1,12 @@
 {
   "name": "intendant",
-  "description": "Template intendant",
+  "description": "intendant",
   "author": "intendant",
   "license": "GPL-3.0+",
   "scripts": {
       "start": "node index.js && npm start"
   },
   "dependencies": {
-    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.1.0-beta.30.tgz"
+    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.1.0-beta.32.tgz"
   }
 }

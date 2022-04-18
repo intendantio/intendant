@@ -25,16 +25,32 @@ import RapportManager from './managers/Rapports'
 
 import Tracing from './utils/Tracing'
 
+import Env from 'dotenv'
+
+Env.config()
+
 import Connector from './connector'
+import Utils from './utils/Utils'
 
 class Core {
-    constructor(configuration) {
+    constructor() {
+
         console.clear()
         Tracing.welcome()
 
+        if(process.env.PORT == undefined) {
+            Tracing.warning(Package.name,"Missing PORT variable on .env file")
+            Tracing.warning(Package.name,"Set 3000 default port")
+            process.env.PORT = 3000
+        }
+        if(process.env.SECRET == undefined) {
+            Tracing.warning(Package.name,"Missing SECRET variable on .env file")
+            Tracing.warning(Package.name,"Self generate secret passphrase")
+            process.env.SECRET = Utils.generateSingleCodeUnique()
+        }
+
         Connector.migration(() => {
 
-            this.configuration = configuration
 
             /* Manager */
             this.manager = {}
@@ -62,7 +78,7 @@ class Core {
                 system: new System()
             }
 
-            this.controller.authentification.token = configuration.token
+            this.controller.authentification.token = process.env.SECRET
             this.controller.authentification.salt = Package.name
 
 

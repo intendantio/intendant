@@ -1,1 +1,1 @@
-new (require('@intendant/core'))(require('./intendant.json'))
+new (require('@intendant/core'))()

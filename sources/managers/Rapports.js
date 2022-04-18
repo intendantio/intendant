@@ -10,7 +10,6 @@ class Rapport extends Manager {
     constructor(core) {
         super()
         this.core = core
-        this.configuration = this.core.configuration
         this.instances = new Map()
         this.scheduler = new ToadScheduler.ToadScheduler()
         Tracing.verbose(Package.name, "Rapport manager : start")
