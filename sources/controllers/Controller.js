@@ -46,6 +46,7 @@ class Controller {
             this.sqlRapportData = new Connector("rapport_data")
             this.sqlRapportArgument = new Connector("rapport_argument")
 
+            this.sqlLink = new Connector("link")
             
             this.sqlSingleCode = new Connector("single_code")
             

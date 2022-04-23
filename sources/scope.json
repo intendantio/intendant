@@ -6,6 +6,9 @@
         "/rooms": [
             "admin"
         ],
+        "/links": [
+            "admin"
+        ],
         "/logs": [
             "admin"
         ],
@@ -39,6 +42,9 @@
         "/rooms/:idRoom": [
             "admin"
         ],
+        "/links/:idLink": [
+            "admin"
+        ],
         "/users/:idUser": [
             "admin"
         ],
@@ -63,6 +69,10 @@
         "/smartobjects/:idSmartobject/state": [
             "admin"
         ],
+        "/smartobjects/assistant/syncData": [
+            "admin",
+            "public"
+        ],
         "/modules/:idModule": [
             "admin"
         ],
@@ -72,6 +82,9 @@
     },
     "POST": {
         "/rooms": [
+            "admin"
+        ],
+        "/links": [
             "admin"
         ],
         "/smartobjects": [
@@ -102,6 +115,9 @@
             "admin"
         ],
         "/smartobjects/:idSmartobject/room": [
+            "admin"
+        ],
+        "/smartobjects/:idSmartobject/link": [
             "admin"
         ],
         "/smartobjects/:idSmartobject/reference": [
@@ -136,6 +152,14 @@
         ],
         "/smartobjects/:idSmartobject": [
             "admin"
+        ],
+        "/smartobjects/assistant/syncQuery": [
+            "admin",
+            "public"
+        ],
+        "/smartobjects/assistant/syncExecute": [
+            "admin",
+            "public"
         ]
     },
     "PUT": {},
@@ -152,6 +176,9 @@
     },
     "DELETE": {
         "/rooms/:idRoom": [
+            "admin"
+        ],
+        "/links/:idLink": [
             "admin"
         ],
         "/rooms/:idRoom/profiles/:idProfile": [

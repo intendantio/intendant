@@ -150,6 +150,16 @@ class Smartobject extends Controller {
 
             }
 
+            let link = null
+
+            if (smartobject.link != null) {
+                let resultLink = await this.sqlLink.getOne(smartobject.link)
+                if (resultLink.error) {
+                    return resultLink
+                }
+                link = resultLink.data
+            }
+
             return new Result(Package.name, false, "", {
                 id: smartobject.id,
                 module: smartobject.module,
@@ -160,6 +170,7 @@ class Smartobject extends Controller {
                 widgets: widgets,
                 dataSources: dataSources,
                 triggers: triggers,
+                link: link,
                 state: {
                     status: "online"
                 },
@@ -191,10 +202,10 @@ class Smartobject extends Controller {
 
     async getState(idSmartobject) {
         try {
-            if(this.smartobjectManager.instances.has(parseInt(idSmartobject))) {
+            if (this.smartobjectManager.instances.has(parseInt(idSmartobject))) {
                 return await this.smartobjectManager.instances.get(parseInt(idSmartobject)).getState()
             } else {
-                return new Result(Package.name,true,"Smartobject not found")
+                return new Result(Package.name, true, "Smartobject not found")
             }
         } catch (error) {
             StackTrace.save(error)
@@ -242,6 +253,20 @@ class Smartobject extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when update room smartobject")
             return new Result(Package.name, true, "Error occurred when update room smartobject")
+        }
+    }
+
+    async updateLink(idSmartobject, idLink) {
+        try {
+            let result = await this.sqlSmartobject.updateAll({ link: idLink }, { id: idSmartobject })
+            if (result.error) {
+                return result
+            }
+            return new Result(Package.name, false, "")
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when update link smartobject")
+            return new Result(Package.name, true, "Error occurred when update link smartobject")
         }
     }
 
@@ -428,6 +453,108 @@ class Smartobject extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when execute smartobject action")
             return new Result(Package.name, true, "Error occurred when execute smartobject action")
+        }
+    }
+
+    async getSyncData() {
+        let resultSmartobject = await this.getAll()
+        let syncData = []
+        resultSmartobject.data.forEach(smartobject => {
+            if (smartobject.configuration.assistant) {
+                console.log(smartobject.link)
+                syncData.push({
+                    id: smartobject.id + "-" + smartobject.room.name + "-" + (smartobject.link ? smartobject.link.name : "default"),
+                    type: smartobject.configuration.assistant.type,
+                    traits: smartobject.configuration.assistant.traits,
+                    attributes: smartobject.configuration.assistant.attributes,
+                    name: {
+                        defaultNames: [smartobject.reference],
+                        name: smartobject.reference
+                    },
+                    roomHint: smartobject.room.name,
+                    structureHint: smartobject.link ? smartobject.link.name : null,
+                    willReportState: true
+                })
+            }
+        })
+        return {
+            error: false,
+            message: "",
+            package: Package.name,
+            data: syncData
+        }
+    }
+
+    async getSyncQuery(settings = {}) {
+        let requestId = settings.requestId
+        let inputs = settings.inputs
+        let currentStates = {}
+        Tracing.verbose(Package.name, "Get SYNC QUERY ")
+        Tracing.verbose(Package.name, JSON.stringify(settings.inputs))
+
+        for (let indexInput = 0; indexInput < inputs.length; indexInput++) {
+            let input = inputs[indexInput]
+            if (input.intent == "action.devices.QUERY") {
+                for (let indexDevices = 0; indexDevices < input.payload.devices.length; indexDevices++) {
+                    try {
+
+                        let idSmartobject = input.payload.devices[indexDevices].id.split("-")[0]
+                        let resultState = await this.getState(idSmartobject)
+                        if (resultState.error) {
+
+                        } else {
+                            let currentState = resultState.data.state
+                            currentState.status = resultState.data.status
+                            currentState.online = true
+                            currentStates[input.payload.devices[indexDevices].id] = currentState
+                        }
+                    } catch (error) {
+                        console.log(error)
+                        console.log(input.payload.devices[indexDevices].id)
+                    }
+                }
+            }
+        }
+        Tracing.verbose(Package.name, "Result SYNC QUERY ")
+        return {
+            error: false,
+            message: "",
+            package: Package.name,
+            data: {
+                devices: currentStates
+            }
+        }
+    }
+
+    async getSyncExecute(settings = {}) {
+        let requestId = settings.requestId
+        settings.inputs.forEach(input => {
+            console.log(input.context)
+            console.log(input.intent)
+            input.payload.commands.forEach(command => {
+                command.devices.forEach(device => {
+                    command.execution.forEach(async exec => {
+                        let idSmartobject = parseInt(device.id.split("-")[0]) 
+                        if (this.smartobjectManager.instances.has(idSmartobject)) {
+
+                            let smartobject = this.smartobjectManager.instances.get(idSmartobject)
+
+                            let resultExecute = await smartobject.executeAssistant(exec.command,exec.params)
+                        }
+
+                    })
+                })
+            })
+        })
+
+        Tracing.verbose(Package.name, "Get SYNC EXECUTE ")
+        return {
+            error: false,
+            message: "",
+            package: Package.name,
+            data: {
+                devices: {}
+            }
         }
     }
 

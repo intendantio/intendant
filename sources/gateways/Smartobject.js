@@ -185,6 +185,24 @@ export default (app, core) => {
             }
         })
 
+    //Update rooms
+    app.post("/api/smartobjects/:idSmartobject/link",
+        body('idLink').isNumeric().withMessage("Invalid link"),
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = "/smartobjects/:idSmartobject/link"
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.smartobject.updateLink(request.params.idSmartobject, request.body.idLink))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
+
     //Update reference
     app.post("/api/smartobjects/:idSmartobject/reference",
         body('reference').isString().withMessage("Invalid reference"),
@@ -213,6 +231,55 @@ export default (app, core) => {
                 result.send(authorization)
             } else {
                 result.send(await core.manager.smartobject.update(request.params.idSmartobject))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
+    //Get Home Sync Data
+    app.get('/api/smartobjects/assistant/syncData', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/assistant/syncData'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.smartobject.getSyncData())
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
+    //Get Home Sync Query
+    app.post('/api/smartobjects/assistant/syncQuery', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/assistant/syncQuery'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.smartobject.getSyncQuery(request.body))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
+    
+    //Get Home Sync Query
+    app.post('/api/smartobjects/assistant/syncExecute', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/assistant/syncExecute'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.smartobject.getSyncExecute(request.body))
             }
         } else {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))

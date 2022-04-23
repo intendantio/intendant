@@ -60,7 +60,7 @@ class Room extends Controller {
         pRoom.name = pRoom.name.toLowerCase()
         try {
             let data = { id: null, name: pRoom.name, description: pRoom.description, icon: pRoom.icon }
-            let getAllRequest = await this.sqlRoom.getAllByField({ name: pRoom.icon })
+            let getAllRequest = await this.sqlRoom.getAllByField({ name: pRoom.name })
             if (getAllRequest.error) {
                 return getAllRequest
             }
@@ -77,7 +77,7 @@ class Room extends Controller {
                 if(resultInsertProfile.error) {
                     return resultInsertProfile
                 }
-                return new Result(Package.name, false, "")
+                return await this.getOne(insertRequest.data.insertId)
             }
         } catch (error) {
             StackTrace.save(error)
