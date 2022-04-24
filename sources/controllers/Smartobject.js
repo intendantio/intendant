@@ -527,31 +527,31 @@ class Smartobject extends Controller {
     }
 
     async getSyncExecute(settings = {}) {
+        let commands = []
         settings.inputs.forEach(input => {
-            console.log(input.context)
-            console.log(input.intent)
             input.payload.commands.forEach(command => {
                 command.devices.forEach(device => {
                     command.execution.forEach(async exec => {
                         let idSmartobject = parseInt(device.id.split("-")[0])
                         if (this.smartobjectManager.instances.has(idSmartobject)) {
-
                             let smartobject = this.smartobjectManager.instances.get(idSmartobject)
-
-                            let resultExecute = await smartobject.executeAssistant(exec.command, exec.params)
+                            await smartobject.executeAssistant(exec.command, exec.params)
                         }
-
+                        commands.push({
+                            ids: [ device.id ],
+                            status: "SUCCESS"
+                        })
                     })
                 })
             })
         })
-        Tracing.verbose(Package.name, "Get SYNC EXECUTE ")
+        Tracing.verbose(Package.name, "Get SYNC EXECUTE")
         return {
             error: false,
             message: "",
             package: Package.name,
             data: {
-                devices: {}
+                commands: commands
             }
         }
     }
