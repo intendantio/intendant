@@ -168,7 +168,7 @@ class Core {
                 Tracing.error(Package.name, resultAdmin.message)
                 return
             }
-            let result = await fetch(Configuration.discover.replace(":uuid", uuid), {
+            let result = await fetch(Configuration.discover.replace(":uuid", this.uuid), {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -186,7 +186,7 @@ class Core {
                 Tracing.error(Package.name, resultJSON.message)
                 return
             }
-            let resultStorage = await this.controller.storage.setItem(Package.name + "/uuid", uuid)
+            let resultStorage = await this.controller.storage.setItem(Package.name + "/uuid", this.uuid)
             if (resultStorage.error) {
                 Tracing.error(Package.name, resultStorage.message)
                 return
