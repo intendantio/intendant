@@ -158,39 +158,40 @@ class Core {
                 return
             }
             if (resultUuid.data == false) {
-                let uuid = uuidv4()
-                let resultAdmin = await this.controller.authentification.getAdminToken()
-                if (resultAdmin.error) {
-                    Tracing.error(Package.name, resultAdmin.message)
-                    return
-                }
-                let result = await fetch(Configuration.discover.replace(":uuid",uuid), {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST',
-                    body: JSON.stringify({
-                        type: process.env.INSTANCE,
-                        name: process.env.NAME_CLOUD,
-                        path: process.env.PUBLIC_CLOUD,
-                        token: resultAdmin.data.access_token
-                    })
-                })
-                let resultJSON = await result.json()
-                if(resultJSON.error) {
-                    Tracing.error(Package.name, resultJSON.message)
-                    return
-                }
-                let resultStorage = await this.controller.storage.setItem(Package.name + "/uuid",uuid)
-                if(resultStorage.error) {
-                    Tracing.error(Package.name, resultStorage.message)
-                    return
-                }
-                this.uuid = uuid
+                this.uuid = uuidv4()
             } else {
                 this.uuid = resultUuid.data
             }
+            
+            let resultAdmin = await this.controller.authentification.getAdminToken()
+            if (resultAdmin.error) {
+                Tracing.error(Package.name, resultAdmin.message)
+                return
+            }
+            let result = await fetch(Configuration.discover.replace(":uuid", uuid), {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    type: process.env.INSTANCE,
+                    name: process.env.NAME_CLOUD,
+                    path: process.env.PUBLIC_CLOUD,
+                    token: resultAdmin.data.access_token
+                })
+            })
+            let resultJSON = await result.json()
+            if (resultJSON.error) {
+                Tracing.error(Package.name, resultJSON.message)
+                return
+            }
+            let resultStorage = await this.controller.storage.setItem(Package.name + "/uuid", uuid)
+            if (resultStorage.error) {
+                Tracing.error(Package.name, resultStorage.message)
+                return
+            }
+
             Tracing.verbose(Package.name, "uuid " + this.uuid)
         }
     }
