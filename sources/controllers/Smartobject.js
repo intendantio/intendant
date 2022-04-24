@@ -200,10 +200,10 @@ class Smartobject extends Controller {
         }
     }
 
-    async getState(idSmartobject) {
+    async getState(idSmartobject, settings = {}) {
         try {
             if (this.smartobjectManager.instances.has(parseInt(idSmartobject))) {
-                return await this.smartobjectManager.instances.get(parseInt(idSmartobject)).getState()
+                return await this.smartobjectManager.instances.get(parseInt(idSmartobject)).getState(settings)
             } else {
                 return new Result(Package.name, true, "Smartobject not found")
             }
@@ -457,23 +457,23 @@ class Smartobject extends Controller {
     }
 
     async getSyncData() {
+        Tracing.verbose(Package.name, "START SYNC DATA")
         let resultSmartobject = await this.getAll()
         let syncData = []
         try {
             resultSmartobject.data.forEach(smartobject => {
                 if (smartobject.configuration.assistant) {
-                    console.log(smartobject.link)
                     syncData.push({
                         id: smartobject.id + "-" + smartobject.room.name + "-" + (smartobject.link ? smartobject.link.name : "default"),
                         type: smartobject.configuration.assistant.type,
                         traits: smartobject.configuration.assistant.traits,
                         attributes: smartobject.configuration.assistant.attributes,
                         name: {
-                            defaultNames: [smartobject.reference],
-                            name: smartobject.reference
+                            defaultNames: [Utils.capitalizeFirstLetter(smartobject.reference)],
+                            name: Utils.capitalizeFirstLetter(smartobject.reference)
                         },
-                        roomHint: smartobject.room.name,
-                        structureHint: smartobject.link ? smartobject.link.name : null,
+                        roomHint: Utils.capitalizeFirstLetter(smartobject.room.name),
+                        structureHint: smartobject.link ? Utils.capitalizeFirstLetter(smartobject.link.name) : null,
                         willReportState: true
                     })
                 }
@@ -493,6 +493,7 @@ class Smartobject extends Controller {
     }
 
     async getSyncQuery(settings = {}) {
+        Tracing.verbose(Package.name, "START SYNC QUERY")
         let currentStates = {}
         try {
             for (let indexInput = 0; indexInput < settings.inputs.length; indexInput++) {
@@ -527,25 +528,29 @@ class Smartobject extends Controller {
     }
 
     async getSyncExecute(settings = {}) {
+        Tracing.verbose(Package.name, "START SYNC EXECUTE")
         let commands = []
-        settings.inputs.forEach(input => {
-            input.payload.commands.forEach(command => {
-                command.devices.forEach(device => {
-                    command.execution.forEach(async exec => {
+        for (let indexInput = 0; indexInput < settings.inputs.length; indexInput++) {
+            let input = settings.inputs[indexInput];
+            for (let indexPayload = 0; indexPayload < input.payload.commands.length; indexPayload++) {
+                let command = input.payload.commands[indexPayload]
+                for (let indexDevices = 0; indexDevices < command.devices.length; indexDevices++) {
+                    let device = command.devices[indexDevices];
+                    for (let indexExecution = 0; indexExecution < command.execution.length; indexExecution++) {
+                        let exec = command.execution[indexExecution];
                         let idSmartobject = parseInt(device.id.split("-")[0])
                         if (this.smartobjectManager.instances.has(idSmartobject)) {
                             let smartobject = this.smartobjectManager.instances.get(idSmartobject)
-                            await smartobject.executeAssistant(exec.command, exec.params)
+                            smartobject.executeAssistant(exec.command, exec.params)
                         }
                         commands.push({
                             ids: [ device.id ],
                             status: "SUCCESS"
                         })
-                    })
-                })
-            })
-        })
-        Tracing.verbose(Package.name, "Get SYNC EXECUTE")
+                    }
+                }  
+            }
+        }
         return {
             error: false,
             message: "",

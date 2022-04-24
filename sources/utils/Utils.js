@@ -23,18 +23,26 @@ class Utils {
     }
 
     static clearCacheModule(pModule) {
-        Object.keys(require.cache).forEach(function(key) { 
+        Object.keys(require.cache).forEach(function (key) {
             let arrModule = pModule.split("/")
-            if(arrModule.length == 1) {
-                if(key.includes(pModule)) {
-                    delete require.cache[key] 
+            if (arrModule.length == 1) {
+                if (key.includes(pModule)) {
+                    delete require.cache[key]
                 }
-            } else if(arrModule.length == 2) {
-                if(key.includes(arrModule[1])) {
-                    delete require.cache[key] 
+            } else if (arrModule.length == 2) {
+                if (key.includes(arrModule[1])) {
+                    delete require.cache[key]
                 }
             }
         })
+    }
+
+
+    static capitalizeFirstLetter(string) {
+        if (string == undefined || string.length == 0) {
+            return ""
+        }
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
 }
