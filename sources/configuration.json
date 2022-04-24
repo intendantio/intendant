@@ -1,0 +1,4 @@
+{
+    "cloud": "https://cloud.intendant.io",
+    "discover": "https://cloud.intendant.io/ws/discover/:uuid"
+}

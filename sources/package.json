@@ -2,7 +2,7 @@
     "name": "@intendant/core",
     "main": "./index.js",
     "author": "Clément MERLET",
-    "version": "0.1.0-beta.34",
+    "version": "0.1.0-beta.35",
     "module": "core",
     "license": "GPL-3.0+",
     "dependencies": {
@@ -19,6 +19,7 @@
         "lodash": "^4.17.21",
         "express-validator": "^6.14.0",
         "chalk": "^4.1.0",
-        "better-sqlite3": "7.4.3"
+        "better-sqlite3": "7.4.3",
+        "uuid": "^8.3.2"
     }
 }

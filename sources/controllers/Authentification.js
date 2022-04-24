@@ -226,8 +226,6 @@ class Authentification extends Controller {
         }
     }
 
-
-
     async getSingleCode(idSmartobject) {
         let resultSmartobject = await this.sqlSmartobject.getOne(idSmartobject)
         if (resultSmartobject.error) {
@@ -264,6 +262,27 @@ class Authentification extends Controller {
             }
         }
         return new Result(Package.name, false, "", singleCode)
+    }
+
+    async getAdminToken() {
+        let expiry = Moment().add({ days: 365 * 365 }).valueOf()
+        let payload = JSON.stringify({ sub: 1, exp: expiry, profile: 1 })
+        let resultAcessToken = Jwt.generateAccessToken(payload, this.token)
+        if (resultAcessToken.error) {
+            return resultAcessToken
+        }
+        let payloadRefresh = JSON.stringify({ sub: resultAcessToken.data })
+        let resultRefreshToken = Jwt.generateAccessToken(payloadRefresh, this.token)
+        if (resultRefreshToken.error) {
+            return resultRefreshToken
+        }
+        return new Result(Package.name, false, "", {
+            profile: 1,
+            access_token: resultAcessToken.data,
+            refresh_token: resultRefreshToken.data,
+            expiry: expiry,
+            user: 1
+        })
     }
 
 

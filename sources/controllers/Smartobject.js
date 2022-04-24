@@ -459,45 +459,46 @@ class Smartobject extends Controller {
     async getSyncData() {
         let resultSmartobject = await this.getAll()
         let syncData = []
-        resultSmartobject.data.forEach(smartobject => {
-            if (smartobject.configuration.assistant) {
-                console.log(smartobject.link)
-                syncData.push({
-                    id: smartobject.id + "-" + smartobject.room.name + "-" + (smartobject.link ? smartobject.link.name : "default"),
-                    type: smartobject.configuration.assistant.type,
-                    traits: smartobject.configuration.assistant.traits,
-                    attributes: smartobject.configuration.assistant.attributes,
-                    name: {
-                        defaultNames: [smartobject.reference],
-                        name: smartobject.reference
-                    },
-                    roomHint: smartobject.room.name,
-                    structureHint: smartobject.link ? smartobject.link.name : null,
-                    willReportState: true
-                })
-            }
-        })
+        try {
+            resultSmartobject.data.forEach(smartobject => {
+                if (smartobject.configuration.assistant) {
+                    console.log(smartobject.link)
+                    syncData.push({
+                        id: smartobject.id + "-" + smartobject.room.name + "-" + (smartobject.link ? smartobject.link.name : "default"),
+                        type: smartobject.configuration.assistant.type,
+                        traits: smartobject.configuration.assistant.traits,
+                        attributes: smartobject.configuration.assistant.attributes,
+                        name: {
+                            defaultNames: [smartobject.reference],
+                            name: smartobject.reference
+                        },
+                        roomHint: smartobject.room.name,
+                        structureHint: smartobject.link ? smartobject.link.name : null,
+                        willReportState: true
+                    })
+                }
+            })
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when sync data")
+        }
         return {
             error: false,
             message: "",
             package: Package.name,
-            data: syncData
+            data: {
+                devices: syncData
+            }
         }
     }
 
     async getSyncQuery(settings = {}) {
-        let requestId = settings.requestId
-        let inputs = settings.inputs
         let currentStates = {}
-        Tracing.verbose(Package.name, "Get SYNC QUERY ")
-        Tracing.verbose(Package.name, JSON.stringify(settings.inputs))
-
-        for (let indexInput = 0; indexInput < inputs.length; indexInput++) {
-            let input = inputs[indexInput]
-            if (input.intent == "action.devices.QUERY") {
-                for (let indexDevices = 0; indexDevices < input.payload.devices.length; indexDevices++) {
-                    try {
-
+        try {
+            for (let indexInput = 0; indexInput < settings.inputs.length; indexInput++) {
+                let input = settings.inputs[indexInput]
+                if (input.intent == "action.devices.QUERY") {
+                    for (let indexDevices = 0; indexDevices < input.payload.devices.length; indexDevices++) {
                         let idSmartobject = input.payload.devices[indexDevices].id.split("-")[0]
                         let resultState = await this.getState(idSmartobject)
                         if (resultState.error) {
@@ -508,14 +509,13 @@ class Smartobject extends Controller {
                             currentState.online = true
                             currentStates[input.payload.devices[indexDevices].id] = currentState
                         }
-                    } catch (error) {
-                        console.log(error)
-                        console.log(input.payload.devices[indexDevices].id)
                     }
                 }
             }
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when sync query")
         }
-        Tracing.verbose(Package.name, "Result SYNC QUERY ")
         return {
             error: false,
             message: "",
@@ -527,26 +527,24 @@ class Smartobject extends Controller {
     }
 
     async getSyncExecute(settings = {}) {
-        let requestId = settings.requestId
         settings.inputs.forEach(input => {
             console.log(input.context)
             console.log(input.intent)
             input.payload.commands.forEach(command => {
                 command.devices.forEach(device => {
                     command.execution.forEach(async exec => {
-                        let idSmartobject = parseInt(device.id.split("-")[0]) 
+                        let idSmartobject = parseInt(device.id.split("-")[0])
                         if (this.smartobjectManager.instances.has(idSmartobject)) {
 
                             let smartobject = this.smartobjectManager.instances.get(idSmartobject)
 
-                            let resultExecute = await smartobject.executeAssistant(exec.command,exec.params)
+                            let resultExecute = await smartobject.executeAssistant(exec.command, exec.params)
                         }
 
                     })
                 })
             })
         })
-
         Tracing.verbose(Package.name, "Get SYNC EXECUTE ")
         return {
             error: false,

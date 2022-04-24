@@ -27,11 +27,14 @@ import RapportManager from './managers/Rapports'
 import Tracing from './utils/Tracing'
 
 import Env from 'dotenv'
+import fetch from 'node-fetch'
+import { v4 as uuidv4 } from 'uuid'
 
 Env.config()
 
 import Connector from './connector'
 import Utils from './utils/Utils'
+import Configuration from './configuration.json'
 
 class Core {
     constructor() {
@@ -39,15 +42,35 @@ class Core {
         console.clear()
         Tracing.welcome()
 
-        if(process.env.PORT == undefined) {
-            Tracing.warning(Package.name,"Missing PORT variable on .env file")
-            Tracing.warning(Package.name,"Set 3000 default port")
+        if (process.env.PORT == undefined) {
+            Tracing.warning(Package.name, "Missing PORT variable on .env file")
+            Tracing.warning(Package.name, "Set 3000 default port")
             process.env.PORT = 3000
         }
-        if(process.env.SECRET == undefined) {
-            Tracing.warning(Package.name,"Missing SECRET variable on .env file")
-            Tracing.warning(Package.name,"Self generate secret passphrase")
+        if (process.env.SECRET == undefined) {
+            Tracing.warning(Package.name, "Missing SECRET variable on .env file")
+            Tracing.warning(Package.name, "Self generate secret passphrase")
             process.env.SECRET = Utils.generateSingleCodeUnique()
+        }
+        if (process.env.ENABLE_CLOUD == undefined) {
+            Tracing.warning(Package.name, "Missing ENABLE_CLOUD variable on .env file")
+            Tracing.warning(Package.name, "Set true default")
+            process.env.ENABLE_CLOUD = true
+        }
+        if (process.env.INSTANCE == undefined) {
+            Tracing.warning(Package.name, "Missing INSTANCE variable on .env file")
+            Tracing.warning(Package.name, "Set 'community' to default")
+            process.env.INSTANCE = 'community'
+        }
+        if (process.env.PUBLIC_CLOUD == undefined) {
+            Tracing.warning(Package.name, "Missing PUBLIC_CLOUD variable on .env file")
+            Tracing.warning(Package.name, "Set 'unknown' to default")
+            process.env.PUBLIC_CLOUD = 'unknown'
+        }
+        if (process.env.NAME_CLOUD == undefined) {
+            Tracing.warning(Package.name, "Missing NAME_CLOUD variable on .env file")
+            Tracing.warning(Package.name, "Set 'unknown' to default")
+            process.env.NAME_CLOUD = 'unknown'
         }
 
         Connector.migration(() => {
@@ -119,10 +142,57 @@ class Core {
                     this.manager.rapport.before()
                     setTimeout(() => {
                         this.manager.automation.before()
+                        this.autoRegister()
                     }, 1000)
                 }, 1000)
             }, 1000)
         })
+    }
+
+    async autoRegister() {
+        if (process.env.ENABLE_CLOUD) {
+            Tracing.verbose(Package.name, "With cloud register")
+            let resultUuid = await this.controller.storage.getItem(Package.name + "/uuid")
+            if (resultUuid.error) {
+                Tracing.error(Package.name, resultUuid.message)
+                return
+            }
+            if (resultUuid.data == false) {
+                let uuid = uuidv4()
+                let resultAdmin = await this.controller.authentification.getAdminToken()
+                if (resultAdmin.error) {
+                    Tracing.error(Package.name, resultAdmin.message)
+                    return
+                }
+                let result = await fetch(Configuration.discover.replace(":uuid",uuid), {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({
+                        type: process.env.INSTANCE,
+                        name: process.env.NAME_CLOUD,
+                        path: process.env.PUBLIC_CLOUD,
+                        token: resultAdmin.data.access_token
+                    })
+                })
+                let resultJSON = await result.json()
+                if(resultJSON.error) {
+                    Tracing.error(Package.name, resultJSON.message)
+                    return
+                }
+                let resultStorage = await this.controller.storage.setItem(Package.name + "/uuid",uuid)
+                if(resultStorage.error) {
+                    Tracing.error(Package.name, resultStorage.message)
+                    return
+                }
+                this.uuid = uuid
+            } else {
+                this.uuid = resultUuid.data
+            }
+            Tracing.verbose(Package.name, "uuid " + this.uuid)
+        }
     }
 
 }
