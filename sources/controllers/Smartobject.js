@@ -464,7 +464,7 @@ class Smartobject extends Controller {
             resultSmartobject.data.forEach(smartobject => {
                 if (smartobject.configuration.assistant) {
                     syncData.push({
-                        id: smartobject.id + "-" + smartobject.room.name + "-" + (smartobject.link ? smartobject.link.name : "default"),
+                        id: smartobject.id + "-" + smartobject.room.name,
                         type: smartobject.configuration.assistant.type,
                         traits: smartobject.configuration.assistant.traits,
                         attributes: smartobject.configuration.assistant.attributes,
