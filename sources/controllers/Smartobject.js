@@ -472,9 +472,7 @@ class Smartobject extends Controller {
                             defaultNames: [Utils.capitalizeFirstLetter(smartobject.reference)],
                             name: Utils.capitalizeFirstLetter(smartobject.reference)
                         },
-                        roomHint: Utils.capitalizeFirstLetter(smartobject.room.name),
-                        structureHint: smartobject.link ? Utils.capitalizeFirstLetter(smartobject.link.name) : null,
-                        willReportState: true
+                        roomHint: Utils.capitalizeFirstLetter(smartobject.room.name)
                     })
                 }
             })
