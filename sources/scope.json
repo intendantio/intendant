@@ -6,7 +6,7 @@
         "/rooms": [
             "admin"
         ],
-        "/links": [
+        "/positions": [
             "admin"
         ],
         "/logs": [
@@ -42,7 +42,7 @@
         "/rooms/:idRoom": [
             "admin"
         ],
-        "/links/:idLink": [
+        "/positions/:idPosition": [
             "admin"
         ],
         "/users/:idUser": [
@@ -84,7 +84,7 @@
         "/rooms": [
             "admin"
         ],
-        "/links": [
+        "/positions": [
             "admin"
         ],
         "/smartobjects": [
@@ -117,7 +117,7 @@
         "/smartobjects/:idSmartobject/room": [
             "admin"
         ],
-        "/smartobjects/:idSmartobject/link": [
+        "/smartobjects/:idSmartobject/position": [
             "admin"
         ],
         "/smartobjects/:idSmartobject/reference": [
@@ -178,7 +178,7 @@
         "/rooms/:idRoom": [
             "admin"
         ],
-        "/links/:idLink": [
+        "/positions/:idPosition": [
             "admin"
         ],
         "/rooms/:idRoom/profiles/:idProfile": [

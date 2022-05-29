@@ -17,7 +17,7 @@ import Essential from './Essential'
 import Rapport from './Rapport'
 import Result from '../utils/Result'
 import Automation from './Automation'
-import Link from './Link'
+import Position from './Position'
 
 class API {
 
@@ -44,7 +44,7 @@ class API {
         Room(app,core)
         Essential(app,core)
         Rapport(app,core)
-        Link(app,core)
+        Position(app,core)
         
         app.use("/api",(request, res) => {
             res.send(new Result(Package.name, true, "Invalid method"))

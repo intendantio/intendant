@@ -185,7 +185,7 @@ class Process extends Controller {
         return allow
     }
 
-    async executeAction(idProcess, inputs, idProfile = false) {
+    async executeAction(idProcess, inputs, idProfile = false, onReverse = false) {
         try {
             let processRequest = await this.getOne(idProcess)
             if (processRequest.error) {
@@ -194,6 +194,7 @@ class Process extends Controller {
             let process = processRequest.data
             if (this.isAllow(process, idProfile)) {
                 let actions = process.actions
+                let currentState = process.mode == "switch" ? onReverse ? process.state == "on" ? "off" : "on" : process.state : process.state
                 let data = []
                 for (let index = 0; index < actions.length; index++) {
                     const action = actions[index]
@@ -211,7 +212,7 @@ class Process extends Controller {
                         }
                         pArguments[argument.reference] = argument.value
                     })
-                    if (action.state === process.state) {
+                    if (action.state === currentState) {
                         if (action.type === "smartobject") {
                             let getOneSmartobject = await this.sqlSmartobject.getOne(action.object)
                             if (getOneSmartobject.error) {
@@ -241,7 +242,7 @@ class Process extends Controller {
                     }
                 }
                 if (process.mode === "switch") {
-                    await this.sqlProcess.updateAll({ state: process.state == "on" ? "off" : "on" }, { id: process.id })
+                    await this.sqlProcess.updateAll({ state: currentState == "on" ? "off" : "on" }, { id: process.id })
                 }
                 return new Result(Package.name, false, "", data)
             } else {

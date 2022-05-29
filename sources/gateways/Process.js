@@ -82,6 +82,7 @@ export default (app, core) => {
     // Execute action
     app.post("/api/processes/:id/execute",
         body('inputs').isObject().withMessage("Invalid inputs"),
+        body('onReverse').isBoolean().withMessage("Invalid onReverse"),
         async (request, result) => {
             let resultValid = validationResult(request)
             if (resultValid.isEmpty()) {
@@ -90,7 +91,7 @@ export default (app, core) => {
                 if (authorization.error) {
                     result.send(authorization)
                 } else {
-                    result.send(await core.controller.process.executeAction(request.params.id, request.body.inputs, authorization.data.idProfile))
+                    result.send(await core.controller.process.executeAction(request.params.id, request.body.inputs, authorization.data.idProfile, request.body.onReverse))
                 }
             } else {
                 result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))

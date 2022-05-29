@@ -15,7 +15,7 @@ import Module from './controllers/Module'
 import Rapport from './controllers/Rapport'
 import Automation from './controllers/Automation'
 import System from './controllers/System'
-import Link from './controllers/Link'
+import Position from './controllers/Position'
 
 import API from './gateways'
 
@@ -100,7 +100,7 @@ class Core {
                 essential: new Essential(),
                 process: new Process(),
                 system: new System(),
-                link: new Link()
+                position: new Position()
             }
 
             this.controller.authentification.token = process.env.SECRET

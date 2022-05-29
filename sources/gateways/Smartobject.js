@@ -186,17 +186,17 @@ export default (app, core) => {
         })
 
     //Update rooms
-    app.post("/api/smartobjects/:idSmartobject/link",
-        body('idLink').isNumeric().withMessage("Invalid link"),
+    app.post("/api/smartobjects/:idSmartobject/position",
+        body('idPosition').isNumeric().withMessage("Invalid position"),
         async (request, result) => {
             let resultValid = validationResult(request)
             if (resultValid.isEmpty()) {
-                request.url = "/smartobjects/:idSmartobject/link"
+                request.url = "/smartobjects/:idSmartobject/position"
                 let authorization = await core.controller.authentification.checkAuthorization(request)
                 if (authorization.error) {
                     result.send(authorization)
                 } else {
-                    result.send(await core.controller.smartobject.updateLink(request.params.idSmartobject, request.body.idLink))
+                    result.send(await core.controller.smartobject.updatePosition(request.params.idSmartobject, request.body.idPosition))
                 }
             } else {
                 result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))

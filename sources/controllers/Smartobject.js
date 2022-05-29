@@ -150,14 +150,14 @@ class Smartobject extends Controller {
 
             }
 
-            let link = null
+            let position = null
 
-            if (smartobject.link != null) {
-                let resultLink = await this.sqlLink.getOne(smartobject.link)
-                if (resultLink.error) {
-                    return resultLink
+            if (smartobject.position != null) {
+                let resultPosition = await this.sqlPosition.getOne(smartobject.position)
+                if (resultPosition.error) {
+                    return resultPosition
                 }
-                link = resultLink.data
+                position = resultPosition.data
             }
 
             return new Result(Package.name, false, "", {
@@ -170,7 +170,7 @@ class Smartobject extends Controller {
                 widgets: widgets,
                 dataSources: dataSources,
                 triggers: triggers,
-                link: link,
+                position: position,
                 state: {
                     status: "online"
                 },
@@ -256,17 +256,17 @@ class Smartobject extends Controller {
         }
     }
 
-    async updateLink(idSmartobject, idLink) {
+    async updatePosition(idSmartobject, idPosition) {
         try {
-            let result = await this.sqlSmartobject.updateAll({ link: idLink }, { id: idSmartobject })
+            let result = await this.sqlSmartobject.updateAll({ position: idPosition }, { id: idSmartobject })
             if (result.error) {
                 return result
             }
             return new Result(Package.name, false, "")
         } catch (error) {
             StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when update link smartobject")
-            return new Result(Package.name, true, "Error occurred when update link smartobject")
+            Tracing.error(Package.name, "Error occurred when update position smartobject")
+            return new Result(Package.name, true, "Error occurred when update position smartobject")
         }
     }
 
