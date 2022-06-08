@@ -101,7 +101,7 @@ export default (app, core) => {
 
     app.post('/api/users',
         body('login').isString().isLength({ min: 5 }).withMessage("Invalid login {min: 5}"),
-        body('password').isStrongPassword({ minLength: 6, minNumbers: 6 }).withMessage("Invalid password {minLength: 6, minNumbers: 6}"),
+        body('password').isString().isLength({ min: 6, max: 6 }).withMessage("Invalid password"),
         body('imei').isString().withMessage("Invalid imei"),
         body('profile').isNumeric().withMessage("Invalid profile"),
         async (request, result) => {
