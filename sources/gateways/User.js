@@ -80,7 +80,7 @@ export default (app, core) => {
             }
         })
 
-        app.post('/api/users/:idUser/dashboards/:idUserDashboard',
+    app.post('/api/users/:idUser/dashboards/:idUserDashboard',
         body('x').isNumeric().withMessage("Invalid x"),
         body('y').isNumeric().withMessage("Invalid y"),
         async (request, result) => {
@@ -91,7 +91,7 @@ export default (app, core) => {
                 if (authorization.error) {
                     result.send(authorization)
                 } else {
-                    result.send(await core.controller.user.updateUserDashboard(request.params.idUserDashboard,request.body.x,request.body.y)
+                    result.send(await core.controller.user.updateUserDashboard(request.params.idUserDashboard, request.body.x, request.body.y)
                     )
                 }
             } else {
@@ -101,7 +101,7 @@ export default (app, core) => {
 
     app.post('/api/users',
         body('login').isString().isLength({ min: 5 }).withMessage("Invalid login {min: 5}"),
-        body('password').isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 }).withMessage("Invalid password {minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1}"),
+        body('password').isStrongPassword({ minLength: 6, minNumbers: 6 }).withMessage("Invalid password {minLength: 6, minNumbers: 6}"),
         body('imei').isString().withMessage("Invalid imei"),
         body('profile').isNumeric().withMessage("Invalid profile"),
         async (request, result) => {
