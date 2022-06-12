@@ -59,7 +59,7 @@ class Smartobject extends Controller {
                 if (Utils.isCompatible(Package.version, resultRawJson.core)) {
                     Tracing.verbose(Package.name, "Install " + item.name)
                     await new Promise((resolve, reject) => {
-                        exec("npm install " + resultRawJson.url + " -s --silent 2>&1 | tee t", (e, std, ster) => {
+                        exec("npm install " + resultRawJson.url + " -s --silent 2>&1", (e, std, ster) => {
                             resolve()
                         })
                     })

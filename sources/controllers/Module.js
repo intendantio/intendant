@@ -115,7 +115,7 @@ class Module extends Controller {
                 if (Utils.isCompatible(Package.version, resultRawJson.core)) {
                     Tracing.verbose(Package.name, "Install " + item.name)
                     await new Promise((resolve, reject) => {
-                        exec("npm install " + resultRawJson.url + " --silent 2>&1 | tee t", (e, std, ster) => {
+                        exec("npm install " + resultRawJson.url + " --silent 2>&1", (e, std, ster) => {
                             resolve()
                         })
                     })
@@ -139,7 +139,7 @@ class Module extends Controller {
             Tracing.verbose(Package.name, "Uninstall " + pPackage)
 
             await new Promise((resolve, reject) => {
-                exec("npm uninstall " + pPackage + " --silent 2>&1 | tee t", (e, std, ster) => {
+                exec("npm uninstall " + pPackage + " --silent 2>&1", (e, std, ster) => {
                     resolve()
                 })
             })

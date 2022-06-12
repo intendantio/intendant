@@ -37,24 +37,22 @@ export default (app, core) => {
     })
 
     //Insert positions
-
-    app.post("/api/positions", 
+    app.post("/api/positions",
         body('name').isString().withMessage("Invalid name"),
-        body('room').isNumeric().withMessage("Invalid room"),
-    async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = "/positions"
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = "/positions"
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.position.insert(request.body))
+                }
             } else {
-                result.send(await core.controller.position.insert(request.body))
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
             }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
+        })
 
 
     //Delete positions

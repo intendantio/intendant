@@ -59,7 +59,7 @@ class Position extends Controller {
     async insert(pPosition) {
         pPosition.name = pPosition.name.toLowerCase()
         try {
-            let data = { id: null, name: pPosition.name, room: pPosition.room }
+            let data = { id: null, name: pPosition.name }
             let getAllRequest = await this.sqlPosition.getAllByField({ name: pPosition.name })
             if (getAllRequest.error) {
                 return getAllRequest
