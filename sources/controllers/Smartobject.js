@@ -494,12 +494,12 @@ class Smartobject extends Controller {
         Tracing.verbose(Package.name, "START SYNC QUERY")
         let currentStates = {}
         try {
-            for (let indexInput = 0; indexInput < settings.inputs.length; indexInput++) {
+            /*for (let indexInput = 0; indexInput < settings.inputs.length; indexInput++) {
                 let input = settings.inputs[indexInput]
                 if (input.intent == "action.devices.QUERY") {
                     for (let indexDevices = 0; indexDevices < input.payload.devices.length; indexDevices++) {
                         let idSmartobject = input.payload.devices[indexDevices].id.split("-")[0]
-                        /*
+                        
                             let resultState = await this.getState(idSmartobject)
                             if (resultState.error) {
 
@@ -509,10 +509,11 @@ class Smartobject extends Controller {
                                 currentState.online = true
                                 currentStates[input.payload.devices[indexDevices].id] = currentState
                             }
-                        */
+                        *
                     }
                 }
             }
+            */
         } catch (error) {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when sync query")
