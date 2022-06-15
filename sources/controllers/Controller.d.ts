@@ -22,8 +22,6 @@ declare class Controller {
     sqlSmartobjectArgument: Connector;
 
     sqlStorage: Connector;
-    sqlWidget: Connector;
-    sqlWidgetArgument: Connector;
 
     sqlProcess: Connector;
     sqlProcessAction: Connector;

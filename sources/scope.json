@@ -9,6 +9,12 @@
         "/positions": [
             "admin"
         ],
+        "/processes/:hash": [
+            "admin"
+        ],
+        "/processes/withoutData": [
+            "admin"
+        ],
         "/logs": [
             "admin"
         ],
@@ -54,9 +60,6 @@
         "/widgets/:idWidget": [
             "admin"
         ],
-        "/processes/:idProcess": [
-            "admin"
-        ],
         "/rapports/:idRapport": [
             "admin"
         ],
@@ -67,6 +70,12 @@
             "admin"
         ],
         "/smartobjects/:idSmartobject/state": [
+            "admin"
+        ],
+        "/smartobjects/:idSmartobject/widgets": [
+            "admin"
+        ],
+        "/smartobjects/:idSmartobject/widgets/:idWidget": [
             "admin"
         ],
         "/smartobjects/assistant/syncData": [
@@ -105,9 +114,6 @@
         "/widgets": [
             "admin"
         ],
-        "/processes": [
-            "admin"
-        ],
         "/rapports": [
             "admin"
         ],
@@ -129,10 +135,7 @@
         "/users/:idUser/profile": [
             "admin"
         ],
-        "/processes/:idprocess/execute": [
-            "admin"
-        ],
-        "/processes/:idProcess/profiles": [
+        "/processes/execute": [
             "admin"
         ],
         "/modules/:idModule/actions/:idAction": [
@@ -197,9 +200,6 @@
             "admin"
         ],
         "/automations/:idAutomation": [
-            "admin"
-        ],
-        "/processes/:idProcess": [
             "admin"
         ],
         "/users/:idUser/dashboards/:idUserDashboard": [

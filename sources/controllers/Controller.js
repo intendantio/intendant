@@ -26,9 +26,6 @@ class Controller {
             this.sqlSmartobjectArgument = new Connector("smartobject_argument")
             
             this.sqlStorage = new Connector("storage")
-            
-            this.sqlWidget = new Connector("widget")
-            this.sqlWidgetArgument = new Connector("widget_argument")
 
             this.sqlProcess = new Connector("process")
             this.sqlProcessAction = new Connector("process_action")

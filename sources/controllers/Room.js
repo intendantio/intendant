@@ -35,7 +35,6 @@ class Room extends Controller {
                 return smartobjectsRequest
             }
             roomsRequest.data.smartobjects = []
-
             for (let index = 0; index < smartobjectsRequest.data.length; index++) {
                 let smartobject = smartobjectsRequest.data[index]
                 let resultSmartobjectGetOne = await this.smartobjectController.getOne(smartobject.id)

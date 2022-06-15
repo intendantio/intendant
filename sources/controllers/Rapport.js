@@ -9,6 +9,34 @@ import Moment from 'moment'
 
 class Rapport extends Controller {
 
+    async getPackageName(type, object) {
+        let packageName = ""
+        if (type == "smartobject") {
+            let resultSmartobject = await this.smartobjectController.getOne(object)
+            if (resultSmartobject.error) {
+                return resultSmartobject
+            }
+            let smartobject = resultSmartobject.data
+            if (smartobject.configuration != null) {
+                packageName = smartobject.configuration.name
+            } else {
+                return new Result(Package.name, true, "Missing configuration with smartobject n°" + object)
+            }
+        } else if (type == "module") {
+            let resultModule = await this.moduleController.getBySum(object)
+            if (resultModule.error) {
+                return resultModule
+            }
+            if (resultModule.data == false) {
+                return new Result(Package.name, true, "Missing configuration with module n°" + object)
+            }
+            packageName = resultModule.data
+        } else {
+            return new Result(Package.name, true, "Invalid type")
+        }
+        return new Result(Package.name, false, "", packageName)
+    }
+
     async getOne(idRapport) {
         try {
             let resultRapport = await this.sqlRapport.getOne(idRapport)
@@ -42,7 +70,7 @@ class Rapport extends Controller {
 
             resultRapport.data.total = resultCounter.data.length == 0 ? 0 : resultCounter.data[0].total
 
-            let resultPackage = await this.widgetController.getPackageName(resultRapport.data.type,resultRapport.data.object)
+            let resultPackage = await this.getPackageName(resultRapport.data.type,resultRapport.data.object)
             
             if(resultPackage.error) {
                 return resultPackage

@@ -38,25 +38,6 @@ export default (app, core) => {
         }
     })
 
-    
-    //Get one smartobject
-    app.get('/api/smartobjects/:idSmartobject/state', async (request, result) => {
-        let resultValid = validationResult(request)
-        if (resultValid.isEmpty()) {
-            request.url = '/smartobjects/:idSmartobject/state'
-            let authorization = await core.controller.authentification.checkAuthorization(request)
-            if (authorization.error) {
-                result.send(authorization)
-            } else {
-                result.send(await core.controller.smartobject.getState(
-                    request.params.idSmartobject
-                ))
-            }
-        } else {
-            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-        }
-    })
-
     //Insert smartobject 
     app.post('/api/smartobjects',
         body('module').isString().withMessage("Invalid module"),
@@ -237,6 +218,45 @@ export default (app, core) => {
         }
     })
 
+    //Get all widget of one smartobject
+    app.get('/api/smartobjects/:idSmartobject/widgets', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/:idSmartobject/widgets'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.widget.getAllWidgets(
+                    request.params.idSmartobject
+                ))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
+    //Get one widget of one smartobject
+    app.get('/api/smartobjects/:idSmartobject/widgets/:idWidget', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/:idSmartobject/widgets/:idWidget'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.widget.getOne(
+                    request.params.idSmartobject,
+                    request.params.idWidget,
+                ))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
+    //Home assistant
+
     //Get Home Sync Data
     app.get('/api/smartobjects/assistant/syncData', async (request, result) => {
         let resultValid = validationResult(request)
@@ -269,7 +289,7 @@ export default (app, core) => {
         }
     })
 
-    
+
     //Get Home Sync Query
     app.post('/api/smartobjects/assistant/syncExecute', async (request, result) => {
         let resultValid = validationResult(request)

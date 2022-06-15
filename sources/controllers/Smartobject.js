@@ -138,6 +138,11 @@ class Smartobject extends Controller {
             let widgets = []
             let dataSources = []
             let triggers = []
+            let processes = []
+            let status = {
+                status: "SUCCESS",
+                reason: ""
+            }
 
             let configuration = false
 
@@ -147,7 +152,12 @@ class Smartobject extends Controller {
                 widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
                 dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
                 triggers = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getTriggers()
-
+                processes = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getProcesses()
+                let resultStatus = await this.smartobjectManager.instances.get(parseInt(smartobject.id)).getStatus()
+                if(resultStatus.error) {
+                    return resultStatus
+                }
+                status = resultStatus.data
             }
 
             let position = null
@@ -171,10 +181,9 @@ class Smartobject extends Controller {
                 dataSources: dataSources,
                 triggers: triggers,
                 position: position,
-                state: {
-                    status: "online"
-                },
+                status: status,
                 room: room,
+                processes: processes,
                 configuration: configuration
             })
         } catch (error) {
@@ -200,10 +209,10 @@ class Smartobject extends Controller {
         }
     }
 
-    async getState(idSmartobject, settings = {}) {
+    async getStatus(idSmartobject, settings = {}) {
         try {
             if (this.smartobjectManager.instances.has(parseInt(idSmartobject))) {
-                return await this.smartobjectManager.instances.get(parseInt(idSmartobject)).getState(settings)
+                return await this.smartobjectManager.instances.get(parseInt(idSmartobject)).getStatus(settings)
             } else {
                 return new Result(Package.name, true, "Smartobject not found")
             }
@@ -375,15 +384,6 @@ class Smartobject extends Controller {
                 return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a rapport")
             }
 
-            /* Check widget */
-            let resultWidget = await this.sqlWidget.count({ type: "smartobject", object: idSmartobject })
-            if (resultWidget.error) {
-                return resultWidget
-            }
-            if (resultWidget.data.count > 0) {
-                return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a widget")
-            }
-
             /* Check automation */
             let resultAutomationTrigger = await this.sqlAutomationTrigger.count({ type: "smartobject", object: idSmartobject })
             if (resultAutomationTrigger.error) {
@@ -499,15 +499,17 @@ class Smartobject extends Controller {
                 if (input.intent == "action.devices.QUERY") {
                     for (let indexDevices = 0; indexDevices < input.payload.devices.length; indexDevices++) {
                         let idSmartobject = input.payload.devices[indexDevices].id.split("-")[0]
-                        let resultState = await this.getState(idSmartobject)
-                        if (resultState.error) {
+                        /*
+                            let resultState = await this.getState(idSmartobject)
+                            if (resultState.error) {
 
-                        } else {
-                            let currentState = resultState.data.state
-                            currentState.status = resultState.data.status
-                            currentState.online = true
-                            currentStates[input.payload.devices[indexDevices].id] = currentState
-                        }
+                            } else {
+                                let currentState = resultState.data.state
+                                currentState.status = resultState.data.status
+                                currentState.online = true
+                                currentStates[input.payload.devices[indexDevices].id] = currentState
+                            }
+                        */
                     }
                 }
             }

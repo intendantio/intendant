@@ -126,6 +126,8 @@ class Core {
             this.controller.process.addManager(this.manager.smartobject)
             this.controller.process.addManager(this.manager.module)
             this.controller.process.addController(this.controller.essential)
+            this.controller.process.addController(this.controller.smartobject)
+            this.controller.process.addController(this.controller.widget)
 
             this.controller.automation.addManager(this.manager.automation)
 

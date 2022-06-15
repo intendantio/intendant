@@ -57,11 +57,10 @@ class Rapport extends Manager {
             return getOneRapport
         }
         let currentRapport = getOneRapport.data
-        let packageNameResult = await this.core.controller.widget.getPackageName(currentRapport.type, currentRapport.object)
+        let packageNameResult = await this.core.controller.rapport.getPackageName(currentRapport.type, currentRapport.object)
         if (packageNameResult.error) {
             return packageNameResult
         }
-        let packageName = packageNameResult.data
         let settings = {}
         currentRapport.settings.forEach(setting => {
             switch (setting.type) {
@@ -76,7 +75,7 @@ class Rapport extends Manager {
                     break
             }
         })
-        let dataSourceResult = await this.core.controller.widget.getDataSourceValue(packageName, currentRapport.reference, currentRapport.type, settings, currentRapport.object)
+        let dataSourceResult = await this.core.controller.widget.getDataSourceValue(currentRapport.object, currentRapport.reference)
         if (dataSourceResult.error) {
             return dataSourceResult
         }
