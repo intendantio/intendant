@@ -147,17 +147,19 @@ class Smartobject extends Controller {
             let configuration = false
 
             if (this.smartobjectManager.instances.has(parseInt(smartobject.id))) {
-                configuration = JSON.parse(fs.readFileSync("./node_modules/" + smartobject.module + "/package.json").toString())
-                actions = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions()
-                widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
-                dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
-                triggers = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getTriggers()
-                processes = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getProcesses()
-                let resultStatus = await this.smartobjectManager.instances.get(parseInt(smartobject.id)).getStatus()
-                if(resultStatus.error) {
-                    return resultStatus
-                }
-                status = resultStatus.data
+                try {
+                    configuration = JSON.parse(fs.readFileSync("./node_modules/" + smartobject.module + "/package.json").toString())
+                    actions = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions()
+                    widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
+                    dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()
+                    triggers = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getTriggers()
+                    processes = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getProcesses()
+                    let resultStatus = await this.smartobjectManager.instances.get(parseInt(smartobject.id)).getStatus()
+                    if (resultStatus.error) {
+                        return resultStatus
+                    }
+                    status = resultStatus.data
+                } catch (error) { }
             }
 
             let position = null
@@ -190,22 +192,6 @@ class Smartobject extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when get one smartobject")
             return new Result(Package.name, true, "Error occurred when get one smartobject")
-        }
-    }
-
-    getAllConfiguration() {
-        try {
-            let configurations = []
-            for (let indexPackage = 0; indexPackage < this.smartobjectManager.packages.length; indexPackage++) {
-                let pPackage = this.smartobjectManager.packages[indexPackage]
-                let configuration = require(pPackage + "/package.json")
-                configurations.push(configuration)
-            }
-            return new Result(Package.name, false, "", configurations)
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when get all configuration in module")
-            return new Result(Package.name, true, "Error occurred when get all configuration in module")
         }
     }
 
@@ -545,11 +531,11 @@ class Smartobject extends Controller {
                             smartobject.executeAssistant(exec.command, exec.params)
                         }
                         commands.push({
-                            ids: [ device.id ],
+                            ids: [device.id],
                             status: "SUCCESS"
                         })
                     }
-                }  
+                }
             }
         }
         return {
