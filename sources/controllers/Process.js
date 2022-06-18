@@ -22,6 +22,31 @@ class Process extends Controller {
                 }
             })
             if(currentProcess) {
+
+                let values = []
+                let lastValue = null
+
+                for (let indexSmartobject = 0; indexSmartobject < currentProcess.length; indexSmartobject++) {
+                    let smartobject = currentProcess[indexSmartobject]
+
+                    let resultDataSourceValue = await this.widgetController.getDataSourceValue(smartobject, currentProcess.dataSource)
+                    if (resultDataSourceValue.error) {
+                        return resultDataSourceValue
+                    }
+                    lastValue = resultDataSourceValue.data.value
+                    values.push(resultDataSourceValue.data.value)
+
+                }
+                let currentAction = _.size(_.countBy(values)) == 1 ? currentProcess.actions[lastValue] : currentProcess.actions.default
+                let action = _.find(actions, { id: currentAction })
+
+                currentProcess.action = currentAction
+                currentProcess.isDefault = currentAction != currentProcess.actions.default
+                currentProcess.name =  action.name + " on " + currentProcess.position
+
+
+
+
                 return new Result(Package.name, false, "",currentProcess)
             } else {
                 return new Result(Package.name, true, "Missing process")
@@ -156,9 +181,12 @@ class Process extends Controller {
 
                 availableProcesses.push({
                     id: process.id,
+                    actions: process.actions,
+                    dataSource: process.dataSource,
                     action: currentAction,
                     isDefault: currentAction != process.actions.default,
                     smartobjects: idSmartobjects,
+                    position: name,
                     name: action.name + " on " + name,
                     settings: action.settings,
                     room: room,
