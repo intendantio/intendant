@@ -15,7 +15,6 @@ class Smartobject extends Controller {
 
     async install(pPackage) {
         try {
-
             if (fs.existsSync("./node_modules/" + pPackage)) {
                 fsExtra.removeSync("./node_modules/" + pPackage)
             }
@@ -77,6 +76,32 @@ class Smartobject extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when install package smartobject")
             return new Result(Package.name, true, "Error occurred when install package smartobject")
+        }
+    }
+
+    async getAllByRoom(idRoom) {
+        try {
+            let pSmartObjects = []
+            let smartobjectsRequest = await this.sqlSmartobject.getAllByField({room: idRoom})
+            if (smartobjectsRequest.error) {
+                return smartobjectsRequest
+            } else {
+                let smartobjects = smartobjectsRequest.data
+                for (let indexSmartObject = 0; indexSmartObject < smartobjects.length; indexSmartObject++) {
+                    let smartobject = smartobjects[indexSmartObject]
+                    let resultSmartobject = await this.getOne(smartobject.id)
+                    if (resultSmartobject.error) {
+                        return resultSmartobject
+                    } else {
+                        pSmartObjects.push(resultSmartobject.data)
+                    }
+                }
+            }
+            return new Result(Package.name, false, "", pSmartObjects)
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all smartobject by room")
+            return new Result(Package.name, true, "Error occurred when get all smartobject by room")
         }
     }
 

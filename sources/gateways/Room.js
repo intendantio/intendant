@@ -36,6 +36,38 @@ export default (app, core) => {
         }
     })
 
+        //Get one rooms
+        app.get("/api/rooms/:idRoom/processes", async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = "/rooms/:idRoom/processes"
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.process.getAllByRoom(request.params.idRoom,true))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
+
+        //Get one rooms
+        app.get("/api/rooms/:idRoom/processes/withoutData", async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = "/rooms/:idRoom/processes/withoutData"
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.process.getAllByRoom(request.params.idRoom,false))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
+
     //Insert rooms
 
     app.post("/api/rooms", 
