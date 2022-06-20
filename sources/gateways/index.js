@@ -26,9 +26,6 @@ class API {
         app.use(cors.default())
         
 
-        app.use("/admin", Express.static(__dirname + '/../public'))
-        app.use("/admin/*", Express.static(__dirname + '/../public'))
-
 
         Authorization(app,core)
         Authentification(app,core)
