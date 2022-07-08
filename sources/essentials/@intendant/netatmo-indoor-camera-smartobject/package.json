@@ -1,0 +1,25 @@
+{
+    "name": "@intendant/netatmo-indoor-camera-smartobject",
+    "module": "smartobject",
+    "product": "security",
+    "author": "Clément MERLET",
+    "version": "0.0.3",
+    "license": "GPL-3.0+",
+    "submit": {
+        "type": "oauth",
+        "url": "https://oauth.intendant.io/netatmo?scope=read_camera write_camera&client_id=6245a26663d03b3e5916483c&secret_id=cKyCbbBpSHeeLB5pSE2JUnW7yuXp7fcM",
+        "name": "Connect netatmo.com"
+    },
+    "dependencies": {
+        "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant-smartobject/main/releases/intendant-smartobject-0.0.5.tgz", 
+        "node-fetch": "^2.6.1",
+        "form-data": "^4.0.0"
+    },
+    "settings": [],
+    "actions": [],
+    "dataSources": [],
+    "widgets": [],
+    "triggers": [],
+    "processes": [],
+    "assistant": {}
+}

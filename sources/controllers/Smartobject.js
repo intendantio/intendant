@@ -10,8 +10,25 @@ import fetch from 'node-fetch'
 import { exec } from 'child_process'
 import Utils from '../utils/Utils'
 import fsExtra from 'fs-extra'
+import Essential from '../essentials/index.json'
 
 class Smartobject extends Controller {
+
+    async getAllPackage() {
+        try {
+            let products = Essential.map(essential => {
+                let pPackage = require('../essentials/' + essential + "/package.json")
+                pPackage.products = require('../essentials/' + essential + "/products.json")
+                pPackage.docs = require('../essentials/' + essential + "/docs.json")
+                return pPackage
+            })
+            return new Result(Package.name, false, "", products)
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all package smartobject")
+            return new Result(Package.name, true, "Error occurred when get all package package smartobject")
+        }
+    }
 
     async install(pPackage) {
         try {
@@ -173,7 +190,7 @@ class Smartobject extends Controller {
 
             if (this.smartobjectManager.instances.has(parseInt(smartobject.id))) {
                 try {
-                    configuration = JSON.parse(fs.readFileSync("./node_modules/" + smartobject.module + "/package.json").toString())
+                    configuration = require("../essentials/" + smartobject.module + "/package.json") 
                     actions = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getActions()
                     widgets = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getWidgets()
                     dataSources = this.smartobjectManager.instances.get(parseInt(smartobject.id)).getDataSources()

@@ -1,0 +1,13 @@
+[
+    {
+        "name": "Home coach",
+        "manufacturer": "Netatmo",
+        "thumb": {
+            "image": "https://medias.netatmo.com/images/products/NHC",
+            "copyright": "NETATMO"
+        },
+        "shop": {
+            "url": "https://shop.netatmo.com/fr-fr/aircare/home-coach/homecoach"
+        }
+    }
+]

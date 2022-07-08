@@ -5,6 +5,7 @@ import StackTrace from '../utils/StackTrace'
 import fs from 'fs'
 import Result from '../utils/Result'
 import Manager from './Manager'
+import Essential from '../essentials/index.json'
 import Utils from '../utils/Utils'
 
 class Smartobject extends Manager {
@@ -89,10 +90,14 @@ class Smartobject extends Manager {
                             settings[argument.reference] = argument.value
                         })
 
+                        let configurations = null
+                        let Module = null
                         Utils.clearCacheModule(smartobject["module"])
-                        
-                        let configurations = require(smartobject["module"] + "/package.json")
-                        let Module = require(smartobject["module"])
+                        Tracing.verbose(Package.name, "Use essential " + smartobject["module"])
+                        configurations = require("../essentials/" + smartobject["module"] + "/package.json")
+                        Module = require("../essentials/" + smartobject["module"])
+
+
                         let instance = new Module(this.core, smartobject.id, smartobject.reference, settings, Tracing, configurations)
                         let resultUpdateRequest = await this.sqlSmartobject.updateAll({ status: 1 }, { id: smartobject.id })
                         if (resultUpdateRequest.error) {
@@ -105,18 +110,10 @@ class Smartobject extends Manager {
                         Tracing.error(Package.name, error)
                     }
                 } else {
-                    if (fs.existsSync("./node_modules/" + smartobject.module)) {
-                        this.packages.push(smartobject.module)
-                        let resultInstanciate = await this.instanciate(smartobject)
-                        if (resultInstanciate.error) {
-                            return resultInstanciate
-                        }
-                    } else {
-                        let resultUpdateAll = await this.sqlSmartobject.updateAll({ status: 3 }, { id: smartobject.id })
-                        if (resultUpdateAll.error) {
-                            return resultUpdateAll
-                        }
-                        Tracing.warning(Package.name, "Missing package : " + smartobject.module)
+                    this.packages.push(smartobject.module)
+                    let resultInstanciate = await this.instanciate(smartobject)
+                    if (resultInstanciate.error) {
+                        return resultInstanciate
                     }
                 }
             }
@@ -156,7 +153,7 @@ class Smartobject extends Manager {
             let smartobjects = []
             for (let indexPackages = 0; indexPackages < this.packages.length; indexPackages++) {
                 let pPackage = this.packages[indexPackages]
-                let configuration = require(pPackage + "/package.json")
+                let configuration = require("../essentials/" + pPackage + "/package.json")
                 smartobjects.push(configuration)
             }
             return new Result(Package.name, false, "", smartobjects)
@@ -166,7 +163,7 @@ class Smartobject extends Manager {
             return new Result(Package.name, true, "Error occurred when get all configuration in smartobject manage")
         }
     }
-    
+
 
 }
 

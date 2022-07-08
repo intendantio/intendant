@@ -1,0 +1,24 @@
+{
+    "conditions": [
+        {
+            "icon": "Power",
+            "text": "Have already initialized the Philips Hue with the Hue application"
+        },
+        {
+            "icon": "Wifi",
+            "text": "To be connected at same internet network to Hue Hub"
+        }
+    ],
+    "steps": [
+        {
+            "text": "Click on the login button `Connect meethue.com`"
+        },
+        {
+            "text": "Follow the instructions"
+        },
+        {
+            "text": "At the same time, you must press the button on Hue Hub"
+        }
+    ],
+    "video": "https://www.youtube.com/watch?v=6lxg0NKZjOE"
+}

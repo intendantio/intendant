@@ -1,0 +1,13 @@
+[
+    {
+        "name": "Indoor Camera",
+        "manufacturer": "Netatmo",
+        "thumb": {
+            "image": "https://medias.netatmo.com/images/products/NSC",
+            "copyright": "NETATMO"
+        },
+        "shop": {
+            "url": "https://shop.netatmo.com/fr-fr/security/cameras/camera-indoor"
+        }
+    }
+]

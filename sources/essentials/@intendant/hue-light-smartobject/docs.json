@@ -1,0 +1,18 @@
+{
+    "conditions": [
+        {
+            "icon": "Hub",
+            "text": "Have an instance of a Philips Hue Hub on Intendant"
+        },
+        {
+            "icon": "TabletAndroid",
+            "text": "Have associated this light with the hub via Philips Hue"
+        }
+    ],
+    "steps": [
+        {
+            "text": "You cannot implement a Philips Hue Light directly, use the `generate` action of the Philips Hue Hub instance"
+        }
+    ],
+    "video": ""
+}

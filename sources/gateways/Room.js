@@ -36,58 +36,58 @@ export default (app, core) => {
         }
     })
 
-        //Get one rooms
-        app.get("/api/rooms/:idRoom/processes", async (request, result) => {
-            let resultValid = validationResult(request)
-            if (resultValid.isEmpty()) {
-                request.url = "/rooms/:idRoom/processes"
-                let authorization = await core.controller.authentification.checkAuthorization(request)
-                if (authorization.error) {
-                    result.send(authorization)
-                } else {
-                    result.send(await core.controller.process.getAllByRoom(request.params.idRoom,true))
-                }
-            } else {
-                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-            }
-        })
-
-        //Get one rooms
-        app.get("/api/rooms/:idRoom/processes/withoutData", async (request, result) => {
-            let resultValid = validationResult(request)
-            if (resultValid.isEmpty()) {
-                request.url = "/rooms/:idRoom/processes/withoutData"
-                let authorization = await core.controller.authentification.checkAuthorization(request)
-                if (authorization.error) {
-                    result.send(authorization)
-                } else {
-                    result.send(await core.controller.process.getAllByRoom(request.params.idRoom,false))
-                }
-            } else {
-                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
-            }
-        })
-
-    //Insert rooms
-
-    app.post("/api/rooms", 
-        body('name').isString().withMessage("Invalid name"),
-        body('description').isString().withMessage("Invalid description"),
-        body('icon').isString().withMessage("Invalid icon"),
-    async (request, result) => {
+    //Get one rooms
+    app.get("/api/rooms/:idRoom/processes", async (request, result) => {
         let resultValid = validationResult(request)
         if (resultValid.isEmpty()) {
-            request.url = "/rooms"
+            request.url = "/rooms/:idRoom/processes"
             let authorization = await core.controller.authentification.checkAuthorization(request)
             if (authorization.error) {
                 result.send(authorization)
             } else {
-                result.send(await core.controller.room.insert(request.body))
+                result.send(await core.controller.process.getAllByRoom(request.params.idRoom, true))
             }
         } else {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
         }
     })
+
+    //Get one rooms
+    app.get("/api/rooms/:idRoom/processes/withoutData", async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = "/rooms/:idRoom/processes/withoutData"
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.process.getAllByRoom(request.params.idRoom, false))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
+    //Insert rooms
+
+    app.post("/api/rooms",
+        body('name').isString().withMessage("Invalid name"),
+        body('description').isString().withMessage("Invalid description"),
+        body('icon').isString().withMessage("Invalid icon"),
+        async (request, result) => {
+            let resultValid = validationResult(request)
+            if (resultValid.isEmpty()) {
+                request.url = "/rooms"
+                let authorization = await core.controller.authentification.checkAuthorization(request)
+                if (authorization.error) {
+                    result.send(authorization)
+                } else {
+                    result.send(await core.controller.room.insert(request.body))
+                }
+            } else {
+                result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+            }
+        })
 
 
 

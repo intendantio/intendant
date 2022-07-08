@@ -20,6 +20,22 @@ export default (app, core) => {
         }
     })
 
+    //Get all smartobject configuration
+    app.get('/api/smartobjects/configurations', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/configurations'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.smartobject.getAllPackage())
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
     //Get one smartobject
     app.get('/api/smartobjects/:idSmartobject', async (request, result) => {
         let resultValid = validationResult(request)
@@ -37,6 +53,8 @@ export default (app, core) => {
             result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
         }
     })
+
+
 
     //Insert smartobject 
     app.post('/api/smartobjects',

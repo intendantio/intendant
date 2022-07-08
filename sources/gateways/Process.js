@@ -20,7 +20,7 @@ export default (app, core) => {
             }
         })
 
-        app.get("/api/processes/withoutData",
+    app.get("/api/processes/withoutData",
         async (request, result) => {
             let resultValid = validationResult(request)
             if (resultValid.isEmpty()) {
@@ -36,7 +36,7 @@ export default (app, core) => {
             }
         })
 
-        app.get("/api/processes/:hash",
+    app.get("/api/processes/:hash",
         async (request, result) => {
             let resultValid = validationResult(request)
             if (resultValid.isEmpty()) {

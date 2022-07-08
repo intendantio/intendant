@@ -1,0 +1,7 @@
+[
+    "@intendant/hue-hub-smartobject",
+    "@intendant/hue-light-smartobject",
+    "@intendant/lametric-time-smartobject",
+    "@intendant/netatmo-home-coach-smartobject",
+    "@intendant/netatmo-indoor-camera-smartobject"
+]

@@ -1,0 +1,47 @@
+{
+    "name": "@intendant/lametric-time-smartobject",
+    "author": "Clément MERLET",
+    "version": "0.0.5",
+    "product": "clock",
+    "license": "GPL-3.0+",
+    "module": "smartobject",
+    "dependencies": {
+        "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant-smartobject/main/releases/intendant-smartobject-0.0.5.tgz",
+        "buffer": "^6.0.3",
+        "node-fetch": "^2.6.1"
+    },
+    "submit": {
+        "type": "submit",
+        "name": "Create LaMetric"
+    },
+    "settings": [],
+    "actions": [
+        {
+            "id": "authentification",
+            "name": "Get authentification",
+            "description": "Get single code authentification",
+            "alias": "none",
+            "settings": [],
+            "type": "none"
+        },
+        {
+            "id": "updateState",
+            "name": "Update state",
+            "description": "Update state",
+            "alias": "none",
+            "settings": [],
+            "type": "trigger"
+        }
+    ],
+    "triggers": [
+        {
+            "id": "updateState",
+            "name": "click on button",
+            "type": "callback"
+        }
+    ],
+    "processes": [],
+    "dataSources": [],
+    "widgets": [],
+    "assistant": {}
+}

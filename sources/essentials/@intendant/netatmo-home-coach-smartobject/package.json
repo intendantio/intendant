@@ -1,0 +1,220 @@
+{
+    "name": "@intendant/netatmo-home-coach-smartobject",
+    "module": "smartobject",
+    "product": "sensor",
+    "author": "Clément MERLET",
+    "version": "0.0.10",
+    "license": "GPL-3.0+",
+    "submit": {
+        "type": "oauth",
+        "url": "https://oauth.intendant.io/netatmo?scope=read_homecoach&client_id=62459eaf23fe9055905d3d6a&secret_id=PaSEACZsZryCyTHGLlR8AKK8ltL",
+        "name": "Connect netatmo.com"
+    },
+    "dependencies": {
+        "@intendant/smartobject": "https://raw.githubusercontent.com/intendantio/intendant-smartobject/main/releases/intendant-smartobject-0.0.6.tgz",
+        "node-fetch": "^2.6.1",
+        "form-data": "^4.0.0"
+    },
+    "settings": [],
+    "actions": [
+        {
+            "id": "dashboard",
+            "name": "Dashboard",
+            "alias": "dashboard",
+            "description": "Get dashboard data",
+            "settings": [],
+            "type": "data"
+        },
+        {
+            "id": "place",
+            "name": "Place",
+            "alias": "dashboard",
+            "description": "Get place",
+            "settings": [],
+            "type": "data"
+        }
+    ],
+    "processes": [],
+    "dataSources": [
+        {
+            "id": "temperature",
+            "type": "number",
+            "action": "dashboard",
+            "path": "temperature",
+            "unit": "°C"
+        },
+        {
+            "id": "co2",
+            "type": "number",
+            "action": "dashboard",
+            "path": "co2",
+            "unit": "ppm"
+        },
+        {
+            "id": "pressure",
+            "type": "number",
+            "action": "dashboard",
+            "path": "pressure",
+            "unit": "pa"
+        },
+        {
+            "id": "noise",
+            "type": "number",
+            "action": "dashboard",
+            "path": "noise",
+            "unit": "db"
+        },
+        {
+            "id": "humidity",
+            "type": "number",
+            "action": "dashboard",
+            "path": "humidity",
+            "unit": "%"
+        },
+        {
+            "id": "altitude",
+            "type": "number",
+            "action": "place",
+            "path": "altitude",
+            "unit": "m"
+        },
+        {
+            "id": "city",
+            "type": "string",
+            "action": "place",
+            "path": "city",
+            "unit": ""
+        },
+        {
+            "id": "country",
+            "type": "string",
+            "action": "place",
+            "path": "country",
+            "unit": ""
+        },
+        {
+            "id": "timezone",
+            "type": "string",
+            "action": "place",
+            "path": "timezone",
+            "unit": ""
+        },
+        {
+            "id": "quality",
+            "type": "string",
+            "action": "dashboard",
+            "path": "quality",
+            "unit": ""
+        },
+        {
+            "id": "colorQuality",
+            "type": "string",
+            "action": "dashboard",
+            "path": "colorQuality",
+            "unit": ""
+        }
+    ],
+    "widgets": [
+        {
+            "id": "state",
+            "dataSources": [
+                "temperature",
+                "co2",
+                "humidity",
+                "quality",
+                "colorQuality"
+            ],
+            "title": {
+                "value": "{quality}",
+                "example": "Good",
+                "styles": {
+                    "color": "{colorQuality}"
+                }
+            },
+            "contents": [
+                {
+                    "value": "Temperature - {temperature}°C",
+                    "example": "Temperature - 20°C",
+                    "styles": {}
+                },
+                {
+                    "value": "Humidity - {humidity}%",
+                    "example": "Humidity - 55%",
+                    "styles": {}
+                },
+                {
+                    "value": "co2 rate - {co2} ppm",
+                    "example": "co2 rate - 550 ppm",
+                    "styles": {}
+                }
+            ]
+        },
+        {
+            "id": "getLocation",
+            "dataSources": [
+                "city",
+                "altitude"
+            ],
+            "title": {
+                "value": "{smartobject.reference}",
+                "example": "My Netatmo",
+                "styles": {}
+            },
+            "contents": [
+                {
+                    "value": "{smartobject.reference}",
+                    "example": "My Netatmo",
+                    "styles": {}
+                },
+                {
+                    "value": "Location - {city}",
+                    "example": "Location - Paris",
+                    "styles": {}
+                },
+                {
+                    "value": "Altitude - {altitude}m",
+                    "example": "Altitude - 100m",
+                    "styles": {}
+                }
+            ]
+        }
+    ],
+    "triggers": [],
+    "assistant": {
+        "type": "action.devices.types.THERMOSTAT",
+        "traits": [
+            "action.devices.traits.TemperatureSetting",
+            "action.devices.traits.HumiditySetting",
+            "action.devices.traits.SensorState"
+        ],
+        "attributes": {
+            "availableThermostatModes": [],
+            "thermostatTemperatureUnit": "C",
+            "queryOnlyTemperatureSetting": true,
+            "commandOnlyTemperatureSetting ": false,
+            "queryOnlyHumiditySetting": true,
+            "commandOnlyHumiditySetting": false,
+            "sensorStatesSupported": [
+                {
+                    "name": "CarbonDioxideLevel",
+                    "numericCapabilities": {
+                        "rawValueUnit": "PARTS_PER_MILLION"
+                    }
+                },
+                {
+                    "name": "AirQuality",
+                    "descriptiveCapabilities": {
+                        "availableStates": [
+                            "healthy",
+                            "good",
+                            "fair",
+                            "poor",
+                            "unhealthy",
+                            "unknown"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

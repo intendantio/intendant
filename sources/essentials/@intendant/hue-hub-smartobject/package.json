@@ -1,0 +1,90 @@
+{
+    "name": "@intendant/hue-hub-smartobject",
+    "product": "bridge",
+    "author": "Clément MERLET",
+    "license": "GPL-3.0+",
+    "module": "smartobject",
+    "essential": true,
+    "submit": {
+        "type": "oauth",
+        "url": "https://oauth.intendant.io/meethue",
+        "name": "Connect meethue.com"
+    },
+    "settings": [],
+    "actions": [
+        {
+            "id": "generate",
+            "name": "Generate",
+            "description": "Generate device",
+            "alias": "none",
+            "settings": [],
+            "type": "data"
+        },
+        {
+            "id": "content",
+            "name": "Content",
+            "description": "Get content",
+            "alias": "none",
+            "settings": [],
+            "type": "data"
+        }
+    ],
+    "processes": [],
+    "widgets": [
+        {
+            "id": "state",
+            "dataSources": [
+                "lights",
+                "motions",
+                "buttons"
+            ],
+            "title":  {
+                "value": "Hub is online",
+                "example": "Hub is online",
+                "styles": {}
+            },
+            "contents": [
+                {
+                    "value": "Total light : {lights}",
+                    "example": "Total light : 1",
+                    "styles": {}
+                },
+                {
+                    "value": "Total motion : {motions}",
+                    "example": "Total motion : 1",
+                    "styles": {}
+                },
+                {
+                    "value": "Total button : {buttons}",
+                    "example": "Total button : 1",
+                    "styles": {}
+                }
+            ]
+        }
+    ],
+    "dataSources": [
+        {
+            "id": "lights",
+            "type": "string",
+            "action": "content",
+            "path": "lights",
+            "unit": ""
+        },
+        {
+            "id": "buttons",
+            "type": "string",
+            "action": "content",
+            "path": "buttons",
+            "unit": ""
+        },
+        {
+            "id": "motions",
+            "type": "string",
+            "action": "content",
+            "path": "motions",
+            "unit": ""
+        }
+    ],
+    "triggers": [],
+    "assistant": {}
+}

@@ -1,0 +1,205 @@
+{
+    "name": "@intendant/hue-light-smartobject",
+    "product": "light",
+    "author": "Clément MERLET",
+    "license": "GPL-3.0+",
+    "module": "smartobject",
+    "essential": true,
+    "submit": {
+        "type": "disabled",
+        "name": "Not available"
+    },
+    "settings": [
+        {
+            "id": "light",
+            "type": "text",
+            "name": "light"
+        },
+        {
+            "id": "gradients",
+            "type": "number",
+            "name": "gradients"
+        },
+        {
+            "id": "hueBridge",
+            "type": "smartobject",
+            "reference": "@intendant/hue-hub-smartobject",
+            "name": "Hue bridge instance"
+        }
+    ],
+    "processes": [
+        {
+            "id": "enable",
+            "dataSource": "state",
+            "actions": {
+                "default": "turnOn",
+                "offline":"turnOn",
+                "online":"turnOff"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "id": "state",
+            "name": "Get state",
+            "description": "Get state",
+            "alias": "none",
+            "settings": [],
+            "type": "none"
+        },
+        {
+            "id": "color",
+            "name": "Get color",
+            "description": "Get current color",
+            "alias": "none",
+            "settings": [],
+            "type": "none"
+        },
+        {
+            "id": "turnOff",
+            "name": "Turn off light",
+            "description": "Turn off light",
+            "alias": "turnOff",
+            "type": "effect",
+            "settings": []
+        },
+        {
+            "id": "turnOn",
+            "name": "Turn on light",
+            "alias": "turnOn",
+            "type": "effect",
+            "description": "Turn on light with color and intensity parameters",
+            "settings": [
+                {
+                    "id": "brightness",
+                    "type": "slider",
+                    "default": 100,
+                    "options": {
+                        "step": 1,
+                        "min": 1,
+                        "max": 100
+                    }
+                },
+                {
+                    "id": "colors",
+                    "type": "colorpicker",
+                    "default": "#ffffff",
+                    "options": {}
+                }
+            ]
+        }
+    ],
+    "dataSources": [
+        {
+            "id": "mode",
+            "type": "string",
+            "action": "state",
+            "path": "mode",
+            "unit": ""
+        },
+        {
+            "id": "enable",
+            "type": "boolean",
+            "action": "state",
+            "path": "on.on",
+            "unit": ""
+        },
+        {
+            "id": "state",
+            "type": "string",
+            "action": "state",
+            "path": "on.state",
+            "unit": ""
+        },
+        {
+            "id": "hueId",
+            "type": "string",
+            "action": "state",
+            "path": "id",
+            "unit": ""
+        },
+        {
+            "id": "name",
+            "type": "string",
+            "action": "state",
+            "path": "metadata.name",
+            "unit": ""
+        },
+        {
+            "id": "archetype",
+            "type": "string",
+            "action": "state",
+            "path": "metadata.archetype",
+            "unit": ""
+        },
+        {
+            "id": "currentHueX",
+            "type": "string",
+            "action": "state",
+            "path": "color.xy.x",
+            "unit": ""
+        },
+        {
+            "id": "currentHueY",
+            "type": "string",
+            "action": "state",
+            "path": "color.xy.x",
+            "unit": ""
+        },
+        {
+            "id": "currentBrightness",
+            "type": "string",
+            "action": "state",
+            "path": "dimming.brightness",
+            "unit": ""
+        },
+        {
+            "id": "currentEffect",
+            "type": "string",
+            "action": "state",
+            "path": "effects.status",
+            "unit": ""
+        },
+        {
+            "id": "currentColor",
+            "type": "string",
+            "action": "color",
+            "path": "color",
+            "unit": ""
+        }
+    ],
+    "widgets": [
+        {
+            "id": "state",
+            "dataSources": [
+                "state",
+                "currentColor",
+                "currentBrightness"
+            ],
+            "title":  {
+                "value": "{state} - {currentBrightness} %",
+                "example": "Bed Light n°1",
+                "styles": {
+                    "color": "{currentColor}"
+                }
+            },
+            "contents": []
+        }
+    ],
+    "triggers": [],
+    "assistant": {
+        "type": "action.devices.types.LIGHT",
+        "traits": [
+            "action.devices.traits.OnOff",
+            "action.devices.traits.ColorSetting",
+            "action.devices.traits.Brightness"
+        ],
+        "attributes": {
+            "colorModel": "rgb",
+            "colorTemperatureRange": {
+              "temperatureMinK": 2000,
+              "temperatureMaxK": 9000
+            }
+        }
+    }
+}

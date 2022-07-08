@@ -132,9 +132,10 @@ class Widget extends Controller {
 
     getConfiguration(pModule) {
         try {
-            let configuration = require(pModule + "/package.json")
+            let configuration = require("../essentials/" + pModule + "/package.json")
             return new Result(Package.name, false, "", configuration)
         } catch (error) {
+            console.log(error)
             Tracing.error(Package.name, "Error occured when get configuration")
             return new Result(Package.name, true, "Error occured when get configuration")
         }
