@@ -1,3 +1,4 @@
+import moment from 'moment'
 class SmartObject {
 
     constructor(core, id, reference, settings, tracing, configurations) {
@@ -16,7 +17,16 @@ class SmartObject {
         if (this["__" + action]) {
             try {
                 this.executeCallback(action)
-                return await this["__" + action](settings)
+                let result = await this["__" + action](settings)
+                
+                await this.core.controller.position.sqlSmartobjectHistory.insert({
+                    smartobject: this.id,
+                    action: action,
+                    settings: JSON.stringify(settings ? settings : {}),
+                    date: moment().format("DD/MM/YYYY HH:mm:ss")
+                })
+                
+                return result
             } catch (error) {
                 let message = "An error has occurred when " + action + " '" + error.toString() + "'"
                 this.tracing.warning("@intendant/smartobject", message)

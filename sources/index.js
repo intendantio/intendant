@@ -32,7 +32,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 Env.config()
 
-import Connector from './connector'
 import Utils from './utils/Utils'
 import Configuration from './configuration.json'
 
@@ -73,70 +72,69 @@ class Core {
             process.env.NAME_CLOUD = 'unknown'
         }
 
-        Connector.migration(() => {
+
+        /* Manager */
+        this.manager = {}
+        this.manager.smartobject = new SmartobjectManager(this)
+        this.manager.module = new ModulesManager(this)
+        this.manager.automation = new AutomationManager(this)
+        this.manager.rapport = new RapportManager(this)
+
+        /* Controller */
+        this.controller = {
+            authentification: new Authentification(),
+            automation: new Automation(),
+            module: new Module(),
+            profile: new Profile(),
+            storage: new Storage(),
+            user: new User(),
+            cache: new Cache(),
+            notification: new Notification(),
+            smartobject: new Smartobject(),
+            widget: new Widget(),
+            rapport: new Rapport(),
+            room: new Room(),
+            essential: new Essential(),
+            process: new Process(),
+            system: new System(),
+            position: new Position()
+        }
+
+        this.controller.authentification.token = process.env.SECRET
+        this.controller.authentification.salt = Package.name
 
 
-            /* Manager */
-            this.manager = {}
-            this.manager.smartobject = new SmartobjectManager(this)
-            this.manager.module = new ModulesManager(this)
-            this.manager.automation = new AutomationManager(this)
-            this.manager.rapport = new RapportManager(this)
-
-            /* Controller */
-            this.controller = {
-                authentification: new Authentification(),
-                automation: new Automation(),
-                module: new Module(),
-                profile: new Profile(),
-                storage: new Storage(),
-                user: new User(),
-                cache: new Cache(),
-                notification: new Notification(),
-                smartobject: new Smartobject(),
-                widget: new Widget(),
-                rapport: new Rapport(),
-                room: new Room(),
-                essential: new Essential(),
-                process: new Process(),
-                system: new System(),
-                position: new Position()
-            }
-
-            this.controller.authentification.token = process.env.SECRET
-            this.controller.authentification.salt = Package.name
-
-
+        setTimeout(() => {
             this.controller.module.addManager(this.manager.module)
 
             this.controller.smartobject.addManager(this.manager.smartobject)
             this.controller.smartobject.addController(this.controller.user)
-
+    
             this.controller.widget.addManager(this.manager.smartobject)
             this.controller.widget.addManager(this.manager.module)
             this.controller.widget.addController(this.controller.module)
             this.controller.widget.addController(this.controller.smartobject)
-
+    
             this.controller.rapport.addManager(this.manager.rapport)
             this.controller.rapport.addController(this.controller.widget)
             this.controller.rapport.addController(this.controller.smartobject)
-
+    
             this.controller.room.addController(this.controller.smartobject)
-
+    
             this.controller.process.addManager(this.manager.smartobject)
             this.controller.process.addManager(this.manager.module)
             this.controller.process.addController(this.controller.essential)
             this.controller.process.addController(this.controller.smartobject)
             this.controller.process.addController(this.controller.widget)
-
+    
             this.controller.automation.addManager(this.manager.automation)
-
+    
             this.manager.smartobject.addController(this.controller.smartobject)
             this.manager.automation.addController(this.controller.automation)
             this.manager.automation.addManager(this.manager.smartobject)
             this.manager.automation.addController(this.controller.smartobject)
             this.manager.automation.addController(this.controller.process)
-
+    
             setTimeout(() => {
                 this.api = new API(this)
                 this.manager.smartobject.before()
@@ -148,7 +146,9 @@ class Core {
                     }, 1000)
                 }, 1000)
             }, 1000)
-        })
+        }, 1000)
+
+        
     }
 
     async autoRegister() {
@@ -164,7 +164,7 @@ class Core {
             } else {
                 this.uuid = resultUuid.data
             }
-            
+
             let resultAdmin = await this.controller.authentification.getAdminToken()
             if (resultAdmin.error) {
                 Tracing.error(Package.name, resultAdmin.message)

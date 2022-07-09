@@ -54,6 +54,24 @@ export default (app, core) => {
         }
     })
 
+    //Get one smartobject
+    app.get('/api/smartobjects/:idSmartobject/history', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/:idSmartobject/history'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.smartobject.getAllHistory(
+                    request.params.idSmartobject
+                ))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
 
 
     //Insert smartobject 

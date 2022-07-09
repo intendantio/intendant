@@ -11,15 +11,14 @@ declare class Controller {
     sqlAutomationActionArgument: Connector;
 
     sqlUser: Connector;
-    sqlUserDashboard: Connector;
     sqlUserHistory: Connector;
 
-    
     sqlProfile: Connector;
 
     sqlSmartobject: Connector;
     sqlSmartobjectStatus: Connector;
     sqlSmartobjectArgument: Connector;
+    sqlSmartobjectHistory: Connector;
 
     sqlStorage: Connector;
 

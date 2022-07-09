@@ -18,50 +18,6 @@ class Connector {
     }
 
     
-
-    static async migration(callback) {
-        let connector = Connection.getInstance()
-        let result = await fetch("https://raw.githubusercontent.com/intendantio/intendant/main/migration/index.json")
-        let resultJSON = await result.json()
-        let databaseVersion = await connector.prepare("SELECT * FROM metadata WHERE reference=@reference").get({ reference: "database" })
-        if (databaseVersion.data == false) {
-            Tracing.error(Package.name, "Error configuration in version is missing")
-        } else {
-            let last = resultJSON.last
-            let current = parseInt(databaseVersion.value)
-            let difference = last - current
-            Tracing.verbose(Package.name, difference + " update(s) is available")
-            if (difference == 0) {
-                callback()
-            } else if (difference > 0) {
-                let next = (current + 1)
-                let nextVersion = resultJSON.versions[next]
-
-                if(Utils.isCompatible(Package.version,nextVersion.core)) {
-                    let result = await fetch(nextVersion.url)
-                    if (result.status == 200) {
-                        let request = await result.text()
-                        let requests = request.split(";")
-                        for (let index = 0; index < requests.length; index++) {
-                            let pRequest = requests[index].replace('\n', "")
-                            if (pRequest != "") {
-                                await connector.prepare(pRequest).run()
-                            }
-                        }
-                        Tracing.verbose(Package.name, "Migration success version n°" + (current + 1))
-                        await this.migration(callback)
-                    }
-                } else {
-                    Tracing.warning(Package.name, "Core must have a minimum version of " + nextVersion.core + " to accept the update")
-                    callback()
-                }
-
-            } else if (difference < 0) {
-                Tracing.error(Package.name, "Invalid version")
-            }
-        }
-    }
-
     check(exec) {
         if (this._connector.open == false) {
             Tracing.error(Package.name, "Unable to connect at database " + this._name)

@@ -81,6 +81,9 @@
         "/smartobjects/:idSmartobject/state": [
             "admin"
         ],
+        "/smartobjects/:idSmartobject/history": [
+            "admin"
+        ],
         "/smartobjects/:idSmartobject/widgets": [
             "admin"
         ],

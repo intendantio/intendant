@@ -2,8 +2,6 @@ import Package from '../package'
 import Tracing from '../utils/Tracing'
 import StackTrace from '../utils/StackTrace'
 import Result from '../utils/Result'
-import fetch from 'node-fetch'
-import fs from 'fs'
 import Manager from './Manager'
 
 class Module extends Manager {
@@ -20,6 +18,7 @@ class Module extends Manager {
     }
 
     async before() {
+        /*
         try {
             Tracing.verbose(Package.name, "Start module manager")
             let resultMarket = await fetch("https://market.intendant.io/modules")
@@ -35,6 +34,7 @@ class Module extends Manager {
             Tracing.error(Package.name, "Error occurred when executing before function")
             return new Result(Package.name, true, "Error occurred when executing before function")
         }
+        */
     }
 
     restart() {
@@ -62,6 +62,7 @@ class Module extends Manager {
             return new Result(Package.name, true, "Error occurred when restart module manager")
         }
     }
+
     getAll() {
         try {
             let modules = []

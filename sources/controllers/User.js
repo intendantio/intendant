@@ -27,13 +27,6 @@ class User extends Controller {
             if (resultHistory.error) {
                 return resultHistory
             }
-            let resultDashboard = await this.sqlUserDashboard.getAllByField({
-                user: user.id
-            })
-            if (resultDashboard.error) {
-                return resultDashboard
-            }
-            user.dashboards = resultDashboard.data
             user.password = "hidden"
             user.histories = resultHistory.data
             return new Result(Package.name, false, "", user)
@@ -192,73 +185,6 @@ class User extends Controller {
         }
     }
 
-    async insertUserDashboard(idUser, type, object, action, x, y) {
-        try {
-            let resultUser = await this.getOne(idUser)
-            if (resultUser.error) {
-                return resultUser
-            }
-
-            let resultUserDashboard = await this.sqlUserDashboard.insert({
-                user: idUser,
-                object: object,
-                action: action,
-                type: type,
-                x: x,
-                y: y
-            })
-
-            if (resultUserDashboard.error) {
-                return resultUserDashboard
-            }
-
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when insert user dashboard")
-            return new Result(Package.name, true, "Error occurred when insert user dashboard")
-        }
-    }
-
-
-    async updateUserDashboard(idUserDasboard, x, y) {
-        try {
-            let resultUserDashboard = await this.sqlUserDashboard.updateAll({ x: x, y: y }, { id: idUserDasboard })
-            if (resultUserDashboard.error) {
-                return resultUserDashboard
-            }
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when update user dashboard")
-            return new Result(Package.name, true, "Error occurred when update user dashboard")
-        }
-    }
-
-    async deleteUserDashboard(idUserDasboard) {
-        try {
-            let resultUserDashboard = await this.sqlUserDashboard.getOne(idUserDasboard)
-            if (resultUserDashboard.error) {
-                return resultUserDashboard
-            }
-            if (resultUserDashboard.data == false) {
-                Tracing.warning(Package.name, "User dashboard not found")
-                return new Result(Package.name, true, "User dashboard not found")
-            }
-
-            let resultDeleteDashboard = await this.sqlUserDashboard.deleteOne(idUserDasboard)
-
-            if (resultDeleteDashboard.error) {
-                return resultDeleteDashboard
-            }
-
-            return new Result(Package.name, false, "")
-        } catch (error) {
-            StackTrace.save(error)
-            Tracing.error(Package.name, "Error occurred when delete user dashboard")
-            return new Result(Package.name, true, "Error occurred when delete user dashboard")
-        }
-    }
 
     async updateProfile(idUser, profile) {
         try {

@@ -394,14 +394,6 @@ class Smartobject extends Controller {
 
     async delete(idSmartobject) {
         try {
-            /* Check process */
-            let resultProcessAction = await this.sqlProcessAction.count({ type: "smartobject", object: idSmartobject })
-            if (resultProcessAction.error) {
-                return resultProcessAction
-            }
-            if (resultProcessAction.data.count > 0) {
-                return new Result(Package.name, true, "Impossible to delete this smartobject that is used in a process")
-            }
 
             /* Check rapport */
             let resultRapport = await this.sqlRapport.count({ type: "smartobject", object: idSmartobject })
@@ -481,6 +473,16 @@ class Smartobject extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when execute smartobject action")
             return new Result(Package.name, true, "Error occurred when execute smartobject action")
+        }
+    }
+
+    async getAllHistory(idSmartobject) {
+        try {
+            return await this.sqlSmartobjectHistory.getAllByField({ smartobject: idSmartobject })
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when get all history smartobject")
+            return new Result(Package.name, true, "Error occurred when  get all history smartobject")
         }
     }
 

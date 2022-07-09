@@ -15,7 +15,6 @@ class Controller {
             this.sqlAutomationActionArgument = new Connector("automation_action_argument")
             
             this.sqlUser = new Connector("user")
-            this.sqlUserDashboard = new Connector("user_dashboard")
             this.sqlUserHistory = new Connector("user_history")
 
             this.sqlClient = new Connector("client")
@@ -24,15 +23,11 @@ class Controller {
 
             this.sqlSmartobject = new Connector("smartobject")
             this.sqlSmartobjectArgument = new Connector("smartobject_argument")
+            this.sqlSmartobjectHistory = new Connector("smartobject_history")
             
             this.sqlStorage = new Connector("storage")
 
             this.sqlProcess = new Connector("process")
-            this.sqlProcessAction = new Connector("process_action")
-            this.sqlProcessActionArgument = new Connector("process_action_argument")
-            this.sqlProcessProfile = new Connector("process_profile")
-            this.sqlProcessInput = new Connector("process_input")
-            this.sqlProcessInputOption = new Connector("process_input_option")
 
             this.sqlRoom = new Connector("room")
             this.sqlRoomProfile = new Connector("room_profile")
