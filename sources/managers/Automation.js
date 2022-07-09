@@ -21,7 +21,7 @@ class Automation extends Manager {
         automations.forEach(async automation => {
             if (this.instances.has(automation.id) == false) {
                 if (automation.trigger.type == "smartobject") {
-                    this.addTrigger(automation.id, automation.trigger, () => {
+                    this.addTrigger(automation.id, automation.trigger,async () => {
                         if (automation.action.type == "smartobject") {
                             let idSmartobject = parseInt(automation.action.object)
                             if (this.smartobjectManager.instances.has(idSmartobject)) {
@@ -34,12 +34,16 @@ class Automation extends Manager {
                                 Tracing.error(Package.name, "Smartobject not instanciate")
                             }
                         } else if (automation.action.type == "process") {
-                            let idProcess = parseInt(automation.action.object)
                             let settings = {}
                             automation.action.settings.forEach(setting => {
                                 settings[setting.reference] = setting.value
                             })
-                            this.processController.executeAction(idProcess, settings)
+                            let resultProcess = await this.processController.getOne(automation.action.object)
+                            if(resultProcess.error) {
+                                Tracing.error(Package.name, resultProcess.message)
+                            } else {
+                                this.processController.executeAction(settings,resultProcess.data.smartobjects.map(smartobject => smartobject.id),resultProcess.data.action)
+                            }
                         }
                     })
                     this.instances.set(automation.id, true)

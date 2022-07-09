@@ -101,7 +101,6 @@ class Authentification extends Controller {
                         Tracing.warning(Package.name, "Expired Bearer token")
                         return new Result(Package.name, true, "Expired Bearer token")
                     }
-
                     let resultUser = await this.sqlUser.getOneByField({ login: token.sub })
                     if (resultUser.error) {
                         return resultUser
@@ -266,7 +265,7 @@ class Authentification extends Controller {
 
     async getAdminToken() {
         let expiry = Moment().add({ days: 365 * 365 }).valueOf()
-        let payload = JSON.stringify({ sub: 1, exp: expiry, profile: 1 })
+        let payload = JSON.stringify({ sub: 'admin', exp: expiry, profile: 1 })
         let resultAcessToken = Jwt.generateAccessToken(payload, this.token)
         if (resultAcessToken.error) {
             return resultAcessToken

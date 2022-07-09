@@ -145,6 +145,27 @@ export default (app, core) => {
         }
     })
 
+    // Execute one action (without body)
+    app.get('/api/smartobjects/:idSmartobject/actions/:idAction', async (request, result) => {
+        let resultValid = validationResult(request)
+        if (resultValid.isEmpty()) {
+            request.url = '/smartobjects/:id/actions/:idAction'
+            let authorization = await core.controller.authentification.checkAuthorization(request)
+            if (authorization.error) {
+                result.send(authorization)
+            } else {
+                result.send(await core.controller.smartobject.executeAction(
+                    request.params.idSmartobject,
+                    request.params.idAction,
+                    {},
+                    authorization.data.idProfile
+                ))
+            }
+        } else {
+            result.send(new Result(Package.name, true, resultValid.array({ onlyFirstError: true }).pop().msg))
+        }
+    })
+
     app.patch("/api/smartobjects",
         body('package').isString().withMessage("Invalid package"),
         async (request, result) => {

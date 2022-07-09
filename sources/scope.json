@@ -84,6 +84,9 @@
         "/smartobjects/:idSmartobject/widgets": [
             "admin"
         ],
+        "/smartobjects/:id/actions/:idAction": [
+            "admin"
+        ],
         "/smartobjects/:idSmartobject/widgets/:idWidget": [
             "admin"
         ],
