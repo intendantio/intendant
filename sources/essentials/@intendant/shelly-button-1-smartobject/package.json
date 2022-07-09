@@ -1,15 +1,23 @@
 {
-    "name": "@intendant/lametric-time-smartobject",
+    "name": "@intendant/shelly-button-1-smartobject",
     "author": "Clément MERLET",
-    "product": "clock",
+    "product": "switch",
     "license": "GPL-3.0+",
     "module": "smartobject",
     "submit": {
         "type": "submit",
-        "name": "Create LaMetric"
+        "name": "Create Shelly"
     },
     "settings": [],
     "actions": [
+        {
+            "id": "url",
+            "name": "Get URL",
+            "description": "Get I/O Actions URL",
+            "alias": "none",
+            "settings": [],
+            "type": "effect"
+        },
         {
             "id": "updateState",
             "name": "Update state",
@@ -27,24 +35,14 @@
         }
     ],
     "processes": [],
-    "dataSources": [
-        {
-            "id": "id",
-            "type": "string",
-            "action": "information",
-            "path": "id",
-            "unit": ""
-        }
-    ],
+    "dataSources": [],
     "widgets": [
         {
             "id": "state",
-            "dataSources": [
-                "id"
-            ],
+            "dataSources": [],
             "title":  {
-                "value": "Online - Smartobject ID : {id}",
-                "example": "Online  - Smartobject ID : 10"
+                "value": "Online",
+                "example": "Online"
             },
             "contents": []
         }

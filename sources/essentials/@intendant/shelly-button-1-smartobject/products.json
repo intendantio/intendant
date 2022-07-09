@@ -1,0 +1,13 @@
+[
+    {
+        "name": "Shelly button 1",
+        "manufacturer": "Shelly",
+        "thumb": {
+            "image": "https://shop.shelly.cloud/image/cache/catalog/shelly_button1/shelly_button1_white_x1-1200x1200.jpg",
+            "copyright": "Shelly"
+        },
+        "shop": {
+            "url": "https://shop.shelly.cloud/shelly-button1-wifi-smart-home-automation"
+        }
+    }
+]

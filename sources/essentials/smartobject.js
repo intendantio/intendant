@@ -137,8 +137,18 @@ class SmartObject {
             data: {}
         }
     }
-    
-    
+
+
+    async __information(settings = {}) {
+        return {
+            error: false,
+            package: "@intendant/smartobject",
+            message: "",
+            data: {
+                id: this.id
+            }
+        }
+    }
 
 }
 
