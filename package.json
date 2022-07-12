@@ -3,17 +3,22 @@
   "repository": "https://github.com/intendantio/intendant",
   "private": "true",
   "author": "Clément MERLET",
+  "main": "sources/index.js",
   "license": "GPL-3.0+",
   "scripts": {
-    "build": "node ./scripts/build",
-    "market": "node ./scripts/market",
+    "build": "npx tsc --allowJs",
+    "release": "npm pack ./dist/ --pack-destination ./releases/",
     "dev": "node ./scripts/development && cd development && npm start"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
     "@babel/core": "^7.16.0",
     "@babel/preset-typescript": "^7.16.0",
-    "jest": "^27.0.1"
+    "jest": "^27.0.1",
+    "typescript": "^4.8.0-dev.20220710"
+  },
+  "compilerOptions": {
+    "module": "nodenext"
   },
   "dependencies": {
     "@babel/preset-env": "^7.14.4",

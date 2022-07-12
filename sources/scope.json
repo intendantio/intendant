@@ -156,7 +156,7 @@
         "/modules/:idModule/actions/:idAction": [
             "admin"
         ],
-        "/users/:idUser/dashboards" : [
+        "/users/:idUser/dashboards": [
             "admin"
         ],
         "/users/:idUser/dashboards/:idUserDashboard": [

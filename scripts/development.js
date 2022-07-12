@@ -29,7 +29,7 @@ const main = async () => {
 
     for (let indexConfiguration = 0; indexConfiguration < configurations.length; indexConfiguration++) {
         let configuration = configurations[indexConfiguration]
-        let pConfiguration = fsextra.readJSONSync(configuration + "/builds/package.json")
+        let pConfiguration = fsextra.readJSONSync(configuration + "/dist/package.json")
         for (let key in pConfiguration.dependencies) {
             newPackage.dependencies[key] = pConfiguration.dependencies[key]
         }
@@ -45,9 +45,9 @@ const main = async () => {
     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Insert build sources"))
     for (let indexConfiguration = 0; indexConfiguration < configurations.length; indexConfiguration++) {
         let configuration = configurations[indexConfiguration]
-        let pConfiguration = fsextra.readJSONSync(configuration + "/builds/package.json")
+        let pConfiguration = fsextra.readJSONSync(configuration + "/dist/package.json")
         fsextra.mkdirSync("./development/node_modules/" + pConfiguration.name,{recursive:true})
-        fsextra.copySync(configuration + "/builds","./development/node_modules/" + pConfiguration.name)
+        fsextra.copySync(configuration + "/dist","./development/node_modules/" + pConfiguration.name)
     }
 
     if(fsextra.existsSync("./development/intendant.db.dev")) {
