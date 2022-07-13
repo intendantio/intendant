@@ -27,14 +27,10 @@ const main = async () => {
 
     update(chalk.white.bold.bgYellow(" >> ") + chalk(" Insert tmp dependencies "))
 
-    for (let indexConfiguration = 0; indexConfiguration < configurations.length; indexConfiguration++) {
-        let configuration = configurations[indexConfiguration]
-        let pConfiguration = fsextra.readJSONSync(configuration + "/dist/package.json")
+        let pConfiguration = fsextra.readJSONSync("./dist/package.json")
         for (let key in pConfiguration.dependencies) {
             newPackage.dependencies[key] = pConfiguration.dependencies[key]
         }
-    }
-    
 
     fsextra.writeJSONSync("./development/package.json",newPackage)
 

@@ -1,5 +1,7 @@
 import SmartObject from '../../smartobject'
 import Package from './package.json'
+import Product from './products.json'
+import Docs from './docs.json'
 
 class ShellyButton extends SmartObject {
 

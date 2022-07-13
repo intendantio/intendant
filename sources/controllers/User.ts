@@ -197,6 +197,7 @@ class User extends Controller {
                 if (saltRequest.error) {
                     return saltRequest
                 }
+                this.insertHistory(idUser,"UPDATE","Update password")
                 return new Result(Package.name, false, "")
             }
         } catch (error) {
@@ -218,6 +219,7 @@ class User extends Controller {
                 return new Result(Package.name, true, "Cannot update admin")
             }
             let userRequest = await this.sqlUser.updateAll({ profile: profile }, { id: idUser })
+            this.insertHistory(idUser,"UPDATE","Update profile {" + profile + "}")
             if (userRequest.error) {
                 return userRequest
             } else {

@@ -1,6 +1,8 @@
 import SmartObject from '../../smartobject'
 import fetch from 'node-fetch'
 import Package from './package.json'
+import Product from './products.json'
+import Docs from './docs.json'
 
 class LaMetric extends SmartObject {
 

@@ -8,7 +8,7 @@
   "scripts": {
     "build": "npx tsc --allowJs",
     "release": "npm pack ./dist/ --pack-destination ./releases/",
-    "dev": "node ./scripts/development && cd development && npm start"
+    "dev": "node ./scripts/development && cd development && node ./node_modules/@intendant/core/index.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.0",

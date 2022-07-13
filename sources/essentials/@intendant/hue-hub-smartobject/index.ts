@@ -2,7 +2,8 @@ import SmartObject from '../../smartobject'
 import Tracing from '../../../utils/Tracing'
 import fetch from 'node-fetch'
 import Package from './package.json'
-
+import Product from './products.json'
+import Docs from './docs.json'
 
 
 class HueHub extends SmartObject {

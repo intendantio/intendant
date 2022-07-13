@@ -78,9 +78,9 @@ class Automation extends Controller {
         }
     }
 
-    async insert(description, trigger, action) {
+    async insert(trigger, action) {
         try {
-            let resultInsert = await this.sqlAutomation.insert({ reference: description })
+            let resultInsert = await this.sqlAutomation.insert({ reference: "" })
             if (resultInsert.error) {
                 return resultInsert
             }

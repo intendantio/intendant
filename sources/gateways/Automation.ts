@@ -39,7 +39,6 @@ export default (app, core) => {
 
     //Insert one automation
     app.post('/api/automations', 
-    body('description').isString().withMessage("Invalid description"),
     body('trigger').isObject().withMessage("Invalid state"),
     body('action').isObject().withMessage("Invalid action"),
     async (request, result) => {
@@ -51,7 +50,6 @@ export default (app, core) => {
                 result.send(authorization)
             } else {
                 result.send(await core.controller.automation.insert(
-                    request.body.description,
                     request.body.trigger,
                     request.body.action
                 ))

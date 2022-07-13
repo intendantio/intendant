@@ -159,6 +159,9 @@
         "/users/:idUser/dashboards": [
             "admin"
         ],
+        "/users/:idUser/password": [
+            "admin"
+        ],
         "/users/:idUser/dashboards/:idUserDashboard": [
             "admin"
         ],

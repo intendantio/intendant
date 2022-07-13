@@ -22,7 +22,7 @@
     "triggers": [
         {
             "id": "updateState",
-            "name": "click on button",
+            "name": "click button",
             "type": "callback"
         }
     ],

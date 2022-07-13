@@ -4,6 +4,8 @@ import Package from './package.json'
 import Https from 'https'
 import Color from './lib/color'
 import Tracing from '../../../utils/Tracing'
+import Product from './products.json'
+import Docs from './docs.json'
 
 const httpsAgent = new Https.Agent({ rejectUnauthorized: false })
 

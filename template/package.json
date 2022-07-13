@@ -4,6 +4,6 @@
   "author": "intendant",
   "license": "GPL-3.0+",
   "dependencies": {
-    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.1.0-beta.56.tgz"
+    "@intendant/core": "https://raw.githubusercontent.com/intendantio/intendant/main/releases/intendant-core-0.1.0-beta.57.tgz"
   }
 }

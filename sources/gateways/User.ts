@@ -75,7 +75,8 @@ export default (app, core) => {
         }
     })
 
-    app.post('/api/users/:idUser/password', async (request, result) => {
+    app.post('/api/users/:idUser/password', 
+    body('password').isString().isLength({ min: 6, max: 6 }).withMessage("Invalid password"), async (request, result) => {
         let resultValid = validationResult(request)
         if (resultValid.isEmpty()) {
             request.url = '/users/:idUser/password'

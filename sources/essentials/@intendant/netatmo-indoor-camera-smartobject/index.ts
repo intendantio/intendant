@@ -3,6 +3,8 @@ import fetch from 'node-fetch'
 import FormData from 'form-data'
 import Package from './package.json'
 import Tracing from '../../../utils/Tracing'
+import Product from './products.json'
+import Docs from './docs.json'
 
 class NetatmoIndoorCamera extends SmartObject {
 
