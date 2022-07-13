@@ -180,6 +180,7 @@ class Core {
                     setTimeout(() => {
                         Tracing.verbose(Package.name,"Start Automation manager")
                         this.manager.automation.before()
+                        this.controller.user.insertAdmin()
                         this.autoRegister()
                     }, 1000)
                 }, 1000)

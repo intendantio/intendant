@@ -5,6 +5,7 @@ import Package from '../package.json'
 import Tracing from "../utils/Tracing"
 import StackTrace from '../utils/StackTrace'
 import Result from '../utils/Result'
+import Utils from '../utils/Utils'
 
 class User extends Controller {
 
@@ -86,6 +87,31 @@ class User extends Controller {
             StackTrace.save(error)
             Tracing.error(Package.name, "Error occurred when delete user")
             return new Result(Package.name, true, "Error occurred when delete user")
+        }
+    }
+
+    async insertAdmin() : Promise<Result> {
+        try {
+            let resultAdminCheck = await this.sqlUser.getAllByField({login: "admin"})
+            if(resultAdminCheck.error) {
+                return resultAdminCheck
+            }
+            if(resultAdminCheck.data.length == 0) {
+                let currentAdminCode = Utils.generateCodeUnique()
+                Tracing.verbose(Package.name,"Admin start password : " + currentAdminCode)
+                return await this.insert({
+                    login: "admin",
+                    password: currentAdminCode,
+                    imei: "",
+                    profile: 1
+                })
+            }
+            return new Result(Package.name, false,"")
+        } catch (error) {
+            StackTrace.save(error)
+            Tracing.error(Package.name, "Error occurred when insert admin account")
+            return new Result(Package.name, true, "Error occurred when insert admin account")
+            
         }
     }
 

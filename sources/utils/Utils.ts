@@ -18,6 +18,10 @@ class Utils {
         return Math.random().toString(36).slice(-8).toUpperCase()
     }
 
+    static generateCodeUnique() {
+        return Math.random().toString().slice(-6)
+    }
+
     static getSum(s = "") {
         return s.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
     }
